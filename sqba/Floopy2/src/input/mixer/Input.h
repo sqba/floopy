@@ -33,11 +33,14 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
+	void MoveTo(UINT samples);
+	void Reset();
+	void Close();
+
 private:
 	void MixBuffers(BYTE *buffers, int count, BYTE *output, UINT size);
 
 #ifdef _DEBUG_TIMER_
-	void Close();
 	DWORD speed;
 	int frames;
 	int framesize;

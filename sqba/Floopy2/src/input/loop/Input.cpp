@@ -43,3 +43,25 @@ UINT CInput::Read(BYTE *data, UINT size)
 	}
 	return size;
 }
+
+void CInput::SetParam(int index, float value)
+{ 
+	m_nMaxLoops = (int)value;
+	Reset();
+}
+
+DWORD CInput::GetSize()
+{
+	return (NULL != m_source ? m_source->GetSize()*m_nMaxLoops : 0);
+}
+
+void CInput::MoveTo(UINT samples)
+{
+	IFloopySoundInput::MoveTo(samples);
+}
+
+void CInput::Reset()
+{
+	m_nLoops=0;
+	IFloopySoundInput::Reset();
+}

@@ -82,11 +82,12 @@ void CEngine::test()
 	CInput *volume1		= new CInput(TEXT("volume"));
 	CInput *volume2		= new CInput(TEXT("volume"));
 	CInput *volume3		= new CInput(TEXT("volume"));
+	CInput *volume4		= new CInput(TEXT("volume"));
 //	CInput *playrgn1	= new CInput(TEXT("playrgn"));
 //	CInput *playrgn2	= new CInput(TEXT("playrgn"));
 //	CInput *playrgn3	= new CInput(TEXT("playrgn"));
 
-	CInput *master = echo1;
+	CInput *master = mixer;
 
 	if( wavfilein1->Open(TEXT("Ischlju.wav")) && 
 		wavfilein2->Open(TEXT("presence.wav")) && 
@@ -101,10 +102,11 @@ void CEngine::test()
 //		playrgn3->SetSource(loop);
 //		playrgn3->SetParam(0, 44100.f);	// Start
 		volume3->SetSource(loop);
+		volume3->SetParam(0, 50);
 		volume3->MoveTo(44100*2);
 		volume3->SetParam(0, 100);
 		volume3->MoveTo(44100*3);
-		volume3->SetParam(0, 50);
+		volume3->SetParam(0, 150);
 		volume3->Reset();
 		mxr->AddSource(volume3);
 
@@ -115,12 +117,14 @@ void CEngine::test()
 		echo2->SetSource(wavfilein3);
 		mxr->AddSource(echo2);
 
+		mxr->AddSource(tonegen);
+
 		tonegen->Reset();
 		tonegen->SetActive(FALSE);
 
 		tonegen->SetFormat( fmt );
 		tonegen->Reset();
-		tonegen->MoveTo(44100*3);
+		master->MoveTo(44100*3);
 		tonegen->SetParam(0, 1800.f);
 		tonegen->SetActive(TRUE);
 		tonegen->MoveTo(44100*4);
@@ -164,30 +168,30 @@ void CEngine::test()
 		loop->MoveTo(44100*15);
 		loop->SetParam(0, 2);
 		volume3->MoveTo(44100*15);
-		volume3->SetParam(0, 150);
+		volume3->SetParam(0, 200);
 		loop->SetActive(TRUE);
 
 		loop->Reset();
 		loop->MoveTo(44100*17);
 		loop->SetParam(0, 2);
 		volume3->MoveTo(44100*17);
-		volume3->SetParam(0, 50);
+		volume3->SetParam(0, 100);
 		loop->SetActive(TRUE);
 
-		mxr->AddSource(tonegen);
-
 		echo1->SetSource(mixer);
-
+/*
 		loop->Reset();
 		echo1->Reset();
 		echo2->Reset();
 		volume3->Reset();
 		tonegen->Reset();
 		mixer->Reset();
-
+*/
 		// Master
 		master->Reset();
-		SetSource( master );
+		volume4->SetSource(master);
+		volume4->SetParam(0, 200);
+		SetSource( volume4 );
 
 //		volume2->SetSource(echo1);
 //		volume2->MoveTo(44100);

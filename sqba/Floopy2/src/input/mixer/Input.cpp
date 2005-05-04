@@ -162,10 +162,31 @@ void CInput::MixBuffers(BYTE *buffers, int buffcount, BYTE *output, UINT size)
 	}
 }
 */
-#ifdef _DEBUG_TIMER_
 void CInput::Close()
 {
+	for(int i=0; i<count; i++)
+	{
+		inputs[i]->Close();
+	}
+
+#ifdef _DEBUG_TIMER_
 	printf("Average frame mixing time (%d samples): %f ms\n",
 		framesize/frames, (float)speed/(float)frames);
-}
 #endif // _DEBUG_TIMER_
+}
+
+void CInput::MoveTo(UINT samples)
+{
+	for(int i=0; i<count; i++)
+	{
+		inputs[i]->MoveTo(samples);
+	}
+}
+
+void CInput::Reset()
+{
+	for(int i=0; i<count; i++)
+	{
+		inputs[i]->Reset();
+	}
+}

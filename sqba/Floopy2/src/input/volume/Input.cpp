@@ -28,15 +28,22 @@ UINT CInput::Read(BYTE *data, UINT size)
 	WAVFORMAT *fmt = GetFormat();
 	//UINT numsamples = size / ((fmt->size/8) * fmt->channels);
 	UINT numsamples = len / (fmt->size/8);
+	//UINT numsamples = len / ((fmt->size / 8) * GetFormat()->channels);
 
-	int max = (int)pow(2, fmt->size) / 2;
+//	int max = (int)pow(2, fmt->size) / 2;
 
-	short int coef = m_volume / 100;
+	float percent = (float)m_volume / 100.f;
+//	float coef = (float)max * (float)m_volume / 100.f;
 
 	int i = numsamples;
 	while(i--)
 	{
-		*(sample++) += (*sample * coef);
+		//*(sample++) += ((float)*sample * coef);
+		//*(sample++) += coef;
+		//*(sample++) += ((float)*sample * (float)m_volume / 100.f);
+		//if(*sample < 100 || *sample > -100)
+		//	*sample = *sample;
+		*(sample++) = ((float)*sample * percent);
 
 		/*short int s = (short int)((float)*sample * m_volume);
 		if((s > -max) && (s < max))

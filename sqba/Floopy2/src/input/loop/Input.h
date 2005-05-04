@@ -26,15 +26,14 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 	int   GetParamCount()			{ return 1; }
-	void  SetParam(int index, float value)
-	{ 
-		m_nMaxLoops = (int)value;
-		m_nLoops=0;
-		IFloopySoundInput::Reset();
-	}
+	void  SetParam(int index, float value);
 	float GetParam(int index)		{ return (float)m_nMaxLoops; }
 	char *GetParamName(int index)	{ return "loopcount"; }
 	char *GetParamDesc(int index)	{ return "Loop Count"; }
+
+	DWORD GetSize();
+	void MoveTo(UINT samples);
+	void Reset();
 
 private:
 	int m_nLoops, m_nMaxLoops;

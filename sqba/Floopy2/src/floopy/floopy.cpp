@@ -9,6 +9,8 @@
 
 UINT offset = 0;
 
+#define BUFFER_LENGTH	5120 //512
+
 void printPath(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
 	IFloopySoundInput *tmp = input;//->getPlugin();
@@ -25,7 +27,7 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
 	clock_t start = clock();
 
-	BYTE buff[512];
+	BYTE buff[BUFFER_LENGTH];
 	UINT len, size=sizeof(buff);
 	memset(buff, 0, sizeof(buff));
 //	while(((len=input->Read(buff, size, 0)) > 0) && (offset<1000000))
