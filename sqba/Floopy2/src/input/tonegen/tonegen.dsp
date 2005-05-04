@@ -97,11 +97,6 @@ SOURCE=.\Input.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\StdAfx.cpp
-# ADD CPP /Yc"stdafx.h"
-# End Source File
-# Begin Source File
-
 SOURCE=.\tonegen.cpp
 # End Source File
 # End Group
@@ -111,10 +106,6 @@ SOURCE=.\tonegen.cpp
 # Begin Source File
 
 SOURCE=.\Input.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\StdAfx.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

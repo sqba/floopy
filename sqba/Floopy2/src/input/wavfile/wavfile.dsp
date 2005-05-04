@@ -102,11 +102,6 @@ SOURCE=.\Output.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\StdAfx.cpp
-# ADD CPP /Yc"stdafx.h"
-# End Source File
-# Begin Source File
-
 SOURCE=.\wavfile.cpp
 # End Source File
 # End Group
@@ -124,10 +119,6 @@ SOURCE=.\Input.h
 # Begin Source File
 
 SOURCE=.\Output.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\StdAfx.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

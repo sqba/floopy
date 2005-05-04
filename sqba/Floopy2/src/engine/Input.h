@@ -30,7 +30,7 @@ public:
 	CInput(char *plugin);
 	virtual ~CInput();
 
-	char *GetName()			{ return "input"; }
+	char *GetName()			{ return "inputwrapper"; }
 	char *GetDescription()	{ return "Floopy Input Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

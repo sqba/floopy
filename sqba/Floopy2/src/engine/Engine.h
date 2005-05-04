@@ -24,7 +24,7 @@ public:
 
 //	UINT Read(BYTE *data, UINT size, UINT offset);
 
-	char *GetName()			{ return "engine"; }
+	char *GetName()			{ return "enginewrapper"; }
 	char *GetDescription()	{ return "Floopy Engine Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

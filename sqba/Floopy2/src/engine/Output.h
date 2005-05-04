@@ -28,7 +28,7 @@ public:
 	COutput(char *plugin, WAVFORMAT *fmt);
 	virtual ~COutput();
 
-	char *GetName()			{ return "output"; }
+	char *GetName()			{ return "outputwrapper"; }
 	char *GetDescription()	{ return "Floopy Output Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
