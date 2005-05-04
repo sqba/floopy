@@ -68,6 +68,18 @@ void CInput::Reset()
 		m_source->Reset();
 }
 
+void CInput::SetParam(int index, float value)
+{
+	// Take m_offset in account!!!
+	m_plugin->SetParam(index, value);
+}
+
+float CInput::GetParam(int index)
+{
+	// Take m_offset in account!!!
+	return m_plugin->GetParam(index);
+}
+
 /*
 BOOL CInput::Open(char *filename)
 {

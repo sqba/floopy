@@ -55,6 +55,18 @@ UINT COutput::Write(BYTE *data, UINT size)
 	return len;
 }
 
+void COutput::SetParam(int index, float value)
+{
+	// Take m_offset in account!!!
+	m_plugin->SetParam(index, value);
+}
+
+float COutput::GetParam(int index)
+{
+	// Take m_offset in account!!!
+	return m_plugin->GetParam(index);
+}
+
 /*
 BOOL COutput::Open(char *filename)
 {

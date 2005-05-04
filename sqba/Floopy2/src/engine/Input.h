@@ -53,8 +53,8 @@ public:
 	}
 */
 	int   GetParamCount()					{ return m_plugin->GetParamCount(); }
-	void  SetParam(int index, float value)	{ m_plugin->SetParam(index, value); }
-	float GetParam(int index)				{ return m_plugin->GetParam(index); }
+	void  SetParam(int index, float value);//	{ m_plugin->SetParam(index, value); }
+	float GetParam(int index);//				{ return m_plugin->GetParam(index); }
 	char *GetParamName(int index)			{ return m_plugin->GetParamName(index); }
 	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
 
