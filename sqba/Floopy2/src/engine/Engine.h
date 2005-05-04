@@ -44,6 +44,10 @@ private:
 	UINT m_offset;
 
 	void test();
+	void testAddTrack1(IFloopySoundMixer *mixer);
+	void testAddTrack2(IFloopySoundMixer *mixer);
+	void testAddTrack3(IFloopySoundMixer *mixer);
+	void testAddTrack4(IFloopySoundMixer *mixer);
 
 //	IFloopy *m_objects; // List
 

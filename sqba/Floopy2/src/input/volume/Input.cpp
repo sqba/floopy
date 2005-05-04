@@ -11,7 +11,7 @@
 
 CInput::CInput()
 {
-	m_volume = 2;
+	m_volume = 100;
 }
 
 CInput::~CInput()
