@@ -28,7 +28,7 @@ public:
 	int   GetParamCount()			{ return 1; }
 	void  SetParam(int index, float value) { m_nMaxLoops = (int)value; }
 	float GetParam(int index)		{ return (float)m_nMaxLoops; }
-	char *GetParamName(int index)	{ return "Loop Count"; }
+	char *GetParamName(int index)	{ return "loopcount"; }
 	char *GetParamDesc(int index)	{ return "Loop Count"; }
 
 private:
