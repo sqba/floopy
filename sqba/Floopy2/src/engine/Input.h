@@ -11,6 +11,7 @@
 
 #include <windows.h>
 #include "../ifloopy.h"
+#include "timeline.h"
 
 /**
  * \class CInput
@@ -34,10 +35,18 @@ public:
 	char *GetDescription()	{ return "Floopy Input Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
-
+/*
+	char *GetName()			{ return (m_plugin ? m_plugin->GetName() : "inputwrapper"); }
+	char *GetDescription()	{ return (m_plugin ? m_plugin->GetDescription() : "Floopy Input Plugin Wrapper"); }
+	char *GetVersion()		{ return (m_plugin ? m_plugin->GetVersion() : "0.1"); }
+	char *GetAuthor()		{ return (m_plugin ? m_plugin->GetAuthor() : "sqba"); }
+*/
 	void MoveTo(UINT samples);
 	void Reset();
 	UINT Read(BYTE *data, UINT size);
+
+	void SetActive(BOOL bActive);
+	BOOL IsActive();
 /*
 	BOOL Open(char *filename);
 	DWORD GetSize();
@@ -67,6 +76,7 @@ private:
 	UINT m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundInput *m_plugin;
+	CTimeline m_timeline;
 };
 
 #endif // !defined(AFX_INPUT_H__0D3139FE_D3F2_4CAF_A696_AB92E4A51331__INCLUDED_)

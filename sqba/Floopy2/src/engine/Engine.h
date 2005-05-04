@@ -15,6 +15,7 @@
 #include "../ifloopy.h"
 #include "input.h"
 #include "output.h"
+#include "timeline.h"
 
 class CEngine : public IFloopyEngine
 {
@@ -47,6 +48,7 @@ private:
 //	IFloopy *m_objects; // List
 
 //	CInput *m_master;
+	CTimeline m_timeline;
 };
 
 #endif // !defined(AFX_ENGINE_H__621A6F07_09D1_41D0_A981_DB32D29DA57A__INCLUDED_)

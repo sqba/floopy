@@ -63,6 +63,13 @@ UINT CEngine::Read(BYTE *data, UINT size)
 
 void CEngine::test()
 {
+//	m_timeline.Set(44100, 0, 0.5f);
+//	int i = m_timeline.GetCount();
+//	m_timeline.Set(44100*2, 0, 2.5f);
+//	m_timeline.Set(44101, 0, 3.5f);
+//	i = m_timeline.GetCount();
+//	UINT s = m_timeline.GetNextOffset(44100);
+
 	CInput *wavfilein1	= new CInput(TEXT("wavfile"));
 	CInput *wavfilein2	= new CInput(TEXT("wavfile"));
 	CInput *wavfilein3	= new CInput(TEXT("wavfile"));
@@ -72,10 +79,14 @@ void CEngine::test()
 	CInput *mixer		= new CInput(TEXT("mixer"));
 	CInput *loop		= new CInput(TEXT("loop"));
 	CInput *tonegen		= new CInput(TEXT("tonegen"));
-	CInput *volume		= new CInput(TEXT("volume"));
-	CInput *playrgn1	= new CInput(TEXT("playrgn"));
-	CInput *playrgn2	= new CInput(TEXT("playrgn"));
-	CInput *playrgn3	= new CInput(TEXT("playrgn"));
+	CInput *volume1		= new CInput(TEXT("volume"));
+	CInput *volume2		= new CInput(TEXT("volume"));
+	CInput *volume3		= new CInput(TEXT("volume"));
+//	CInput *playrgn1	= new CInput(TEXT("playrgn"));
+//	CInput *playrgn2	= new CInput(TEXT("playrgn"));
+//	CInput *playrgn3	= new CInput(TEXT("playrgn"));
+
+	CInput *master = echo1;
 
 	if( wavfilein1->Open(TEXT("Ischlju.wav")) && 
 		wavfilein2->Open(TEXT("presence.wav")) && 
@@ -85,47 +96,125 @@ void CEngine::test()
 
 		WAVFORMAT *fmt = wavfilein1->GetFormat();
 
-		loop->SetParam(0, 2);
+		loop->SetParam(0, 3);
 		loop->SetSource(wavfilein1);
-		playrgn3->SetSource(loop);
-		playrgn3->SetParam(0, 44100.f);	// Start
-		mxr->AddSource(playrgn3);
+//		playrgn3->SetSource(loop);
+//		playrgn3->SetParam(0, 44100.f);	// Start
+		volume3->SetSource(loop);
+		volume3->MoveTo(44100*2);
+		volume3->SetParam(0, 100);
+		volume3->MoveTo(44100*3);
+		volume3->SetParam(0, 50);
+		volume3->Reset();
+		mxr->AddSource(volume3);
 
-		playrgn2->SetSource(wavfilein2);
-		playrgn2->SetParam(0, 44100.f*5.f);	// Start
-		mxr->AddSource(playrgn2);
+//		playrgn2->SetSource(wavfilein2);
+//		playrgn2->SetParam(0, 44100.f*5.f);	// Start
+		mxr->AddSource(wavfilein2);
 
 		echo2->SetSource(wavfilein3);
 		mxr->AddSource(echo2);
 
+		tonegen->Reset();
+		tonegen->SetActive(FALSE);
+
 		tonegen->SetFormat( fmt );
+		tonegen->Reset();
+		tonegen->MoveTo(44100*3);
 		tonegen->SetParam(0, 1800.f);
-		playrgn1->SetSource(tonegen);
-		playrgn1->SetParam(0, 44100.f*7.f);	// Start
-		playrgn1->SetParam(1, 44100.f*8.f);	// Stop
-		mxr->AddSource(playrgn1);
+		tonegen->SetActive(TRUE);
+		tonegen->MoveTo(44100*4);
+		tonegen->SetActive(FALSE);
+//		playrgn1->SetSource(tonegen);
+//		playrgn1->SetParam(0, 44100.f*6.f);	// Start
+//		playrgn1->SetParam(1, 44100.f*7.f);	// Stop
+		tonegen->Reset();
+		tonegen->MoveTo(44100*8);
+		tonegen->SetParam(0, 2600.f);
+		tonegen->SetActive(TRUE);
+		tonegen->MoveTo(44100*9);
+		tonegen->SetActive(FALSE);
+//		playrgn1->MoveTo(44100*9);
+//		playrgn1->SetParam(0, 44100.f*9.f);	// Start
+//		playrgn1->SetParam(1, 44100.f*10.f);	// Stop
+//		playrgn1->Reset();
+//		playrgn1->MoveTo(44100*12);
+//		tonegen->Reset();
+//		tonegen->MoveTo(44100*13);
+//		tonegen->SetParam(0, 2600.f);
+//		playrgn1->SetParam(0, 44100.f*12.f);	// Start
+//		playrgn1->SetParam(1, 44100.f*15.f);	// Stop
+//		playrgn1->Reset();
+		//tonegen->Reset();
+//		tonegen->MoveTo(44100*13);
+//		tonegen->SetActive(FALSE);
+//		tonegen->Reset();
+		tonegen->MoveTo(44100*12);
+		tonegen->SetParam(0, 4000.f);
+		tonegen->SetActive(TRUE);
+		tonegen->MoveTo(44100*13);
+		tonegen->SetParam(0, 800.f);
+		tonegen->MoveTo(44100*14);
+		tonegen->SetParam(0, 600.f);
+		tonegen->MoveTo(44100*15);
+		tonegen->SetActive(FALSE);
+		tonegen->Reset();
+
+		loop->Reset();
+		loop->MoveTo(44100*15);
+		loop->SetParam(0, 2);
+		volume3->MoveTo(44100*15);
+		volume3->SetParam(0, 150);
+		loop->SetActive(TRUE);
+
+		loop->Reset();
+		loop->MoveTo(44100*17);
+		loop->SetParam(0, 2);
+		volume3->MoveTo(44100*17);
+		volume3->SetParam(0, 50);
+		loop->SetActive(TRUE);
+
+		mxr->AddSource(tonegen);
 
 		echo1->SetSource(mixer);
 
+		loop->Reset();
+		echo1->Reset();
+		echo2->Reset();
+		volume3->Reset();
+		tonegen->Reset();
+		mixer->Reset();
+
 		// Master
-		SetSource( echo1 );
-/*
-		mxr->AddSource(wavfilein1);
-		mxr->AddSource(wavfilein2);
-		mxr->AddSource(wavfilein3);
+		master->Reset();
+		SetSource( master );
 
-		WAVFORMAT *fmt = wavfilein1->GetFormat();
-		tonegen->SetFormat(wavfilein1->GetFormat());
-		fmt = tonegen->GetFormat();
-		tonegen->SetParam(0, 1800.f);
-		playrgn1->SetSource(tonegen);
-		fmt = playrgn1->GetFormat();
-		playrgn1->SetParam(0, 44100.f*2.f);	// Start
-		playrgn1->SetParam(1, 44100.f*3.f);	// Stop
-		mxr->AddSource(playrgn1);
+//		volume2->SetSource(echo1);
+//		volume2->MoveTo(44100);
+//		volume2->SetParam(0, 150);
+//		volume2->Reset();
+//		SetSource( volume2 );
 
-		SetSource( mxr );
-*/
+		//int n = playrgn1->GetParam(0);
+
+
+
+//		mxr->AddSource(wavfilein1);
+//		mxr->AddSource(wavfilein2);
+//		mxr->AddSource(wavfilein3);
+
+//		WAVFORMAT *fmt = wavfilein1->GetFormat();
+//		tonegen->SetFormat(wavfilein1->GetFormat());
+//		fmt = tonegen->GetFormat();
+//		tonegen->SetParam(0, 1800.f);
+//		playrgn1->SetSource(tonegen);
+//		fmt = playrgn1->GetFormat();
+//		playrgn1->SetParam(0, 44100.f*2.f);	// Start
+//		playrgn1->SetParam(1, 44100.f*3.f);	// Stop
+//		mxr->AddSource(playrgn1);
+
+//		SetSource( mxr );
+
 
 		// Total time: 25056 ms WaveOut
 		// Total time: 2984 ms
@@ -142,6 +231,150 @@ void CEngine::test()
 }
 
 
+/*
+
+void CEngine::test()
+{
+//	m_timeline.Set(44100, 0, 0.5f);
+//	int i = m_timeline.GetCount();
+//	m_timeline.Set(44100*2, 0, 2.5f);
+//	m_timeline.Set(44101, 0, 3.5f);
+//	i = m_timeline.GetCount();
+//	UINT s = m_timeline.GetNextOffset(44100);
+
+	CInput *wavfilein1	= new CInput(TEXT("wavfile"));
+	CInput *wavfilein2	= new CInput(TEXT("wavfile"));
+	CInput *wavfilein3	= new CInput(TEXT("wavfile"));
+	CInput *echo1		= new CInput(TEXT("echo"));
+	CInput *echo2		= new CInput(TEXT("echo"));
+	CInput *echo3		= new CInput(TEXT("echo"));
+	CInput *mixer		= new CInput(TEXT("mixer"));
+	CInput *loop		= new CInput(TEXT("loop"));
+	CInput *tonegen		= new CInput(TEXT("tonegen"));
+	CInput *volume1		= new CInput(TEXT("volume"));
+	CInput *volume2		= new CInput(TEXT("volume"));
+	CInput *volume3		= new CInput(TEXT("volume"));
+	CInput *playrgn1	= new CInput(TEXT("playrgn"));
+	CInput *playrgn2	= new CInput(TEXT("playrgn"));
+	CInput *playrgn3	= new CInput(TEXT("playrgn"));
+
+	CInput *master = echo1;
+
+	if( wavfilein1->Open(TEXT("Ischlju.wav")) && 
+		wavfilein2->Open(TEXT("presence.wav")) && 
+		wavfilein3->Open(TEXT("Gimme Sh_T.wav")) )
+	{
+		IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
+
+		WAVFORMAT *fmt = wavfilein1->GetFormat();
+
+//		loop->SetParam(0, 2);
+//		loop->SetSource(wavfilein1);
+//		playrgn3->SetSource(loop);
+//		playrgn3->SetParam(0, 44100.f);	// Start
+//		mxr->AddSource(playrgn3);
+
+		loop->SetParam(0, 3);
+		loop->SetSource(wavfilein1);
+		playrgn3->SetSource(loop);
+		playrgn3->SetParam(0, 44100.f);	// Start
+		volume3->SetSource(playrgn3);
+		volume3->MoveTo(44100*2);
+		volume3->SetParam(0, 100);
+		volume3->MoveTo(44100*3);
+		volume3->SetParam(0, 1);
+		master->Reset();
+		mxr->AddSource(volume3);
+
+		playrgn2->SetSource(wavfilein2);
+		playrgn2->SetParam(0, 44100.f*5.f);	// Start
+		mxr->AddSource(playrgn2);
+
+		echo2->SetSource(wavfilein3);
+		mxr->AddSource(echo2);
+
+//		//echo2->SetSource(wavfilein3);
+//		volume3->SetSource(wavfilein3);
+//		volume3->MoveTo(44100*12);
+//		volume3->SetParam(0, 150);
+//		volume3->Reset();
+//		mxr->AddSource(volume3);
+		
+		//echo2->SetSource(wavfilein3);
+		//volume1->SetSource(echo2);
+		
+		//volume1->SetSource(wavfilein3);
+		//volume1->SetParam(0, 150);
+		//mxr->AddSource(volume1);
+
+		tonegen->SetFormat( fmt );
+		tonegen->SetParam(0, 1800.f);
+		playrgn1->SetSource(tonegen);
+		playrgn1->SetParam(0, 44100.f*6.f);	// Start
+		playrgn1->SetParam(1, 44100.f*7.f);	// Stop
+		tonegen->MoveTo(44100*8);
+		tonegen->SetParam(0, 2600.f);
+		playrgn1->MoveTo(44100*9);
+		playrgn1->SetParam(0, 44100.f*9.f);	// Start
+		playrgn1->SetParam(1, 44100.f*10.f);	// Stop
+		playrgn1->Reset();
+		playrgn1->MoveTo(44100*12);
+		tonegen->Reset();
+		tonegen->MoveTo(44100*13);
+		tonegen->SetParam(0, 2600.f);
+		playrgn1->SetParam(0, 44100.f*12.f);	// Start
+		playrgn1->SetParam(1, 44100.f*15.f);	// Stop
+		playrgn1->Reset();
+		//tonegen->Reset();
+		mxr->AddSource(playrgn1);
+
+		echo1->SetSource(mixer);
+
+		// Master
+		master->Reset();
+		SetSource( master );
+
+//		volume2->SetSource(echo1);
+//		volume2->MoveTo(44100);
+//		volume2->SetParam(0, 150);
+//		volume2->Reset();
+//		SetSource( volume2 );
+
+		//int n = playrgn1->GetParam(0);
+
+
+
+//		mxr->AddSource(wavfilein1);
+//		mxr->AddSource(wavfilein2);
+//		mxr->AddSource(wavfilein3);
+
+//		WAVFORMAT *fmt = wavfilein1->GetFormat();
+//		tonegen->SetFormat(wavfilein1->GetFormat());
+//		fmt = tonegen->GetFormat();
+//		tonegen->SetParam(0, 1800.f);
+//		playrgn1->SetSource(tonegen);
+//		fmt = playrgn1->GetFormat();
+//		playrgn1->SetParam(0, 44100.f*2.f);	// Start
+//		playrgn1->SetParam(1, 44100.f*3.f);	// Stop
+//		mxr->AddSource(playrgn1);
+
+//		SetSource( mxr );
+
+
+		// Total time: 25056 ms WaveOut
+		// Total time: 2984 ms
+		// Total time: 3104 ms
+		// Total time: 3054 ms
+		// Total time: 2473 ms posle prve optimizacije
+		// Total time: 2333 ms
+		// Total time: 2204 ms posle druge optimizacije
+		// Total time: 1812 ms
+		// Total time: 2393 ms
+		// Total time: 1792 ms
+
+	}
+}
+*/
 
 
 

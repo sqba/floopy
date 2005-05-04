@@ -135,6 +135,22 @@ Package=<4>
 
 ###############################################################################
 
+Project: "svgfile"=".\OUTPUT\svgfile\svgfile.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/sqba/Floopy2/src/output/svgfile", LGDAAAAA
+    .\output\svgfile
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "tonegen"=".\INPUT\tonegen\tonegen.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -155,6 +171,10 @@ Project: "volume"=".\INPUT\volume\volume.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    "$/sqba/Floopy2/src/input/volume", RGDAAAAA
+    .\input\volume
+    end source code control
 }}}
 
 Package=<4>

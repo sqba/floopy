@@ -37,6 +37,11 @@ UINT CInput::Read(BYTE *data, UINT size)
 	while(i--)
 	{
 		*(sample++) += (*sample * coef);
+
+		/*short int s = (short int)((float)*sample * m_volume);
+		if((s > -max) && (s < max))
+			*sample = s;
+		sample++;*/
 	}
 	return len;
 }

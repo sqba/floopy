@@ -25,11 +25,11 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
 	clock_t start = clock();
 
-	BYTE buff[128];
+	BYTE buff[512];
 	UINT len, size=sizeof(buff);
 	memset(buff, 0, sizeof(buff));
 //	while(((len=input->Read(buff, size, 0)) > 0) && (offset<1000000))
-	while((len=input->Read(buff, size, 0)) > 0)
+	while((len=input->Read(buff, size)) > 0)
 	{
 		offset += len;
 		output->Write(buff, len);
@@ -40,8 +40,52 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	DWORD speed = clock() - start;
 	printf("Total time: %d ms\n", speed);
 }
-/*
 
+void main(int argc, char* argv[])
+{
+	CEngine *engine = new CEngine("engine");
+	//engine->Open(TEXT("test.xml"));
+
+	//COutput *output = NULL;
+	IFloopySoundOutput *output = NULL;
+
+	int i = 0;
+
+	switch(i)
+	{
+	case 0:
+		// Render to file
+		//output = new COutput(TEXT("wavfile"), engine);
+		output = engine->CreateOutput("wavfile", engine->GetFormat());
+		output->Open("floopy.wav");
+		break;
+	case 1:
+		// Output to speakers
+		//output = new COutput(TEXT("waveout"), engine->getPlugin());
+		output = engine->CreateOutput("waveout", engine->GetFormat());
+		break;
+	case 2:
+		// Output to svg
+		output = engine->CreateOutput("svgfile", engine->GetFormat());
+		output->Open("floopy.svg");
+		break;
+	}
+
+	// stdout?
+
+	printPath(engine, output);
+//	WAVFORMAT *fmt = engine->getPlugin()->GetFormat();
+
+	process(engine, output);
+
+	delete output;
+	delete engine;
+
+	printf("Press enter to continue");
+	getchar();
+}
+
+/*
 void loadSection(IFloopyConfig *section)
 {
 }
@@ -186,35 +230,3 @@ int main(int argc, char* argv[])
 	return 0;
 }
 */
-
-void main(int argc, char* argv[])
-{
-	CEngine *engine = new CEngine("engine");
-	//engine->Open(TEXT("test.xml"));
-
-	//COutput *output = NULL;
-	IFloopySoundOutput *output = NULL;
-
-	if(1)
-	{
-		// Render to file
-		//output = new COutput(TEXT("wavfile"), engine);
-		output = engine->CreateOutput("wavfile", engine->GetFormat());
-		output->Open("floopy.wav");
-	} else {
-		// Output to speakers
-		//output = new COutput(TEXT("waveout"), engine->getPlugin());
-		output = engine->CreateOutput("waveout", engine->GetFormat());
-	}
-
-//	printPath(engine->getPlugin(), output);
-//	WAVFORMAT *fmt = engine->getPlugin()->GetFormat();
-
-	process(engine, output);
-
-	delete output;
-	delete engine;
-
-	printf("Press enter to continue");
-	getchar();
-}

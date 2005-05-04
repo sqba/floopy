@@ -12,6 +12,7 @@
 #include <windows.h>
 #include "../ifloopy.h"
 #include <stdio.h>
+#include "timeline.h"
 
 /**
  * \class COutput
@@ -57,6 +58,7 @@ private:
 	UINT m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundOutput *m_plugin;
+	CTimeline m_timeline;
 };
 
 #endif // !defined(AFX_OUTPUT_H__8964D44D_9FFA_4F21_BA21_37E1D084CDD4__INCLUDED_)

@@ -107,6 +107,10 @@ SOURCE=.\main.cpp
 
 SOURCE=.\Output.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\Timeline.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -122,6 +126,10 @@ SOURCE=.\Input.h
 # Begin Source File
 
 SOURCE=.\Output.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Timeline.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

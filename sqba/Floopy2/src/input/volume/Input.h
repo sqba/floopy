@@ -32,7 +32,7 @@ public:
 	char *GetParamDesc(int index)	{ return "Volume"; }
 
 private:
-	int m_volume;
+	int m_volume; // In percents
 };
 
 #endif // !defined(AFX_INPUT_H__92AD1778_7D98_4217_9A76_ECD63DA4B8FA__INCLUDED_)

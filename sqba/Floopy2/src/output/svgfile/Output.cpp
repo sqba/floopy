@@ -50,7 +50,7 @@ UINT COutput::Write(BYTE *data, UINT size)
 {
 	UINT written = 0;
 
-	int interval = 64;//512
+	int interval = 512;
 	int step=1;
 
 	short int *buffer = (short int*)data;
