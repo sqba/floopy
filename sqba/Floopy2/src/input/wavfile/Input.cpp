@@ -47,12 +47,24 @@ DWORD CInput::GetSize()
 	//return (NULL != m_pFile ? 0 : 0);
 }
 
-UINT CInput::Read(BYTE *data, UINT size, UINT offset)
+void CInput::MoveTo(UINT samples)
+{
+	UINT n = samples * ((m_wavformat.size/8) * m_wavformat.channels);
+	fseek(m_pFile, n, SEEK_SET);
+}
+
+void CInput::Reset()
+{
+	long hdrlen = (sizeof(RIFF)+sizeof(FMT)+sizeof(DATA));
+	fseek(m_pFile, hdrlen, SEEK_SET);
+}
+
+UINT CInput::Read(BYTE *data, UINT size)
 {
 	if(NULL != m_pFile)
 	{
 		// Moze li se offset potpuno izbaciti?
-		if(-1 == offset)
+		/*if(-1 == offset)
 		{
 			long hdrlen = (sizeof(RIFF)+sizeof(FMT)+sizeof(DATA));
 			fseek(m_pFile, hdrlen, SEEK_SET);
@@ -61,7 +73,7 @@ UINT CInput::Read(BYTE *data, UINT size, UINT offset)
 		{
 			UINT n = offset * ((m_wavformat.size/8) * m_wavformat.channels);
 			fseek(m_pFile, n, SEEK_SET);
-		}
+		}*/
 
 		long pos = ftell(m_pFile);
 		long hdrlen = (sizeof(RIFF)+sizeof(FMT)+sizeof(DATA));
@@ -81,10 +93,4 @@ void CInput::Close()
 	{
 		fclose(m_pFile);
 	}
-}
-
-void CInput::Reset()
-{
-	long hdrlen = (sizeof(RIFF)+sizeof(FMT)+sizeof(DATA));
-	fseek(m_pFile, hdrlen, SEEK_SET);
 }

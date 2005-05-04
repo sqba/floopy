@@ -34,6 +34,10 @@ public:
 	char *GetDescription()	{ return "Floopy Input Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
+
+	void MoveTo(UINT samples);
+	void Reset();
+	UINT Read(BYTE *data, UINT size);
 /*
 	BOOL Open(char *filename);
 	DWORD GetSize();

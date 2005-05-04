@@ -59,7 +59,7 @@ void CInput::RemoveSource(int index)
 {
 }
 
-UINT CInput::Read(BYTE *data, UINT size, UINT offset)
+UINT CInput::Read(BYTE *data, UINT size)
 {
 	if(lensize != count)
 	{
@@ -86,7 +86,7 @@ UINT CInput::Read(BYTE *data, UINT size, UINT offset)
 		// Fill source buffers;
 		for(int i=0; i<count; i++)
 		{
-			lengths[i] = inputs[i]->Read(pbuffers, size, offset);
+			lengths[i] = inputs[i]->Read(pbuffers, size);
 			pbuffers += size;
 		}
 

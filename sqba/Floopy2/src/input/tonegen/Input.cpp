@@ -20,14 +20,14 @@ CInput::~CInput()
 
 }
 
-UINT CInput::Read(BYTE *data, UINT size, UINT offset)
+UINT CInput::Read(BYTE *data, UINT size)
 {
 	//short sample_buffer[576*2];
 	//short sample_buffer[8*2];
 	short int *sample_buffer = (short*)data;
 
-	if(-1 == offset)
-		angle = 0.0;
+//	if(-1 == offset)
+//		angle = 0.0;
 
 	WAVFORMAT *fmt = GetFormat();
 	UINT numsamples = size / ((fmt->size/8) * fmt->channels);

@@ -18,7 +18,7 @@ public:
 	CInput();
 	virtual ~CInput();
 
-	UINT Read(BYTE *data, UINT size, UINT offset);
+	UINT Read(BYTE *data, UINT size);
 
 	char *GetName()			{ return "loop"; }
 	char *GetDescription()	{ return "Looping component"; }

@@ -12,6 +12,8 @@ CEngine::CEngine()
 {
 //	m_master = NULL;
 
+	m_offset = 0;
+
 	test();
 }
 
@@ -20,6 +22,131 @@ CEngine::~CEngine()
 	if(m_source)
 		delete m_source;
 }
+
+IFloopySoundInput  *CEngine::CreateInput(char *plugin)
+{
+	return new CInput(plugin);
+}
+
+IFloopySoundOutput *CEngine::CreateOutput(char *plugin, WAVFORMAT *fmt)
+{
+	return new COutput(plugin, fmt);
+}
+
+void CEngine::MoveTo(UINT samples)
+{
+	m_offset = samples;
+
+	if(NULL != m_source)
+		m_source->MoveTo(samples);
+}
+
+void CEngine::Reset()
+{
+	m_offset = 0;
+	if(NULL != m_source)
+		m_source->Reset();
+}
+
+UINT CEngine::Read(BYTE *data, UINT size)
+{
+	//printf("offset: %d\n", m_offset);
+	UINT len = (NULL != m_source ? m_source->Read(data, size) : 0);
+	m_offset += len;
+	return len;
+}
+
+
+
+
+
+
+void CEngine::test()
+{
+	CInput *wavfilein1	= new CInput(TEXT("wavfile"));
+	CInput *wavfilein2	= new CInput(TEXT("wavfile"));
+	CInput *wavfilein3	= new CInput(TEXT("wavfile"));
+	CInput *echo1		= new CInput(TEXT("echo"));
+	CInput *echo2		= new CInput(TEXT("echo"));
+	CInput *echo3		= new CInput(TEXT("echo"));
+	CInput *mixer		= new CInput(TEXT("mixer"));
+	CInput *loop		= new CInput(TEXT("loop"));
+	CInput *tonegen		= new CInput(TEXT("tonegen"));
+	CInput *volume		= new CInput(TEXT("volume"));
+	CInput *playrgn1	= new CInput(TEXT("playrgn"));
+	CInput *playrgn2	= new CInput(TEXT("playrgn"));
+	CInput *playrgn3	= new CInput(TEXT("playrgn"));
+
+	if( wavfilein1->Open(TEXT("Ischlju.wav")) && 
+		wavfilein2->Open(TEXT("presence.wav")) && 
+		wavfilein3->Open(TEXT("Gimme Sh_T.wav")) )
+	{
+		IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
+
+		WAVFORMAT *fmt = wavfilein1->GetFormat();
+
+		loop->SetParam(0, 2);
+		loop->SetSource(wavfilein1);
+		playrgn3->SetSource(loop);
+		playrgn3->SetParam(0, 44100.f);	// Start
+		mxr->AddSource(playrgn3);
+
+		playrgn2->SetSource(wavfilein2);
+		playrgn2->SetParam(0, 44100.f*5.f);	// Start
+		mxr->AddSource(playrgn2);
+
+		echo2->SetSource(wavfilein3);
+		mxr->AddSource(echo2);
+
+		tonegen->SetFormat( fmt );
+		tonegen->SetParam(0, 1800.f);
+		playrgn1->SetSource(tonegen);
+		playrgn1->SetParam(0, 44100.f*7.f);	// Start
+		playrgn1->SetParam(1, 44100.f*8.f);	// Stop
+		mxr->AddSource(playrgn1);
+
+		echo1->SetSource(mixer);
+
+		// Master
+		SetSource( echo1 );
+/*
+		mxr->AddSource(wavfilein1);
+		mxr->AddSource(wavfilein2);
+		mxr->AddSource(wavfilein3);
+
+		WAVFORMAT *fmt = wavfilein1->GetFormat();
+		tonegen->SetFormat(wavfilein1->GetFormat());
+		fmt = tonegen->GetFormat();
+		tonegen->SetParam(0, 1800.f);
+		playrgn1->SetSource(tonegen);
+		fmt = playrgn1->GetFormat();
+		playrgn1->SetParam(0, 44100.f*2.f);	// Start
+		playrgn1->SetParam(1, 44100.f*3.f);	// Stop
+		mxr->AddSource(playrgn1);
+
+		SetSource( mxr );
+*/
+
+		// Total time: 25056 ms WaveOut
+		// Total time: 2984 ms
+		// Total time: 3104 ms
+		// Total time: 3054 ms
+		// Total time: 2473 ms posle prve optimizacije
+		// Total time: 2333 ms
+		// Total time: 2204 ms posle druge optimizacije
+		// Total time: 1812 ms
+		// Total time: 2393 ms
+		// Total time: 1792 ms
+
+	}
+}
+
+
+
+
+
+
+
 /*
 void printPath(IFloopySoundInput *input)
 {
@@ -207,81 +334,3 @@ UINT CEngine::Read(BYTE *data, UINT size, UINT offset)
 
 
 
-
-void CEngine::test()
-{
-	CInput *wavfilein1	= new CInput(TEXT("wavfile"));
-	CInput *wavfilein2	= new CInput(TEXT("wavfile"));
-	CInput *wavfilein3	= new CInput(TEXT("wavfile"));
-	CInput *echo1		= new CInput(TEXT("echo"));
-	CInput *echo2		= new CInput(TEXT("echo"));
-	CInput *echo3		= new CInput(TEXT("echo"));
-	CInput *mixer		= new CInput(TEXT("mixer"));
-	CInput *loop		= new CInput(TEXT("loop"));
-	CInput *tonegen		= new CInput(TEXT("tonegen"));
-	CInput *volume		= new CInput(TEXT("volume"));
-	CInput *playrgn1	= new CInput(TEXT("playrgn"));
-	CInput *playrgn2	= new CInput(TEXT("playrgn"));
-	CInput *playrgn3	= new CInput(TEXT("playrgn"));
-
-	if( wavfilein1->Open(TEXT("Ischlju.wav")) && 
-		wavfilein2->Open(TEXT("presence.wav")) && 
-		wavfilein3->Open(TEXT("Gimme Sh_T.wav")) )
-	{
-		IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
-
-		loop->SetParam(0, 4);
-		loop->SetSource(wavfilein1);
-		playrgn3->SetSource(loop);
-		playrgn3->SetParam(0, 44100.f);	// Start
-		mxr->AddSource(playrgn3);
-
-		playrgn2->SetSource(wavfilein2);
-		playrgn2->SetParam(0, 44100.f*5.f);	// Start
-		mxr->AddSource(playrgn2);
-
-		echo2->SetSource(wavfilein3);
-		mxr->AddSource(echo2);
-
-		tonegen->SetFormat(wavfilein1->GetFormat());
-		tonegen->SetParam(0, 1800.f);
-		playrgn1->SetSource(tonegen);
-		playrgn1->SetParam(0, 44100.f*4.f);	// Start
-		playrgn1->SetParam(1, 44100.f*5.f);	// Stop
-		mxr->AddSource(playrgn1);
-
-		echo1->SetSource(mixer);
-
-		// Master
-		SetSource( echo1 );
-/*
-		mxr->AddSource(wavfilein1);
-		mxr->AddSource(wavfilein2);
-		mxr->AddSource(wavfilein3);
-
-		WAVFORMAT *fmt = wavfilein1->GetFormat();
-		tonegen->SetFormat(wavfilein1->GetFormat());
-		fmt = tonegen->GetFormat();
-		tonegen->SetParam(0, 1800.f);
-		playrgn1->SetSource(tonegen);
-		fmt = playrgn1->GetFormat();
-		playrgn1->SetParam(0, 44100.f*2.f);	// Start
-		playrgn1->SetParam(1, 44100.f*3.f);	// Stop
-		mxr->AddSource(playrgn1);
-
-		SetSource( mxr );
-*/
-
-		// Total time: 25056 ms WaveOut
-		// Total time: 2984 ms
-		// Total time: 3104 ms
-		// Total time: 3054 ms
-		// Total time: 2473 ms posle prve optimizacije
-		// Total time: 2333 ms
-		// Total time: 2204 ms posle druge optimizacije
-		// Total time: 1812 ms
-		// Total time: 2393 ms
-		// Total time: 1792 ms
-
-	}
-}

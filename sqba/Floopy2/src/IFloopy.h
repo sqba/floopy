@@ -151,9 +151,9 @@ public:
 	 * @param offset number of bytes to skip.
 	 * @return number of bytes read from data.
 	 */
-	virtual UINT Read(BYTE *data, UINT size, UINT offset)
+	virtual UINT Read(BYTE *data, UINT size)
 	{
-		return (NULL != m_source ? m_source->Read(data, size, offset) : 0);
+		return (NULL != m_source ? m_source->Read(data, size) : 0);
 	}
 
 	/**

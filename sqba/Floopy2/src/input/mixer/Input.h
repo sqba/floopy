@@ -26,7 +26,7 @@ public:
 	int AddSource(IFloopySoundInput *src);
 	void RemoveSource(IFloopySoundInput *src);
 	void RemoveSource(int index);
-	UINT Read(BYTE *data, UINT size, UINT offset);
+	UINT Read(BYTE *data, UINT size);
 
 	char *GetName()			{ return "mixer"; }
 	char *GetDescription()	{ return "Mixer component"; }

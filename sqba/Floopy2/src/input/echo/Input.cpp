@@ -20,10 +20,10 @@ CInput::~CInput()
 }
 
 
-UINT CInput::Read(BYTE *data, UINT size, UINT offset)
+UINT CInput::Read(BYTE *data, UINT size)
 {
 	WAVFORMAT *fmt = m_source->GetFormat();
-	UINT len = IFloopySoundInput::Read(data, size, offset);
+	UINT len = IFloopySoundInput::Read(data, size);
 	if(len <= 0)
 		return len;
 	UINT numsamples = len / ((fmt->size/8) * fmt->channels);

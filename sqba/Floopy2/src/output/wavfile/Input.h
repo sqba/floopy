@@ -27,10 +27,10 @@ public:
 
 	BOOL Open(char *filename);
 	DWORD GetSize();
-	UINT Read(BYTE *data, UINT size, UINT offset);
-	void Close();
-
+	void MoveTo(UINT samples);
 	void Reset();
+	UINT Read(BYTE *data, UINT size);
+	void Close();
 
 	char *GetName()			{ return "wavfile"; }
 	char *GetDescription()	{ return "WAV file reader"; }

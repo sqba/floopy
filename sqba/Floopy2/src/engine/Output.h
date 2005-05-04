@@ -46,12 +46,15 @@ public:
 	char *GetParamName(int index)			{ return m_plugin->GetParamName(index); }
 	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
 
+	UINT Write(BYTE *data, UINT size);
+
 	void SetDest(IFloopySoundOutput *dst)
 	{
 		m_plugin->SetDest(dst);
 	}
 
 private:
+	UINT m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundOutput *m_plugin;
 };

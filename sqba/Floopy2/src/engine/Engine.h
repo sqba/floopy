@@ -29,16 +29,22 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
-	IFloopySoundInput  *CreateInput(char *plugin)
-		{ return new CInput(plugin); }
-	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT *fmt)
-		{ return new COutput(plugin, fmt); }
+	IFloopySoundInput  *CreateInput(char *plugin);
+	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT *fmt);
+
+	void MoveTo(UINT samples);
+	void Reset();
+	UINT Read(BYTE *data, UINT size);
 
 private:
 //	void printPath(CInput *input, COutput *output);
 //	void process(CInput *input, COutput *output);
 
+	UINT m_offset;
+
 	void test();
+
+//	IFloopy *m_objects; // List
 
 //	CInput *m_master;
 };

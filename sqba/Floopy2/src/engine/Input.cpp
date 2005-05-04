@@ -45,6 +45,29 @@ CInput::~CInput()
 	if(NULL != m_hinst)
 		FreeLibrary(m_hinst);
 }
+
+UINT CInput::Read(BYTE *data, UINT size)
+{
+	UINT len = (NULL != m_plugin ? m_plugin->Read(data, size) : 0);
+	m_offset += len;
+	return len;
+}
+
+void CInput::MoveTo(UINT samples)
+{
+	m_offset = samples;
+
+	if(NULL != m_source)
+		m_source->MoveTo(samples);
+}
+
+void CInput::Reset()
+{
+	m_offset = 0;
+	if(NULL != m_source)
+		m_source->Reset();
+}
+
 /*
 BOOL CInput::Open(char *filename)
 {

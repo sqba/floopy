@@ -20,7 +20,8 @@ public:
 	CInput();
 	virtual ~CInput();
 
-	UINT Read(BYTE *data, UINT size, UINT offset);
+	UINT Read(BYTE *data, UINT size);
+	void Reset() { angle = 0.0; }
 
 	char *GetName()			{ return "tonegen"; }
 	char *GetDescription()	{ return "Tone generator"; }

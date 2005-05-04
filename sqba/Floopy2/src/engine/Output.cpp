@@ -47,6 +47,14 @@ COutput::~COutput()
 	if(NULL != m_hinst)
 		FreeLibrary(m_hinst);
 }
+
+UINT COutput::Write(BYTE *data, UINT size)
+{
+	UINT len = (NULL != m_plugin ? m_plugin->Write(data, size) : 0);
+	m_offset += len;
+	return len;
+}
+
 /*
 BOOL COutput::Open(char *filename)
 {

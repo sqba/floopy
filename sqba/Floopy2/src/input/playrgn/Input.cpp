@@ -18,10 +18,10 @@ CInput::~CInput()
 
 }
 
-UINT CInput::Read(BYTE *data, UINT size, UINT offset)
+UINT CInput::Read(BYTE *data, UINT size)
 {
-	if(-1 == offset)
-		m_nLength = 0;
+//	if(-1 == offset)
+//		m_nLength = 0;
 
 	UINT len = 0;
 	UINT sizeOrig = size;
@@ -33,7 +33,7 @@ UINT CInput::Read(BYTE *data, UINT size, UINT offset)
 			// Skip data
 			size = m_nLength - m_nStartAt;
 			BYTE *tmp = new BYTE[size];
-			IFloopySoundInput::Read(data, size, offset);
+			IFloopySoundInput::Read(data, size);
 			delete[] tmp;
 			size = sizeOrig - size;
 		}
@@ -43,7 +43,7 @@ UINT CInput::Read(BYTE *data, UINT size, UINT offset)
 			size = m_nStopAt - m_nLength;
 		}
 
-		len = IFloopySoundInput::Read(data, size, offset);
+		len = IFloopySoundInput::Read(data, size);
 	}
 
 	m_nLength += sizeOrig;
