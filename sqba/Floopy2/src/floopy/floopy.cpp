@@ -57,13 +57,19 @@ void main(int argc, char* argv[])
 
 	if(argc >= 2)
 	{
+		// Convert seconds to samples
+		WAVFORMAT *fmt = engine->GetFormat();
+		int x = fmt->freq;// * (fmt->size / 8) * fmt->channels;
 		int i = atoi(argv[1]);
-		engine->MoveTo(i);
+		engine->MoveTo(i*x);
 	}
 	if(argc == 3)
 	{
+		// Convert seconds to samples
+		WAVFORMAT *fmt = engine->GetFormat();
+		int x = fmt->freq;// * (fmt->size / 8) * fmt->channels;
 		int i = atoi(argv[2]);
-		engine->SetSize(i);
+		engine->SetSize(i*x);
 	}
 
 	int i = 0;
