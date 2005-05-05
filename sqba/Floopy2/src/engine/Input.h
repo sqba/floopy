@@ -45,8 +45,8 @@ public:
 	void Reset();
 	UINT Read(BYTE *data, UINT size);
 
-	void SetActive(BOOL bActive);
-	BOOL IsActive();
+	void Enable(BOOL bEnable);
+	BOOL IsEnabled();
 /*
 	BOOL Open(char *filename);
 	DWORD GetSize();

@@ -12,8 +12,8 @@
 #include <windows.h>
 
 #define TIMELINE_PARAM		-1
-#define PARAM_ACTIVATE		1000.f
-#define PARAM_DEACTIVATE	2000.f
+#define PARAM_ENABLE	1000.f
+#define PARAM_DISABLE	2000.f
 
 struct tParam
 {

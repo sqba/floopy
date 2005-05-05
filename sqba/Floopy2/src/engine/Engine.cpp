@@ -107,6 +107,33 @@ void CEngine::testAddTrack3(IFloopySoundMixer *mixer)
 		echo->SetSource(wavfile);
 		volume->SetSource(echo);
 		mixer->AddSource(volume);
+
+		volume->Reset();
+		volume->SetParam(0, 80);
+		volume->MoveTo(44100*5);
+		volume->SetParam(0, 100);
+		volume->MoveTo(44100*13);
+		volume->SetParam(0, 50);
+		volume->MoveTo(44100*17);
+		volume->SetParam(0, 200);
+		volume->MoveTo(44100*18);
+		volume->Enable(FALSE);
+		volume->MoveTo(44100*19);
+		volume->Enable(TRUE);
+		volume->MoveTo(44100*20);
+		volume->Enable(FALSE);
+
+		echo->Reset();
+		echo->Enable(FALSE);
+		echo->MoveTo(44100*10);
+		echo->Enable(TRUE);
+		echo->MoveTo(44100*11);
+		echo->Enable(FALSE);
+
+		echo->MoveTo(44100*21);
+		echo->Enable(TRUE);
+		echo->MoveTo(44100*22);
+		echo->Enable(FALSE);
 	}
 }
 
@@ -121,56 +148,105 @@ void CEngine::testAddTrack4(IFloopySoundMixer *mixer)
 	volume->SetSource(tonegen);
 	mixer->AddSource(volume);
 
-	volume->SetParam(0, 80);
-
 	tonegen->Reset();
-	tonegen->SetActive(FALSE);
+	tonegen->Enable(FALSE);
 	tonegen->Reset();
 	tonegen->MoveTo(44100*3);
 	tonegen->SetParam(0, 1800.f);
-	tonegen->SetActive(TRUE);
+	tonegen->Enable(TRUE);
 	tonegen->MoveTo(44100*4);
-	tonegen->SetActive(FALSE);
+	tonegen->Enable(FALSE);
 	tonegen->Reset();
 	tonegen->MoveTo(44100*8);
-	volume->MoveTo(44100*8);
-	volume->SetParam(0, 100);
 	tonegen->SetParam(0, 2600.f);
-	tonegen->SetActive(TRUE);
+	tonegen->Enable(TRUE);
 	tonegen->MoveTo(44100*9);
-	tonegen->SetActive(FALSE);
+	tonegen->Enable(FALSE);
+
 	tonegen->MoveTo(44100*12);
 	tonegen->SetParam(0, 4000.f);
-	tonegen->SetActive(TRUE);
-	volume->MoveTo(44100*13);
-	volume->SetParam(0, 50);
+	tonegen->Enable(TRUE);
 	tonegen->MoveTo(44100*13);
 	tonegen->SetParam(0, 800.f);
 	tonegen->MoveTo(44100*14);
 	tonegen->SetParam(0, 600.f);
 	tonegen->MoveTo(44100*15);
-	tonegen->SetActive(FALSE);
+	tonegen->Enable(FALSE);
+
+	tonegen->MoveTo(44100*18);
+	tonegen->SetParam(0, 1000.f);
+	tonegen->Enable(TRUE);
+	tonegen->MoveTo(44100*19);
+	tonegen->Enable(FALSE);
+
+	tonegen->MoveTo(44100*20);
+	tonegen->SetParam(0, 2000.f);
+	tonegen->Enable(TRUE);
+	tonegen->MoveTo(44100*21);
+	tonegen->Enable(FALSE);
+
 	tonegen->Reset();
+
+	volume->Reset();
+	volume->SetParam(0, 80);
+	volume->MoveTo(44100*8);
+	volume->SetParam(0, 100);
+	volume->MoveTo(44100*13);
+	volume->SetParam(0, 50);
 }
 
 void CEngine::test()
 {
 	CInput *volume	= new CInput(TEXT("volume"));
-	CInput *mixer = new CInput(TEXT("mixer"));
-	IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
+	CInput *mixer	= new CInput(TEXT("mixer"));
+//	CInput *echo	= new CInput(TEXT("echo"));
 
-	volume->SetSource(mxr);
+	IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
 
 	testAddTrack1(mxr);
 	testAddTrack2(mxr);
 	testAddTrack3(mxr);
 	testAddTrack4(mxr);
 
+	volume->SetSource(mxr);
+//	echo->SetSource(volume);
+
 	volume->Reset(); // Reset all
 	volume->SetParam(0, 150);
 
 	SetSource( volume );
-}
+/*
+	echo->MoveTo(44100*8);
+	echo->Enable(TRUE);
+	echo->MoveTo(44100*9);
+	echo->Enable(FALSE);
+
+	echo->MoveTo(44100*13);
+	echo->Enable(TRUE);
+	echo->MoveTo(44100*14);
+	echo->Enable(FALSE);
+
+	echo->Reset(); // Reset all
+
+	SetSource( echo );
+*/
+/*
+	volume->MoveTo(44100*8);
+	volume->SetParam(0, 150);
+	volume->Enable(TRUE);
+	volume->MoveTo(44100*9);
+	volume->Enable(FALSE);
+
+	volume->MoveTo(44100*21);
+	volume->SetParam(0, 250);
+	volume->Enable(TRUE);
+	volume->MoveTo(44100*22);
+	volume->Enable(FALSE);
+
+	volume->Reset(); // Reset all
+
+	SetSource( volume );
+*/}
 
 
 

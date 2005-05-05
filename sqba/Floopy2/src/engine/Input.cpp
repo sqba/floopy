@@ -18,8 +18,8 @@ CInput::CInput(char *plugin)
 	m_hinst = NULL;
 	m_plugin = NULL;
 	m_offset = 0;
-	SetActive(TRUE);
-	IFloopy::SetActive(TRUE);
+	Enable(TRUE);
+	IFloopy::Enable(TRUE);
 
 	char *filename = new char[strlen(plugin) + 5];
 	strcpy(filename, plugin);
@@ -77,8 +77,9 @@ UINT CInput::Read(BYTE *data, UINT size)
 	param = m_timeline.GetParam(m_offset, TIMELINE_PARAM);
 	if(param)
 	{
-		BOOL bActive = (PARAM_ACTIVATE == param->value);
-		IFloopy::SetActive(bActive);
+		//BOOL bActive = (PARAM_ENABLE == param->value);
+		BOOL bActive = (PARAM_DISABLE != param->value);
+		IFloopy::Enable(bActive);
 	}
 
 	// Apply all due parameters
@@ -90,10 +91,14 @@ UINT CInput::Read(BYTE *data, UINT size)
 			m_plugin->SetParam(param->index, param->value);
 		}
 	}
+	/*if(s==1587600)//1587600)
+	{
+		char *name = m_plugin->GetName();
+	}*/
 
 	while(((s=m_timeline.GetNextOffset(s)) < endpos) && (s>0))
 	{
-		/*if(s==2293200)
+		/*if(s==1587600)//1587600)
 		{
 			char *name = m_plugin->GetName();
 		}*/
@@ -103,9 +108,9 @@ UINT CInput::Read(BYTE *data, UINT size)
 			int z=0;
 		}*/
 
-		if(IFloopy::IsActive())
+		if(IFloopy::IsEnabled())
 		{
-			char *name = m_plugin->GetName();
+			//char *name = m_plugin->GetName();
 			size = s - m_offset;
 			UINT len = m_plugin->Read(data, size);
 			readBytes += len;
@@ -113,9 +118,22 @@ UINT CInput::Read(BYTE *data, UINT size)
 		}
 		else
 		{
+			IFloopySoundInput *src = m_plugin->GetSource();
+			if(src)
+			{
+				size = s - m_offset;
+				UINT len = src->Read(data, size);
+				readBytes += len;
+				m_offset += len;
+			}
+			else
+				m_offset += s - m_offset;
+		}
+		/*else
+		{
 			m_offset += s - m_offset;
 			//char *name = m_plugin->GetName();
-		}
+		}*/
 	
 		param = m_timeline.GetParam(m_offset, TIMELINE_PARAM);
 		if(param)
@@ -124,8 +142,9 @@ UINT CInput::Read(BYTE *data, UINT size)
 			{
 				int z=0;
 			}*/
-			BOOL bActive = (PARAM_ACTIVATE == param->value);
-			IFloopy::SetActive(bActive);
+			//BOOL bActive = (PARAM_ENABLE == param->value);
+			BOOL bActive = (PARAM_DISABLE != param->value);
+			IFloopy::Enable(bActive);
 		}
 		
 		for(int i=0; i<GetParamCount(); i++)
@@ -142,7 +161,7 @@ UINT CInput::Read(BYTE *data, UINT size)
 		}
 	}
 
-	if(IFloopy::IsActive())
+	if(IFloopy::IsEnabled())
 	{
 		/*if(bProblem)
 		{
@@ -154,6 +173,17 @@ UINT CInput::Read(BYTE *data, UINT size)
 		readBytes += len;
 
 		//assert(origSize >= readBytes);
+	}
+	else
+	{
+		IFloopySoundInput *src = m_plugin->GetSource();
+		if(src)
+		{
+			size = size - readBytes;
+
+			UINT len = src->Read(data, size);
+			readBytes += len;
+		}
 	}
 
 	m_offset = endpos;
@@ -197,20 +227,29 @@ float CInput::GetParam(int index)
 	//return m_plugin->GetParam(index);
 }
 
-void CInput::SetActive(BOOL bActive)
+void CInput::Enable(BOOL bEnable)
 {
-	/*if(m_plugin && !bActive)
+	if(m_plugin && !bEnable)
 	{
 		char *comp = m_plugin->GetName();
-		printf("SetActive %d\t%s\t%d\n", m_offset, comp, bActive);
-	}*/
-	m_timeline.Set(m_offset, TIMELINE_PARAM, (bActive ? PARAM_ACTIVATE : PARAM_DEACTIVATE));
+		printf("Enable %d\t%s\t%d\n", m_offset, comp, bEnable);
+	}
+	else
+		printf("Enable %d\t%d\n", m_offset, bEnable);
+	m_timeline.Set(m_offset, TIMELINE_PARAM, (bEnable ? PARAM_ENABLE : PARAM_DISABLE));
 //	IFloopy::SetActive(bActive);
 }
 
-BOOL CInput::IsActive()
+BOOL CInput::IsEnabled()
 {
-	return (IFloopy::IsActive() && (PARAM_DEACTIVATE != m_timeline.Get(m_offset, TIMELINE_PARAM)));
+	/*tParam *param = NULL;
+	param = m_timeline.GetParam(m_offset, TIMELINE_PARAM);
+	if(param)
+	{
+		BOOL bActive = (PARAM_ENABLE == param->value);
+		IFloopy::Enable(bActive);
+	}*/
+	return (IFloopy::IsEnabled() && (PARAM_DISABLE != m_timeline.Get(m_offset, TIMELINE_PARAM)));
 //	return IFloopy::IsActive();
 }
 

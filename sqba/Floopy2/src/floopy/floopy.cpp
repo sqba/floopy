@@ -7,7 +7,6 @@
 #include "engine.h"
 
 
-UINT offset = 0;
 
 #define BUFFER_LENGTH	5120 //512
 
@@ -27,6 +26,7 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
 	clock_t start = clock();
 
+	UINT offset = 0;
 	BYTE buff[BUFFER_LENGTH];
 	UINT len, size=sizeof(buff);
 	memset(buff, 0, sizeof(buff));
@@ -40,7 +40,11 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	output->Close();
 
 	DWORD speed = clock() - start;
-	printf("Total time: %d ms\n", speed);
+	printf("Processing time: %d ms\n", speed);
+	WAVFORMAT *fmt = input->GetFormat();
+	//int x = ((fmt->size / 8) * fmt->channels);
+	printf("Samples: %d\n", (offset / ((fmt->size / 8) * fmt->channels)));
+	printf("Length:  %f seconds\n", ((float)offset / (((float)fmt->size / 8.f) * (float)fmt->channels)) / (float)fmt->freq);
 }
 
 void main(int argc, char* argv[])

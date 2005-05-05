@@ -15,7 +15,7 @@ class IFloopy
 {
 public:
 //	IFloopy() { m_config = NULL; }
-	IFloopy() { m_bActive = FALSE; }
+	IFloopy() { m_bEnabled = TRUE; }
 	virtual ~IFloopy() {}
 
 	//! Used for runtime identification, do not override in plugins!
@@ -32,8 +32,8 @@ public:
 	virtual char *GetParamName(int index)	{ return NULL; }
 	virtual char *GetParamDesc(int index)	{ return NULL; }
 
-	virtual void SetActive(BOOL bActive) { m_bActive = bActive; }
-	virtual BOOL IsActive() { return m_bActive; }
+	virtual void Enable(BOOL bEnabled) { m_bEnabled = bEnabled; }
+	virtual BOOL IsEnabled() { return m_bEnabled; }
 
 //	virtual BOOL Initialize(IFloopyConfig *config) { m_config = config; return true; }
 //	virtual void UnInitialize() {}
@@ -43,7 +43,7 @@ public:
 	//virtual void SetSource(IFloopy *src) {}
 
 private:
-	BOOL m_bActive;
+	BOOL m_bEnabled;
 //	IFloopyConfig *m_config;
 
 protected:
