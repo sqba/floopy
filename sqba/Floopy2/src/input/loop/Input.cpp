@@ -10,6 +10,8 @@
 
 CInput::CInput()
 {
+//	m_pos = 0;
+//	m_offset = 0;
 	m_nLoops = 0;
 	m_nMaxLoops = 5;
 }
@@ -25,23 +27,30 @@ UINT CInput::Read(BYTE *data, UINT size)
 //		m_nLoops = 0;
 
 	UINT len = IFloopySoundInput::Read(data, size);
-	if(len < size)
+//	int x = (GetFormat()->size / 8) * GetFormat()->channels;
+//	m_pos += len / x;
+//	UINT l = IFloopySoundInput::GetSize();
+	if(len < size && len > 0)
 	{
 		if(m_nLoops < m_nMaxLoops-1)
 		{
 			size -= len;
-			// Moze li se ovde umesto offset-a pozvati npr. Reset()?
-			//len = IFloopySoundInput::Read(data+len, size, -1);
-			// Proba:
 			IFloopySoundInput::Reset();
-			len = IFloopySoundInput::Read(data+len, size);
-			// A ako radi, da li se offset parametar moze potpuno izbaciti?
+			len += IFloopySoundInput::Read(data+len, size);
 			m_nLoops++;
 		}
-		else
-			return len;
+//		else
+//			return len;
 	}
-	return size;
+	/*else if(m_pos >= IFloopySoundInput::GetSize())
+	{
+		m_pos = 0;
+		IFloopySoundInput::Reset();
+		m_nLoops++;
+		return 0;
+	}*/
+//	return size;
+	return len;
 }
 
 void CInput::SetParam(int index, float value)
@@ -57,11 +66,29 @@ DWORD CInput::GetSize()
 
 void CInput::MoveTo(UINT samples)
 {
+//	WAVFORMAT *fmt = GetFormat();
+//	m_offset = samples * ( (fmt->size / 8) * fmt->channels );
+
+	UINT size = IFloopySoundInput::GetSize();
+
+	if(samples > size)
+	{
+		int s = samples / size;
+		m_nLoops = s;
+		if(s>0)
+		{
+			samples -= (s * size);
+		}
+		IFloopySoundInput::Reset();
+	}
 	IFloopySoundInput::MoveTo(samples);
+//	m_pos = samples;
 }
 
 void CInput::Reset()
 {
+//	m_pos = 0;
+//	m_offset = 0;
 	m_nLoops=0;
 	IFloopySoundInput::Reset();
 }

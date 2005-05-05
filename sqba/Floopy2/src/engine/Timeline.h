@@ -36,6 +36,7 @@ public:
 	int GetCount();
 	UINT GetNextOffset(UINT offset);
 	tParam *GetParam(UINT offset, int index);
+	UINT GetLastOffset(UINT offset);
 
 private:
 	tParam *Find(UINT offset, int index);

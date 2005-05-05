@@ -12,9 +12,13 @@ CEngine::CEngine()
 {
 //	m_master = NULL;
 
+	m_length = 0;
+
 	m_offset = 0;
 
-	test();
+	IFloopySoundInput *master = testCreateMaster();
+	master->Reset();
+	SetSource( master );
 }
 
 CEngine::~CEngine()
@@ -35,7 +39,14 @@ IFloopySoundOutput *CEngine::CreateOutput(char *plugin, WAVFORMAT *fmt)
 
 void CEngine::MoveTo(UINT samples)
 {
-	m_offset = samples;
+	WAVFORMAT *fmt = GetFormat();
+	int x = (fmt->size / 8) * fmt->channels;
+
+	//m_offset = samples * ((fmt->size / 8) * fmt->channels);
+	m_offset = samples * x;
+
+	if(m_length > 0)
+		m_stopAt = m_offset + m_length * x;
 
 	if(NULL != m_source)
 		m_source->MoveTo(samples);
@@ -43,6 +54,12 @@ void CEngine::MoveTo(UINT samples)
 
 void CEngine::Reset()
 {
+	if(m_length > 0)
+	{
+		WAVFORMAT *fmt = GetFormat();
+		int x = (fmt->size / 8) * fmt->channels;
+		m_stopAt = m_offset + m_length * x;
+	}
 	m_offset = 0;
 	if(NULL != m_source)
 		m_source->Reset();
@@ -50,28 +67,40 @@ void CEngine::Reset()
 
 UINT CEngine::Read(BYTE *data, UINT size)
 {
+	if(m_offset + size > m_stopAt)
+		size = m_stopAt - m_offset;
+	if(size <= 0)
+		return 0;
 	//printf("offset: %d\n", m_offset);
 	UINT len = (NULL != m_source ? m_source->Read(data, size) : 0);
 	m_offset += len;
 	return len;
 }
 
-
-
-
-
-void CEngine::testAddTrack1(IFloopySoundMixer *mixer)
+void CEngine::SetSize(DWORD size)
 {
-	CInput *wavfile	= new CInput(TEXT("wavfile"));
-	CInput *volume	= new CInput(TEXT("volume"));
-	CInput *loop	= new CInput(TEXT("loop"));
+	WAVFORMAT *fmt = GetFormat();
+	int x = (fmt->size / 8) * fmt->channels;
+	m_length = size;
+	m_stopAt = m_offset + m_length * x;
+}
+
+
+
+IFloopySoundInput *CEngine::testCreateTrack1()
+{
+	IFloopySoundInput *wavfile	= CreateInput(TEXT("wavfile"));
+	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
+	IFloopySoundInput *loop	= CreateInput(TEXT("loop"));
 	if( wavfile->Open(TEXT("Ischlju.wav")) )
 	{
 		loop->SetSource(wavfile);
-		mixer->AddSource(volume);
+		//mixer->AddSource(volume);
 
 		loop->Reset();
 		loop->SetParam(0, 3);
+//	loop->MoveTo(44100*1);
+//	loop->Enable(FALSE);
 		volume->Reset();
 		volume->SetSource(loop);
 		volume->SetParam(0, 50);
@@ -81,32 +110,36 @@ void CEngine::testAddTrack1(IFloopySoundMixer *mixer)
 		volume->SetParam(0, 150);
 		volume->Reset();
 	}
+
+	return volume;
 }
 
-void CEngine::testAddTrack2(IFloopySoundMixer *mixer)
+IFloopySoundInput *CEngine::testCreateTrack2()
 {
-	CInput *wavfile	= new CInput(TEXT("wavfile"));
-	CInput *volume	= new CInput(TEXT("volume"));
+	IFloopySoundInput *wavfile	= CreateInput(TEXT("wavfile"));
+	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
 	if( wavfile->Open(TEXT("presence.wav")) )
 	{
 		volume->SetSource(wavfile);
 		volume->SetParam(0, 40);
 		volume->MoveTo(44100);
 		volume->SetParam(0, 80);
-		mixer->AddSource(volume);
+		//mixer->AddSource(volume);
 	}
+
+	return volume;
 }
 
-void CEngine::testAddTrack3(IFloopySoundMixer *mixer)
+IFloopySoundInput *CEngine::testCreateTrack3()
 {
-	CInput *wavfile	= new CInput(TEXT("wavfile"));
-	CInput *volume	= new CInput(TEXT("volume"));
-	CInput *echo	= new CInput(TEXT("echo"));
+	IFloopySoundInput *wavfile	= CreateInput(TEXT("wavfile"));
+	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
+	IFloopySoundInput *echo		= CreateInput(TEXT("echo"));
 	if( wavfile->Open(TEXT("Gimme Sh_T.wav")) )
 	{
 		echo->SetSource(wavfile);
 		volume->SetSource(echo);
-		mixer->AddSource(volume);
+		//mixer->AddSource(volume);
 
 		volume->Reset();
 		volume->SetParam(0, 80);
@@ -135,18 +168,20 @@ void CEngine::testAddTrack3(IFloopySoundMixer *mixer)
 		echo->MoveTo(44100*22);
 		echo->Enable(FALSE);
 	}
+
+	return echo;
 }
 
-void CEngine::testAddTrack4(IFloopySoundMixer *mixer)
+IFloopySoundInput *CEngine::testCreateTrack4(WAVFORMAT *fmt)
 {
-	CInput *tonegen	= new CInput(TEXT("tonegen"));
-	CInput *volume	= new CInput(TEXT("volume"));
-	CInput *echo	= new CInput(TEXT("echo"));
+	IFloopySoundInput *tonegen	= CreateInput(TEXT("tonegen"));
+	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
+	IFloopySoundInput *echo		= CreateInput(TEXT("echo"));
 
-	tonegen->SetFormat( mixer->GetFormat() );
+	tonegen->SetFormat( fmt );
 
 	volume->SetSource(tonegen);
-	mixer->AddSource(volume);
+	//mixer->AddSource(volume);
 
 	tonegen->Reset();
 	tonegen->Enable(FALSE);
@@ -193,20 +228,23 @@ void CEngine::testAddTrack4(IFloopySoundMixer *mixer)
 	volume->SetParam(0, 100);
 	volume->MoveTo(44100*13);
 	volume->SetParam(0, 50);
+
+	return volume;
 }
 
-void CEngine::test()
+IFloopySoundInput *CEngine::testCreateMaster()
 {
-	CInput *volume	= new CInput(TEXT("volume"));
-	CInput *mixer	= new CInput(TEXT("mixer"));
-//	CInput *echo	= new CInput(TEXT("echo"));
+	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
+	IFloopySoundInput *mixer	= CreateInput(TEXT("mixer"));
+//	IFloopySoundInput *echo	= CreateInput(TEXT("echo"));
 
 	IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
 
-	testAddTrack1(mxr);
-	testAddTrack2(mxr);
-	testAddTrack3(mxr);
-	testAddTrack4(mxr);
+	mxr->AddSource( testCreateTrack1() );
+	mxr->AddSource( testCreateTrack2() );
+	mxr->AddSource( testCreateTrack3() );
+	WAVFORMAT *fmt = mixer->GetFormat();
+	mxr->AddSource( testCreateTrack4(fmt) );
 
 	volume->SetSource(mxr);
 //	echo->SetSource(volume);
@@ -214,7 +252,8 @@ void CEngine::test()
 	volume->Reset(); // Reset all
 	volume->SetParam(0, 150);
 
-	SetSource( volume );
+	return volume;
+
 /*
 	echo->MoveTo(44100*8);
 	echo->Enable(TRUE);

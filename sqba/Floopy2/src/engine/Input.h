@@ -73,10 +73,17 @@ public:
 	}
 
 private:
+	void applyParamsAt(UINT offset);
+
+	void initLog(char *plugin);
+	void logParamChange(UINT offset, tParam *param);
+	void logParamSet(UINT offset, int index, float value);
+
 	UINT m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundInput *m_plugin;
 	CTimeline m_timeline;
+	FILE *m_fplog;
 };
 
 #endif // !defined(AFX_INPUT_H__0D3139FE_D3F2_4CAF_A696_AB92E4A51331__INCLUDED_)

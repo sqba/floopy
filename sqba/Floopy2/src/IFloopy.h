@@ -132,6 +132,15 @@ public:
 	{
 		return (NULL != m_source ? m_source->GetSize() : 0);
 	}
+
+	/**
+	 * Sets total sample count.
+	 */
+	virtual void SetSize(DWORD size)
+	{
+		if(NULL != m_source)
+			m_source->SetSize(size);
+	}
 /*
 	virtual FLOAT GetLength()
 	{

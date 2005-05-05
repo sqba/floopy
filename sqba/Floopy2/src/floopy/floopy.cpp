@@ -55,6 +55,17 @@ void main(int argc, char* argv[])
 	//COutput *output = NULL;
 	IFloopySoundOutput *output = NULL;
 
+	if(argc >= 2)
+	{
+		int i = atoi(argv[1]);
+		engine->MoveTo(i);
+	}
+	if(argc == 3)
+	{
+		int i = atoi(argv[2]);
+		engine->SetSize(i);
+	}
+
 	int i = 0;
 
 	switch(i)

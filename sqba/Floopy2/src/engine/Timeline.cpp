@@ -58,6 +58,28 @@ float CTimeline::Get(UINT offset, int index)
 	return(tmp ? tmp->value : 0.f);
 }
 
+UINT CTimeline::GetLastOffset(UINT offset)
+{
+	//UINT val = offset;
+	tParam *tmp = first;
+	UINT max = 0;
+	while(tmp)
+	{
+		if(tmp->offset < offset)
+		{
+			if(tmp->offset > max)
+				max = tmp->offset;
+			/*if((val == offset) || (tmp->offset < val))
+			{
+				val = tmp->offset;
+			}*/
+		}
+		tmp = tmp->next;
+	}
+	//return (val != offset ? val : 0);
+	return max;
+}
+
 UINT CTimeline::GetNextOffset(UINT offset)
 {
 	UINT val = offset;
