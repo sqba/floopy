@@ -52,6 +52,9 @@ void main(int argc, char* argv[])
 	CEngine *engine = new CEngine("engine");
 	//engine->Open(TEXT("test.xml"));
 
+	if(!engine->Open(TEXT("test.xml")))
+		return;
+
 	//COutput *output = NULL;
 	IFloopySoundOutput *output = NULL;
 

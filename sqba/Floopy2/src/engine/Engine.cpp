@@ -121,9 +121,25 @@ IFloopySoundInput *CEngine::testCreateTrack2()
 	if( wavfile->Open(TEXT("presence.wav")) )
 	{
 		volume->SetSource(wavfile);
-		volume->SetParam(0, 40);
+		volume->SetParam(0, 10);
 		volume->MoveTo(44100);
+		volume->SetParam(0, 20);
+		volume->MoveTo(44100 + 4410*1);
+		volume->SetParam(0, 40);
+		volume->MoveTo(44100 + 4410*2);
+		volume->SetParam(0, 60);
+		volume->MoveTo(44100 + 4410*3);
 		volume->SetParam(0, 80);
+		volume->MoveTo(44100 + 4410*4);
+		volume->SetParam(0, 60);
+		volume->MoveTo(44100 + 4410*5);
+		volume->SetParam(0, 50);
+		volume->MoveTo(44100 + 4410*6);
+		volume->SetParam(0, 20);
+		volume->MoveTo(44100 + 4410*7);
+		volume->SetParam(0, 10);
+		volume->MoveTo(44100 + 4410*8);
+		volume->SetParam(0, 1);
 		//mixer->AddSource(volume);
 	}
 
