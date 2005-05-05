@@ -26,6 +26,9 @@ UINT CInput::Read(BYTE *data, UINT size)
 //	if(-1 == offset)
 //		m_nLoops = 0;
 
+	if(m_nLoops >= m_nMaxLoops)
+		return 0;
+
 	UINT len = IFloopySoundInput::Read(data, size);
 //	int x = (GetFormat()->size / 8) * GetFormat()->channels;
 //	m_pos += len / x;
@@ -70,6 +73,13 @@ void CInput::MoveTo(UINT samples)
 //	m_offset = samples * ( (fmt->size / 8) * fmt->channels );
 
 	UINT size = IFloopySoundInput::GetSize();
+
+	if(samples > (size * m_nMaxLoops))
+	{
+		IFloopySoundInput::Reset();
+		m_nLoops = m_nMaxLoops;
+		return;
+	}
 
 	if(samples > size)
 	{

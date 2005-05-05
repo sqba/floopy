@@ -63,7 +63,7 @@ void main(int argc, char* argv[])
 		int i = atoi(argv[1]);
 		engine->MoveTo(i*x);
 	}
-	if(argc == 3)
+	if(argc >= 3)
 	{
 		// Convert seconds to samples
 		WAVFORMAT *fmt = engine->GetFormat();
