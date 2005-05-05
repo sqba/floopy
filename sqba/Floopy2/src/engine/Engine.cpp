@@ -10,15 +10,7 @@
 
 CEngine::CEngine()
 {
-//	m_master = NULL;
-
-	m_length = 0;
-
-	m_offset = 0;
-
-	IFloopySoundInput *master = testCreateMaster();
-	master->Reset();
-	SetSource( master );
+	m_offset = m_stopAt = m_length = 0;
 }
 
 CEngine::~CEngine()
@@ -37,12 +29,19 @@ IFloopySoundOutput *CEngine::CreateOutput(char *plugin, WAVFORMAT *fmt)
 	return new COutput(plugin, fmt);
 }
 
+BOOL CEngine::Open(char *filename)
+{
+	IFloopySoundInput *master = testCreateMaster();
+	master->Reset();
+	SetSource( master );
+	return TRUE;
+}
+
 void CEngine::MoveTo(UINT samples)
 {
 	WAVFORMAT *fmt = GetFormat();
 	int x = (fmt->size / 8) * fmt->channels;
 
-	//m_offset = samples * ((fmt->size / 8) * fmt->channels);
 	m_offset = samples * x;
 
 	if(m_length > 0)
@@ -67,7 +66,7 @@ void CEngine::Reset()
 
 UINT CEngine::Read(BYTE *data, UINT size)
 {
-	if(m_offset + size > m_stopAt)
+	if((m_stopAt > 0) && (m_offset + size > m_stopAt))
 		size = m_stopAt - m_offset;
 	if(size <= 0)
 		return 0;
@@ -85,6 +84,8 @@ void CEngine::SetSize(DWORD size)
 	m_stopAt = m_offset + m_length * x;
 }
 
+
+////////////////////////////////////////////////////////////////////////////
 
 
 IFloopySoundInput *CEngine::testCreateTrack1()

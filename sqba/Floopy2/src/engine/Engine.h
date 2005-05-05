@@ -23,8 +23,6 @@ public:
 	CEngine();
 	virtual ~CEngine();
 
-//	UINT Read(BYTE *data, UINT size, UINT offset);
-
 	char *GetName()			{ return "enginewrapper"; }
 	char *GetDescription()	{ return "Floopy Engine Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
@@ -39,6 +37,7 @@ public:
 	IFloopySoundInput  *CreateInput(char *plugin);
 	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT *fmt);
 
+	BOOL Open(char *filename);
 	void MoveTo(UINT samples);
 	void Reset();
 	UINT Read(BYTE *data, UINT size);
@@ -46,23 +45,14 @@ public:
 	DWORD GetSize() { return (m_length > 0 ? m_length : GetSource()->GetSize()); }
 
 private:
-//	void printPath(CInput *input, COutput *output);
-//	void process(CInput *input, COutput *output);
-
-	UINT m_offset;
+	CTimeline m_timeline;
+	UINT m_offset, m_stopAt, m_length;
 
 	IFloopySoundInput *testCreateMaster();
 	IFloopySoundInput *testCreateTrack1();
 	IFloopySoundInput *testCreateTrack2();
 	IFloopySoundInput *testCreateTrack3();
 	IFloopySoundInput *testCreateTrack4(WAVFORMAT *fmt);
-
-//	IFloopy *m_objects; // List
-
-//	CInput *m_master;
-	CTimeline m_timeline;
-
-	UINT m_stopAt, m_length;
 };
 
 #endif // !defined(AFX_ENGINE_H__621A6F07_09D1_41D0_A981_DB32D29DA57A__INCLUDED_)
