@@ -254,6 +254,7 @@ IFloopySoundInput *CEngine::testCreateMaster()
 	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
 	IFloopySoundInput *mixer	= CreateInput(TEXT("mixer"));
 //	IFloopySoundInput *echo	= CreateInput(TEXT("echo"));
+//	IFloopySoundInput *loop	= CreateInput(TEXT("loop"));
 
 	IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
 
@@ -270,7 +271,13 @@ IFloopySoundInput *CEngine::testCreateMaster()
 	volume->SetParam(0, 150);
 
 	return volume;
+/*
+	loop->Reset();
+	loop->SetParam(0, 2);
+	loop->SetSource(volume);
 
+	return loop;
+*/
 /*
 	echo->MoveTo(44100*8);
 	echo->Enable(TRUE);
