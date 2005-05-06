@@ -65,28 +65,12 @@ CInput::~CInput()
 
 UINT CInput::Read(BYTE *data, UINT size)
 {
-	/*char *name = m_plugin->GetName();
-	if(0 == strcmp(name, "loop"))
-	{
-		//UINT s = m_plugin->GetSize();
-		UINT s = GetSize();
-		int v=0;
-	}*/
-
 	UINT s = m_offset;
 	UINT readBytes = 0;
 	UINT endpos = m_offset + size;
 	UINT len = 0;
 	IFloopySoundInput *src = m_plugin;
 	UINT origSize = size;
-
-	/*if(m_plugin){
-		char *name = m_plugin->GetName();
-		if(strcmp(name, "loop"))
-		{
-			int dbg = 0;
-		}
-	}*/
 
 	// Apply all due parameters
 	applyParamsAt( m_offset );
@@ -189,13 +173,6 @@ BOOL CInput::IsEnabled()
 
 DWORD CInput::GetSize()
 {
-	/*char *name = m_plugin->GetName();
-	if(0 == strcmp(name, "volume"))
-	{
-		int v=0;
-	}*/
-
-	//UINT offset = GetSize();
 	UINT size = 0;
 	UINT tmp = 0;
 	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
@@ -306,44 +283,3 @@ void CInput::logParamSet(UINT offset, int index, float value)
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-BOOL CInput::Open(char *filename)
-{
-	return (NULL != m_plugin ? m_plugin->Open(filename) : FALSE);
-}
-
-DWORD CInput::GetSize()
-{
-	return (NULL != m_plugin ? m_plugin->GetSize() : 0);
-}
-
-void CInput::Close()
-{
-	if(NULL != m_plugin)
-		m_plugin->Close();
-}
-*/

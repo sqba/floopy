@@ -11,7 +11,9 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef IFloopySoundOutput*	(*CreateOutputProc)(int, int, int);
+typedef IFloopySoundOutput* (*CreateProc)(int, int, int);
+#define PROC_NAME "CreateOutput"
+#define PLUG_EXT ".dll"
 
 COutput::COutput(char *plugin, WAVFORMAT *fmt)
 {
@@ -20,12 +22,12 @@ COutput::COutput(char *plugin, WAVFORMAT *fmt)
 
 	char *filename = new char[strlen(plugin) + 5];
 	strcpy(filename, plugin);
-	strcat(filename, TEXT(".dll\0"));
+	strcat(filename, PLUG_EXT);
 	m_hinst = LoadLibraryA(filename);
 
 	if (NULL != m_hinst)
 	{
-		CreateOutputProc func = (CreateOutputProc)GetProcAddress(m_hinst, "CreateOutput"); 
+		CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
 
 		if(func != NULL) {
 			printf("CreateOutput() found in %s.\n", filename);
@@ -56,34 +58,10 @@ UINT COutput::Write(BYTE *data, UINT size)
 
 void COutput::SetParam(int index, float value)
 {
-	// Take m_offset in account!!!
 	m_plugin->SetParam(index, value);
 }
 
 float COutput::GetParam(int index)
 {
-	// Take m_offset in account!!!
 	return m_plugin->GetParam(index);
 }
-
-/*
-BOOL COutput::Open(char *filename)
-{
-	if(NULL != m_plugin)
-		return m_plugin->Open(filename);
-	return FALSE;
-}
-
-UINT COutput::Write(BYTE *data, UINT size)
-{
-	if(NULL != m_plugin)
-		return m_plugin->Write(data, size);
-	return 0;
-}
-
-void COutput::Close()
-{
-	if(NULL != m_plugin)
-		m_plugin->Close();
-}
-*/

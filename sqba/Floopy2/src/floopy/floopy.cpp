@@ -11,18 +11,58 @@
 
 #define BUFFER_LENGTH	5120 //512
 
+
+void printPath(IFloopySoundInput *input, int level)
+{
+	if(!input)
+		return;
+
+	char space[100] = {0};
+	if(level > 0)
+	{
+		int indent = level*2;
+		for(int i=0; i<indent-2; i++)
+			space[i] = ' ';
+		
+		space[i] = 0xb3;//0xc3;//0xc4;
+		printf("%s\n", space);
+		
+		space[i] = 0xc0;//0xc3;//0xc4;
+		
+		space[i+1] = 0xc4;
+		space[i+2] = 0xc4;
+	}
+
+	printf("%s%s\n", space, input->GetName());
+
+//	if(level!=1 && input->GetInputCount() > 0)
+//	{
+	try {
+		for(int i=0; i<input->GetInputCount(); i++)
+		{
+			printPath(input->GetSource(i), level+1);
+		}
+	}
+	catch(...)
+	{
+		printf("This happens only in debug mode!!!\n");
+	}
+	// Zasto se ovo dogadja prilikom debagovanja i
+	// zasto se sve stampa po dva puta???
+/*	}
+	else
+	{
+		printPath(input->GetSource(), level+1);
+	}*/
+}
+/*
 void printPath(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
-	IFloopySoundInput *tmp = input;//->getPlugin();
-	printf("%s", output->GetName());
-	while(NULL != tmp)
-	{
-		printf(" << %s ", tmp->GetName());
-		tmp = tmp->GetSource();
-	}
-	printf("\n");
+	printf("%s\n", output->GetName());
+	printPath(input, 1);
+	getchar();
 }
-
+*/
 void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
 	clock_t start = clock();
@@ -106,7 +146,10 @@ void main(int argc, char* argv[])
 
 	// stdout?
 
-	printPath(engine->GetSource(), output);
+//	printPath(engine, output);
+	printf("%s\n", output->GetName());
+	printPath(engine, 1);
+	getchar();
 //	WAVFORMAT *fmt = engine->getPlugin()->GetFormat();
 	
 	printf("%d samples\n", engine->GetSize());

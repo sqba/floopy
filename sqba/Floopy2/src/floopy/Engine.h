@@ -35,6 +35,8 @@ public:
 		return (NULL != m_plugin ? m_plugin->CreateOutput(plugin, fmt) : NULL);
 	}
 
+	IFloopySoundInput *GetSource() { return (m_plugin ? m_plugin->GetSource() : NULL); }
+
 private:
 	HINSTANCE m_hinst;
 	IFloopyEngine *m_plugin;

@@ -279,7 +279,8 @@ public:
 
 	virtual IFloopySoundInput *GetSource(int index)
 	{
-		return (NULL != m_source ? m_source->GetSource(index) : NULL);
+		//return (NULL != m_source ? m_source->GetSource(index) : NULL);
+		return (index > 0 ? NULL : m_source);
 	}
 
 	virtual void RemoveSource(IFloopySoundInput *src)
@@ -290,7 +291,8 @@ public:
 
 	virtual int GetInputCount()
 	{
-		return (NULL != m_source ? m_source->GetInputCount() : 0);
+		//return (NULL != m_source ? m_source->GetInputCount() : 0);
+		return (NULL != m_source ? 1 : 0);
 	}
 
 protected:

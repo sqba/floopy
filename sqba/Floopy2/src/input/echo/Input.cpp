@@ -23,11 +23,12 @@ CInput::~CInput()
 
 UINT CInput::Read(BYTE *data, UINT size)
 {
-	WAVFORMAT *fmt = m_source->GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
 	UINT len = IFloopySoundInput::Read(data, size);
 	if(len <= 0)
 		return len;
+
+	WAVFORMAT *fmt = m_source->GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
 	UINT numsamples = len / ((fmt->size/8) * fmt->channels);
 
 	// echo doesn't support 8 bit right now cause I'm lazy.
@@ -36,7 +37,7 @@ UINT CInput::Read(BYTE *data, UINT size)
 		short int *samples = (short int*)data;
 		int max = (int)pow(2, fmt->size) / 2; // 32768
 		int x,s;
-		s = numsamples*fmt->channels;
+		s = numsamples * fmt->channels;
 		
 		memcpy(echo_buf2,       echo_buf,       s*2);
 		memcpy(echo_buf,        echo_buf+s,     s*2);
@@ -44,7 +45,7 @@ UINT CInput::Read(BYTE *data, UINT size)
 		memcpy(echo_buf+s*2,	echo_buf+s*3,	s*2);
 		memcpy(echo_buf+s*3,	samples,		s*2);
 		
-		for (x = 0; x < s; x ++)
+		for(x=0; x<s; x++)
 		{
 			int s = samples[x]/2 + echo_buf2[x]/2;
 			samples[x] = (s > max ? max : (s < -max ? -max : s));
