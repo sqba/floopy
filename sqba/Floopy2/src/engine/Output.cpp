@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "Output.h"
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -28,10 +29,8 @@ COutput::COutput(char *plugin, WAVFORMAT *fmt)
 
 		if(func != NULL) {
 			printf("CreateOutput() found in %s.\n", filename);
-			m_plugin = func(
-			fmt->freq,
-			fmt->size,
-			fmt->channels);
+			assert((fmt->size > 0) && (fmt->channels > 0));
+			m_plugin = func( fmt->freq, fmt->size, fmt->channels);
 			IFloopySoundOutput::SetDest( m_plugin );
 		}
 		else

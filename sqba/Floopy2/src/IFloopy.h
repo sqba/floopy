@@ -1,7 +1,41 @@
 #ifndef _IFLOOPY_H_
 #define _IFLOOPY_H_
 
-#include "floopyutil.h"
+//#include "floopyutil.h"
+
+
+
+//! Portable waveform structure
+typedef struct structWAVFormat
+{
+	INT   freq;		// Sampling frequency
+	WORD  format;
+	BYTE  channels;	// Mono/Stereo - 1/2
+	BYTE  silence;
+	WORD  samples;
+	DWORD size;
+} WAVFORMAT;
+
+/*
+//! Object types definition, used for runtime identification
+enum objType
+{
+	typeFloopy,
+	typeFloopySound,
+	typeFloopySoundInput,
+	typeFloopySoundOutput,
+	typeFloopyEngine
+//	typeFloopySoundMixer,
+//	typeFloopyEvents,
+//	typeFloopyParameters,
+//	typeFloopySoundEffect,
+//	typeFloopyGUI,
+//	typeFloopyEvent,
+//	typeFloopyTrack,
+//	typeFloopyTracks,
+//	typeFloopyGUIApp
+};
+*/
 
 
 /*********************************************************************
@@ -19,7 +53,7 @@ public:
 	virtual ~IFloopy() {}
 
 	//! Used for runtime identification, do not override in plugins!
-	virtual int GetType()			{ return typeFloopy; }
+//	virtual int GetType()			{ return typeFloopy; }
 
 	virtual char *GetName()			{ return "IFloopy"; }
 	virtual char *GetDescription()	{ return "IFloopy interface"; }
@@ -68,7 +102,7 @@ public:
 	virtual ~IFloopySound() {}
 
 	//! Used for runtime identification, do not override in plugins!
-	virtual int GetType() { return typeFloopySound; }
+//	virtual int GetType() { return typeFloopySound; }
 
 	virtual char *GetName()			{ return "IFloopySound"; }
 	virtual char *GetDescription()	{ return "IFloopySound interface"; }
@@ -100,11 +134,16 @@ public:
 class IFloopySoundInput : public IFloopySound
 {
 public:
-	IFloopySoundInput() { m_source = NULL; memset(&m_wavformat, 0, sizeof(WAVFORMAT)); }
+	IFloopySoundInput()
+	{
+		m_source = NULL;
+		//m_pos = 0;
+		memset(&m_wavformat, 0, sizeof(WAVFORMAT));
+	}
 	virtual ~IFloopySoundInput() {}
 
 	//! Used for runtime identification, do not override in plugins!
-	int GetType() { return typeFloopySoundInput; }
+//	int GetType() { return typeFloopySoundInput; }
 
 	virtual char *GetName()			{ return "IFloopySoundInput"; }
 	virtual char *GetDescription()	{ return "IFloopySoundInput interface"; }
@@ -119,6 +158,9 @@ public:
 		return (NULL != m_source ? m_source->Open(filename) : FALSE);
 	}
 
+	/**
+	 * Opens source file.
+	 */
 	virtual void Close()
 	{
 		if(NULL != m_source)
@@ -127,6 +169,7 @@ public:
 
 	/**
 	 * Returns total sample count.
+	 * @return number of samples.
 	 */
 	virtual DWORD GetSize()
 	{
@@ -135,6 +178,7 @@ public:
 
 	/**
 	 * Sets total sample count.
+	 * @param size number of samples.
 	 */
 	virtual void SetSize(DWORD size)
 	{
@@ -166,6 +210,9 @@ public:
 	 */
 	virtual UINT Read(BYTE *data, UINT size)
 	{
+		//UINT len = (NULL != m_source ? m_source->Read(data, size) : 0);
+		//m_pos += len;
+		//return len;
 		return (NULL != m_source ? m_source->Read(data, size) : 0);
 	}
 
@@ -177,6 +224,17 @@ public:
 	{
 		if(NULL != m_source)
 			m_source->MoveTo(samples);
+		//WAVFORMAT *fmt = GetFormat();
+		//m_pos = samples * ( (fmt->size / 8) * fmt->channels );
+	}
+
+	virtual UINT GetPos()
+	{
+		if(NULL != m_source)
+			return m_source->GetPos();
+		else
+			return 0;
+		//	return m_pos;
 	}
 
 	/**
@@ -186,6 +244,7 @@ public:
 	{
 		if(NULL != m_source)
 			m_source->Reset();
+		//m_pos = 0;
 	}
 
 	virtual WAVFORMAT *GetFormat()
@@ -193,52 +252,140 @@ public:
 		return (NULL != m_source ? m_source->GetFormat() : &m_wavformat);
 	}
 
-	virtual void SetFormat(WAVFORMAT *fmt)
+	virtual BOOL SetFormat(WAVFORMAT *fmt)
 	{
 		if(NULL != m_source)
-			m_source->SetFormat(fmt);
+			return m_source->SetFormat(fmt);
 		else
+		{
 			memcpy(&m_wavformat, fmt, sizeof(WAVFORMAT));
+			return TRUE;
+		}
+	}
+
+	// Utility
+	/*UINT SamplesToBytes(UINT samples)
+	{
+		WAVFORMAT *fmt = GetFormat();
+		return samples * ( (fmt->size / 8) * fmt->channels );
+	}*/
+
+
+	// Mixer specific functions
+	virtual int AddSource(IFloopySoundInput *src)
+	{
+		return (NULL != m_source ? m_source->AddSource(src) : 0);
+	}
+
+	virtual IFloopySoundInput *GetSource(int index)
+	{
+		return (NULL != m_source ? m_source->GetSource(index) : NULL);
+	}
+
+	virtual void RemoveSource(IFloopySoundInput *src)
+	{
+		if(NULL != m_source)
+			m_source->RemoveSource(src);
+	}
+
+	virtual int GetInputCount()
+	{
+		return (NULL != m_source ? m_source->GetInputCount() : 0);
 	}
 
 protected:
 	IFloopySoundInput *m_source;
 	WAVFORMAT m_wavformat;
+	//UINT m_pos;
+};
+
+/*********************************************************************
+ *! \class IFloopySoundOutput
+ *  \brief Main sound output interface.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 13. april 2005
+ *
+ *  Interface implemented and used by all sound output objects
+ *  such as sound mixer, encoders and other output objects.
+ *********************************************************************/
+class IFloopySoundOutput : public IFloopySound
+{
+public:
+	IFloopySoundOutput() { m_dest = NULL; }
+//	IFloopySoundOutput(IFloopySoundInput *source) {}
+	IFloopySoundOutput(int nSamplesPerSec, int wBitsPerSample, int nChannels) {}
+	virtual ~IFloopySoundOutput() {}
+
+	//! Used for runtime identification, do not override in plugins!
+//	int GetType() { return typeFloopySoundOutput; }
+
+	virtual char *GetName()			{ return "IFloopySoundOutput"; }
+	virtual char *GetDescription()	{ return "IFloopySoundOutput interface"; }
+	virtual char *GetVersion()		{ return "0.1"; }
+	virtual char *GetAuthor()		{ return "sqba"; }
+
+	/**
+	 * Opens destination (file).
+	 */
+	virtual BOOL Open(char *filename)
+	{
+		return (NULL != m_dest ? m_dest->Open(filename) : FALSE);
+	}
+
+	/**
+	 * Closes destination (file).
+	 */
+	virtual void Close()
+	{
+		if(NULL != m_dest)
+			m_dest->Close();
+	}
+
+	virtual void SetDest(IFloopySoundOutput *dst)
+	{
+		m_dest = dst;
+	}
+
+	virtual IFloopySoundOutput *GetDest()
+	{
+		return m_dest;
+	}
+
+	/**
+	 * Writes a buffer to the output, whatever it may be.
+	 * @param size size of the data in bytes.
+	 * @param data pointer to the buffer written into output.
+	 * @return number of bytes read from data into output.
+	 */
+	virtual UINT Write(BYTE *data, UINT size)
+	{
+		return (NULL != m_dest ? m_dest->Write(data, size) : 0);
+	}
+
+protected:
+	IFloopySoundOutput *m_dest;
 };
 
 
-class IFloopySoundMixer : public IFloopySoundInput
+class IFloopyEngine : public IFloopySoundInput
 {
-private:
-	/*class CInput
-	{
-		CInput(IFloopySoundInput *source, CInput *prev)
-		{
-			this->source = source;
-			this->prev = prev;
-			this->next = NULL;
-			this->index = (NULL == prev ? 0 : prev->index+1);
-			if(NULL != prev)
-				prev->next = this;
-		}
+public:
+	//! Used for runtime identification, do not override in plugins!
+//	int GetType() { return typeFloopyEngine; }
 
-		CInput *item(int index)
-		{
-			CInput *tmp = this;
-			do {
-				if(index == tmp->index)
-					return tmp;
-				tmp = tmp->prev;
-			} while(NULL != tmp);
-			return NULL;
-		}
+	virtual char *GetName()			{ return "IFloopySoundEngine"; }
+	virtual char *GetDescription()	{ return "IFloopySoundEngine interface"; }
+	virtual char *GetVersion()		{ return "0.1"; }
+	virtual char *GetAuthor()		{ return "sqba"; }
 
-		IFloopySoundInput *source;
-		CInput *next;
-		CInput *prev;
-		int index;
-	};*/
+	virtual IFloopySoundInput  *CreateInput(char *plugin)  { return NULL; }
+	virtual IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT *fmt) { return NULL; }
+};
 
+
+/*class IFloopySoundMixer : public IFloopySoundInput
+{
 public:
 	IFloopySoundMixer() { m_source = NULL; }
 	virtual ~IFloopySoundMixer() {}
@@ -276,89 +423,11 @@ public:
 		m_source = NULL;
 	}
 
+	virtual int GetInputCount() { return (m_source ? 1 : 0); }
+
 private:
 //	CInput *m_last;
-};
-
-
-/*********************************************************************
- *! \class IFloopySoundOutput
- *  \brief Main sound output interface.
- *  \author Filip Pavlovic
- *  \version 0.0
- *  \date 13. april 2005
- *
- *  Interface implemented and used by all sound output objects
- *  such as sound mixer, encoders and other output objects.
- *********************************************************************/
-class IFloopySoundOutput : public IFloopySound
-{
-public:
-	IFloopySoundOutput() { m_dest = NULL; }
-//	IFloopySoundOutput(IFloopySoundInput *source) {}
-	IFloopySoundOutput(int nSamplesPerSec, int wBitsPerSample, int nChannels) {}
-	virtual ~IFloopySoundOutput() {}
-
-	//! Used for runtime identification, do not override in plugins!
-	int GetType() { return typeFloopySoundOutput; }
-
-	virtual char *GetName()			{ return "IFloopySoundOutput"; }
-	virtual char *GetDescription()	{ return "IFloopySoundOutput interface"; }
-	virtual char *GetVersion()		{ return "0.1"; }
-	virtual char *GetAuthor()		{ return "sqba"; }
-
-	virtual BOOL Open(char *filename)
-	{
-		return (NULL != m_dest ? m_dest->Open(filename) : FALSE);
-	}
-
-	virtual void Close()
-	{
-		if(NULL != m_dest)
-			m_dest->Close();
-	}
-
-	virtual void SetDest(IFloopySoundOutput *dst)
-	{
-		m_dest = dst;
-	}
-
-	virtual IFloopySoundOutput *GetDest()
-	{
-		return m_dest;
-	}
-
-	/**
-	 * Writes a buffer to the output, whatever it may be.
-	 * @param size size of the data in bytes.
-	 * @param data pointer to the buffer written into output.
-	 * return number of bytes read from data into output.
-	 */
-	virtual UINT Write(BYTE *data, UINT size)
-	{
-		return (NULL != m_dest ? m_dest->Write(data, size) : 0);
-	}
-
-protected:
-	IFloopySoundOutput *m_dest;
-};
-
-
-class IFloopyEngine : public IFloopySoundInput
-{
-public:
-	//! Used for runtime identification, do not override in plugins!
-	virtual int GetType()			{ return typeFloopyEngine; }
-
-	virtual char *GetName()			{ return "IFloopyEngine"; }
-	virtual char *GetDescription()	{ return "IFloopyEngine interface"; }
-	virtual char *GetVersion()		{ return "0.1"; }
-	virtual char *GetAuthor()		{ return "sqba"; }
-
-	virtual IFloopySoundInput  *CreateInput(char *plugin)  { return NULL; }
-	virtual IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT *fmt) { return NULL; }
-};
-
+};*/
 
 /*class IFloopyParameters// : public IFloopy
 {
@@ -371,7 +440,7 @@ public:
 	virtual float Get(int index) { return 0.f; }
 };*/
 
-
+/*
 class IFloopyEvents// : public IFloopy
 {
 public:
@@ -387,7 +456,7 @@ public:
 
 	virtual void Remove(int index) { }
 };
-
+*/
 
 /*********************************************************************
  *! \class IFloopyGUI

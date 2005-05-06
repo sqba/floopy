@@ -33,6 +33,8 @@ COutput::COutput(int nSamplesPerSec, int wBitsPerSample, int nChannels)
 
 	strcpy(m_data.dataID, TEXT("data"));
 	m_data.dataSIZE = 0;
+
+	memset(m_filename, 0, sizeof(m_filename));
 }
 
 COutput::~COutput()
@@ -50,6 +52,9 @@ BOOL COutput::Open(char *filename)
 		fwrite(&m_riff, sizeof(RIFF), 1, m_pFile);
 		fwrite(&m_fmt, sizeof(FMT), 1, m_pFile);
 		fwrite(&m_data, sizeof(DATA), 1, m_pFile);
+
+		memset(m_filename, 0, sizeof(m_filename));
+		strncpy(m_filename, filename, MAX_PATH);
 
 		return TRUE;
 	}

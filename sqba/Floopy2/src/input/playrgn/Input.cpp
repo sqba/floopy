@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Input.h"
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -54,7 +55,9 @@ UINT CInput::Read(BYTE *data, UINT size)
 
 void  CInput::SetParam(int index, float value)
 {
-	int x = (GetFormat()->size / 8) * GetFormat()->channels;
+	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+	int x = (fmt->size / 8) * fmt->channels;
 	if(index == 0)
 		m_nStartAt = (int)value * x;
 	else if(index == 1)
@@ -63,7 +66,9 @@ void  CInput::SetParam(int index, float value)
 
 float CInput::GetParam(int index)
 {
-	int x = (GetFormat()->size / 8) * GetFormat()->channels;
+	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+	int x = (fmt->size / 8) * fmt->channels;
 	if(index == 0)
 		return (float)m_nStartAt / x;
 	else if(index == 1)

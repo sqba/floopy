@@ -65,6 +65,14 @@ CInput::~CInput()
 
 UINT CInput::Read(BYTE *data, UINT size)
 {
+	/*char *name = m_plugin->GetName();
+	if(0 == strcmp(name, "loop"))
+	{
+		//UINT s = m_plugin->GetSize();
+		UINT s = GetSize();
+		int v=0;
+	}*/
+
 	UINT s = m_offset;
 	UINT readBytes = 0;
 	UINT endpos = m_offset + size;
@@ -72,13 +80,13 @@ UINT CInput::Read(BYTE *data, UINT size)
 	IFloopySoundInput *src = m_plugin;
 	UINT origSize = size;
 
-	if(m_plugin){
+	/*if(m_plugin){
 		char *name = m_plugin->GetName();
 		if(strcmp(name, "loop"))
 		{
 			int dbg = 0;
 		}
-	}
+	}*/
 
 	// Apply all due parameters
 	applyParamsAt( m_offset );
@@ -114,16 +122,27 @@ UINT CInput::Read(BYTE *data, UINT size)
 
 	//assert( readBytes <= origSize );
 
+	/*if(readBytes < origSize)
+	{
+		WAVFORMAT *fmt = m_plugin->GetFormat();
+		int x = m_offset * ( (fmt->size / 8) * fmt->channels );
+		if(x < GetSize())
+		{
+			return origSize;
+		}
+	}*/
+
 	return readBytes;
 }
 
 void CInput::MoveTo(UINT samples)
 {
 	WAVFORMAT *fmt = m_plugin->GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
 	m_offset = samples * ( (fmt->size / 8) * fmt->channels );
 
 	// Apply all due parameters
-	applyParamsAt( m_timeline.GetLastOffset(m_offset) );
+	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 
 	if(NULL != m_source)
 		m_source->MoveTo(samples);
@@ -141,6 +160,8 @@ void CInput::SetParam(int index, float value)
 	m_timeline.Set(m_offset, index, value);
 
 	logParamSet(m_offset, index, value);
+
+	m_plugin->SetParam(index, value);
 
 	/*if(m_fplog)
 	{
@@ -164,6 +185,46 @@ void CInput::Enable(BOOL bEnable)
 BOOL CInput::IsEnabled()
 {
 	return (IFloopy::IsEnabled() && (PARAM_DISABLE != m_timeline.Get(m_offset, TIMELINE_PARAM)));
+}
+
+DWORD CInput::GetSize()
+{
+	/*char *name = m_plugin->GetName();
+	if(0 == strcmp(name, "volume"))
+	{
+		int v=0;
+	}*/
+
+	//UINT offset = GetSize();
+	UINT size = 0;
+	UINT tmp = 0;
+	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
+	{
+		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM);
+		if(param && (param->value == PARAM_DISABLE))
+		{
+			if(tmp > size)
+				size = tmp;
+		}
+	}
+
+	WAVFORMAT *fmt = m_plugin->GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+	int x = ( (fmt->size / 8) * fmt->channels );
+	size /= x;
+
+//	if(0 == size)
+//	{
+		IFloopySoundInput *src = IFloopySoundInput::GetSource();
+		while(src)
+		{
+			if(src->GetSize() > size)
+				size = src->GetSize();
+			src = src->GetSource();
+		}
+//	}
+
+	return size;
 }
 
 
@@ -191,6 +252,7 @@ void CInput::initLog(char *plugin)
 {
 	//m_fplog = NULL;
 	//m_fplog = stdout;
+
 	char *logname = new char[strlen(plugin) + 5];
 	strcpy(logname, plugin);
 	strcat(logname, ".txt");
@@ -200,7 +262,7 @@ void CInput::initLog(char *plugin)
 
 void CInput::logParamChange(UINT offset, tParam *param)
 {
-	if(m_fplog)
+	if(m_fplog && m_fplog != stdout)
 	{
 		char *plugname = m_plugin->GetName();
 		if(TIMELINE_PARAM == param->index)
@@ -208,19 +270,21 @@ void CInput::logParamChange(UINT offset, tParam *param)
 			BOOL bEnable = (PARAM_DISABLE != param->value);
 			fprintf(m_fplog, "%d\t%s %s\n", offset,
 				(bEnable?"Enabled":"Disabled"), plugname);
+				fflush(m_fplog);
 		}
 		else
 		{
 			char *paramname = m_plugin->GetParamName(param->index);
 			fprintf(m_fplog, "%d\t%s.%s = %f\n", offset, plugname,
 				paramname, param->value);
+				fflush(m_fplog);
 		}
 	}
 }
 
 void CInput::logParamSet(UINT offset, int index, float value)
 {
-	if(m_fplog)
+	if(m_fplog && m_fplog != stdout)
 	{
 		if(m_plugin)
 		{
@@ -230,12 +294,14 @@ void CInput::logParamSet(UINT offset, int index, float value)
 				BOOL bEnable = (PARAM_DISABLE != value);
 				fprintf(m_fplog, "SetParam: %d\t%s %s\n", offset,
 					(bEnable?"Enabled":"Disabled"), plugname);
+				fflush(m_fplog);
 			}
 			else
 			{
 				char *paramname = m_plugin->GetParamName(index);
 				fprintf(m_fplog, "SetParam: %d\t%s.%s set to %f\n", offset, plugname,
 					paramname, value);
+				fflush(m_fplog);
 			}
 		}
 	}

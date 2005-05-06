@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Input.h"
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -11,9 +12,9 @@
 CInput::CInput()
 {
 //	m_pos = 0;
-//	m_offset = 0;
+	m_offset = 0;
 	m_nLoops = 0;
-	m_nMaxLoops = 5;
+	m_nMaxLoops = 1;
 }
 
 CInput::~CInput()
@@ -29,7 +30,45 @@ UINT CInput::Read(BYTE *data, UINT size)
 	if(m_nLoops >= m_nMaxLoops)
 		return 0;
 
-	UINT len = IFloopySoundInput::Read(data, size);
+	UINT len = 0;
+	UINT origSize = size;
+	
+	UINT srclen = IFloopySoundInput::GetSize();
+	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+	srclen *= ( (fmt->size / 8) * fmt->channels );
+
+	if(m_offset + size > srclen)
+	{
+		/*if(1142016 == srclen)
+		{
+			int debug = 1;
+		}*/
+
+		if(srclen > m_offset)
+		{
+			size = srclen - m_offset;
+			len = IFloopySoundInput::Read(data, size);
+			size = origSize - size;
+		}
+		IFloopySoundInput::Reset();
+		m_offset = 0;
+		m_nLoops++;
+		len += IFloopySoundInput::Read(data, size);
+		m_offset += len;
+	}
+	else
+	{
+		/*if(1142016 == srclen)
+		{
+			int debug = 1;
+		}*/
+
+		len = IFloopySoundInput::Read(data, size);
+		m_offset += len;
+	}
+
+	/*UINT len = IFloopySoundInput::Read(data, size);
 //	int x = (GetFormat()->size / 8) * GetFormat()->channels;
 //	m_pos += len / x;
 //	UINT l = IFloopySoundInput::GetSize();
@@ -44,7 +83,7 @@ UINT CInput::Read(BYTE *data, UINT size)
 		}
 //		else
 //			return len;
-	}
+	}*/
 	/*else if(m_pos >= IFloopySoundInput::GetSize())
 	{
 		m_pos = 0;
@@ -69,14 +108,11 @@ DWORD CInput::GetSize()
 
 void CInput::MoveTo(UINT samples)
 {
-//	WAVFORMAT *fmt = GetFormat();
-//	m_offset = samples * ( (fmt->size / 8) * fmt->channels );
-
 	UINT size = IFloopySoundInput::GetSize();
 
 	if(samples > (size * m_nMaxLoops))
 	{
-		IFloopySoundInput::Reset();
+		Reset();
 		m_nLoops = m_nMaxLoops;
 		return;
 	}
@@ -89,16 +125,21 @@ void CInput::MoveTo(UINT samples)
 		{
 			samples -= (s * size);
 		}
-		IFloopySoundInput::Reset();
+		Reset();
 	}
 	IFloopySoundInput::MoveTo(samples);
+
 //	m_pos = samples;
+
+	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+	m_offset = samples * ( (fmt->size / 8) * fmt->channels );
 }
 
 void CInput::Reset()
 {
 //	m_pos = 0;
-//	m_offset = 0;
+	m_offset = 0;
 	m_nLoops=0;
 	IFloopySoundInput::Reset();
 }

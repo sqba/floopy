@@ -32,7 +32,8 @@ public:
 	UINT Read(BYTE *data, UINT size);
 	void Close();
 
-	char *GetName()			{ return "wavfile"; }
+	//char *GetName()			{ return "wavfile"; }
+	char *GetName()			{ return (m_pFile ? m_filename : "wavfile"); }
 	char *GetDescription()	{ return "WAV file reader"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
@@ -43,6 +44,7 @@ private:
 	RIFF m_riff;
 	FMT  m_fmt;
 	DATA m_data;
+	char m_filename[MAX_PATH];
 };
 
 #endif // !defined(AFX_INPUT_H__579B912B_2195_41EE_95BE_0B229EB45826__INCLUDED_)

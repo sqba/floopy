@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "engine.h"
+#include <assert.h>
 
 
 
@@ -42,9 +43,10 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	DWORD speed = clock() - start;
 	printf("Processing time: %d ms\n", speed);
 	WAVFORMAT *fmt = input->GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
 	//int x = ((fmt->size / 8) * fmt->channels);
-	printf("Samples: %d\n", (offset / ((fmt->size / 8) * fmt->channels)));
-	printf("Length:  %f seconds\n", ((float)offset / (((float)fmt->size / 8.f) * (float)fmt->channels)) / (float)fmt->freq);
+	printf("Read:   %d samples\n", (offset / ((fmt->size / 8) * fmt->channels)));
+	printf("Length: %f seconds\n", ((float)offset / (((float)fmt->size / 8.f) * (float)fmt->channels)) / (float)fmt->freq);
 }
 
 void main(int argc, char* argv[])
@@ -62,6 +64,7 @@ void main(int argc, char* argv[])
 	{
 		// Convert seconds to samples
 		WAVFORMAT *fmt = engine->GetFormat();
+		assert((fmt->size > 0) && (fmt->channels > 0));
 		int x = fmt->freq;// * (fmt->size / 8) * fmt->channels;
 		int i = atoi(argv[1]);
 		engine->MoveTo(i*x);
@@ -70,10 +73,14 @@ void main(int argc, char* argv[])
 	{
 		// Convert seconds to samples
 		WAVFORMAT *fmt = engine->GetFormat();
+		assert((fmt->size > 0) && (fmt->channels > 0));
 		int x = fmt->freq;// * (fmt->size / 8) * fmt->channels;
 		int i = atoi(argv[2]);
 		engine->SetSize(i*x);
 	}
+
+	WAVFORMAT *fmt = engine->GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
 
 	int i = 0;
 
@@ -82,25 +89,27 @@ void main(int argc, char* argv[])
 	case 0:
 		// Render to file
 		//output = new COutput(TEXT("wavfile"), engine);
-		output = engine->CreateOutput("wavfile", engine->GetFormat());
+		output = engine->CreateOutput("wavfile", fmt);
 		output->Open("floopy.wav");
 		break;
 	case 1:
 		// Output to speakers
 		//output = new COutput(TEXT("waveout"), engine->getPlugin());
-		output = engine->CreateOutput("waveout", engine->GetFormat());
+		output = engine->CreateOutput("waveout", fmt);
 		break;
 	case 2:
 		// Output to svg
-		output = engine->CreateOutput("svgfile", engine->GetFormat());
+		output = engine->CreateOutput("svgfile", fmt);
 		output->Open("floopy.svg");
 		break;
 	}
 
 	// stdout?
 
-	printPath(engine, output);
+	printPath(engine->GetSource(), output);
 //	WAVFORMAT *fmt = engine->getPlugin()->GetFormat();
+	
+	printf("%d samples\n", engine->GetSize());
 
 	process(engine, output);
 

@@ -58,7 +58,7 @@ float CTimeline::Get(UINT offset, int index)
 	return(tmp ? tmp->value : 0.f);
 }
 
-UINT CTimeline::GetLastOffset(UINT offset)
+UINT CTimeline::GetPrevOffset(UINT offset)
 {
 	//UINT val = offset;
 	tParam *tmp = first;

@@ -30,23 +30,25 @@ class CInput : public IFloopySoundInput
 public:
 	CInput(char *plugin);
 	virtual ~CInput();
-
+/*
 	char *GetName()			{ return "inputwrapper"; }
 	char *GetDescription()	{ return "Floopy Input Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
-/*
+*/
 	char *GetName()			{ return (m_plugin ? m_plugin->GetName() : "inputwrapper"); }
 	char *GetDescription()	{ return (m_plugin ? m_plugin->GetDescription() : "Floopy Input Plugin Wrapper"); }
 	char *GetVersion()		{ return (m_plugin ? m_plugin->GetVersion() : "0.1"); }
 	char *GetAuthor()		{ return (m_plugin ? m_plugin->GetAuthor() : "sqba"); }
-*/
+
 	void MoveTo(UINT samples);
 	void Reset();
 	UINT Read(BYTE *data, UINT size);
 
 	void Enable(BOOL bEnable);
 	BOOL IsEnabled();
+
+	DWORD GetSize();
 /*
 	BOOL Open(char *filename);
 	DWORD GetSize();
@@ -70,6 +72,11 @@ public:
 	void SetSource(IFloopySoundInput *src)
 	{
 		m_plugin->SetSource(src);
+	}
+
+	IFloopySoundInput *GetSource()
+	{
+		return m_plugin->GetSource();
 	}
 
 private:

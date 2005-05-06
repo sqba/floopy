@@ -23,8 +23,8 @@ public:
 	CEngine();
 	virtual ~CEngine();
 
-	char *GetName()			{ return "enginewrapper"; }
-	char *GetDescription()	{ return "Floopy Engine Plugin Wrapper"; }
+	char *GetName()			{ return "engine"; }
+	char *GetDescription()	{ return "Floopy Engine"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
@@ -43,6 +43,7 @@ public:
 	UINT Read(BYTE *data, UINT size);
 	void SetSize(DWORD size);// { m_length = size; }
 	DWORD GetSize() { return (m_length > 0 ? m_length : GetSource()->GetSize()); }
+//	DWORD GetSize();
 
 private:
 	CTimeline m_timeline;

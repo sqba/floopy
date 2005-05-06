@@ -5,6 +5,7 @@
 #include "Input.h"
 #include <time.h>
 #include <stdio.h>
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -53,10 +54,35 @@ int CInput::AddSource(IFloopySoundInput *src)
 
 void CInput::RemoveSource(IFloopySoundInput *src)
 {
+	/*for(int i=0; i<count; i++)
+	{
+		if(src == inputs[i])
+		{
+		}
+	}*/
+	/*if(index < count)
+	{
+		IFloopySoundInput *tmp = inputs[index];
+		tmp
+		return inputs[index];
+	}*/
 }
 
-void CInput::RemoveSource(int index)
+IFloopySoundInput *CInput::GetSource(int index)
 {
+	/*for(int i=0; i<count; i++)
+	{
+		if(index == i)
+			return inputs[i];
+	}*/
+	if(index < count)
+		return inputs[index];
+	return NULL;
+}
+
+int CInput::GetInputCount()
+{
+	return count;
 }
 
 UINT CInput::Read(BYTE *data, UINT size)
@@ -72,6 +98,7 @@ UINT CInput::Read(BYTE *data, UINT size)
 	if(count>0)
 	{
 		WAVFORMAT *fmt = GetFormat();
+		assert((fmt->size > 0) && (fmt->channels > 0));
 
 		if(buffsize != (count*(int)size))
 		{
@@ -110,6 +137,7 @@ void CInput::MixBuffers(BYTE *buffers, int buffcount, BYTE *output, UINT size)
 #endif // _DEBUG_TIMER_
 
 	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
 	
 	int step = fmt->size / 8;
 	int numsamples = size/step;
@@ -141,6 +169,7 @@ void CInput::MixBuffers(BYTE *buffers, int buffcount, BYTE *output, UINT size)
 void CInput::MixBuffers(BYTE *buffers, int buffcount, BYTE *output, UINT size)
 {
 	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
 	
 	int step = fmt->size / 8;
 	int numsamples = size/step;
@@ -190,3 +219,31 @@ void CInput::Reset()
 		inputs[i]->Reset();
 	}
 }
+
+DWORD CInput::GetSize()
+{
+	DWORD size = 0;
+	for(int i=0; i<count; i++)
+	{
+		if(inputs[i]->GetSize() > size)
+			size = inputs[i]->GetSize();
+	}
+	return size;
+}
+/*
+WAVFORMAT *CInput::GetFormat()
+{
+	WAVFORMAT *fmt = IFloopySoundInput::GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+	for(int i=0; i<count; i++)
+	{
+		WAVFORMAT *tmp = inputs[i]->GetFormat();
+		if(tmp->freq > 0)
+		{
+			fmt = tmp;
+			break;
+		}
+	}
+	return fmt;
+}
+*/

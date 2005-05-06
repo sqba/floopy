@@ -17,16 +17,11 @@
 
 #define MAX_INPUTS	12
 
-class CInput : public IFloopySoundMixer
+class CInput : public IFloopySoundInput
 {
 public:
 	CInput();
 	virtual ~CInput();
-
-	int AddSource(IFloopySoundInput *src);
-	void RemoveSource(IFloopySoundInput *src);
-	void RemoveSource(int index);
-	UINT Read(BYTE *data, UINT size);
 
 	char *GetName()			{ return "mixer"; }
 	char *GetDescription()	{ return "Mixer component"; }
@@ -36,6 +31,15 @@ public:
 	void MoveTo(UINT samples);
 	void Reset();
 	void Close();
+	DWORD GetSize();
+	//WAVFORMAT *GetFormat();
+
+	UINT Read(BYTE *data, UINT size);
+
+	int AddSource(IFloopySoundInput *src);
+	IFloopySoundInput *GetSource(int index);
+	void RemoveSource(IFloopySoundInput *src);
+	int GetInputCount();
 
 private:
 	void MixBuffers(BYTE *buffers, int count, BYTE *output, UINT size);

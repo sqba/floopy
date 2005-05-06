@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include "Input.h"
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -26,6 +27,7 @@ UINT CInput::Read(BYTE *data, UINT size)
 	short int *sample = (short int*)data;
 
 	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
 	//UINT numsamples = size / ((fmt->size/8) * fmt->channels);
 	UINT numsamples = len / (fmt->size/8);
 	//UINT numsamples = len / ((fmt->size / 8) * GetFormat()->channels);

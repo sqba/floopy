@@ -4,6 +4,7 @@
 
 #include "Input.h"
 #include <math.h>
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -23,6 +24,7 @@ CInput::~CInput()
 UINT CInput::Read(BYTE *data, UINT size)
 {
 	WAVFORMAT *fmt = m_source->GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
 	UINT len = IFloopySoundInput::Read(data, size);
 	if(len <= 0)
 		return len;

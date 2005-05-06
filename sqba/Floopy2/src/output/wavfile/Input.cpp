@@ -12,6 +12,7 @@ CInput::CInput()
 {
 	m_pFile = NULL;
 	m_size = 0;
+	memset(m_filename, 0, sizeof(m_filename));
 }
 
 CInput::~CInput()
@@ -35,6 +36,9 @@ BOOL CInput::Open(char *filename)
 
 		// Number of samples
 		m_size = m_data.dataSIZE / ((m_wavformat.size/8) * m_wavformat.channels);
+
+		memset(m_filename, 0, sizeof(m_filename));
+		strncpy(m_filename, filename, MAX_PATH);
 
 		return TRUE;
 	}
@@ -63,18 +67,6 @@ UINT CInput::Read(BYTE *data, UINT size)
 {
 	if(NULL != m_pFile)
 	{
-		// Moze li se offset potpuno izbaciti?
-		/*if(-1 == offset)
-		{
-			long hdrlen = (sizeof(RIFF)+sizeof(FMT)+sizeof(DATA));
-			fseek(m_pFile, hdrlen, SEEK_SET);
-		}
-		else if(0 != offset)
-		{
-			UINT n = offset * ((m_wavformat.size/8) * m_wavformat.channels);
-			fseek(m_pFile, n, SEEK_SET);
-		}*/
-
 		long pos = ftell(m_pFile);
 		long hdrlen = (sizeof(RIFF)+sizeof(FMT)+sizeof(DATA));
 		if(pos+size > m_data.dataSIZE+hdrlen)
