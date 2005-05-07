@@ -136,17 +136,16 @@ IFloopySoundInput *CEngine::testCreateTrack1()
 	IFloopySoundInput *wavfile	= CreateInput(TEXT("wavfile"));
 	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
 	IFloopySoundInput *loop	= CreateInput(TEXT("loop"));
+//	IFloopySoundInput *cache	= CreateInput(TEXT("cache"));
 	if( wavfile->Open(TEXT("Ischlju.wav")) )
 	{
-		volume->SetSource(wavfile);
-//		WAVFORMAT *fmt = volume->GetFormat();
-		loop->SetSource(wavfile);
-		//mixer->AddSource(volume);
+//		cache->SetSource(wavfile);
 
+		loop->SetSource(wavfile);
+//		loop->SetSource(cache);
 		loop->Reset();
 		loop->SetParam(0, 3);
-		//loop->MoveTo(44100*1);
-		//loop->Enable(FALSE);
+
 		volume->Reset();
 		volume->SetSource(loop);
 		volume->SetParam(0, 50);
@@ -164,8 +163,11 @@ IFloopySoundInput *CEngine::testCreateTrack2()
 {
 	IFloopySoundInput *wavfile	= CreateInput(TEXT("wavfile"));
 	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
+//	IFloopySoundInput *cache	= CreateInput(TEXT("cache"));
 	if( wavfile->Open(TEXT("presence.wav")) )
 	{
+//		cache->SetSource(wavfile);
+//		volume->SetSource(cache);
 		volume->SetSource(wavfile);
 		volume->SetParam(0, 10);
 		volume->MoveTo(44100);
@@ -197,12 +199,18 @@ IFloopySoundInput *CEngine::testCreateTrack3()
 	IFloopySoundInput *wavfile	= CreateInput(TEXT("wavfile"));
 	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
 	IFloopySoundInput *echo		= CreateInput(TEXT("echo"));
+	IFloopySoundInput *cache	= CreateInput(TEXT("cache"));
 	if( wavfile->Open(TEXT("Gimme Sh_T.wav")) )
 	{
-		echo->SetSource(wavfile);
-		volume->SetSource(echo);
-		//mixer->AddSource(volume);
+		if(1)
+		{
+			cache->SetSource(wavfile);
+			echo->SetSource(cache);
+		}
+		else
+			echo->SetSource(wavfile);
 
+		volume->SetSource(echo);
 		volume->Reset();
 		volume->SetParam(0, 80);
 		volume->MoveTo(44100*5);
@@ -241,9 +249,6 @@ IFloopySoundInput *CEngine::testCreateTrack4(WAVFORMAT *fmt)
 	IFloopySoundInput *echo		= CreateInput(TEXT("echo"));
 
 	tonegen->SetFormat( fmt );
-
-	volume->SetSource(tonegen);
-	//mixer->AddSource(volume);
 
 	tonegen->Reset();
 	tonegen->Enable(FALSE);
@@ -284,6 +289,7 @@ IFloopySoundInput *CEngine::testCreateTrack4(WAVFORMAT *fmt)
 
 	tonegen->Reset();
 
+	volume->SetSource(tonegen);
 	volume->Reset();
 	volume->SetParam(0, 80);
 	volume->MoveTo(44100*8);
@@ -302,6 +308,7 @@ IFloopySoundInput *CEngine::testCreateMaster()
 	IFloopySoundInput *loop	= CreateInput(TEXT("loop"));
 //	IFloopySoundInput *startat	= CreateInput(TEXT("startat"));
 	IFloopySoundInput *playrgn	= CreateInput(TEXT("playrgn"));
+	IFloopySoundInput *cache	= CreateInput(TEXT("cache"));
 
 //	IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
 
@@ -312,39 +319,35 @@ IFloopySoundInput *CEngine::testCreateMaster()
 	assert((fmt->size > 0) && (fmt->channels > 0));
 	mixer->AddSource( testCreateTrack4(fmt) );
 
-	UINT size = mixer->GetSize();
+//	UINT size = mixer->GetSize();
 
 	volume->SetSource(mixer);
 //	echo->SetSource(volume);
-	size = volume->GetSize();
 
 	volume->Reset(); // Reset all
 	volume->SetParam(0, 150);
 
-if(0)
-	return volume;
-else{
-	/*mixer->Reset();
-	mixer->MoveTo(44100*10);
-	mixer->Enable(FALSE);
-	mixer->Reset();*/
-	size = mixer->GetSize(); // 1142016
+	if(0)
+		return volume;
+	else
+	{
+		if(1)
+		{
+			cache->SetSource(volume);
+		}
+		else
+		{
+			playrgn->SetSource(volume);
+			playrgn->SetParam(0, 44100*7);
+			playrgn->SetParam(1, 44100*12);
+			cache->SetSource(playrgn);
+		}
 
-	playrgn->SetSource(volume);
-	playrgn->SetParam(0, 44100*7);
-	playrgn->SetParam(1, 44100*12);
-	size = playrgn->GetSize();
+		loop->Reset();
+		loop->SetParam(0, 2);
+		loop->SetSource(cache);
 
-//	loop->SetSource(volume);
-
-	loop->Reset();
-	loop->SetParam(0, 2);
-	loop->SetSource(playrgn);
-	size = loop->GetSize();
-	return loop;
-//	startat->SetSource(loop);
-//	startat->SetParam(0, 44100*2);
-//	return startat;
+		return loop;
 	}
 }
 

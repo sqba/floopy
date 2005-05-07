@@ -3,6 +3,22 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
+Project: "cache"=".\INPUT\cache\cache.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/sqba/Floopy2/src/input/cache", ZGDAAAAA
+    .\input\cache
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "echo"=".\input\echo\echo.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -51,18 +67,6 @@ Package=<4>
 
 ###############################################################################
 
-Project: "length"=".\INPUT\length\length.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
 Project: "loop"=".\input\loop\loop.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -103,18 +107,6 @@ Package=<5>
     "$/sqba/Floopy2/src/input/playrgn", UEDAAAAA
     .\input\playrgn
     end source code control
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "startat"=".\INPUT\startat\startat.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
 }}}
 
 Package=<4>

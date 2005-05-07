@@ -77,12 +77,6 @@ BOOL CInput::createBuffer()
 			size = (1024 < m_nSize ? 1024 : m_nSize);
 			BYTE *pbuff = m_pBuffer;
 			UINT len = 0;
-			//while((size = src->Read(pbuff, size)) == size && (len < m_nSize))
-			/*UINT read = 0;
-			while((read=src->Read(pbuff, size)) == size)
-			{
-				pbuff += read;
-			}*/
 			while(len < m_nSize)
 			{
 				if((len + size) > m_nSize)
@@ -93,8 +87,6 @@ BOOL CInput::createBuffer()
 			}
 		}
 	}
-
-	m_nPosition = 0;
 
 	return (m_nSize > 0);
 }
@@ -120,9 +112,3 @@ void CInput::Reset()
 {
 	m_nPosition = 0;
 }
-/*
-UINT CInput::GetSize()
-{
-	return m_nSize / samplesToBytes();
-}
-*/
