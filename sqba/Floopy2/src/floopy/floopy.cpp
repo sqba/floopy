@@ -37,16 +37,16 @@ void printPath(IFloopySoundInput *input, int level)
 
 //	if(level!=1 && input->GetInputCount() > 0)
 //	{
-	try {
+//	try {
 		for(int i=0; i<input->GetInputCount(); i++)
 		{
 			printPath(input->GetSource(i), level+1);
 		}
-	}
-	catch(...)
-	{
-		printf("This happens only in debug mode!!!\n");
-	}
+//	}
+//	catch(...)
+//	{
+//		printf("This happens only in debug mode!!!\n");
+//	}
 	// Zasto se ovo dogadja prilikom debagovanja i
 	// zasto se sve stampa po dva puta???
 /*	}
@@ -149,6 +149,7 @@ void main(int argc, char* argv[])
 //	printPath(engine, output);
 	printf("%s\n", output->GetName());
 	printPath(engine, 1);
+	printf("Press enter to continue");
 	getchar();
 //	WAVFORMAT *fmt = engine->getPlugin()->GetFormat();
 	
@@ -159,7 +160,7 @@ void main(int argc, char* argv[])
 	delete output;
 	delete engine;
 
-	printf("Press enter to continue");
+	printf("Press enter to exit");
 	getchar();
 }
 

@@ -171,7 +171,7 @@ public:
 	 * Returns total sample count.
 	 * @return number of samples.
 	 */
-	virtual DWORD GetSize()
+	virtual UINT GetSize()
 	{
 		return (NULL != m_source ? m_source->GetSize() : 0);
 	}

@@ -18,8 +18,6 @@ public:
 	CInput();
 	virtual ~CInput();
 
-	UINT Read(BYTE *data, UINT size);
-
 	char *GetName()			{ return "playrgn"; }
 	char *GetDescription()	{ return "Start/Stop at sample"; }
 	char *GetVersion()		{ return "0.1"; }
@@ -30,6 +28,12 @@ public:
 	float GetParam(int index);
 	char *GetParamName(int index);
 	char *GetParamDesc(int index);
+
+	UINT GetSize();
+	void MoveTo(UINT samples);
+	void Reset();
+
+	UINT Read(BYTE *data, UINT size);
 
 private:
 	INT32 m_nLength, m_nStartAt, m_nStopAt;

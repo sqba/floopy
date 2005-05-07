@@ -24,6 +24,13 @@ UINT CInput::Read(BYTE *data, UINT size)
 //	if(-1 == offset)
 //		m_nLength = 0;
 
+	UINT len = GetSize();
+	if(m_nLength + size > len)
+	{
+		size = len - m_nLength;
+	}
+	return IFloopySoundInput::Read(data, size);
+/*
 	UINT len = 0;
 	UINT sizeOrig = size;
 
@@ -49,17 +56,59 @@ UINT CInput::Read(BYTE *data, UINT size)
 
 	m_nLength += sizeOrig;
 
-
 	return len;
+*/
+}
+
+UINT CInput::GetSize()
+{
+	if(m_nStartAt >= m_nStopAt)
+		return 0;
+
+	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+
+	int x = (fmt->size / 8) * fmt->channels;
+
+	UINT size = (m_nStopAt - m_nStartAt) / x;
+
+	return size;
+
+	//return IFloopySoundInput::GetSize();
+}
+
+void CInput::MoveTo(UINT samples)
+{
+	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+
+	int x = (fmt->size / 8) * fmt->channels;
+
+	IFloopySoundInput::MoveTo((m_nStartAt / x) + samples);
+}
+
+void CInput::Reset()
+{
+	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+
+	int x = (fmt->size / 8) * fmt->channels;
+
+	IFloopySoundInput::MoveTo(m_nStartAt / x);
 }
 
 void  CInput::SetParam(int index, float value)
 {
 	WAVFORMAT *fmt = GetFormat();
 	assert((fmt->size > 0) && (fmt->channels > 0));
+
 	int x = (fmt->size / 8) * fmt->channels;
+
 	if(index == 0)
+	{
 		m_nStartAt = (int)value * x;
+		IFloopySoundInput::MoveTo((UINT)value);
+	}
 	else if(index == 1)
 		m_nStopAt = (int)value * x;
 }
@@ -68,7 +117,9 @@ float CInput::GetParam(int index)
 {
 	WAVFORMAT *fmt = GetFormat();
 	assert((fmt->size > 0) && (fmt->channels > 0));
+
 	int x = (fmt->size / 8) * fmt->channels;
+
 	if(index == 0)
 		return (float)m_nStartAt / x;
 	else if(index == 1)
