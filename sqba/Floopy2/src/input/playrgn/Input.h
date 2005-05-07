@@ -19,7 +19,7 @@ public:
 	virtual ~CInput();
 
 	char *GetName()			{ return "playrgn"; }
-	char *GetDescription()	{ return "Start/Stop at sample"; }
+	char *GetDescription()	{ return "Start/Stop At Sample"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
@@ -36,7 +36,10 @@ public:
 	UINT Read(BYTE *data, UINT size);
 
 private:
-	INT32 m_nLength, m_nStartAt, m_nStopAt;
+	int samplesToBytes();
+
+private:
+	UINT m_nPosition, m_nStartAt, m_nStopAt;
 };
 
 #endif // !defined(AFX_INPUT_H__C7D6984D_7FB9_43B3_AD16_041165A37CD1__INCLUDED_)

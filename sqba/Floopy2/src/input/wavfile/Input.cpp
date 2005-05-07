@@ -45,7 +45,7 @@ BOOL CInput::Open(char *filename)
 	return FALSE;
 }
 
-DWORD CInput::GetSize()
+UINT CInput::GetSize()
 {
 	return m_size; // In samples!
 	//return (NULL != m_pFile ? 0 : 0);

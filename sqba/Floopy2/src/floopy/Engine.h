@@ -17,6 +17,11 @@ class CEngine : public IFloopyEngine
 public:
 	CEngine(char *plugin);
 	virtual ~CEngine();
+
+	char *GetName()			{ return "enginew"; }
+	char *GetDescription()	{ return "Floopy Engine Plugin Wrapper"; }
+	char *GetVersion()		{ return "0.1"; }
+	char *GetAuthor()		{ return "sqba"; }
 /*
 	char *GetName()			{ return (m_plugin ? m_plugin->GetName() : "enginewrapper"); }
 	char *GetDescription()	{ return (m_plugin ? m_plugin->GetDescription() : "Floopy Engine Plugin Wrapper"); }

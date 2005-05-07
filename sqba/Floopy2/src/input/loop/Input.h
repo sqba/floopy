@@ -10,6 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include <windows.h>
+#include <assert.h>
 #include "../../ifloopy.h"
 
 class CInput : public IFloopySoundInput
@@ -31,13 +32,16 @@ public:
 	char *GetParamName(int index)	{ return "loopcount"; }
 	char *GetParamDesc(int index)	{ return "Loop Count"; }
 
-	DWORD GetSize();
+	UINT GetSize();
 	void MoveTo(UINT samples);
 	void Reset();
 
 private:
+	int samplesToBytes();
+
+private:
 	int m_nLoops, m_nMaxLoops;
-	UINT m_offset;//, m_pos;
+	UINT m_nPosition;//, m_pos;
 };
 
 #endif // !defined(AFX_INPUT_H__8424BDB3_B751_4EBE_B07D_55F804CFC065__INCLUDED_)

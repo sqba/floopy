@@ -11,7 +11,7 @@
 
 CInput::CInput()
 {
-	m_nStartAt = m_nStopAt = m_nLength = 0;
+	m_nStartAt = m_nStopAt = m_nPosition = 0;
 }
 
 CInput::~CInput()
@@ -21,88 +21,37 @@ CInput::~CInput()
 
 UINT CInput::Read(BYTE *data, UINT size)
 {
-//	if(-1 == offset)
-//		m_nLength = 0;
-
 	UINT len = GetSize();
-	if(m_nLength + size > len)
-	{
-		size = len - m_nLength;
-	}
+
+	if((m_nPosition + size) > len)
+		size = len - m_nPosition;
+
 	return IFloopySoundInput::Read(data, size);
-/*
-	UINT len = 0;
-	UINT sizeOrig = size;
-
-	if((m_nLength >= m_nStartAt) && ((m_nLength < m_nStopAt) || (m_nStopAt == 0)))
-	{
-		if((m_nLength - m_nStartAt) < (int)size)
-		{
-			// Skip data
-			size = m_nLength - m_nStartAt;
-			BYTE *tmp = new BYTE[size];
-			IFloopySoundInput::Read(data, size);
-			delete[] tmp;
-			size = sizeOrig - size;
-		}
-
-		if(((m_nLength + (int)size) > m_nStopAt) && (m_nStopAt > 0))
-		{
-			size = m_nStopAt - m_nLength;
-		}
-
-		len = IFloopySoundInput::Read(data, size);
-	}
-
-	m_nLength += sizeOrig;
-
-	return len;
-*/
 }
 
 UINT CInput::GetSize()
 {
-	if(m_nStartAt >= m_nStopAt)
-		return 0;
+	UINT size = 0;
 
-	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-
-	int x = (fmt->size / 8) * fmt->channels;
-
-	UINT size = (m_nStopAt - m_nStartAt) / x;
+	if(m_nStartAt < m_nStopAt)
+		size = (m_nStopAt - m_nStartAt) / samplesToBytes();
 
 	return size;
-
-	//return IFloopySoundInput::GetSize();
 }
 
 void CInput::MoveTo(UINT samples)
 {
-	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-
-	int x = (fmt->size / 8) * fmt->channels;
-
-	IFloopySoundInput::MoveTo((m_nStartAt / x) + samples);
+	IFloopySoundInput::MoveTo((m_nStartAt / samplesToBytes()) + samples);
 }
 
 void CInput::Reset()
 {
-	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-
-	int x = (fmt->size / 8) * fmt->channels;
-
-	IFloopySoundInput::MoveTo(m_nStartAt / x);
+	IFloopySoundInput::MoveTo(0);
 }
 
 void  CInput::SetParam(int index, float value)
 {
-	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-
-	int x = (fmt->size / 8) * fmt->channels;
+	int x = samplesToBytes();
 
 	if(index == 0)
 	{
@@ -115,10 +64,7 @@ void  CInput::SetParam(int index, float value)
 
 float CInput::GetParam(int index)
 {
-	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-
-	int x = (fmt->size / 8) * fmt->channels;
+	int x = samplesToBytes();
 
 	if(index == 0)
 		return (float)m_nStartAt / x;
@@ -146,4 +92,11 @@ char *CInput::GetParamDesc(int index)
 		return "Stop At Sample";
 	else
 		return NULL;
+}
+
+int CInput::samplesToBytes()
+{
+	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->size > 0) && (fmt->channels > 0));
+	return (fmt->size / 8) * fmt->channels;
 }

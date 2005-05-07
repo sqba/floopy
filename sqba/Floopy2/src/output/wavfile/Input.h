@@ -26,7 +26,7 @@ public:
 	virtual ~CInput();
 
 	BOOL Open(char *filename);
-	DWORD GetSize();
+	UINT GetSize();
 	void MoveTo(UINT samples);
 	void Reset();
 	UINT Read(BYTE *data, UINT size);
