@@ -42,8 +42,8 @@ public:
 	void Reset();
 	UINT Read(BYTE *data, UINT size);
 	void SetSize(DWORD size);// { m_length = size; }
-	DWORD GetSize() { return (m_length > 0 ? m_length : GetSource()->GetSize()); }
-//	DWORD GetSize();
+	UINT GetSize() { return (m_length > 0 ? m_length : GetSource()->GetSize()); }
+//	UINT GetSize();
 
 private:
 	CTimeline m_timeline;

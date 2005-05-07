@@ -171,7 +171,7 @@ BOOL CInput::IsEnabled()
 	return (IFloopy::IsEnabled() && (PARAM_DISABLE != m_timeline.Get(m_offset, TIMELINE_PARAM)));
 }
 
-DWORD CInput::GetSize()
+UINT CInput::GetSize()
 {
 	UINT size = 0;
 	UINT tmp = 0;
@@ -193,12 +193,20 @@ DWORD CInput::GetSize()
 //	if(0 == size)
 //	{
 		IFloopySoundInput *src = IFloopySoundInput::GetSource();
-		while(src)
+/*		while(src)
 		{
-			if(src->GetSize() > size)
-				size = src->GetSize();
-			src = src->GetSource();
-		}
+			try
+			{*/
+				tmp = src->GetSize();
+				if(tmp > size)
+					size = tmp;
+				src = src->GetSource();
+			/*}
+			catch(...)
+			{
+				printf("This happens only in debug mode!!!\n");
+			}
+		}*/
 //	}
 
 	return size;

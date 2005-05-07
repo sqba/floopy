@@ -38,7 +38,10 @@ CEngine::CEngine(char *plugin)
 CEngine::~CEngine()
 {
 	if(NULL != m_plugin)
+	{
+		m_plugin->Close();
 		delete m_plugin;
+	}
 
 	if(NULL != m_hinst)
 		FreeLibrary(m_hinst);

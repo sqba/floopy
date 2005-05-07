@@ -28,12 +28,12 @@ class COutput : public IFloopySoundOutput
 public:
 	COutput(char *plugin, WAVFORMAT *fmt);
 	virtual ~COutput();
-/*
-	char *GetName()			{ return "outputwrapper"; }
+
+	char *GetName()			{ return "outputw"; }
 	char *GetDescription()	{ return "Floopy Output Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
-*/
+/*
 	char *GetName()			{ return (m_plugin ? m_plugin->GetName() : "outputwrapper"); }
 	char *GetDescription()	{ return (m_plugin ? m_plugin->GetDescription() : "Floopy Output Plugin Wrapper"); }
 	char *GetVersion()		{ return (m_plugin ? m_plugin->GetVersion() : "0.1"); }

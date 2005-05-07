@@ -10,6 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include <windows.h>
+#include <assert.h>
 #include "../../ifloopy.h"
 
 class CInput : public IFloopySoundInput

@@ -3,9 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Input.h"
-#include <time.h>
-#include <stdio.h>
-#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -22,6 +19,7 @@ CInput::CInput()
 	lensize = 0;
 
 #ifdef _DEBUG_TIMER_
+	m_bDebugTimer = TRUE;
 	framesize=speed=frames=0;
 #endif // _DEBUG_TIMER_
 }
@@ -133,7 +131,9 @@ UINT CInput::Read(BYTE *data, UINT size)
 void CInput::MixBuffers(BYTE *buffers, int buffcount, BYTE *output, UINT size)
 {
 #ifdef _DEBUG_TIMER_
-	clock_t start = clock();
+	clock_t start = 0;
+	if(m_bDebugTimer)
+		start = clock();
 #endif // _DEBUG_TIMER_
 
 	WAVFORMAT *fmt = GetFormat();
@@ -158,9 +158,12 @@ void CInput::MixBuffers(BYTE *buffers, int buffcount, BYTE *output, UINT size)
 	}
 
 #ifdef _DEBUG_TIMER_
-	speed += clock() - start;
-	framesize += numsamples;
-	frames++;
+	if(m_bDebugTimer)
+	{
+		speed += clock() - start;
+		framesize += numsamples;
+		frames++;
+	}
 #endif // _DEBUG_TIMER_
 }
 
@@ -199,8 +202,13 @@ void CInput::Close()
 	}
 
 #ifdef _DEBUG_TIMER_
-	printf("Average frame mixing time (%d samples): %f ms\n",
-		framesize/frames, (float)speed/(float)frames);
+	if(m_bDebugTimer)
+	{
+		printf("Average frame mixing time:\t%f ms\n",
+			(float)speed/(float)frames);
+		printf("Average frame size:\t\t%d samples\n",
+			framesize/frames);
+	}
 #endif // _DEBUG_TIMER_
 }
 
@@ -220,7 +228,7 @@ void CInput::Reset()
 	}
 }
 
-DWORD CInput::GetSize()
+UINT CInput::GetSize()
 {
 	DWORD size = 0;
 	for(int i=0; i<count; i++)
@@ -230,6 +238,57 @@ DWORD CInput::GetSize()
 	}
 	return size;
 }
+
+#ifdef _DEBUG_TIMER_
+void CInput::SetParam(int index, float value)
+{
+	if(index == 0)
+		m_bDebugTimer = (value==1.f);
+}
+
+float CInput::GetParam(int index)
+{
+	switch(index)
+	{
+	case 0:
+		return (m_bDebugTimer ? 1.f : 0.f);
+	case 1:
+		return (float)speed/(float)frames;
+	case 2:
+		return (float)framesize/(float)frames;
+	}
+	return 0.f;
+}
+
+char *CInput::GetParamName(int index)
+{
+	switch(index)
+	{
+	case 0:
+		return "timer";
+	case 1:
+		return "mixtime";
+	case 2:
+		return "framesize";
+	}
+	return NULL;
+}
+
+char *CInput::GetParamDesc(int index)
+{
+	switch(index)
+	{
+	case 0:
+		return "Debug Timer On/Off";
+	case 1:
+		return "Average frame mixing time";
+	case 2:
+		return "Average frame size";
+	}
+	return NULL;
+}
+#endif // _DEBUG_TIMER_
+
 /*
 WAVFORMAT *CInput::GetFormat()
 {

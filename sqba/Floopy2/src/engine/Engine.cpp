@@ -301,6 +301,7 @@ IFloopySoundInput *CEngine::testCreateMaster()
 //	IFloopySoundInput *echo	= CreateInput(TEXT("echo"));
 	IFloopySoundInput *loop	= CreateInput(TEXT("loop"));
 //	IFloopySoundInput *startat	= CreateInput(TEXT("startat"));
+	IFloopySoundInput *playrgn	= CreateInput(TEXT("playrgn"));
 
 //	IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
 
@@ -329,9 +330,16 @@ else{
 	mixer->Reset();*/
 	size = mixer->GetSize(); // 1142016
 
+	playrgn->SetSource(volume);
+	playrgn->SetParam(0, 44100*7);
+	playrgn->SetParam(1, 44100*12);
+	size = playrgn->GetSize();
+
+//	loop->SetSource(volume);
+
 	loop->Reset();
 	loop->SetParam(0, 2);
-	loop->SetSource(volume);
+	loop->SetSource(playrgn);
 	size = loop->GetSize();
 	return loop;
 //	startat->SetSource(loop);

@@ -12,7 +12,9 @@
 #define _DEBUG_TIMER_
 
 #include <windows.h>
-
+#include <time.h>
+#include <stdio.h>
+#include <assert.h>
 #include "../../ifloopy.h"
 
 #define MAX_INPUTS	12
@@ -28,10 +30,18 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
+#ifdef _DEBUG_TIMER_
+	int   GetParamCount()			{ return 3; }
+	void  SetParam(int index, float value);// { m_bDebugTimer = (value==1.f); }
+	float GetParam(int index);//		{ return (float)m_bDebugTimer; }
+	char *GetParamName(int index);//	{ return "timer"; }
+	char *GetParamDesc(int index);//	{ return "Debug Timer"; }
+#endif // _DEBUG_TIMER_
+
 	void MoveTo(UINT samples);
 	void Reset();
 	void Close();
-	DWORD GetSize();
+	UINT GetSize();
 	//WAVFORMAT *GetFormat();
 
 	UINT Read(BYTE *data, UINT size);
@@ -45,6 +55,7 @@ private:
 	void MixBuffers(BYTE *buffers, int count, BYTE *output, UINT size);
 
 #ifdef _DEBUG_TIMER_
+	BOOL m_bDebugTimer;
 	DWORD speed;
 	int frames;
 	int framesize;
