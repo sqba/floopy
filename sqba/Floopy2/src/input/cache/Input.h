@@ -24,7 +24,7 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 	UINT Read(BYTE *data, UINT size);
-	void SetSource(IFloopySoundInput *src);
+	BOOL SetSource(IFloopySoundInput *src);
 	void MoveTo(UINT samples);
 	UINT GetPos();
 	void Reset();

@@ -94,11 +94,11 @@ BOOL CInput::createBuffer()
 	return (m_nSize > 0);
 }
 
-void CInput::SetSource(IFloopySoundInput *src)
+BOOL CInput::SetSource(IFloopySoundInput *src)
 {
 	createBuffer();
 
-	IFloopySoundInput::SetSource(src);
+	return IFloopySoundInput::SetSource(src);
 }
 
 void CInput::MoveTo(UINT samples)

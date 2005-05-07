@@ -191,9 +191,10 @@ public:
 		return (NULL != m_source ? m_source->GetLength() : 0.f);
 	};
 */
-	virtual void SetSource(IFloopySoundInput *src)
+	virtual BOOL SetSource(IFloopySoundInput *src)
 	{
 		m_source = src;
+		return TRUE;
 	}
 
 	virtual IFloopySoundInput *GetSource()
