@@ -208,7 +208,10 @@ void CInput::Close()
 			(float)speed/(float)frames);
 		printf("Average frame size:\t\t%d samples\n",
 			framesize/frames);
+		printf("Average mixing rate:\t\t%.1f KB/s\n",
+			((float)framesize/(float)frames/1024.f)*(float)speed/(float)frames*1000.f);
 	}
+	framesize=speed=frames=0;
 #endif // _DEBUG_TIMER_
 }
 
@@ -256,6 +259,8 @@ float CInput::GetParam(int index)
 		return (float)speed/(float)frames;
 	case 2:
 		return (float)framesize/(float)frames;
+	case 3:
+		return ((float)framesize/(float)frames/1024.f)*(float)speed/(float)frames*1000.f;
 	}
 	return 0.f;
 }
@@ -270,6 +275,8 @@ char *CInput::GetParamName(int index)
 		return "mixtime";
 	case 2:
 		return "framesize";
+	case 3:
+		return "mixrate";
 	}
 	return NULL;
 }
@@ -284,6 +291,8 @@ char *CInput::GetParamDesc(int index)
 		return "Average frame mixing time";
 	case 2:
 		return "Average frame size";
+	case 3:
+		return "Average mixing rate";
 	}
 	return NULL;
 }
