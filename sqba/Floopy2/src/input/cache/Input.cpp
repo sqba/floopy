@@ -82,9 +82,12 @@ BOOL CInput::createBuffer()
 				if((len + size) > m_nSize)
 					size = m_nSize - len;
 				UINT read = src->Read(pbuff, size);
+				if(read == 0)
+					break;
 				pbuff += read;
 				len += read;
 			}
+			m_nSize = len;
 		}
 	}
 

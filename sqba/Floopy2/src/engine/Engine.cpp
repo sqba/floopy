@@ -153,7 +153,12 @@ IFloopySoundInput *CEngine::testCreateTrack1()
 		volume->SetParam(0, 100);
 		volume->MoveTo(44100*3);
 		volume->SetParam(0, 150);
+		volume->MoveTo(44100*23);
+		volume->SetParam(0, 50);
 		volume->Reset();
+
+		loop->MoveTo(44100 * 23);
+		loop->SetParam(0, 2);
 	}
 
 	return volume;
@@ -331,23 +336,27 @@ IFloopySoundInput *CEngine::testCreateMaster()
 		return volume;
 	else
 	{
-		if(1)
+		if(0)
 		{
 			cache->SetSource(volume);
 		}
 		else
 		{
 			playrgn->SetSource(volume);
-			playrgn->SetParam(0, 44100*7);
-			playrgn->SetParam(1, 44100*12);
+			playrgn->SetParam(0, 44100*20);
+			playrgn->SetParam(1, 44100*50);
 			cache->SetSource(playrgn);
 		}
 
-		loop->Reset();
-		loop->SetParam(0, 2);
-		loop->SetSource(cache);
-
-		return loop;
+		if(1)
+		{
+			loop->Reset();
+			loop->SetParam(0, 2);
+			loop->SetSource(cache);
+			return loop;
+		}
+		else
+			return cache;
 	}
 }
 

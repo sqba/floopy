@@ -69,9 +69,9 @@ public:
 	char *GetParamName(int index)			{ return m_plugin->GetParamName(index); }
 	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
 
-	void SetSource(IFloopySoundInput *src)
+	BOOL SetSource(IFloopySoundInput *src)
 	{
-		m_plugin->SetSource(src);
+		return m_plugin->SetSource(src);
 	}
 
 	IFloopySoundInput *GetSource()

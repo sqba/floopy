@@ -20,12 +20,16 @@ CInput::~CInput()
 
 UINT CInput::Read(BYTE *data, UINT size)
 {
-	UINT len = GetSize();
+	UINT len = IFloopySoundInput::GetSize() * samplesToBytes();
 
 	if((m_nPosition + size) > len)
 		size = len - m_nPosition;
 
-	return IFloopySoundInput::Read(data, size);
+	UINT read = IFloopySoundInput::Read(data, size);
+
+	m_nPosition += read;
+
+	return read;
 }
 
 UINT CInput::GetSize()
@@ -40,12 +44,15 @@ UINT CInput::GetSize()
 
 void CInput::MoveTo(UINT samples)
 {
+//	UINT sizeo = IFloopySoundInput::GetSize();
+//	UINT size = GetSize();
+	m_nPosition = m_nStartAt + samples * samplesToBytes();
 	IFloopySoundInput::MoveTo((m_nStartAt / samplesToBytes()) + samples);
 }
 
 void CInput::Reset()
 {
-	IFloopySoundInput::MoveTo(0);
+	MoveTo(0);
 }
 
 void  CInput::SetParam(int index, float value)
@@ -58,7 +65,12 @@ void  CInput::SetParam(int index, float value)
 		IFloopySoundInput::MoveTo((UINT)value);
 	}
 	else if(index == 1)
-		m_nStopAt = (int)value * x;
+	{
+		//m_nStopAt = (int)value * x;
+		UINT val = (int)value * x;
+		UINT max = IFloopySoundInput::GetSize() * x;
+		m_nStopAt = (val > max ? max : val);
+	}
 }
 
 float CInput::GetParam(int index)
