@@ -28,10 +28,11 @@ public:
 	void MoveTo(UINT samples);
 	UINT GetPos();
 	void Reset();
+//	UINT GetSize();
 
 private:
 	int samplesToBytes();
-	void createBuffer();
+	BOOL createBuffer();
 
 private:
 	BYTE *m_pBuffer;
