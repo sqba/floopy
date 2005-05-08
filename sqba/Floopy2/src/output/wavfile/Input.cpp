@@ -31,11 +31,11 @@ BOOL CInput::Open(char *filename)
 		fread( &m_data, 1, sizeof(DATA), m_pFile );
 
 		m_wavformat.channels = (int)m_fmt.fmtFORMAT.nChannels;
-		m_wavformat.freq = m_fmt.fmtFORMAT.nSamplesPerSec;
-		m_wavformat.size = m_fmt.fmtFORMAT.wBitsPerSample;
+		m_wavformat.frequency = m_fmt.fmtFORMAT.nSamplesPerSec;
+		m_wavformat.bitsPerSample = m_fmt.fmtFORMAT.wBitsPerSample;
 
 		// Number of samples
-		m_size = m_data.dataSIZE / ((m_wavformat.size/8) * m_wavformat.channels);
+		m_size = m_data.dataSIZE / ((m_wavformat.bitsPerSample/8) * m_wavformat.channels);
 
 		memset(m_filename, 0, sizeof(m_filename));
 		strncpy(m_filename, filename, MAX_PATH);
@@ -45,15 +45,15 @@ BOOL CInput::Open(char *filename)
 	return FALSE;
 }
 
-UINT CInput::GetSize()
+int CInput::GetSize()
 {
 	return m_size; // In samples!
 	//return (NULL != m_pFile ? 0 : 0);
 }
 
-void CInput::MoveTo(UINT samples)
+void CInput::MoveTo(int samples)
 {
-	UINT n = samples * ((m_wavformat.size/8) * m_wavformat.channels);
+	int n = samples * ((m_wavformat.bitsPerSample/8) * m_wavformat.channels);
 	fseek(m_pFile, n, SEEK_SET);
 }
 
@@ -63,7 +63,7 @@ void CInput::Reset()
 	fseek(m_pFile, hdrlen, SEEK_SET);
 }
 
-UINT CInput::Read(BYTE *data, UINT size)
+int CInput::Read(BYTE *data, int size)
 {
 	if(NULL != m_pFile)
 	{

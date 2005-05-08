@@ -12,7 +12,7 @@ CInput::CInput()
 {
 	m_nPosition = 0;
 	m_nLoops = 0;
-	m_nMaxLoops = 1;
+	m_nMaxLoops = -1;  // -1 - infinite?
 }
 
 CInput::~CInput()
@@ -20,15 +20,15 @@ CInput::~CInput()
 
 }
 
-UINT CInput::Read(BYTE *data, UINT size)
+int CInput::Read(BYTE *data, int size)
 {
-	if(m_nLoops >= m_nMaxLoops)
+	if((m_nMaxLoops > 0) && (m_nLoops >= m_nMaxLoops))
 		return 0;
 
-	UINT len = 0;
-	UINT origSize = size;
+	int len = 0;
+	int origSize = size;
 	
-	UINT srclen = IFloopySoundInput::GetSize();
+	int srclen = IFloopySoundInput::GetSize();
 	srclen *= samplesToBytes();
 
 	if((m_nPosition + size) > srclen)
@@ -60,16 +60,19 @@ void CInput::SetParam(int index, float value)
 	Reset();
 }
 
-UINT CInput::GetSize()
+int CInput::GetSize()
 {
-	return (NULL != m_source ? m_source->GetSize()*m_nMaxLoops : 0);
+	if(m_nMaxLoops > 0)
+		return (NULL != m_source ? m_source->GetSize()*m_nMaxLoops : 0);
+	else
+		return -1;
 }
 
-void CInput::MoveTo(UINT samples)
+void CInput::MoveTo(int samples)
 {
-	UINT size = IFloopySoundInput::GetSize();
+	int size = IFloopySoundInput::GetSize();
 
-	if(samples > (size * m_nMaxLoops))
+	if((samples > (size * m_nMaxLoops)) && (m_nMaxLoops > 0))
 	{
 		Reset();
 		m_nLoops = m_nMaxLoops;
@@ -99,6 +102,6 @@ void CInput::Reset()
 int CInput::samplesToBytes()
 {
 	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-	return (fmt->size / 8) * fmt->channels;
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	return (fmt->bitsPerSample / 8) * fmt->channels;
 }

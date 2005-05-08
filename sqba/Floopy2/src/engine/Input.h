@@ -41,18 +41,18 @@ public:
 	char *GetVersion()		{ return (m_plugin ? m_plugin->GetVersion() : "0.1"); }
 	char *GetAuthor()		{ return (m_plugin ? m_plugin->GetAuthor() : "sqba"); }
 */
-	void MoveTo(UINT samples);
+	void MoveTo(int samples);
 	void Reset();
-	UINT Read(BYTE *data, UINT size);
+	int Read(BYTE *data, int size);
 
 	void Enable(BOOL bEnable);
 	BOOL IsEnabled();
 
-	UINT GetSize();
+	int GetSize();
 /*
 	BOOL Open(char *filename);
 	DWORD GetSize();
-	UINT Read(BYTE *data, UINT size, UINT offset);
+	int Read(BYTE *data, int size, int offset);
 	void Close();
 */
 //	IFloopySoundInput *getPlugin() { return m_plugin; }
@@ -80,13 +80,13 @@ public:
 	}
 
 private:
-	void applyParamsAt(UINT offset);
+	void applyParamsAt(int offset);
 
 	void initLog(char *plugin);
-	void logParamChange(UINT offset, tParam *param);
-	void logParamSet(UINT offset, int index, float value);
+	void logParamChange(int offset, tParam *param);
+	void logParamSet(int offset, int index, float value);
 
-	UINT m_offset;
+	int m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundInput *m_plugin;
 	CTimeline m_timeline;

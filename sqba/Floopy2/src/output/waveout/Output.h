@@ -29,10 +29,10 @@ static int              waveCurrentBlock;
 class COutput : public IFloopySoundOutput
 {
 public:
-	COutput(int nSamplesPerSec, int wBitsPerSample, int nChannels);
+	COutput(WAVFORMAT fmt);
 	virtual ~COutput();
 
-	UINT Write(BYTE *data, UINT size);
+	int Write(BYTE *data, int size);
 
 	char *GetName()			{ return "waveout"; }
 	char *GetDescription()	{ return "Wave Out"; }

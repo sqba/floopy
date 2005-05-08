@@ -21,7 +21,7 @@ CInput::~CInput()
 
 }
 
-UINT CInput::Read(BYTE *data, UINT size)
+int CInput::Read(BYTE *data, int size)
 {
 	//short sample_buffer[576*2];
 	//short sample_buffer[8*2];
@@ -31,14 +31,14 @@ UINT CInput::Read(BYTE *data, UINT size)
 //		angle = 0.0;
 
 	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-	UINT numsamples = size / ((fmt->size/8) * fmt->channels);
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	int numsamples = size / ((fmt->bitsPerSample/8) * fmt->channels);
 
 
 	int l = numsamples, x=l*fmt->channels;
-	double dangle = M_PI * (double)fmt->channels * freq / (double)fmt->freq / 2.0;
+	double dangle = M_PI * (double)fmt->channels * freq / (double)fmt->frequency / 2.0;
 
-	double max = (pow(2, fmt->size) - 1.0) / 2.0;
+	double max = (pow(2, fmt->bitsPerSample) - 1.0) / 2.0;
 
 //	memset(data, 0, size);
 	short int *s = sample_buffer;

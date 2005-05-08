@@ -63,14 +63,14 @@ CInput::~CInput()
 	}
 }
 
-UINT CInput::Read(BYTE *data, UINT size)
+int CInput::Read(BYTE *data, int size)
 {
-	UINT s = m_offset;
-	UINT readBytes = 0;
-	UINT endpos = m_offset + size;
-	UINT len = 0;
+	int s = m_offset;
+	int readBytes = 0;
+	int endpos = m_offset + size;
+	int len = 0;
 	IFloopySoundInput *src = m_plugin;
-	UINT origSize = size;
+	int origSize = size;
 
 	// Apply all due parameters
 	applyParamsAt( m_offset );
@@ -119,11 +119,11 @@ UINT CInput::Read(BYTE *data, UINT size)
 	return readBytes;
 }
 
-void CInput::MoveTo(UINT samples)
+void CInput::MoveTo(int samples)
 {
 	WAVFORMAT *fmt = m_plugin->GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-	m_offset = samples * ( (fmt->size / 8) * fmt->channels );
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	m_offset = samples * ( (fmt->bitsPerSample / 8) * fmt->channels );
 
 	// Apply all due parameters
 	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
@@ -171,10 +171,10 @@ BOOL CInput::IsEnabled()
 	return (IFloopy::IsEnabled() && (PARAM_DISABLE != m_timeline.Get(m_offset, TIMELINE_PARAM)));
 }
 
-UINT CInput::GetSize()
+int CInput::GetSize()
 {
-	UINT size = 0;
-	UINT tmp = 0;
+	int size = 0;
+	int tmp = 0;
 	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
 	{
 		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM);
@@ -186,8 +186,8 @@ UINT CInput::GetSize()
 	}
 
 	WAVFORMAT *fmt = m_plugin->GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-	int x = ( (fmt->size / 8) * fmt->channels );
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	int x = ( (fmt->bitsPerSample / 8) * fmt->channels );
 	size /= x;
 
 //	if(0 == size)
@@ -213,7 +213,7 @@ UINT CInput::GetSize()
 }
 
 
-void CInput::applyParamsAt(UINT offset)
+void CInput::applyParamsAt(int offset)
 {
 	tParam *param = m_timeline.GetParam(offset, TIMELINE_PARAM);
 	if(param)
@@ -245,7 +245,7 @@ void CInput::initLog(char *plugin)
 	delete[] logname;
 }
 
-void CInput::logParamChange(UINT offset, tParam *param)
+void CInput::logParamChange(int offset, tParam *param)
 {
 	if(m_fplog && m_fplog != stdout)
 	{
@@ -267,7 +267,7 @@ void CInput::logParamChange(UINT offset, tParam *param)
 	}
 }
 
-void CInput::logParamSet(UINT offset, int index, float value)
+void CInput::logParamSet(int offset, int index, float value)
 {
 	if(m_fplog && m_fplog != stdout)
 	{

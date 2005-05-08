@@ -20,7 +20,7 @@ public:
 	CInput();
 	virtual ~CInput();
 
-	UINT Read(BYTE *data, UINT size);
+	int Read(BYTE *data, int size);
 	void Reset() { angle = 0.0; }
 
 	char *GetName()			{ return "tonegen"; }

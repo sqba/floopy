@@ -30,13 +30,13 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
-	void MoveTo(UINT samples);
+	void MoveTo(int samples);
 	void Reset();
 	void Close();
-	UINT GetSize();
+	int GetSize();
 	//WAVFORMAT *GetFormat();
 
-	UINT Read(BYTE *data, UINT size);
+	int Read(BYTE *data, int size);
 
 	int AddSource(IFloopySoundInput *src);
 	IFloopySoundInput *GetSource(int index);
@@ -52,9 +52,9 @@ public:
 #endif // _DEBUG_TIMER_
 
 private:
-	void mixBuffers(BYTE *buffers, int count, BYTE *output, UINT size);
+	void mixBuffers(BYTE *buffers, int count, BYTE *output, int size);
 
-	UINT	*m_nLengths;
+	int	*m_nLengths;
 	int		m_nLengthsSize;
 
 	BYTE	*m_pBuffers;

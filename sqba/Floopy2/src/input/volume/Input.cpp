@@ -20,17 +20,17 @@ CInput::~CInput()
 
 }
 
-UINT CInput::Read(BYTE *data, UINT size)
+int CInput::Read(BYTE *data, int size)
 {
-	UINT len = IFloopySoundInput::Read(data, size);
+	int len = IFloopySoundInput::Read(data, size);
 
 	short int *sample = (short int*)data;
 
 	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-	//UINT numsamples = size / ((fmt->size/8) * fmt->channels);
-	UINT numsamples = len / (fmt->size/8);
-	//UINT numsamples = len / ((fmt->size / 8) * GetFormat()->channels);
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	//int numsamples = size / ((fmt->size/8) * fmt->channels);
+	int numsamples = len / (fmt->bitsPerSample/8);
+	//int numsamples = len / ((fmt->size / 8) * GetFormat()->channels);
 
 //	int max = (int)pow(2, fmt->size) / 2;
 

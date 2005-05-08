@@ -26,10 +26,10 @@ public:
 	virtual ~CInput();
 
 	BOOL Open(char *filename);
-	UINT GetSize();
-	void MoveTo(UINT samples);
+	int GetSize();
+	void MoveTo(int samples);
 	void Reset();
-	UINT Read(BYTE *data, UINT size);
+	int Read(BYTE *data, int size);
 	void Close();
 
 	//char *GetName()			{ return "wavfile"; }
@@ -39,7 +39,7 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 private:
-	UINT m_size;	// Number of samples
+	int m_size;	// Number of samples
 	FILE *m_pFile;
 	RIFF m_riff;
 	FMT  m_fmt;

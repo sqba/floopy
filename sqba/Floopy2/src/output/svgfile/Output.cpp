@@ -46,9 +46,9 @@ BOOL COutput::Open(char *filename)
 	return FALSE;
 }
 
-UINT COutput::Write(BYTE *data, UINT size)
+int COutput::Write(BYTE *data, int size)
 {
-	UINT written = 0;
+	int written = 0;
 
 	int interval = 512;
 	int step=1;

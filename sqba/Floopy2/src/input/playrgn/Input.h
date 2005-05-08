@@ -30,17 +30,17 @@ public:
 	char *GetParamName(int index);
 	char *GetParamDesc(int index);
 
-	UINT GetSize();
-	void MoveTo(UINT samples);
+	int GetSize();
+	void MoveTo(int samples);
 	void Reset();
 
-	UINT Read(BYTE *data, UINT size);
+	int Read(BYTE *data, int size);
 
 private:
 	int samplesToBytes();
 
 private:
-	UINT m_nPosition, m_nStartAt, m_nStopAt;
+	int m_nPosition, m_nStartAt, m_nStopAt;
 };
 
 #endif // !defined(AFX_INPUT_H__C7D6984D_7FB9_43B3_AD16_041165A37CD1__INCLUDED_)

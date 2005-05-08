@@ -24,7 +24,7 @@ CTimeline::~CTimeline()
 	}
 }
 
-void CTimeline::Set(UINT offset, int index, float value)
+void CTimeline::Set(int offset, int index, float value)
 {
 	tParam *tmp = Find(offset, index);
 	if(!tmp)
@@ -47,22 +47,22 @@ void CTimeline::Set(UINT offset, int index, float value)
 	tmp->value = value;
 }
 
-tParam *CTimeline::GetParam(UINT offset, int index)
+tParam *CTimeline::GetParam(int offset, int index)
 {
 	return Find(offset, index);
 }
 
-float CTimeline::Get(UINT offset, int index)
+float CTimeline::Get(int offset, int index)
 {
 	tParam *tmp = Find(offset, index);
 	return(tmp ? tmp->value : 0.f);
 }
 
-UINT CTimeline::GetPrevOffset(UINT offset)
+int CTimeline::GetPrevOffset(int offset)
 {
-	//UINT val = offset;
+	//int val = offset;
 	tParam *tmp = first;
-	UINT max = 0;
+	int max = 0;
 	while(tmp)
 	{
 		if(tmp->offset < offset)
@@ -80,9 +80,9 @@ UINT CTimeline::GetPrevOffset(UINT offset)
 	return max;
 }
 
-UINT CTimeline::GetNextOffset(UINT offset)
+int CTimeline::GetNextOffset(int offset)
 {
-	UINT val = offset;
+	int val = offset;
 	tParam *tmp = first;
 	while(tmp)
 	{
@@ -98,7 +98,7 @@ UINT CTimeline::GetNextOffset(UINT offset)
 	return (val != offset ? val : 0);
 }
 
-void CTimeline::Remove(UINT offset, int index)
+void CTimeline::Remove(int offset, int index)
 {
 	tParam *tmp = Find(offset, index);
 	if(tmp)
@@ -123,7 +123,7 @@ int CTimeline::GetCount()
 	return len;
 }
 
-tParam *CTimeline::Find(UINT offset, int index)
+tParam *CTimeline::Find(int offset, int index)
 {
 	tParam *tmp = first;
 	while(tmp)

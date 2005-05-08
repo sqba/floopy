@@ -26,7 +26,7 @@ public:
 	virtual ~COutput();
 
 	BOOL Open(char *filename);
-	UINT Write(BYTE *data, UINT size);
+	int Write(BYTE *data, int size);
 	void Close();
 
 	//char *GetName()			{ return "wavfile"; }

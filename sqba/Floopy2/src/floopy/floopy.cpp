@@ -35,43 +35,21 @@ void printPath(IFloopySoundInput *input, int level)
 
 	printf("%s%s\n", space, input->GetName());
 
-//	if(level!=1 && input->GetInputCount() > 0)
-//	{
-//	try {
-		for(int i=0; i<input->GetInputCount(); i++)
-		{
-			printPath(input->GetSource(i), level+1);
-		}
-//	}
-//	catch(...)
-//	{
-//		printf("This happens only in debug mode!!!\n");
-//	}
-	// Zasto se ovo dogadja prilikom debagovanja i
-	// zasto se sve stampa po dva puta???
-/*	}
-	else
+	for(int i=0; i<input->GetInputCount(); i++)
 	{
-		printPath(input->GetSource(), level+1);
-	}*/
+		printPath(input->GetSource(i), level+1);
+	}
 }
-/*
-void printPath(IFloopySoundInput *input, IFloopySoundOutput *output)
-{
-	printf("%s\n", output->GetName());
-	printPath(input, 1);
-	getchar();
-}
-*/
+
 void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
 	printf("Reading %d samples...\n\n", input->GetSize());
 
 	clock_t start = clock();
 
-	UINT offset = 0;
+	int offset = 0;
 	BYTE buff[BUFFER_LENGTH];
-	UINT len, size=sizeof(buff);
+	int len, size=sizeof(buff);
 
 	memset(buff, 0, sizeof(buff));
 
@@ -86,10 +64,10 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	output->Close();
 
 	WAVFORMAT *fmt = input->GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 
-	printf("Samples read:\t%d\n", (offset / ((fmt->size / 8) * fmt->channels)));
-	printf("Output length:\t%.3f seconds\n", ((float)offset / (((float)fmt->size / 8.f) * (float)fmt->channels)) / (float)fmt->freq);
+	printf("Samples read:\t%d\n", (offset / ((fmt->bitsPerSample / 8) * fmt->channels)));
+	printf("Output length:\t%.3f seconds\n", ((float)offset / (((float)fmt->bitsPerSample / 8.f) * (float)fmt->channels)) / (float)fmt->frequency);
 
 	if(speed < 1000)
 		printf("Total time:\t%d ms\n", speed);
@@ -105,67 +83,61 @@ void main(int argc, char* argv[])
 	if(!engine->Open(TEXT("test.xml")))
 		return;
 
+	IFloopySoundInput *region = engine->CreateInput("playrgn");
+
 	//COutput *output = NULL;
 	IFloopySoundOutput *output = NULL;
 
+	region->SetSource( engine );
+
+	WAVFORMAT *fmt = engine->GetFormat();
+	assert((fmt->frequency > 0) && (fmt->bitsPerSample > 0) && (fmt->channels > 0));
+
 	if(argc >= 2)
 	{
-		// Convert seconds to samples
-		WAVFORMAT *fmt = engine->GetFormat();
-		assert((fmt->size > 0) && (fmt->channels > 0));
-		int x = fmt->freq;// * (fmt->size / 8) * fmt->channels;
-		int i = atoi(argv[1]);
-		engine->MoveTo(i*x);
+		float start = (float)atof(argv[1]);
+		region->Reset();
+		region->SetParam(0, start*fmt->frequency);
 	}
 	if(argc >= 3)
 	{
-		// Convert seconds to samples
-		WAVFORMAT *fmt = engine->GetFormat();
-		assert((fmt->size > 0) && (fmt->channels > 0));
-		int x = fmt->freq;// * (fmt->size / 8) * fmt->channels;
-		int i = atoi(argv[2]);
-		engine->SetSize(i*x);
+		float end = (float)atof(argv[2]);
+		region->Reset();
+		region->SetParam(1, end*fmt->frequency);
 	}
 
-	WAVFORMAT *fmt = engine->GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
+	WAVFORMAT format;
+	memcpy(&format, fmt, sizeof(WAVFORMAT));
 
 	int i = 0;
 
 	switch(i)
 	{
-	case 0:
-		// Render to file
-		//output = new COutput(TEXT("wavfile"), engine);
-		output = engine->CreateOutput("wavfile", fmt);
+	case 0: // Render to A wav file
+		output = engine->CreateOutput("wavfile", format);
 		output->Open("floopy.wav");
 		break;
-	case 1:
-		// Output to speakers
-		//output = new COutput(TEXT("waveout"), engine->getPlugin());
-		output = engine->CreateOutput("waveout", fmt);
+	case 1:	// Output to speakers
+		output = engine->CreateOutput("waveout", format);
 		break;
-	case 2:
-		// Output to svg
-		output = engine->CreateOutput("svgfile", fmt);
+	case 2:	// Output to svg
+		output = engine->CreateOutput("svgfile", format);
 		output->Open("floopy.svg");
 		break;
 	}
 
 	// stdout?
 
-//	printPath(engine, output);
 	printf("%s\n", output->GetName());
-	printPath(engine, 1);
+	printPath(region, 1);
 	printf("Press enter to continue...\n");
 	getchar();
-//	WAVFORMAT *fmt = engine->getPlugin()->GetFormat();
 
-	process(engine, output);
-
-	delete output;
-	delete engine;
+	process(region, output);
 
 	printf("\nPress enter to exit...");
 	getchar();
+
+	delete output;
+	delete engine;
 }

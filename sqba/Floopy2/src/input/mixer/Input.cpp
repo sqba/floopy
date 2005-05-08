@@ -83,20 +83,20 @@ int CInput::GetInputCount()
 	return m_nInputCount;
 }
 
-UINT CInput::Read(BYTE *data, UINT size)
+int CInput::Read(BYTE *data, int size)
 {
 	if(m_nLengthsSize != m_nInputCount)
 	{
 		if(NULL != m_nLengths)
 			delete[] m_nLengths;
-		m_nLengths = new UINT[m_nInputCount];
+		m_nLengths = new int[m_nInputCount];
 		m_nLengthsSize = m_nInputCount;
 	}
 
 	if(m_nInputCount>0)
 	{
 		WAVFORMAT *fmt = GetFormat();
-		assert((fmt->size > 0) && (fmt->channels > 0));
+		assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 
 		if(m_nBuffSize != (m_nInputCount*(int)size))
 		{
@@ -118,7 +118,7 @@ UINT CInput::Read(BYTE *data, UINT size)
 		mixBuffers(m_pBuffers, m_nInputCount, data, size);
 	}
 
-	UINT result = 0;
+	int result = 0;
 	for(int i=0; i<m_nInputCount; i++)
 	{
 		if(m_nLengths[i] > result)
@@ -128,7 +128,7 @@ UINT CInput::Read(BYTE *data, UINT size)
 	return result; 
 }
 
-void CInput::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, UINT size)
+void CInput::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, int size)
 {
 #ifdef _DEBUG_TIMER_
 	clock_t start = 0;
@@ -137,9 +137,9 @@ void CInput::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, U
 #endif // _DEBUG_TIMER_
 
 	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	
-	int step = fmt->size / 8;
+	int step = fmt->bitsPerSample / 8;
 	int numsamples = size/step;
 
 	// For 16 bit samples only!!!
@@ -169,7 +169,7 @@ void CInput::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, U
 
 /*
 // Maybe this one is faster? Check out...
-void CInput::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, UINT size)
+void CInput::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, int size)
 {
 	WAVFORMAT *fmt = GetFormat();
 	assert((fmt->size > 0) && (fmt->channels > 0));
@@ -218,7 +218,7 @@ void CInput::Close()
 #endif // _DEBUG_TIMER_
 }
 
-void CInput::MoveTo(UINT samples)
+void CInput::MoveTo(int samples)
 {
 	for(int i=0; i<m_nInputCount; i++)
 	{
@@ -234,7 +234,7 @@ void CInput::Reset()
 	}
 }
 
-UINT CInput::GetSize()
+int CInput::GetSize()
 {
 	DWORD size = 0;
 	for(int i=0; i<m_nInputCount; i++)

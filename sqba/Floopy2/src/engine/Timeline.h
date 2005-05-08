@@ -17,7 +17,7 @@
 
 struct tParam
 {
-	UINT offset;
+	int offset;
 	int index;
 	float value;
 	tParam *prev;
@@ -30,16 +30,16 @@ public:
 	CTimeline();
 	virtual ~CTimeline();
 
-	void Set(UINT offset, int index, float value);
-	float Get(UINT offset, int index);
-	void Remove(UINT offset, int index);
+	void Set(int offset, int index, float value);
+	float Get(int offset, int index);
+	void Remove(int offset, int index);
 	int GetCount();
-	UINT GetNextOffset(UINT offset);
-	tParam *GetParam(UINT offset, int index);
-	UINT GetPrevOffset(UINT offset);
+	int GetNextOffset(int offset);
+	tParam *GetParam(int offset, int index);
+	int GetPrevOffset(int offset);
 
 private:
-	tParam *Find(UINT offset, int index);
+	tParam *Find(int offset, int index);
 
 private:
 	tParam *first, *last;

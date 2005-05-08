@@ -26,7 +26,7 @@
 class COutput : public IFloopySoundOutput
 {
 public:
-	COutput(char *plugin, WAVFORMAT *fmt);
+	COutput(char *plugin, WAVFORMAT fmt);
 	virtual ~COutput();
 
 	char *GetName()			{ return "outputw"; }
@@ -52,7 +52,7 @@ public:
 	char *GetParamName(int index)			{ return m_plugin->GetParamName(index); }
 	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
 
-	UINT Write(BYTE *data, UINT size);
+	int Write(BYTE *data, int size);
 
 	void SetDest(IFloopySoundOutput *dst)
 	{
@@ -60,7 +60,7 @@ public:
 	}
 
 private:
-	UINT m_offset;
+	int m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundOutput *m_plugin;
 	CTimeline m_timeline;

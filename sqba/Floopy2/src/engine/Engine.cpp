@@ -11,7 +11,7 @@
 
 CEngine::CEngine()
 {
-	m_offset = m_stopAt = m_length = 0;
+	//m_offset = m_stopAt = m_length = 0;
 }
 
 CEngine::~CEngine()
@@ -25,7 +25,7 @@ IFloopySoundInput  *CEngine::CreateInput(char *plugin)
 	return new CInput(plugin);
 }
 
-IFloopySoundOutput *CEngine::CreateOutput(char *plugin, WAVFORMAT *fmt)
+IFloopySoundOutput *CEngine::CreateOutput(char *plugin, WAVFORMAT fmt)
 {
 	return new COutput(plugin, fmt);
 }
@@ -38,16 +38,16 @@ BOOL CEngine::Open(char *filename)
 	return TRUE;
 }
 
-void CEngine::MoveTo(UINT samples)
+void CEngine::MoveTo(int samples)
 {
 	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-	int x = (fmt->size / 8) * fmt->channels;
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	int x = (fmt->bitsPerSample / 8) * fmt->channels;
 
-	m_offset = samples * x;
+//	m_offset = samples * x;
 
-	if(m_length > 0)
-		m_stopAt = m_offset + m_length * x;
+//	if(m_length > 0)
+//		m_stopAt = m_offset + m_length * x;
 
 	if(NULL != m_source)
 		m_source->MoveTo(samples);
@@ -55,38 +55,39 @@ void CEngine::MoveTo(UINT samples)
 
 void CEngine::Reset()
 {
-	if(m_length > 0)
+	/*if(m_length > 0)
 	{
 		WAVFORMAT *fmt = GetFormat();
-		assert((fmt->size > 0) && (fmt->channels > 0));
-		int x = (fmt->size / 8) * fmt->channels;
+		assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+		int x = (fmt->bitsPerSample / 8) * fmt->channels;
 		m_stopAt = m_offset + m_length * x;
-	}
-	m_offset = 0;
+	}*/
+//	m_offset = 0;
 	if(NULL != m_source)
 		m_source->Reset();
 }
 
-UINT CEngine::Read(BYTE *data, UINT size)
+int CEngine::Read(BYTE *data, int size)
 {
-	if((m_stopAt > 0) && (m_offset + size > m_stopAt))
-		size = m_stopAt - m_offset;
-	if(size <= 0)
-		return 0;
+//	if((m_stopAt > 0) && (m_offset + size > m_stopAt))
+//		size = m_stopAt - m_offset;
+//	if(size <= 0)
+//		return 0;
 	//printf("offset: %d\n", m_offset);
-	UINT len = (NULL != m_source ? m_source->Read(data, size) : 0);
-	m_offset += len;
+	int len = (NULL != m_source ? m_source->Read(data, size) : 0);
+//	m_offset += len;
 	return len;
 }
-
+/*
 void CEngine::SetSize(DWORD size)
 {
 	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-	int x = (fmt->size / 8) * fmt->channels;
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	int x = (fmt->bitsPerSample / 8) * fmt->channels;
 	m_length = size;
 	m_stopAt = m_offset + m_length * x;
 }
+*/
 /*
 DWORD CEngine::GetSize()
 {
@@ -102,9 +103,9 @@ DWORD CEngine::GetSize()
 /*
 DWORD CEngine::GetSize()
 {
-	//UINT offset = GetSize();
-	UINT size = 0;
-	UINT tmp = 0;
+	//int offset = GetSize();
+	int size = 0;
+	int tmp = 0;
 	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
 	{
 		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM);
@@ -136,29 +137,41 @@ IFloopySoundInput *CEngine::testCreateTrack1()
 	IFloopySoundInput *wavfile	= CreateInput(TEXT("wavfile"));
 	IFloopySoundInput *volume	= CreateInput(TEXT("volume"));
 	IFloopySoundInput *loop	= CreateInput(TEXT("loop"));
-//	IFloopySoundInput *cache	= CreateInput(TEXT("cache"));
+	IFloopySoundInput *cache	= CreateInput(TEXT("cache"));
 	if( wavfile->Open(TEXT("Ischlju.wav")) )
 	{
-//		cache->SetSource(wavfile);
+		cache->SetSource(wavfile);
 
-		loop->SetSource(wavfile);
-//		loop->SetSource(cache);
-		loop->Reset();
-		loop->SetParam(0, 3);
+//		loop->SetSource(wavfile);
+		loop->SetSource(cache);
 
 		volume->Reset();
 		volume->SetSource(loop);
-		volume->SetParam(0, 50);
-		volume->MoveTo(44100*2);
-		volume->SetParam(0, 100);
-		volume->MoveTo(44100*3);
-		volume->SetParam(0, 150);
-		volume->MoveTo(44100*23);
-		volume->SetParam(0, 50);
-		volume->Reset();
 
-		loop->MoveTo(44100 * 23);
-		loop->SetParam(0, 2);
+		loop->Reset();
+
+		if(1)
+		{
+			volume->SetParam(0, 50);
+			volume->MoveTo(44100*2);
+			volume->SetParam(0, 100);
+			volume->MoveTo(44100*3);
+			volume->SetParam(0, 150);
+			volume->MoveTo(44100*23);
+			volume->SetParam(0, 50);
+			volume->Reset();
+
+			loop->SetParam(0, 3);
+
+			loop->MoveTo(44100 * 23);
+			loop->SetParam(0, 2);
+		}
+		else
+		{
+			// Infinite
+			loop->MoveTo(44100 * 22);
+			loop->Enable(FALSE);
+		}
 	}
 
 	return volume;
@@ -312,8 +325,8 @@ IFloopySoundInput *CEngine::testCreateMaster()
 //	IFloopySoundInput *echo	= CreateInput(TEXT("echo"));
 	IFloopySoundInput *loop	= CreateInput(TEXT("loop"));
 //	IFloopySoundInput *startat	= CreateInput(TEXT("startat"));
-	IFloopySoundInput *playrgn	= CreateInput(TEXT("playrgn"));
-	IFloopySoundInput *cache	= CreateInput(TEXT("cache"));
+//	IFloopySoundInput *playrgn	= CreateInput(TEXT("playrgn"));
+//	IFloopySoundInput *cache	= CreateInput(TEXT("cache"));
 
 //	IFloopySoundMixer *mxr = (IFloopySoundMixer*)mixer->GetSource();
 
@@ -321,10 +334,10 @@ IFloopySoundInput *CEngine::testCreateMaster()
 	mixer->AddSource( testCreateTrack2() );
 	mixer->AddSource( testCreateTrack3() );
 	WAVFORMAT *fmt = mixer->GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	mixer->AddSource( testCreateTrack4(fmt) );
 
-//	UINT size = mixer->GetSize();
+//	int size = mixer->GetSize();
 
 	volume->SetSource(mixer);
 //	echo->SetSource(volume);
@@ -332,9 +345,9 @@ IFloopySoundInput *CEngine::testCreateMaster()
 	volume->Reset(); // Reset all
 	volume->SetParam(0, 150);
 
-	if(0)
+//	if(0)
 		return volume;
-	else
+/*	else
 	{
 		if(0)
 		{
@@ -357,6 +370,6 @@ IFloopySoundInput *CEngine::testCreateMaster()
 		}
 		else
 			return cache;
-	}
+	}*/
 }
 

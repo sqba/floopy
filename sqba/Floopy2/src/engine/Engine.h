@@ -35,19 +35,19 @@ public:
 //	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
 
 	IFloopySoundInput  *CreateInput(char *plugin);
-	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT *fmt);
+	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT fmt);
 
 	BOOL Open(char *filename);
-	void MoveTo(UINT samples);
+	void MoveTo(int samples);
 	void Reset();
-	UINT Read(BYTE *data, UINT size);
-	void SetSize(DWORD size);// { m_length = size; }
-	UINT GetSize() { return (m_length > 0 ? m_length : GetSource()->GetSize()); }
-//	UINT GetSize();
+	int Read(BYTE *data, int size);
+//	void SetSize(DWORD size);// { m_length = size; }
+//	int GetSize() { return (m_length > 0 ? m_length : GetSource()->GetSize()); }
+//	int GetSize();
 
 private:
 	CTimeline m_timeline;
-	UINT m_offset, m_stopAt, m_length;
+//	int m_offset, m_stopAt;//, m_length;
 
 	IFloopySoundInput *testCreateMaster();
 	IFloopySoundInput *testCreateTrack1();

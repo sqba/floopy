@@ -11,11 +11,11 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef IFloopySoundOutput* (*CreateProc)(int, int, int);
+typedef IFloopySoundOutput* (*CreateProc)(WAVFORMAT);
 #define PROC_NAME "CreateOutput"
 #define PLUG_EXT ".dll"
 
-COutput::COutput(char *plugin, WAVFORMAT *fmt)
+COutput::COutput(char *plugin, WAVFORMAT fmt)
 {
 	m_hinst = NULL;
 	m_plugin = NULL;
@@ -31,8 +31,8 @@ COutput::COutput(char *plugin, WAVFORMAT *fmt)
 
 		if(func != NULL) {
 			printf("CreateOutput() found in %s.\n", filename);
-			assert((fmt->size > 0) && (fmt->channels > 0));
-			m_plugin = func( fmt->freq, fmt->size, fmt->channels);
+			assert((fmt.bitsPerSample > 0) && (fmt.channels > 0));
+			m_plugin = func( fmt );
 			IFloopySoundOutput::SetDest( m_plugin );
 		}
 		else
@@ -49,9 +49,9 @@ COutput::~COutput()
 		FreeLibrary(m_hinst);
 }
 
-UINT COutput::Write(BYTE *data, UINT size)
+int COutput::Write(BYTE *data, int size)
 {
-	UINT len = (NULL != m_plugin ? m_plugin->Write(data, size) : 0);
+	int len = (NULL != m_plugin ? m_plugin->Write(data, size) : 0);
 	m_offset += len;
 	return len;
 }

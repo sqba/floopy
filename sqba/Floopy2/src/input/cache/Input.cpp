@@ -23,7 +23,7 @@ CInput::~CInput()
 		delete[] m_pBuffer;
 }
 
-UINT CInput::Read(BYTE *data, UINT size)
+int CInput::Read(BYTE *data, int size)
 {
 	// Buffer is empty
 	if(m_nSize == 0)
@@ -47,8 +47,8 @@ UINT CInput::Read(BYTE *data, UINT size)
 int CInput::samplesToBytes()
 {
 	WAVFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-	return (fmt->size / 8) * fmt->channels;
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	return (fmt->bitsPerSample / 8) * fmt->channels;
 }
 
 BOOL CInput::createBuffer()
@@ -64,7 +64,7 @@ BOOL CInput::createBuffer()
 	IFloopySoundInput *src = GetSource();
 	if(src)
 	{
-		UINT size = src->GetSize();
+		int size = src->GetSize();
 		if(size > 0)
 		{
 			// Allocate the memory
@@ -76,12 +76,12 @@ BOOL CInput::createBuffer()
 			src->Reset();
 			size = (1024 < m_nSize ? 1024 : m_nSize);
 			BYTE *pbuff = m_pBuffer;
-			UINT len = 0;
+			int len = 0;
 			while(len < m_nSize)
 			{
 				if((len + size) > m_nSize)
 					size = m_nSize - len;
-				UINT read = src->Read(pbuff, size);
+				int read = src->Read(pbuff, size);
 				if(read == 0)
 					break;
 				pbuff += read;
@@ -101,12 +101,12 @@ BOOL CInput::SetSource(IFloopySoundInput *src)
 	return IFloopySoundInput::SetSource(src);
 }
 
-void CInput::MoveTo(UINT samples)
+void CInput::MoveTo(int samples)
 {
 	m_nPosition = samples * samplesToBytes();
 }
 
-UINT CInput::GetPos()
+int CInput::GetPos()
 {
 	return m_nPosition / samplesToBytes();
 }
@@ -114,4 +114,17 @@ UINT CInput::GetPos()
 void CInput::Reset()
 {
 	m_nPosition = 0;
+}
+
+void CInput::Close()
+{
+	if(m_pBuffer)
+	{
+		delete[] m_pBuffer;
+		m_pBuffer = NULL;
+		m_nSize = 0;
+		m_nPosition = 0;
+	}
+
+	IFloopySoundInput::Close();
 }

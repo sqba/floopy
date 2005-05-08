@@ -23,11 +23,12 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
-	UINT Read(BYTE *data, UINT size);
+	int Read(BYTE *data, int size);
 	BOOL SetSource(IFloopySoundInput *src);
-	void MoveTo(UINT samples);
-	UINT GetPos();
+	void MoveTo(int samples);
+	int GetPos();
 	void Reset();
+	void Close();
 
 private:
 	int samplesToBytes();
@@ -35,8 +36,8 @@ private:
 
 private:
 	BYTE *m_pBuffer;
-	UINT m_nSize;
-	UINT m_nPosition;
+	int m_nSize;
+	int m_nPosition;
 };
 
 #endif // !defined(AFX_INPUT_H__7F7E81C5_BFE1_483B_A8C6_7AC5C56F08AE__INCLUDED_)

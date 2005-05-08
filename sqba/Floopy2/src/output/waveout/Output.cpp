@@ -8,7 +8,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-COutput::COutput(int nSamplesPerSec, int wBitsPerSample, int nChannels)
+COutput::COutput(WAVFORMAT fmt)
 {
 	// initialise the module variables
 	waveBlocks         = allocateBlocks(BLOCK_SIZE, BLOCK_COUNT);
@@ -18,9 +18,9 @@ COutput::COutput(int nSamplesPerSec, int wBitsPerSample, int nChannels)
 	InitializeCriticalSection(&waveCriticalSection);
 
 	// set up the WAVEFORMATEX structure.
-	wfx.nSamplesPerSec  = nSamplesPerSec;	// sample rate
-	wfx.wBitsPerSample  = wBitsPerSample;	// sample size
-	wfx.nChannels       = nChannels;		// channels
+	wfx.nSamplesPerSec  = fmt.frequency;	// sample rate
+	wfx.wBitsPerSample  = fmt.bitsPerSample;// sample size
+	wfx.nChannels       = fmt.channels;		// channels
 	
 	wfx.cbSize          = 0;		// size of _extra_ info
 	wfx.wFormatTag      = WAVE_FORMAT_PCM;
@@ -62,7 +62,7 @@ COutput::~COutput()
 	waveOutClose(hWaveOut);
 }
 
-UINT COutput::Write(BYTE *data, UINT size)
+int COutput::Write(BYTE *data, int size)
 {
 	writeAudio(hWaveOut, (char*)data, size);
 	return size;

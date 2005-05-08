@@ -18,7 +18,7 @@ public:
 	CInput();
 	virtual ~CInput();
 
-	UINT Read(BYTE *data, UINT size);
+	int Read(BYTE *data, int size);
 
 	char *GetName()			{ return "volume"; }
 	char *GetDescription()	{ return "Volume control"; }

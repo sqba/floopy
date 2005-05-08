@@ -19,7 +19,7 @@ public:
 	CInput();
 	virtual ~CInput();
 
-	UINT Read(BYTE *data, UINT size);
+	int Read(BYTE *data, int size);
 
 	char *GetName()			{ return "loop"; }
 	char *GetDescription()	{ return "Looping component"; }
@@ -32,8 +32,8 @@ public:
 	char *GetParamName(int index)	{ return "loopcount"; }
 	char *GetParamDesc(int index)	{ return "Loop Count"; }
 
-	UINT GetSize();
-	void MoveTo(UINT samples);
+	int GetSize();
+	void MoveTo(int samples);
 	void Reset();
 
 private:
@@ -41,7 +41,7 @@ private:
 
 private:
 	int m_nLoops, m_nMaxLoops;
-	UINT m_nPosition;//, m_pos;
+	int m_nPosition;//, m_pos;
 };
 
 #endif // !defined(AFX_INPUT_H__8424BDB3_B751_4EBE_B07D_55F804CFC065__INCLUDED_)
