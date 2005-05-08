@@ -24,13 +24,13 @@ void printPath(IFloopySoundInput *input, int level)
 		for(int i=0; i<indent-2; i++)
 			space[i] = ' ';
 		
-		space[i] = 0xb3;//0xc3;//0xc4;
+		space[i] = (char)0xb3;//0xc3;//0xc4;
 		printf("%s\n", space);
 		
-		space[i] = 0xc0;//0xc3;//0xc4;
+		space[i] = (char)0xc0;//0xc3;//0xc4;
 		
-		space[i+1] = 0xc4;
-		space[i+2] = 0xc4;
+		space[i+1] = (char)0xc4;
+		space[i+2] = (char)0xc4;
 	}
 
 	printf("%s%s\n", space, input->GetName());
@@ -65,28 +65,36 @@ void printPath(IFloopySoundInput *input, IFloopySoundOutput *output)
 */
 void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
+	printf("Reading %d samples...\n\n", input->GetSize());
+
 	clock_t start = clock();
 
 	UINT offset = 0;
 	BYTE buff[BUFFER_LENGTH];
 	UINT len, size=sizeof(buff);
+
 	memset(buff, 0, sizeof(buff));
-//	while(((len=input->Read(buff, size, 0)) > 0) && (offset<1000000))
+
 	while((len=input->Read(buff, size)) > 0)
 	{
 		offset += len;
 		output->Write(buff, len);
 		memset(buff, 0, sizeof(buff));
 	}
+	DWORD speed = clock() - start;
+
 	output->Close();
 
-	DWORD speed = clock() - start;
-	printf("Processing time: %d ms\n", speed);
 	WAVFORMAT *fmt = input->GetFormat();
 	assert((fmt->size > 0) && (fmt->channels > 0));
-	//int x = ((fmt->size / 8) * fmt->channels);
-	printf("Read:   %d samples\n", (offset / ((fmt->size / 8) * fmt->channels)));
-	printf("Length: %f seconds\n", ((float)offset / (((float)fmt->size / 8.f) * (float)fmt->channels)) / (float)fmt->freq);
+
+	printf("Samples read:\t%d\n", (offset / ((fmt->size / 8) * fmt->channels)));
+	printf("Output length:\t%.3f seconds\n", ((float)offset / (((float)fmt->size / 8.f) * (float)fmt->channels)) / (float)fmt->freq);
+
+	if(speed < 1000)
+		printf("Total time:\t%d ms\n", speed);
+	else
+		printf("Total time:\t%.3f sec\n", (float)speed / 1000.f);
 }
 
 void main(int argc, char* argv[])
@@ -149,17 +157,15 @@ void main(int argc, char* argv[])
 //	printPath(engine, output);
 	printf("%s\n", output->GetName());
 	printPath(engine, 1);
-	printf("Press enter to continue");
+	printf("Press enter to continue...\n");
 	getchar();
 //	WAVFORMAT *fmt = engine->getPlugin()->GetFormat();
-	
-	printf("%d samples\n", engine->GetSize());
 
 	process(engine, output);
 
 	delete output;
 	delete engine;
 
-	printf("Press enter to exit");
+	printf("\nPress enter to exit...");
 	getchar();
 }
