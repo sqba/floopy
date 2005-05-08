@@ -28,6 +28,8 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
+	BOOL Open(char *filename);
+
 //	int   GetParamCount()					{ return 1; }
 //	void  SetParam(int index, float value)	{ if(index==0) m_startAt = value; if(index==2) m_stopAt = value; }
 //	float GetParam(int index)				{ if(index==0) return m_startAt else if(index==2) return m_stopAt else return 0; }
@@ -36,14 +38,6 @@ public:
 
 	IFloopySoundInput  *CreateInput(char *plugin);
 	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT fmt);
-
-	BOOL Open(char *filename);
-	void MoveTo(int samples);
-	void Reset();
-	int Read(BYTE *data, int size);
-//	void SetSize(DWORD size);// { m_length = size; }
-//	int GetSize() { return (m_length > 0 ? m_length : GetSource()->GetSize()); }
-//	int GetSize();
 
 private:
 	CTimeline m_timeline;

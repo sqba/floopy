@@ -24,10 +24,10 @@ void printPath(IFloopySoundInput *input, int level)
 		for(int i=0; i<indent-2; i++)
 			space[i] = ' ';
 		
-		space[i] = (char)0xb3;//0xc3;//0xc4;
+		space[i] = (char)0xb3;
 		printf("%s\n", space);
 		
-		space[i] = (char)0xc0;//0xc3;//0xc4;
+		space[i] = (char)0xc0;
 		
 		space[i+1] = (char)0xc4;
 		space[i+2] = (char)0xc4;
@@ -43,36 +43,42 @@ void printPath(IFloopySoundInput *input, int level)
 
 void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
-	printf("Reading %d samples...\n\n", input->GetSize());
+	int samples = input->GetSize();
+	printf("Reading %d samples...\n\n", samples);
+
+	WAVFORMAT *fmt = input->GetFormat();
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	int x = (fmt->bitsPerSample / 8) * fmt->channels;
 
 	clock_t start = clock();
 
 	int offset = 0;
 	BYTE buff[BUFFER_LENGTH];
 	int len, size=sizeof(buff);
-
 	memset(buff, 0, sizeof(buff));
 
+	int max = samples * x;
+	int percent = 0;
+
+	printf("Reading:   0%");
 	while((len=input->Read(buff, size)) > 0)
 	{
 		offset += len;
 		output->Write(buff, len);
 		memset(buff, 0, sizeof(buff));
+		percent = offset * 100 / max;
+		printf("\b\b\b%2d%%", percent);
 	}
+
 	DWORD speed = clock() - start;
 
-	output->Close();
-
-	WAVFORMAT *fmt = input->GetFormat();
-	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-
-	printf("Samples read:\t%d\n", (offset / ((fmt->bitsPerSample / 8) * fmt->channels)));
-	printf("Output length:\t%.3f seconds\n", ((float)offset / (((float)fmt->bitsPerSample / 8.f) * (float)fmt->channels)) / (float)fmt->frequency);
-
 	if(speed < 1000)
-		printf("Total time:\t%d ms\n", speed);
+		printf("\nFinished in %d ms\n\n", speed);
 	else
-		printf("Total time:\t%.3f sec\n", (float)speed / 1000.f);
+		printf("\nFinished in %.3f sec\n\n", (float)speed / 1000.f);
+
+	printf("Samples: %d\n", (offset / x));
+	printf("Seconds: %.3f\n", (float)offset / (float)x / (float)fmt->frequency);
 }
 
 void main(int argc, char* argv[])
@@ -134,6 +140,9 @@ void main(int argc, char* argv[])
 	getchar();
 
 	process(region, output);
+
+	region->Close();
+	output->Close();
 
 	printf("\nPress enter to exit...");
 	getchar();

@@ -125,8 +125,18 @@ private:
 		short y;
 	};
 
+	/*struct Param
+	{
+		int val;
+		char *name;
+		char *desc;
+	} params[] = {
+		512, "interval", "Interval", 
+		1, "step", "Step"
+	};*/
+
 public:
-	COutput(int nSamplesPerSec, int wBitsPerSample, int nChannels);
+	COutput(WAVFORMAT fmt);
 	virtual ~COutput();
 
 	BOOL Open(char *filename);
@@ -137,7 +147,13 @@ public:
 	char *GetDescription()	{ return "SVG File Writer"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
-
+/*
+	int   GetParamCount()			{ return 2; }
+	void  SetParam(int index, float value) {  }
+	float GetParam(int index)		{ return (float)interval; }
+	char *GetParamName(int index)	{ return "Frequency"; }
+	char *GetParamDesc(int index)	{ return "Tone Frequency"; }
+*/
 private:
 	FILE *m_pFile;
 	int m_nSamplesPerSec, m_wBitsPerSample, m_nChannels;
@@ -147,6 +163,8 @@ private:
 	int x;//, step=1;
 	int counter;
 	int headerLen;
+//	int interval;
+//	int step;
 };
 
 #endif // !defined(AFX_OUTPUT_H__F92C4FCF_3973_4C92_8FD9_3248B8EC974B__INCLUDED_)

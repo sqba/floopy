@@ -9,11 +9,11 @@
 //////////////////////////////////////////////////////////////////////
 
 
-COutput::COutput(int nSamplesPerSec, int wBitsPerSample, int nChannels)
+COutput::COutput(WAVFORMAT fmt)
 {
-	m_nSamplesPerSec = nSamplesPerSec;
-	m_wBitsPerSample = wBitsPerSample;
-	m_nChannels = nChannels;
+	m_nSamplesPerSec = fmt.frequency;
+	m_wBitsPerSample = fmt.bitsPerSample;
+	m_nChannels = fmt.channels;
 	m_pFile = NULL;
 	height=400;
 	width=65535;
@@ -24,6 +24,8 @@ COutput::COutput(int nSamplesPerSec, int wBitsPerSample, int nChannels)
 	pt2.x=pt2.y=0;
 	x=0;//, step=1;
 	counter=0;
+//	interval = 64;//512;
+//	step=1;
 }
 
 COutput::~COutput()
@@ -50,7 +52,7 @@ int COutput::Write(BYTE *data, int size)
 {
 	int written = 0;
 
-	int interval = 512;
+	int interval = 64;//512;
 	int step=1;
 
 	short int *buffer = (short int*)data;
