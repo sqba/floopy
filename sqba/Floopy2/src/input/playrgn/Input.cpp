@@ -55,7 +55,9 @@ void CInput::MoveTo(int samples)
 
 void CInput::Reset()
 {
-	MoveTo(0);
+//	MoveTo(0);
+	m_nPosition = m_nStartAt;
+	IFloopySoundInput::Reset();
 }
 
 void  CInput::SetParam(int index, float value)

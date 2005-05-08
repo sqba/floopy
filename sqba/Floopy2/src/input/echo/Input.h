@@ -25,6 +25,8 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
+	void Reset();
+
 private:
 	short echo_buf[65536], echo_buf2[65536];
 };

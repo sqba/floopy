@@ -20,7 +20,6 @@ CInput::~CInput()
 
 }
 
-
 int CInput::Read(BYTE *data, int size)
 {
 	int len = IFloopySoundInput::Read(data, size);
@@ -53,4 +52,11 @@ int CInput::Read(BYTE *data, int size)
 	}
 
 	return len;
+}
+
+void CInput::Reset()
+{
+	memset(echo_buf, 0, sizeof(echo_buf));
+	memset(echo_buf2, 0, sizeof(echo_buf));
+	IFloopySoundInput::Reset();
 }

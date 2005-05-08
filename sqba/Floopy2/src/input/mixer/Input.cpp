@@ -212,7 +212,7 @@ void CInput::Close()
 		else
 			printf("Mixing rate:\t%.2f Mb/sec\n", amr / 1024.f);
 		printf("Average frame mixing time:\t%f ms\n", afmt);
-		printf("Average frame size:\t\t%f samples\n", afsz);
+		printf("Average frame size:\t\t%.2f samples\n", afsz);
 	}
 	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
 #endif // _DEBUG_TIMER_
@@ -232,6 +232,8 @@ void CInput::Reset()
 	{
 		m_pInputs[i]->Reset();
 	}
+	if(m_nBuffSize > 0)
+		memset(m_pBuffers, 0, m_nBuffSize);
 }
 
 int CInput::GetSize()

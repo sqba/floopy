@@ -11,8 +11,8 @@
 CInput::CInput()
 {
 	m_nPosition = 0;
-	m_nLoops = 0;
-	m_nMaxLoops = -1;  // -1 - infinite?
+//	m_nLoops = 0;
+//	m_nMaxLoops = -1;  // -1 - infinite?
 }
 
 CInput::~CInput()
@@ -22,11 +22,11 @@ CInput::~CInput()
 
 int CInput::Read(BYTE *data, int size)
 {
-	if((m_nMaxLoops > 0) && (m_nLoops >= m_nMaxLoops))
-		return 0;
+//	if((m_nMaxLoops > 0) && (m_nLoops >= m_nMaxLoops))
+//		return 0;
 
 	int len = 0;
-	int origSize = size;
+/*	int origSize = size;
 	
 	int srclen = IFloopySoundInput::GetSize();
 	srclen *= samplesToBytes();
@@ -39,35 +39,72 @@ int CInput::Read(BYTE *data, int size)
 			len = IFloopySoundInput::Read(data, size);
 			size = origSize - size;
 		}
-		IFloopySoundInput::Reset();
-		m_nPosition = 0;
-		m_nLoops++;
+		Reset();
+//		m_nPosition = 0;
+//		m_nLoops++;
 		len += IFloopySoundInput::Read(data, size);
 		m_nPosition += len;
 	}
 	else
-	{
+	{*/
 		len = IFloopySoundInput::Read(data, size);
+		if(len < size)
+		{
+			// We have reached the end
+			Reset();
+			len += IFloopySoundInput::Read(data+len, size-len);
+		}
 		m_nPosition += len;
-	}
+//	}
 
 	return len;
 }
-
+/*
 void CInput::SetParam(int index, float value)
 { 
 	m_nMaxLoops = (int)value;
 	Reset();
 }
-
+*/
 int CInput::GetSize()
 {
-	if(m_nMaxLoops > 0)
-		return (NULL != m_source ? m_source->GetSize()*m_nMaxLoops : 0);
-	else
+//	if(m_nMaxLoops > 0)
+//		return (NULL != m_source ? m_source->GetSize()*m_nMaxLoops : 0);
+//	else
 		return -1;
 }
 
+void CInput::MoveTo(int samples)
+{
+	int size = IFloopySoundInput::GetSize();
+
+	/*if((m_nMaxLoops > 0) && (samples > (size * m_nMaxLoops)))
+	{
+		Reset();
+		m_nLoops = m_nMaxLoops;
+		return;
+	}*/
+
+	if(samples > size)
+	{
+		//m_nLoops = samples / size;
+		/*int n = samples % size;
+		float a = (float)samples / (float)size;
+		int b = (int)samples / (int)size;
+		float c = a - (float)b;
+		//samples -= (m_nLoops * size);
+		int x = samples - (samples % size);
+		samples = size * (samples % size) / 10;*/
+		//samples = size - (samples % size);
+		samples = samples % size;
+		IFloopySoundInput::Reset();
+	}
+	IFloopySoundInput::MoveTo(samples);
+
+//	m_nPosition = samples * samplesToBytes();
+}
+
+/*
 void CInput::MoveTo(int samples)
 {
 	int size = IFloopySoundInput::GetSize();
@@ -91,11 +128,11 @@ void CInput::MoveTo(int samples)
 
 	m_nPosition = samples * samplesToBytes();
 }
-
+*/
 void CInput::Reset()
 {
 	m_nPosition = 0;
-	m_nLoops=0;
+//	m_nLoops=0;
 	IFloopySoundInput::Reset();
 }
 
