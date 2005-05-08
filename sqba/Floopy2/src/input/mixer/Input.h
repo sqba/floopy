@@ -26,17 +26,9 @@ public:
 	virtual ~CInput();
 
 	char *GetName()			{ return "mixer"; }
-	char *GetDescription()	{ return "Mixer component"; }
+	char *GetDescription()	{ return "Mixer Component"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
-
-#ifdef _DEBUG_TIMER_
-	int   GetParamCount()			{ return 4; }
-	void  SetParam(int index, float value);// { m_bDebugTimer = (value==1.f); }
-	float GetParam(int index);//		{ return (float)m_bDebugTimer; }
-	char *GetParamName(int index);//	{ return "timer"; }
-	char *GetParamDesc(int index);//	{ return "Debug Timer"; }
-#endif // _DEBUG_TIMER_
 
 	void MoveTo(UINT samples);
 	void Reset();
@@ -51,24 +43,32 @@ public:
 	void RemoveSource(IFloopySoundInput *src);
 	int GetInputCount();
 
-private:
-	void MixBuffers(BYTE *buffers, int count, BYTE *output, UINT size);
-
 #ifdef _DEBUG_TIMER_
-	BOOL m_bDebugTimer;
-	DWORD speed;
-	int frames;
-	int framesize;
-
-	BYTE *buffers;
-	int buffsize;
-
-	UINT *lengths;
-	int lensize;
+	int   GetParamCount()			{ return 4; }
+	void  SetParam(int index, float value);// { m_bDebugTimer = (value==1.f); }
+	float GetParam(int index);//		{ return (float)m_bDebugTimer; }
+	char *GetParamName(int index);//	{ return "timer"; }
+	char *GetParamDesc(int index);//	{ return "Debug Timer"; }
 #endif // _DEBUG_TIMER_
 
-	IFloopySoundInput *inputs[MAX_INPUTS];
-	int count;
+private:
+	void mixBuffers(BYTE *buffers, int count, BYTE *output, UINT size);
+
+	UINT	*m_nLengths;
+	int		m_nLengthsSize;
+
+	BYTE	*m_pBuffers;
+	int		m_nBuffSize;
+
+	IFloopySoundInput *m_pInputs[MAX_INPUTS];
+	int		m_nInputCount;
+
+#ifdef _DEBUG_TIMER_
+	BOOL	m_bDebugTimer;
+	DWORD	m_dwSpeed;
+	int		m_nFrameCount;
+	int		m_nFrameSize;
+#endif // _DEBUG_TIMER_
 };
 
 #endif // !defined(AFX_MIXER_H__1B41AC02_C337_4777_8CEC_C87828A934BE__INCLUDED_)
