@@ -258,8 +258,8 @@ IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine)
 		//int prb1=0, prb2=1, prb3=0, prb4=0;
 		//int prb1=0, prb2=1, prb3=0, prb4=0;
 		//int prb1=0, prb2=1, prb3=1, prb4=0;
-		int prb1=1, prb2=1, prb3=0, prb4=0;
-		//int prb1=1, prb2=0, prb3=1, prb4=0; // Jedino ovako radi kako treba!
+		//int prb1=1, prb2=1, prb3=0, prb4=0;
+		int prb1=1, prb2=0, prb3=1, prb4=0; // Jedino ovako radi kako treba!
 		if(prb1)
 		{
 			wavfile->Reset();
