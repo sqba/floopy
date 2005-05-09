@@ -71,12 +71,18 @@ BOOL saveXML(IFloopyEngine *engine, char *filename)
 
 	fprintf(fp, "\nEngine diagram:\n\n");
 	printTree(fp, engine, 0, FALSE, FALSE);
-	fprintf(fp, "\n\nPress enter to continue...");
-	getchar();
+	fprintf(fp, "\n\n");
+	if(fp == stdout)
+	{
+		fprintf(fp, "Press enter to continue...");
+		getchar();
+	}
 
-	printTimeline(fp, engine, fmt->frequency, TRUE);
+//	printTimeline(fp, engine, fmt->frequency, TRUE);
 
 	engine->Reset();
+
+//	engine->dump(fp);
 
 	if(fp != stdout)
 		fclose(fp);
@@ -149,22 +155,42 @@ void printTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive)
 
 	IFloopySoundInput *comp = input->GetComponent();
 
-	char line[81] = {0};
-	memset(line, '-', 80);
-	fprintf(fp, "%s%s\n%s\n", line, comp->GetName(), line);
+	/*if(0 == strcmpi(comp->GetName(), "ischlju.wav"))
+	//if(0 == strcmpi(comp->GetName(), "mixer"))
+	{
+		int debug=1;
+	}*/
+
+	char line[80] = {0};
+	memset(line, '-', 79);
+	fprintf(fp, "%s\n%s\n%s\n", line, comp->GetName(), line);
 
 	int offset=0;
 	do {
-		fprintf(fp, "%d*%d", freq, offset/freq);
-		input->MoveTo(offset);
-		for(int i=0; i<input->GetParamCount(); i++)
+		if(input->GetParamCount() > 0)
 		{
-			fprintf(fp, "\t%s %s %f\t", 
-				(input->IsEnabled() ? "ON" : "OFF"), 
-				input->GetParamName(i),
-				input->GetParam(i));
+			/*int z = 44100 * 12;// + 4410*1;
+			if(z == offset)
+			{
+				int debug=1;
+			}*/
+			fprintf(fp, "%d*%d", freq, offset/freq);
+			input->MoveTo(offset);
+			for(int i=0; i<input->GetParamCount(); i++)
+			{
+				char *paramName = input->GetParamName(i);
+				float paramVal = input->GetParam(i);
+				fprintf(fp, "\t%s %s %f\t", 
+					(input->IsEnabled() ? "ON" : "OFF"), paramName, paramVal);
+			}
+			fprintf(fp, "\n");
 		}
-		fprintf(fp, "\n");
+		else
+		{
+			fprintf(fp, "%d*%d", freq, offset/freq);
+			input->MoveTo(offset);
+			fprintf(fp, "\t%s\n", (input->IsEnabled() ? "ON" : "OFF"));
+		}
 		offset = input->GetNextOffset(offset);
 	} while (offset > 0);
 
@@ -221,20 +247,22 @@ IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine)
 
 		volume->SetSource(loop);
 
-		wavfile->Reset();
-		volume->Reset();
-		loop->Reset();
-			
-		loop->SetParam(-333, 1);
-		wavfile->SetParam(-333, 2);
-		volume->SetParam(-333, 3);
+		wavfile->SetParam(-333, 1);
+		cache->SetParam(-333, 2);
+		loop->SetParam(-333, 3);
+		volume->SetParam(-333, 4);
 
 //		if(1)
 //		{
 
-		int prb1=1, prb2=0, prb3=0;
+		//int prb1=0, prb2=1, prb3=0, prb4=0;
+		//int prb1=0, prb2=1, prb3=0, prb4=0;
+		//int prb1=0, prb2=1, prb3=1, prb4=0;
+		int prb1=1, prb2=1, prb3=0, prb4=0;
+		//int prb1=1, prb2=0, prb3=1, prb4=0; // Jedino ovako radi kako treba!
 		if(prb1)
 		{
+			wavfile->Reset();
 			wavfile->Enable(TRUE);
 			wavfile->MoveTo(44100 * 3);
 			wavfile->Enable(FALSE);
@@ -243,8 +271,20 @@ IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine)
 			wavfile->MoveTo(44100 * 24);
 			wavfile->Enable(FALSE);
 		}
-		if(prb1)
+		if(prb2)
 		{
+			cache->Reset();
+			cache->Enable(TRUE);
+			cache->MoveTo(44100 * 3);
+			cache->Enable(FALSE);
+			cache->MoveTo(44100 * 23);
+			cache->Enable(TRUE);
+			cache->MoveTo(44100 * 24);
+			cache->Enable(FALSE);
+		}
+		if(prb3)
+		{
+			loop->Reset();
 			loop->Enable(TRUE);
 			loop->MoveTo(44100 * 3);
 			loop->Enable(FALSE);
@@ -253,8 +293,9 @@ IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine)
 			loop->MoveTo(44100 * 24);
 			loop->Enable(FALSE);
 		}
-		if(prb1)
+		/*if(prb4)
 		{
+			volume->Reset();
 			volume->MoveTo(44100 * 3);
 			volume->Enable(FALSE);
 
@@ -263,7 +304,7 @@ IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine)
 
 			volume->MoveTo(44100 * 24);
 			volume->Enable(FALSE);
-		}
+		}*/
 
 			volume->SetParam(0, 50);
 			volume->MoveTo(44100*2);
@@ -387,6 +428,8 @@ IFloopySoundInput *testCreateTrack4(IFloopyEngine *engine, WAVFORMAT *fmt)
 	//IFloopySoundInput *echo		= CreateInput(TEXT("echo"));
 
 	tonegen->SetFormat( fmt );
+		
+	tonegen->SetParam(-333, 5);
 
 	tonegen->Reset();
 	tonegen->Enable(FALSE);

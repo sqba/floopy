@@ -10,6 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include <windows.h>
+#include <stdio.h>
 
 #define TIMELINE_PARAM		-1
 #define PARAM_ENABLE	1000.f
@@ -38,8 +39,11 @@ public:
 	tParam *GetParam(int offset, int index);
 	int GetPrevOffset(int offset);
 
+	void dump(FILE *fp);
+
 private:
 	tParam *Find(int offset, int index);
+//	tParam *GetPrevParam(int offset);
 
 private:
 	tParam *first, *last;

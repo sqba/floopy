@@ -17,6 +17,13 @@
 #include "output.h"
 #include "timeline.h"
 
+struct tComponent
+{
+	IFloopy *comp;
+	tComponent *prev;
+	tComponent *next;
+};
+
 class CEngine : public IFloopyEngine
 {
 public:
@@ -40,6 +47,8 @@ public:
 	IFloopySoundInput  *CreateInput(char *plugin);
 	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT fmt);
 
+//	void dump(FILE *fp);
+
 private:
 	CTimeline m_timeline;
 //	int m_offset, m_stopAt;//, m_length;
@@ -49,6 +58,9 @@ private:
 	IFloopySoundInput *testCreateTrack2();
 	IFloopySoundInput *testCreateTrack3();
 	IFloopySoundInput *testCreateTrack4(WAVFORMAT *fmt);
+
+	tComponent *m_pFirst, *m_pLast;
+	tComponent *add(IFloopy *comp);
 };
 
 #endif // !defined(AFX_ENGINE_H__621A6F07_09D1_41D0_A981_DB32D29DA57A__INCLUDED_)

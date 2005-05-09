@@ -44,6 +44,8 @@ public:
 
 	BOOL Save(char *filename) { return (m_plugin ? m_plugin->Save(filename) : FALSE); }
 
+//	void dump(FILE *fp) { m_plugin->dump(fp); }
+
 private:
 	HINSTANCE m_hinst;
 	IFloopyEngine *m_plugin;

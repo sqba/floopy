@@ -44,7 +44,7 @@ void printPath(IFloopySoundInput *input, int level)
 void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
 	int samples = input->GetSize();
-	printf("Reading %d samples...\n\n", samples);
+	fprintf(stderr, "Reading %d samples...\n\n", samples);
 
 	WAVFORMAT *fmt = input->GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
@@ -60,25 +60,25 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	int max = samples * x;
 	int percent = 0;
 
-	printf("Reading:   0%");
+	fprintf(stderr, "Reading:   0%");
 	while((len=input->Read(buff, size)) > 0)
 	{
 		offset += len;
 		output->Write(buff, len);
 		memset(buff, 0, sizeof(buff));
 		percent = offset * 100 / max;
-		printf("\b\b\b%2d%%", percent);
+		fprintf(stderr, "\b\b\b%2d%%", percent);
 	}
 
 	DWORD speed = clock() - start;
 
 	if(speed < 1000)
-		printf("\nFinished in %d ms\n\n", speed);
+		fprintf(stderr, "\nFinished in %d ms\n\n", speed);
 	else
-		printf("\nFinished in %.3f sec\n\n", (float)speed / 1000.f);
+		fprintf(stderr, "\nFinished in %.3f sec\n\n", (float)speed / 1000.f);
 
-	printf("Samples: %d\n", (offset / x));
-	printf("Seconds: %.3f\n", (float)offset / (float)x / (float)fmt->frequency);
+	fprintf(stderr, "Samples: %d\n", (offset / x));
+	fprintf(stderr, "Seconds: %.3f\n", (float)offset / (float)x / (float)fmt->frequency);
 }
 
 void main(int argc, char* argv[])
@@ -139,18 +139,21 @@ void main(int argc, char* argv[])
 	printf("Press enter to continue...\n");
 	getchar();
 */
+	fprintf(stderr, "\nPress enter to start...");
+	getchar();
+
 	process(region, output);
 
 	engine->Reset();
 	engine->Save("test");
-	printf("\n");
+	fprintf(stderr, "\n");
 
 	region->Close();
 	output->Close();
 
-	printf("\nPress enter to exit...");
-	getchar();
-
 	delete output;
 	delete engine;
+
+	fprintf(stderr, "\nPress enter to exit...");
+	getchar();
 }

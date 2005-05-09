@@ -2,6 +2,10 @@
 #define _IFLOOPY_H_
 
 
+//#include <windows.h>	// Data type definitions (BYTE, INT, DWORD...)
+//#include <stdio.h>		// FILE
+
+
 //! Portable waveform structure
 typedef struct structWAVFormat
 {
@@ -66,6 +70,8 @@ public:
 
 	virtual void Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
 	virtual BOOL IsEnabled()				{ return m_bEnabled; }
+
+//	virtual void dump(FILE *fp) {}
 
 private:
 	BOOL m_bEnabled;

@@ -39,7 +39,7 @@ CEngine::~CEngine()
 {
 	if(NULL != m_plugin)
 	{
-		m_plugin->Close();
+		//m_plugin->Close();
 		delete m_plugin;
 	}
 

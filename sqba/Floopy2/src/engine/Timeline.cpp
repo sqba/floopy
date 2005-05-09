@@ -18,9 +18,20 @@ CTimeline::~CTimeline()
 	tParam *tmp;
 	while(first)
 	{
+		//printf("%d %d %f\n", first->offset, first->index, first->value);
 		tmp = first->next;
 		delete first;
 		first = tmp;
+	}
+}
+
+void CTimeline::dump(FILE *fp)
+{
+	tParam *tmp = first;
+	while(tmp)
+	{
+		fprintf(fp, "%d\t%d\t%f\n", tmp->offset, tmp->index, tmp->value);
+		tmp = tmp->next;
 	}
 }
 
@@ -58,6 +69,25 @@ float CTimeline::Get(int offset, int index)
 	return(tmp ? tmp->value : 0.f);
 }
 
+//tParam *CTimeline::GetPrevParam(int offset)
+int CTimeline::GetPrevOffset(int offset)
+{
+	int max = 0;
+	tParam *tmp = first;
+//	tParam *res = NULL;
+	while(tmp)
+	{
+		if((tmp->offset < offset) && (tmp->offset > max))
+		{
+			max = tmp->offset;
+//			res = tmp;
+		}
+		tmp = tmp->next;
+	}
+//	return res;
+	return max;
+}
+/*
 int CTimeline::GetPrevOffset(int offset)
 {
 	//int val = offset;
@@ -69,10 +99,10 @@ int CTimeline::GetPrevOffset(int offset)
 		{
 			if(tmp->offset > max)
 				max = tmp->offset;
-			/*if((val == offset) || (tmp->offset < val))
-			{
-				val = tmp->offset;
-			}*/
+			//if((val == offset) || (tmp->offset < val))
+			//{
+			//	val = tmp->offset;
+			//}
 		}
 		tmp = tmp->next;
 	}
@@ -93,6 +123,29 @@ int CTimeline::GetNextOffset(int offset)
 				val = tmp->offset;
 			}
 		}
+		tmp = tmp->next;
+	}
+	return (val != offset ? val : 0);
+}
+*/
+int CTimeline::GetNextOffset(int offset)
+{
+	tParam *tmp = first;
+	int max = offset;
+
+	while(tmp)
+	{
+		if(tmp->offset > max)
+			max = tmp->offset;
+		tmp = tmp->next;
+	}
+
+	int val = max;
+	tmp = first;
+	while(tmp)
+	{
+		if((tmp->offset > offset) && (tmp->offset < val))
+			val = tmp->offset;
 		tmp = tmp->next;
 	}
 	return (val != offset ? val : 0);

@@ -76,19 +76,23 @@ public:
 		return m_plugin->SetSource(src);
 	}
 
-	IFloopySoundInput *GetSource()
-	{
-		return m_plugin->GetSource();
-	}
+	IFloopySoundInput *GetSource()			{ return m_plugin->GetSource(); }
 
-	int GetNextOffset(int offset) { return m_timeline.GetNextOffset(offset); }
+	IFloopySoundInput *GetSource(int index)	{ return m_plugin->GetSource(index); }
+
+	int GetNextOffset(int offset);// { return m_timeline.GetNextOffset(offset) / samplesToBytes(); }
 
 	int GetInputCount() { return m_plugin->GetInputCount(); }
 
+//	void Close();
+
+//	void dump(FILE *fp);
+
 private:
 	void applyParamsAt(int offset);
+	int samplesToBytes();
 
-	void initLog(char *plugin);
+	FILE *initLog(char *plugin);
 	void logParamChange(int offset, tParam *param);
 	void logParamSet(int offset, int index, float value);
 
