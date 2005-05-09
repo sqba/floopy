@@ -98,6 +98,8 @@ public:
 
 	virtual BOOL Open(char *filename) { return FALSE; }
 	virtual void Close() {}
+
+	virtual int GetNextOffset(int offset) { return 0; }
 };
 
 
@@ -181,6 +183,14 @@ public:
 	virtual IFloopySoundInput *GetSource()
 	{
 		return m_source;
+	}
+
+	/**
+	 * Used by wrappers to return wrapped object.
+	 */
+	virtual IFloopySoundInput *GetComponent()
+	{
+		return this;
 	}
 
 	/**
@@ -372,6 +382,8 @@ public:
 
 	virtual IFloopySoundInput  *CreateInput(char *plugin)  { return NULL; }
 	virtual IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT fmt) { return NULL; }
+
+	virtual BOOL Save(char *filename) { return FALSE; }
 };
 
 

@@ -25,6 +25,8 @@ CInput::CInput(char *plugin)
 	Enable(TRUE);
 	IFloopy::Enable(TRUE);
 
+	m_fDebug = 0.f;
+
 	char *filename = new char[strlen(plugin) + 5];
 	strcpy(filename, plugin);
 	strcat(filename, PLUG_EXT);
@@ -93,6 +95,15 @@ int CInput::Read(BYTE *data, int size)
 		applyParamsAt( s );
 	}
 
+	//assert(!m_bDebug);
+	if(m_fDebug == 3.f)
+	{
+		int debug = 1;
+		IFloopySoundInput *tmp = m_plugin->GetSource();
+		BOOL b = IFloopy::IsEnabled();
+		int x=m_timeline.GetPrevOffset(m_offset);
+	}
+
 	// Fill the rest of the data
 	src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
 	if(src)
@@ -125,8 +136,29 @@ void CInput::MoveTo(int samples)
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	m_offset = samples * ( (fmt->bitsPerSample / 8) * fmt->channels );
 
+	//assert(!m_bDebug);
+	/*if(m_bDebug)
+	{
+		int debug = 1;
+		int prev = m_timeline.GetPrevOffset(m_offset);
+		debug = 1;
+	}*/
+
+
+	/////////////////////////////////////////////////////////////
+	// Apply all previous parameters?
+	/*int s = 0;
+	while((s=m_timeline.GetNextOffset(s)) > 0 && s < samples)
+	{
+		applyParamsAt( s );
+	}*/
+
+	// or:
+
 	// Apply all due parameters
 	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
+	/////////////////////////////////////////////////////////////
+
 
 	if(NULL != m_source)
 		m_source->MoveTo(samples);
@@ -141,6 +173,12 @@ void CInput::Reset()
 
 void CInput::SetParam(int index, float value)
 {
+	if(index == -333)
+	{
+		m_fDebug = value;
+		return;
+	}
+
 	m_timeline.Set(m_offset, index, value);
 
 	logParamSet(m_offset, index, value);
@@ -164,6 +202,9 @@ void CInput::Enable(BOOL bEnable)
 {
 	m_timeline.Set(m_offset, TIMELINE_PARAM, (bEnable ? PARAM_ENABLE : PARAM_DISABLE));
 	logParamSet(m_offset, TIMELINE_PARAM, (bEnable ? PARAM_ENABLE : PARAM_DISABLE));
+
+//	if(m_plugin)
+//		m_plugin->Enable(bEnable);
 }
 
 BOOL CInput::IsEnabled()
@@ -189,6 +230,14 @@ int CInput::GetSize()
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	int x = ( (fmt->bitsPerSample / 8) * fmt->channels );
 	size /= x;
+
+	/*if(m_fDebug == 3.f)
+	{
+		int debug = 1;
+		IFloopySoundInput *tmp = m_plugin->GetSource();
+		BOOL b = IFloopy::IsEnabled();
+		int x=m_timeline.GetPrevOffset(m_offset);
+	}*/
 
 //	if(0 == size)
 //	{

@@ -42,6 +42,8 @@ public:
 
 	IFloopySoundInput *GetSource() { return (m_plugin ? m_plugin->GetSource() : NULL); }
 
+	BOOL Save(char *filename) { return (m_plugin ? m_plugin->Save(filename) : FALSE); }
+
 private:
 	HINSTANCE m_hinst;
 	IFloopyEngine *m_plugin;

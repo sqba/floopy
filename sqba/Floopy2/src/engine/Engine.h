@@ -29,6 +29,7 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 	BOOL Open(char *filename);
+	BOOL Save(char *filename);
 
 //	int   GetParamCount()					{ return 1; }
 //	void  SetParam(int index, float value)	{ if(index==0) m_startAt = value; if(index==2) m_stopAt = value; }

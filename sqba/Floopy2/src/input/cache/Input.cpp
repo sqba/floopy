@@ -32,10 +32,12 @@ int CInput::Read(BYTE *data, int size)
 			return 0;
 	}
 
+	if(m_nPosition > m_nSize)
+		return 0;	// Passed the end
+
+	// Last chunk
 	if((m_nPosition + size) > m_nSize)
 		size = m_nSize - m_nPosition;
-
-	BYTE *p = m_pBuffer+m_nPosition;
 
 	memcpy(data, m_pBuffer+m_nPosition, size);
 
@@ -83,7 +85,7 @@ BOOL CInput::createBuffer()
 					size = m_nSize - len;
 				int read = src->Read(pbuff, size);
 				if(read == 0)
-					break;
+					break; // End of file
 				pbuff += read;
 				len += read;
 			}
@@ -96,7 +98,8 @@ BOOL CInput::createBuffer()
 
 BOOL CInput::SetSource(IFloopySoundInput *src)
 {
-	createBuffer();
+	if(	createBuffer() )
+		return FALSE;	// Don't do it for infinite sources!
 
 	return IFloopySoundInput::SetSource(src);
 }

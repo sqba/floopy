@@ -3,6 +3,7 @@
 
 #include <windows.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include "../../ifloopy.h"
 
@@ -20,12 +21,15 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 BOOL loadXML(IFloopyEngine *engine, char *filename);
 BOOL saveXML(IFloopyEngine *engine, char *filename);
+
+void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast);
+void printTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive);
+
 IFloopySoundInput *testCreateMaster(IFloopyEngine *engine);
 IFloopySoundInput *testCreateTrack4(IFloopyEngine *engine, WAVFORMAT *fmt);
 IFloopySoundInput *testCreateTrack3(IFloopyEngine *engine);
 IFloopySoundInput *testCreateTrack2(IFloopyEngine *engine);
 IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine);
-void printPath(IFloopySoundInput *input, int level);
 
 
 #ifdef __cplusplus
@@ -57,69 +61,127 @@ BOOL loadXML(IFloopyEngine *engine, char *filename)
 
 BOOL saveXML(IFloopyEngine *engine, char *filename)
 {
-//	printPath(engine, 1);
 
-	FILE *fp = fopen("test.txt", "w");
+//	FILE *fp = fopen("test.txt", "w");
+	FILE *fp = stdout;
 	if(NULL == fp)
 		return FALSE;
 
-	engine->Reset();
+	WAVFORMAT *fmt = engine->GetFormat();
 
-	IFloopySoundInput *tmp = engine;
-	while(tmp)
-	{
-		fprintf(fp, "%s\n", tmp->GetName());
-		int offset = 0;
-		do {
-			fprintf(fp, "%d\t", offset);
-			tmp->MoveTo(offset);
-			for(int i=0; i<tmp->GetParamCount(); i++)
-			{
-				fprintf(fp, "%d %s %f\t", i, tmp->GetParamName(i), tmp->GetParam(i));
-			}
-			fprintf(fp, "\n");
-		} while ((offset=tmp->GetNextOffset(offset)) > 0);
-		tmp = tmp->GetSource();
-	}
+	fprintf(fp, "\nEngine diagram:\n\n");
+	printTree(fp, engine, 0, FALSE, FALSE);
+	fprintf(fp, "\n\nPress enter to continue...");
+	getchar();
+
+	printTimeline(fp, engine, fmt->frequency, TRUE);
 
 	engine->Reset();
 
-	fclose(fp);
+	if(fp != stdout)
+		fclose(fp);
 
 	return FALSE;
 }
 
 
-
-
-void printPath(IFloopySoundInput *input, int level)
+int length=0;
+void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast)
 {
+	int len=0;
+
 	if(!input)
 		return;
 
-	char space[100] = {0};
-	if(level > 0)
+	input = input->GetComponent();
+
+	char *name = input->GetName();
+
+	if(bTree)
 	{
-		int indent = level*2;
-		for(int i=0; i<indent-2; i++)
-			space[i] = ' ';
-		
-		space[i] = (char)0xb3;
-		printf("%s\n", space);
-		
-		space[i] = (char)0xc0;
-		
-		space[i+1] = (char)0xc4;
-		space[i+2] = (char)0xc4;
+		char space[100] = {0};
+		//if(level > 0)
+		//{
+			//int indent = level*2;
+			//for(int i=0; i<indent-2; i++)
+
+			for(int i=0; i<length-2; i++)
+				space[i] = ' ';
+			
+			space[i] = (char)0xb3;
+			len = fprintf(fp, "\n%s", space);
+			
+			space[i] = (char)(bLast ? 0xc0 : 0xc3);
+
+			space[i+1] = (char)0xc4;
+			space[i+2] = (char)0xc4;
+		//}
+
+		len += fprintf(fp, "\n%s< %s", space, name);
+	}
+	else
+		len = fprintf(fp, "%s%s", (level>0?" < ":""), name);
+
+	//len /= sizeof(char);
+
+	length += len;
+
+	int count = input->GetInputCount();
+
+	if(count > 1)
+		length -= strlen(name) / 2 - 1;
+	
+	for(int i=0; i<count; i++)
+	{
+		printTree(fp, input->GetSource(i), level+1, (count>1), (i==count-1));
 	}
 
-	printf("%s%s\n", space, input->GetName());
+	length -= len;
+}
 
-	for(int i=0; i<input->GetInputCount(); i++)
+
+void printTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive)
+{
+	if(NULL == input)
+		return;
+
+	input->Reset();
+
+	IFloopySoundInput *comp = input->GetComponent();
+
+	char line[81] = {0};
+	memset(line, '-', 80);
+	fprintf(fp, "%s%s\n%s\n", line, comp->GetName(), line);
+
+	int offset=0;
+	do {
+		fprintf(fp, "%d*%d", freq, offset/freq);
+		input->MoveTo(offset);
+		for(int i=0; i<input->GetParamCount(); i++)
+		{
+			fprintf(fp, "\t%s %s %f\t", 
+				(input->IsEnabled() ? "ON" : "OFF"), 
+				input->GetParamName(i),
+				input->GetParam(i));
+		}
+		fprintf(fp, "\n");
+		offset = input->GetNextOffset(offset);
+	} while (offset > 0);
+
+	if(recursive)
 	{
-		printPath(input->GetSource(i), level+1);
+		if(input->GetInputCount() > 1)
+		{
+			for(int i=0; i<input->GetInputCount(); i++)
+			{
+				printTimeline(fp, input->GetSource(i), freq, TRUE);
+			}
+		}
+		else
+			printTimeline(fp, input->GetSource(), freq, TRUE);
 	}
 }
+
 
 
 

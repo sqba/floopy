@@ -44,7 +44,7 @@ public:
 	int GetInputCount();
 
 #ifdef _DEBUG_TIMER_
-	int   GetParamCount()			{ return 4; }
+	int   GetParamCount()			{ return 0; }
 	void  SetParam(int index, float value);// { m_bDebugTimer = (value==1.f); }
 	float GetParam(int index);//		{ return (float)m_bDebugTimer; }
 	char *GetParamName(int index);//	{ return "timer"; }

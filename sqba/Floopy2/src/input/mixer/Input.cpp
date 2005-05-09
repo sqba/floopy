@@ -262,13 +262,13 @@ float CInput::GetParam(int index)
 
 	switch(index)
 	{
-	case 0:
+	case -333:
 		return (m_bDebugTimer ? 1.f : 0.f);
-	case 1:
+	case -334:
 		return afmt;
-	case 2:
+	case -335:
 		return afsz;
-	case 3:
+	case -336:
 		return amr;
 	}
 	return 0.f;
@@ -278,13 +278,13 @@ char *CInput::GetParamName(int index)
 {
 	switch(index)
 	{
-	case 0:
+	case -333:
 		return "timer";
-	case 1:
+	case -334:
 		return "mixtime";
-	case 2:
+	case -335:
 		return "m_nFrameSize";
-	case 3:
+	case -336:
 		return "mixrate";
 	}
 	return NULL;
@@ -294,13 +294,13 @@ char *CInput::GetParamDesc(int index)
 {
 	switch(index)
 	{
-	case 0:
+	case -333:
 		return "Debug Timer On/Off (1/0)";
-	case 1:
+	case -334:
 		return "Average frame mixing time (in ms)";
-	case 2:
+	case -335:
 		return "Average frame size (in bytes)";
-	case 3:
+	case -336:
 		return "Average mixing rate (in bytes)";
 	}
 	return NULL;

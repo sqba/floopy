@@ -11,7 +11,7 @@
 
 #define BUFFER_LENGTH	5120 //512
 
-
+/*
 void printPath(IFloopySoundInput *input, int level)
 {
 	if(!input)
@@ -40,7 +40,7 @@ void printPath(IFloopySoundInput *input, int level)
 		printPath(input->GetSource(i), level+1);
 	}
 }
-
+*/
 void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
 	int samples = input->GetSize();
@@ -86,7 +86,7 @@ void main(int argc, char* argv[])
 	CEngine *engine = new CEngine("engine");
 	//engine->Open(TEXT("test.xml"));
 
-	if(!engine->Open(TEXT("test.xml")))
+	if(!engine->Open(TEXT("test")))
 		return;
 
 	IFloopySoundInput *region = engine->CreateInput("playrgn");
@@ -133,13 +133,17 @@ void main(int argc, char* argv[])
 	}
 
 	// stdout?
-
+/*
 	printf("%s\n", output->GetName());
 	printPath(region, 1);
 	printf("Press enter to continue...\n");
 	getchar();
-
+*/
 	process(region, output);
+
+	engine->Reset();
+	engine->Save("test");
+	printf("\n");
 
 	region->Close();
 	output->Close();

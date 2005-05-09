@@ -48,6 +48,8 @@ public:
 	void Enable(BOOL bEnable);
 	BOOL IsEnabled();
 
+	IFloopySoundInput *GetComponent() { return m_plugin; }
+
 	int GetSize();
 /*
 	BOOL Open(char *filename);
@@ -79,6 +81,10 @@ public:
 		return m_plugin->GetSource();
 	}
 
+	int GetNextOffset(int offset) { return m_timeline.GetNextOffset(offset); }
+
+	int GetInputCount() { return m_plugin->GetInputCount(); }
+
 private:
 	void applyParamsAt(int offset);
 
@@ -91,6 +97,8 @@ private:
 	IFloopySoundInput *m_plugin;
 	CTimeline m_timeline;
 	FILE *m_fplog;
+
+	float m_fDebug;
 };
 
 #endif // !defined(AFX_INPUT_H__0D3139FE_D3F2_4CAF_A696_AB92E4A51331__INCLUDED_)
