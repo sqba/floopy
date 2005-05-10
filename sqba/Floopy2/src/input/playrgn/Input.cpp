@@ -39,75 +39,78 @@ int CInput::GetSize()
 {
 	int size = IFloopySoundInput::GetSize();
 
-	if((m_nStartAt < m_nStopAt))
-		size = (m_nStopAt - m_nStartAt) / samplesToBytes();
+	int start = m_nStartAt;
+	int stop = (m_nStopAt > 0 ? m_nStopAt : size*samplesToBytes());
+	size = (stop - start) / samplesToBytes();
 
 	return size;
 }
 
 void CInput::MoveTo(int samples)
 {
-//	int sizeo = IFloopySoundInput::GetSize();
-//	int size = GetSize();
 	m_nPosition = m_nStartAt + samples * samplesToBytes();
 	IFloopySoundInput::MoveTo((m_nStartAt / samplesToBytes()) + samples);
 }
 
 void CInput::Reset()
 {
-//	MoveTo(0);
 	m_nPosition = m_nStartAt;
 	IFloopySoundInput::Reset();
 }
 
 void  CInput::SetParam(int index, float value)
 {
-	int x = samplesToBytes();
-
-	if(index == 0)
+	switch(index)
 	{
-		m_nStartAt = (int)value * x;
+	case 0:
+		m_nStartAt = (int)value * samplesToBytes();
 		IFloopySoundInput::MoveTo((int)value);
-	}
-	else if(index == 1)
-	{
-		//m_nStopAt = (int)value * x;
-		int val = (int)value * x;
-		int max = IFloopySoundInput::GetSize() * x;
-		m_nStopAt = (val > max ? max : val);
+		break;
+	case 1:
+		int stop = (int)value * samplesToBytes();
+		int size = IFloopySoundInput::GetSize();
+		int max = size * samplesToBytes();
+		m_nStopAt = (stop > max ? max : stop);
 	}
 }
 
 float CInput::GetParam(int index)
 {
-	int x = samplesToBytes();
-
-	if(index == 0)
-		return (float)m_nStartAt / x;
-	else if(index == 1)
-		return (float)m_nStopAt / x;
-	else
+	switch(index)
+	{
+	case 0:
+		return (float)m_nStartAt / samplesToBytes();
+	case 1:
+		return (float)m_nStopAt / samplesToBytes();
+	default:
 		return 0.f;
+	}
 }
 
 char *CInput::GetParamName(int index)
 {
-	if(index == 0)
+	switch(index)
+	{
+	case 0:
 		return "StartAt";
-	else if(index == 1)
+	case 1:
 		return "StopAt";
-	else
+	default:
 		return NULL;
+	}
 }
 
 char *CInput::GetParamDesc(int index)
 {
-	if(index == 0)
+	switch(index)
+	{
+	case 0:
 		return "Start At Sample";
-	else if(index == 1)
+	case 1:
 		return "Stop At Sample";
-	else
+	default:
 		return NULL;
+	}
 }
 
 int CInput::samplesToBytes()

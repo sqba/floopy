@@ -13,30 +13,22 @@
 CInput::CInput()
 {
 	m_pBuffer = NULL;
-	m_nSize = 0;
-	m_nPosition = 0;
+	m_nPosition = m_nSize = 0;
 }
 
 CInput::~CInput()
 {
-	if(m_pBuffer)
-		delete[] m_pBuffer;
+	if( !bufferIsEmpty() )
+		clearBuffer();
 }
 
 int CInput::Read(BYTE *data, int size)
 {
-	// Buffer is empty
-	if(m_nSize == 0)
-	{
-		if(!createBuffer())
-			return 0;
-	}
-
-	if(m_nPosition > m_nSize)
-		return 0;	// Passed the end
+	if( (bufferIsEmpty() && !createBuffer()) || passedTheEnd() )
+		return 0;
 
 	// Last chunk
-	if((m_nPosition + size) > m_nSize)
+	if( (m_nPosition + size) > m_nSize )
 		size = m_nSize - m_nPosition;
 
 	memcpy(data, m_pBuffer+m_nPosition, size);
@@ -46,6 +38,24 @@ int CInput::Read(BYTE *data, int size)
 	return size;
 }
 
+BOOL CInput::SetSource(IFloopySoundInput *src)
+{
+	if(	createBuffer() )
+		return FALSE;
+
+	return IFloopySoundInput::SetSource(src);
+}
+
+void CInput::Close()
+{
+	if( !bufferIsEmpty() )
+		clearBuffer();
+
+	m_nPosition = 0;
+
+	IFloopySoundInput::Close();
+}
+
 int CInput::samplesToBytes()
 {
 	WAVFORMAT *fmt = GetFormat();
@@ -53,21 +63,23 @@ int CInput::samplesToBytes()
 	return (fmt->bitsPerSample / 8) * fmt->channels;
 }
 
+void CInput::clearBuffer()
+{
+	delete[] m_pBuffer;
+	m_pBuffer = NULL;
+	m_nSize = 0;
+}
+
 BOOL CInput::createBuffer()
 {
-	if(m_pBuffer)
-	{
-		// Clear previous buffer
-		delete[] m_pBuffer;
-		m_pBuffer = NULL;
-		m_nSize = 0;
-	}
+	if( !bufferIsEmpty() )
+		clearBuffer();
 
 	IFloopySoundInput *src = GetSource();
 	if(src)
 	{
 		int size = src->GetSize();
-		if(size > 0)
+		if(size > 0)	// Infinite sources (-1) not allowed!
 		{
 			// Allocate the memory
 			m_nSize = size * samplesToBytes();
@@ -94,40 +106,4 @@ BOOL CInput::createBuffer()
 	}
 
 	return (m_nSize > 0);
-}
-
-BOOL CInput::SetSource(IFloopySoundInput *src)
-{
-	if(	createBuffer() )
-		return FALSE;	// Don't do it for infinite sources!
-
-	return IFloopySoundInput::SetSource(src);
-}
-
-void CInput::MoveTo(int samples)
-{
-	m_nPosition = samples * samplesToBytes();
-}
-
-int CInput::GetPos()
-{
-	return m_nPosition / samplesToBytes();
-}
-
-void CInput::Reset()
-{
-	m_nPosition = 0;
-}
-
-void CInput::Close()
-{
-	if(m_pBuffer)
-	{
-		delete[] m_pBuffer;
-		m_pBuffer = NULL;
-		m_nSize = 0;
-		m_nPosition = 0;
-	}
-
-	IFloopySoundInput::Close();
 }

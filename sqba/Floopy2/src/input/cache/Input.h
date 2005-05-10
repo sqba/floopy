@@ -18,21 +18,25 @@ public:
 	CInput();
 	virtual ~CInput();
 
-	char *GetName()			{ return "cache"; }
-	char *GetDescription()	{ return "Cache Component"; }
-	char *GetVersion()		{ return "0.1"; }
-	char *GetAuthor()		{ return "sqba"; }
+	char *GetName()				{ return "cache"; }
+	char *GetDescription()		{ return "Stores entire source input in memory"; }
+	char *GetVersion()			{ return "0.1"; }
+	char *GetAuthor()			{ return "sqba"; }
 
 	int Read(BYTE *data, int size);
 	BOOL SetSource(IFloopySoundInput *src);
-	void MoveTo(int samples);
-	int GetPos();
-	void Reset();
+
+	void MoveTo(int samples)	{ m_nPosition = samples * samplesToBytes(); }
+	int GetPos()				{ return m_nPosition / samplesToBytes(); }
+	void Reset()				{ m_nPosition = 0; }
 	void Close();
 
 private:
 	int samplesToBytes();
 	BOOL createBuffer();
+	inline BOOL passedTheEnd()	{ return (m_nPosition > m_nSize); }
+	inline BOOL bufferIsEmpty()	{ return (m_nSize == 0); }
+	void clearBuffer();
 
 private:
 	BYTE *m_pBuffer;

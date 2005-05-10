@@ -102,6 +102,7 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	input = input->GetComponent();
 
 	char *name = input->GetName();
+	int size = input->GetSize();
 
 	if(bTree)
 	{
@@ -123,10 +124,10 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 			space[i+2] = (char)0xc4;
 		//}
 
-		len += fprintf(fp, "\n%s< %s", space, name);
+		len += fprintf(fp, "\n%s< %s(%d)", space, name, size);
 	}
 	else
-		len = fprintf(fp, "%s%s", (level>0?" < ":""), name);
+		len = fprintf(fp, "%s%s(%d)", (level>0?" < ":""), name, size);
 
 	//len /= sizeof(char);
 
@@ -258,9 +259,9 @@ IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine)
 		//int prb1=0, prb2=1, prb3=0, prb4=0;
 		//int prb1=0, prb2=1, prb3=0, prb4=0;
 		//int prb1=0, prb2=1, prb3=1, prb4=0;
-		//int prb1=1, prb2=1, prb3=0, prb4=0;
-		int prb1=1, prb2=0, prb3=1, prb4=0; // Jedino ovako radi kako treba!
-		if(prb1)
+//		int prb1=0, prb2=0, prb3=1, prb4=0;
+		//int prb1=1, prb2=0, prb3=1, prb4=0; // Jedino ovako radi kako treba!
+		/*if(prb1)
 		{
 			wavfile->Reset();
 			wavfile->Enable(TRUE);
@@ -283,7 +284,7 @@ IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine)
 			cache->Enable(FALSE);
 		}
 		if(prb3)
-		{
+		{*/
 			loop->Reset();
 			loop->Enable(TRUE);
 			loop->MoveTo(44100 * 3);
@@ -292,7 +293,7 @@ IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine)
 			loop->Enable(TRUE);
 			loop->MoveTo(44100 * 24);
 			loop->Enable(FALSE);
-		}
+//		}
 		/*if(prb4)
 		{
 			volume->Reset();

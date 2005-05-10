@@ -35,12 +35,7 @@ public:
 	char *GetDescription()	{ return "Floopy Input Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
-/*
-	char *GetName()			{ return (m_plugin ? m_plugin->GetName() : "inputwrapper"); }
-	char *GetDescription()	{ return (m_plugin ? m_plugin->GetDescription() : "Floopy Input Plugin Wrapper"); }
-	char *GetVersion()		{ return (m_plugin ? m_plugin->GetVersion() : "0.1"); }
-	char *GetAuthor()		{ return (m_plugin ? m_plugin->GetAuthor() : "sqba"); }
-*/
+
 	void MoveTo(int samples);
 	void Reset();
 	int Read(BYTE *data, int size);
@@ -51,20 +46,7 @@ public:
 	IFloopySoundInput *GetComponent() { return m_plugin; }
 
 	int GetSize();
-/*
-	BOOL Open(char *filename);
-	DWORD GetSize();
-	int Read(BYTE *data, int size, int offset);
-	void Close();
-*/
-//	IFloopySoundInput *getPlugin() { return m_plugin; }
-//	IFloopySoundInput *getPlugin() { return GetSource(); }
-/*
-	WAVFORMAT *GetFormat()
-	{
-		return m_plugin->GetFormat();
-	}
-*/
+
 	int   GetParamCount()					{ return m_plugin->GetParamCount(); }
 	void  SetParam(int index, float value);//	{ m_plugin->SetParam(index, value); }
 	float GetParam(int index);//				{ return m_plugin->GetParam(index); }
@@ -80,27 +62,19 @@ public:
 
 	IFloopySoundInput *GetSource(int index)	{ return m_plugin->GetSource(index); }
 
-	int GetNextOffset(int offset);// { return m_timeline.GetNextOffset(offset) / samplesToBytes(); }
+	int GetNextOffset(int offset);
 
 	int GetInputCount() { return m_plugin->GetInputCount(); }
-
-//	void Close();
-
-//	void dump(FILE *fp);
 
 private:
 	void applyParamsAt(int offset);
 	int samplesToBytes();
-
-	FILE *initLog(char *plugin);
-	void logParamChange(int offset, tParam *param);
-	void logParamSet(int offset, int index, float value);
+	int getEndOffset();
 
 	int m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundInput *m_plugin;
 	CTimeline m_timeline;
-	FILE *m_fplog;
 
 	float m_fDebug;
 };
