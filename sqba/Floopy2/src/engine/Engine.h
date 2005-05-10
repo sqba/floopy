@@ -50,6 +50,9 @@ public:
 //	void dump(FILE *fp);
 
 private:
+	char *getStorageName(char *filename);
+
+private:
 	CTimeline m_timeline;
 //	int m_offset, m_stopAt;//, m_length;
 

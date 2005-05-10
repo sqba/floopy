@@ -86,8 +86,8 @@ void main(int argc, char* argv[])
 	CEngine *engine = new CEngine("engine");
 	//engine->Open(TEXT("test.xml"));
 
-	if(!engine->Open(TEXT("test")))
-		return;
+//	if(!engine->Open(TEXT("test")))
+//		return;
 
 	IFloopySoundInput *region = engine->CreateInput("playrgn");
 
@@ -95,6 +95,14 @@ void main(int argc, char* argv[])
 	IFloopySoundOutput *output = NULL;
 
 	region->SetSource( engine );
+
+	if(argc >= 4)
+	{
+		if(!engine->Open(argv[3]))
+			return;
+	}
+	else if(!engine->Open("test.test"))
+		return;
 
 	WAVFORMAT *fmt = engine->GetFormat();
 	assert((fmt->frequency > 0) && (fmt->bitsPerSample > 0) && (fmt->channels > 0));
@@ -145,7 +153,8 @@ void main(int argc, char* argv[])
 	process(region, output);
 
 	engine->Reset();
-	engine->Save("test");
+//	engine->Save("test.test");
+	engine->Save("test.xml");
 	fprintf(stderr, "\n");
 
 	region->Close();

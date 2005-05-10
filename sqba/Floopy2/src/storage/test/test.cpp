@@ -19,11 +19,13 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 */
 
 
-BOOL loadXML(IFloopyEngine *engine, char *filename);
-BOOL saveXML(IFloopyEngine *engine, char *filename);
+BOOL load(IFloopyEngine *engine, char *filename);
+BOOL save(IFloopyEngine *engine, char *filename);
 
 void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast);
 void printTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive);
+
+void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive);
 
 IFloopySoundInput *testCreateMaster(IFloopyEngine *engine);
 IFloopySoundInput *testCreateTrack4(IFloopyEngine *engine, WAVFORMAT *fmt);
@@ -37,12 +39,12 @@ extern "C" {
 #endif
 __declspec( dllexport ) BOOL Load(IFloopyEngine *engine, char *filename)
 {
-	return loadXML(engine, filename);
+	return load(engine, filename);
 }
 
 __declspec( dllexport ) BOOL Save(IFloopyEngine *engine, char *filename)
 {
-	return saveXML(engine, filename);
+	return save(engine, filename);
 }
 
 #ifdef __cplusplus
@@ -50,7 +52,7 @@ __declspec( dllexport ) BOOL Save(IFloopyEngine *engine, char *filename)
 #endif
 
 
-BOOL loadXML(IFloopyEngine *engine, char *filename)
+BOOL load(IFloopyEngine *engine, char *filename)
 {
 	IFloopySoundInput *master = testCreateMaster(engine);
 	master->Reset();
@@ -59,32 +61,28 @@ BOOL loadXML(IFloopyEngine *engine, char *filename)
 	return TRUE;
 }
 
-BOOL saveXML(IFloopyEngine *engine, char *filename)
+BOOL save(IFloopyEngine *engine, char *filename)
 {
 
-//	FILE *fp = fopen("test.txt", "w");
-	FILE *fp = stdout;
+	FILE *fp = fopen(filename, "w");
+//	FILE *fp = stdout;
 	if(NULL == fp)
 		return FALSE;
 
 	WAVFORMAT *fmt = engine->GetFormat();
 
-	fprintf(fp, "\nEngine diagram:\n\n");
-	printTree(fp, engine, 0, FALSE, FALSE);
-	fprintf(fp, "\n\n");
-	if(fp == stdout)
-	{
-		fprintf(fp, "Press enter to continue...");
-		getchar();
-	}
+	fprintf(stderr, "\nEngine diagram:\n\n");
+	printTree(stderr, engine, 0, FALSE, FALSE);
+	fprintf(stderr, "\n\n");
+	fprintf(stderr, "Press enter to continue...");
+	getchar();
 
 //	printTimeline(fp, engine, fmt->frequency, TRUE);
+	saveXML(fp, engine, TRUE);
 
 	engine->Reset();
 
-//	engine->dump(fp);
-
-	if(fp != stdout)
+	if(fp)
 		fclose(fp);
 
 	return FALSE;
@@ -124,10 +122,12 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 			space[i+2] = (char)0xc4;
 		//}
 
-		len += fprintf(fp, "\n%s< %s(%d)", space, name, size);
+		//len += fprintf(fp, "\n%s< %s(%d)", space, name, size);
+		len += fprintf(fp, "\n%s< %s", space, name, size);
 	}
 	else
-		len = fprintf(fp, "%s%s(%d)", (level>0?" < ":""), name, size);
+		len = fprintf(fp, "%s%s", (level>0?" < ":""), name, size);
+		//len = fprintf(fp, "%s%s(%d)", (level>0?" < ":""), name, size);
 
 	//len /= sizeof(char);
 
@@ -212,6 +212,55 @@ void printTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive)
 
 
 
+void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
+{
+	if(NULL == input)
+		return;
+
+	input->Reset();
+
+	IFloopySoundInput *comp = input->GetComponent();
+
+	fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
+
+	int offset=0;
+	do {
+		if(input->GetParamCount() > 0)
+		{
+			fprintf(fp, "%d", offset);
+			input->MoveTo(offset);
+			for(int i=0; i<input->GetParamCount(); i++)
+			{
+				char *paramName = input->GetParamName(i);
+				float paramVal = input->GetParam(i);
+				fprintf(fp, ":%d:%s:%f-", i, (input->IsEnabled() ? "ON" : "OFF"));
+			}
+			fprintf(fp, "\n");
+		}
+		else
+		{
+			fprintf(fp, "%d", offset);
+			input->MoveTo(offset);
+			fprintf(fp, ":%d:%s:%f-", -1, (input->IsEnabled() ? "ON" : "OFF"));
+		}
+		offset = input->GetNextOffset(offset);
+	} while (offset > 0);
+
+	if(recursive)
+	{
+		if(input->GetInputCount() > 1)
+		{
+			for(int i=0; i<input->GetInputCount(); i++)
+			{
+				saveXML(fp, input->GetSource(i), TRUE);
+			}
+		}
+		else
+			saveXML(fp, input->GetSource(), TRUE);
+	}
+
+	fprintf(fp, "</%s>\n", input->GetName());
+}
 
 
 
