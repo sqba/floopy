@@ -66,6 +66,9 @@ public:
 
 	int GetInputCount() { return m_plugin->GetInputCount(); }
 
+	//WAVFORMAT *GetFormat() { return m_plugin->GetFormat(); }
+	//WAVFORMAT *GetFormat() { return IFloopySoundInput::GetFormat(); }
+
 private:
 	void applyParamsAt(int offset);
 	int samplesToBytes();

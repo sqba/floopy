@@ -49,6 +49,8 @@ public:
 
 //	void dump(FILE *fp);
 
+	//WAVFORMAT *GetFormat() { return IFloopyEngine::GetFormat(); }
+
 private:
 	char *getStorageName(char *filename);
 

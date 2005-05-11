@@ -17,6 +17,9 @@ CInput::CInput()
 	angle = 0.0;
 	memset(name, 0, sizeof(name));
 	sprintf(name, "%.2f.hz", freq);
+	m_wavformat.channels = 2;
+	m_wavformat.frequency = 44100;
+	m_wavformat.bitsPerSample = 16;
 }
 
 CInput::~CInput()
