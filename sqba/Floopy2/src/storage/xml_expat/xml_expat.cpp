@@ -272,20 +272,24 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 
 	fprintf(fp, "<timeline>\n");
 
+	WAVFORMAT *fmt = input->GetFormat();
+	int freq = fmt->frequency;
+
 	int offset=0;
 	do {
+		float seconds = (float)offset / (float)freq;
 		input->MoveTo(offset);
 		char *enabled = (input->IsEnabled() ? "ON" : "OFF");
 		if(offset > 0)
 			fprintf(fp, ", "); // Separator
-		fprintf(fp, "%d:-1:%s", offset, enabled);
+		fprintf(fp, "%.3f:-1:%s", seconds, enabled);
 		if(input->GetParamCount() > 0)
 		{
 			for(int i=0; i<input->GetParamCount(); i++)
 			{
 				char *paramName = input->GetParamName(i);
 				float paramVal = input->GetParam(i);
-				fprintf(fp, ", %d:%d:%f", offset, i, paramVal);
+				fprintf(fp, ", %.3f:%d:%.3f", seconds, i, paramVal);
 			}
 		}
 		offset = input->GetNextOffset(offset);
@@ -335,12 +339,14 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 	int i=0;
 	int param=0;
 	input->Reset();
+	WAVFORMAT *fmt = input->GetFormat();
+	int freq = fmt->frequency;
 	while( token != NULL )
 	{
 		switch(i)
 		{
 		case 0:
-			input->MoveTo(atoi(token));
+			input->MoveTo(atof(token) * (float)freq);
 			break;
 		case 1:
 			param = atoi(token);
