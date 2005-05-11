@@ -66,10 +66,11 @@ int CInput::atoi(char *s)
 	}
 	return n;
 }
-
+/*
 char *CInput::GetName()
 {
 	memset(name, 0, sizeof(name));
 	sprintf(name, "%.2f.hz", freq);
 	return name;
 }
+*/

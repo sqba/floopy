@@ -23,9 +23,9 @@ BOOL load(IFloopyEngine *engine, char *filename);
 BOOL save(IFloopyEngine *engine, char *filename);
 
 void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast);
-void printTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive);
+void saveTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive);
 
-void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive);
+//void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive);
 
 IFloopySoundInput *testCreateMaster(IFloopyEngine *engine);
 IFloopySoundInput *testCreateTrack4(IFloopyEngine *engine, WAVFORMAT *fmt);
@@ -77,8 +77,8 @@ BOOL save(IFloopyEngine *engine, char *filename)
 	fprintf(stderr, "Press enter to continue...");
 	getchar();
 
-//	printTimeline(fp, engine, fmt->frequency, TRUE);
-	saveXML(fp, engine, TRUE);
+	saveTimeline(fp, engine, fmt->frequency, TRUE);
+//	saveXML(fp, engine, TRUE);
 
 	engine->Reset();
 
@@ -147,7 +147,7 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 }
 
 
-void printTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive)
+void saveTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive)
 {
 	if(NULL == input)
 		return;
@@ -201,17 +201,17 @@ void printTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive)
 		{
 			for(int i=0; i<input->GetInputCount(); i++)
 			{
-				printTimeline(fp, input->GetSource(i), freq, TRUE);
+				saveTimeline(fp, input->GetSource(i), freq, TRUE);
 			}
 		}
 		else
-			printTimeline(fp, input->GetSource(), freq, TRUE);
+			saveTimeline(fp, input->GetSource(), freq, TRUE);
 	}
 }
 
 
 
-
+/*
 void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 {
 	if(NULL == input)
@@ -261,7 +261,7 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 
 	fprintf(fp, "</%s>\n", input->GetName());
 }
-
+*/
 
 
 

@@ -68,20 +68,6 @@ int CInput::Read(BYTE *data, int size)
 	// Apply all due parameters
 	applyParamsAt( m_offset );
 
-	/*if(m_fDebug == 3.f)
-	{
-		int offset = m_offset / samplesToBytes();
-		bool a = IFloopy::IsEnabled();
-		if(!a)
-		{
-			bool b = m_plugin->IsEnabled();
-			bool c = m_plugin->GetSource()->GetSource()->GetComponent()->IsEnabled();
-			int s = m_plugin->GetSize();
-			int s1 = GetSize();
-			int s2 = GetSource()->GetSize();
-		}
-	}*/
-
 	while(((s=m_timeline.GetNextOffset(s)) < endpos) && (s>0))
 	{
 		// Fill small chunks between parameter changes
@@ -124,24 +110,7 @@ void CInput::MoveTo(int samples)
 {
 	m_offset = samples * samplesToBytes();
 
-	/*if(m_fDebug == 3.f)
-	{
-		int offset = m_offset / samplesToBytes();
-		bool debug = IsEnabled();
-	}*/
-
-	if(0)
-	{
-		int s = 0;
-		while((s=m_timeline.GetNextOffset(s)) > 0 && (s < m_offset))
-		{
-			applyParamsAt( s );
-		}
-	}
-	else
-	{
-		applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
-	}
+	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 
 	if(NULL != m_source)
 		m_source->MoveTo(samples);
@@ -163,11 +132,6 @@ int CInput::GetSize()
 	tmp = src->GetSize();
 	if(tmp > size)
 		size = tmp;
-
-	/*if(m_fDebug == 4.f)
-	{
-		int debug = 1;
-	}*/
 
 	return size;
 }
@@ -194,8 +158,9 @@ void CInput::SetParam(int index, float value)
 
 int CInput::GetNextOffset(int offset)
 {
-	int next = m_timeline.GetNextOffset(offset*samplesToBytes());
-	return (next > 0 ? next / samplesToBytes() : 0);
+	int stb = samplesToBytes();
+	int next = m_timeline.GetNextOffset(offset*stb);
+	return (next > 0 ? next / stb : 0);
 }
 
 float CInput::GetParam(int index)

@@ -23,7 +23,7 @@ public:
 	int Read(BYTE *data, int size);
 	void Reset() { angle = 0.0; }
 
-	char *GetName();//			{ return "tonegen"; }
+	char *GetName()			{ return "tonegen"; }
 	char *GetDescription()	{ return "Tone generator"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

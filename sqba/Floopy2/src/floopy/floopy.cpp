@@ -98,6 +98,8 @@ void main(int argc, char* argv[])
 
 	char *filename = (argc >= 4 ? argv[3] : "test.test");
 
+	fprintf(stderr, "Opening %s\n", filename);
+
 	if(!engine->Open(filename))
 		return;
 
@@ -152,7 +154,13 @@ void main(int argc, char* argv[])
 	process(region, output);
 
 	engine->Reset();
-//	engine->Save(filename);
+	char *out = new char[strlen(filename) + 6];
+	memset(out, 0, strlen(filename) + 6);
+	strcat(out, "out_");
+	strcat(out, filename);
+	fprintf(stderr, "Saving to %s\n", out);
+	engine->Save(out);
+	delete[] out;
 	fprintf(stderr, "\n");
 
 	region->Close();

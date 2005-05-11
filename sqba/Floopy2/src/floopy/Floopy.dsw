@@ -215,6 +215,10 @@ Project: "xml_expat"=".\STORAGE\xml_expat\xml_expat.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    "$/sqba/Floopy2/src/storage/xml_expat", PHDAAAAA
+    .\storage\xml_expat
+    end source code control
 }}}
 
 Package=<4>
