@@ -101,6 +101,17 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 
 void main(int argc, char* argv[])
 {
+	if(argc == 1)
+	{
+		fprintf(stderr, "Usage: %s -i [input] -s [start] -e [end] -o [output] -v [filename]\n", argv[0]);
+		fprintf(stderr, "\t-i - Input file\n");
+		fprintf(stderr, "\t-s - Start (in seconds)\n");
+		fprintf(stderr, "\t-e - End (in seconds)\n");
+		fprintf(stderr, "\t-o - Output (file name or waveout)\n");
+		fprintf(stderr, "\t-v - Document file (save to)\n");
+		return;
+	}
+
 	CEngine *engine = new CEngine("engine");
 	IFloopySoundInput *region = engine->CreateInput("playrgn");
 	IFloopySoundOutput *output = NULL;
@@ -124,9 +135,7 @@ void main(int argc, char* argv[])
 
 	float start = GetArg(argc, argv, "s", 0.f);
 	float end = GetArg(argc, argv, "e", 0.f);
-	//region->Reset();
 	region->SetParam(0, start*fmt->frequency);
-	//region->Reset();
 	region->SetParam(1, end*fmt->frequency);
 
 
@@ -135,6 +144,8 @@ void main(int argc, char* argv[])
 
 	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
 	output = engine->CreateOutput(outfile, format);
+	if(!output)
+		return;
 
 	
 	length = fprintf(stderr, "%s < ", output->GetComponent()->GetName());

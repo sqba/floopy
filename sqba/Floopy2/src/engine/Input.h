@@ -13,6 +13,8 @@
 #include "../ifloopy.h"
 #include "timeline.h"
 
+#define LOCAL_PARAM_COUNT	2
+
 /**
  * \class CInput
  * \brief Input plug-in wrapper class.
@@ -47,11 +49,11 @@ public:
 
 	int GetSize();
 
-	int   GetParamCount()					{ return m_plugin->GetParamCount(); }
+	int   GetParamCount();//					{ return m_plugin->GetParamCount(); }
 	void  SetParam(int index, float value);//	{ m_plugin->SetParam(index, value); }
 	float GetParam(int index);//				{ return m_plugin->GetParam(index); }
-	char *GetParamName(int index)			{ return m_plugin->GetParamName(index); }
-	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
+	char *GetParamName(int index);//			{ return m_plugin->GetParamName(index); }
+	char *GetParamDesc(int index);//			{ return m_plugin->GetParamDesc(index); }
 
 	BOOL SetSource(IFloopySoundInput *src)
 	{
@@ -78,6 +80,8 @@ private:
 	HINSTANCE m_hinst;
 	IFloopySoundInput *m_plugin;
 	CTimeline m_timeline;
+
+	BOOL m_bRecording;
 
 	float m_fDebug;
 };
