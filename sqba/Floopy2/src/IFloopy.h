@@ -71,6 +71,8 @@ public:
 	virtual void Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
 	virtual BOOL IsEnabled()				{ return m_bEnabled; }
 
+//	virtual IFloopy *GetComponent() { return this; }
+
 //	virtual void dump(FILE *fp) {}
 
 private:
@@ -362,6 +364,8 @@ public:
 	{
 		return (NULL != m_dest ? m_dest->Write(data, size) : 0);
 	}
+
+	virtual IFloopySoundOutput *GetComponent() { return this; }
 
 protected:
 	IFloopySoundOutput *m_dest;

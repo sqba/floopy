@@ -9,7 +9,9 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef IFloopyEngine*	(*CreateEngineProc)(void);
+typedef IFloopyEngine* (*CreateProc)(void);
+#define PROC_NAME "CreateEngine"
+#define PLUG_EXT ".dll"
 
 CEngine::CEngine(char *plugin)
 {
@@ -18,20 +20,20 @@ CEngine::CEngine(char *plugin)
 
 	char *filename = new char[strlen(plugin) + 5];
 	strcpy(filename, plugin);
-	strcat(filename, TEXT(".dll\0"));
+	strcat(filename, PLUG_EXT);
 	m_hinst = LoadLibraryA(filename);
 
 	if (NULL != m_hinst)
 	{
-		CreateEngineProc func = (CreateEngineProc)GetProcAddress(m_hinst, "CreateEngine"); 
+		CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
 
 		if(func != NULL) {
-			printf("CreateEngine() found in %s.\n", filename);
+			//printf("CreateEngine() found in %s.\n", filename);
 			m_plugin = func();
 			SetSource( m_plugin );
 		}
 		else
- 			printf("Error: CreateEngine() not found in %s.\n", filename);
+ 			fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, filename);
 	}
 }
 

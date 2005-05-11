@@ -11,36 +11,53 @@
 
 #define BUFFER_LENGTH	5120 //512
 
-/*
-void printPath(IFloopySoundInput *input, int level)
+
+int length=0;
+void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast)
 {
+	int len=0;
+
 	if(!input)
 		return;
 
-	char space[100] = {0};
-	if(level > 0)
+	input = input->GetComponent();
+
+	char *name = input->GetName();
+
+	if(bTree)
 	{
-		int indent = level*2;
-		for(int i=0; i<indent-2; i++)
+		char space[100] = {0};
+		for(int i=0; i<length-2; i++)
 			space[i] = ' ';
 		
 		space[i] = (char)0xb3;
-		printf("%s\n", space);
+		len = fprintf(fp, "\n%s", space);
 		
-		space[i] = (char)0xc0;
-		
+		space[i] = (char)(bLast ? 0xc0 : 0xc3);
+
 		space[i+1] = (char)0xc4;
 		space[i+2] = (char)0xc4;
+
+		len += fprintf(fp, "\n%s< %s", space, name);
 	}
+	else
+		len = fprintf(fp, "%s%s", (level>0?" < ":""), name);
 
-	printf("%s%s\n", space, input->GetName());
+	length += len;
 
-	for(int i=0; i<input->GetInputCount(); i++)
+	int count = input->GetInputCount();
+
+	if(count > 1)
+		length -= strlen(name) / 2 - 1;
+	
+	for(int i=0; i<count; i++)
 	{
-		printPath(input->GetSource(i), level+1);
+		printTree(fp, input->GetSource(i), level+1, (count>1), (i==count-1));
 	}
+
+	length -= len;
 }
-*/
+
 void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
 	int samples = input->GetSize();
@@ -98,12 +115,12 @@ void main(int argc, char* argv[])
 
 	char *filename = (argc >= 4 ? argv[3] : "test.test");
 
-	fprintf(stderr, "Opening %s\n", filename);
+	fprintf(stderr, "Opening %s\n\n", filename);
 
 	if(!engine->Open(filename))
 		return;
 
-	engine->Save("test.test");
+//	engine->Save("test.test");
 
 	WAVFORMAT *fmt = engine->GetFormat();
 	assert((fmt->frequency > 0) && (fmt->bitsPerSample > 0) && (fmt->channels > 0));
@@ -120,6 +137,11 @@ void main(int argc, char* argv[])
 		region->Reset();
 		region->SetParam(1, end*fmt->frequency);
 	}
+
+
+	printTree(stdout, engine, 0, FALSE, FALSE);
+	fprintf(stderr, "\n");
+
 
 	WAVFORMAT format;
 	memcpy(&format, fmt, sizeof(WAVFORMAT));
@@ -172,3 +194,34 @@ void main(int argc, char* argv[])
 	fprintf(stderr, "\nPress enter to exit...");
 	getchar();
 }
+
+/*
+void printPath(IFloopySoundInput *input, int level)
+{
+	if(!input)
+		return;
+
+	char space[100] = {0};
+	if(level > 0)
+	{
+		int indent = level*2;
+		for(int i=0; i<indent-2; i++)
+			space[i] = ' ';
+		
+		space[i] = (char)0xb3;
+		printf("%s\n", space);
+		
+		space[i] = (char)0xc0;
+		
+		space[i+1] = (char)0xc4;
+		space[i+2] = (char)0xc4;
+	}
+
+	printf("%s%s\n", space, input->GetName());
+
+	for(int i=0; i<input->GetInputCount(); i++)
+	{
+		printPath(input->GetSource(i), level+1);
+	}
+}
+*/

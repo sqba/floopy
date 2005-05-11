@@ -9,53 +9,6 @@
 
 
 /*
-int length=0;
-void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast)
-{
-	int len=0;
-
-	if(!input)
-		return;
-
-	input = input->GetComponent();
-
-	char *name = input->GetName();
-
-	if(bTree)
-	{
-		char space[100] = {0};
-		for(int i=0; i<length-2; i++)
-			space[i] = ' ';
-		
-		space[i] = (char)0xb3;
-		len = fprintf(fp, "\n%s", space);
-		
-		space[i] = (char)(bLast ? 0xc0 : 0xc3);
-
-		space[i+1] = (char)0xc4;
-		space[i+2] = (char)0xc4;
-
-		len += fprintf(fp, "\n%s< %s", space, name);
-	}
-	else
-		len = fprintf(fp, "%s%s", (level>0?" < ":""), name);
-
-	length += len;
-
-	int count = input->GetInputCount();
-
-	if(count > 1)
-		length -= strlen(name) / 2 - 1;
-	
-	for(int i=0; i<count; i++)
-	{
-		printTree(fp, input->GetSource(i), level+1, (count>1), (i==count-1));
-	}
-
-	length -= len;
-}
-*/
-/*
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
@@ -95,12 +48,12 @@ struct tTimeline
 	IFloopySoundInput *obj;
 	char *data;
 };
-tTimeline gObjects[100];
+tTimeline gObjects[1024];	// Temporary solution
 int gIndex = 0;
 
 
-#define BUFF_LEN	1024
-int gpos = 0;
+int gBuffLen = 0;
+int gBuffEnd = 0;
 char *gpbuff = NULL;
 
 const char *gElement = NULL;
@@ -155,14 +108,14 @@ void endElement(void *userData, const char *name)
 	{
 		if(gpbuff)
 		{
-			gObjects[gIndex].data = new char[gpos];
-			memcpy(gObjects[gIndex].data, gpbuff, gpos);
+			gObjects[gIndex].data = new char[gBuffEnd];
+			memcpy(gObjects[gIndex].data, gpbuff, gBuffEnd);
 			gIndex++;
 			//loadTimeline(gInput, gpbuff);
 
 			delete[] gpbuff;
 			gpbuff = NULL;
-			gpos = 0;
+			gBuffEnd = 0;
 		}
 	}
 }
@@ -173,29 +126,26 @@ void elementData(void *userData, const char *data, int len)
 	{
 		if(!gpbuff)
 		{
-			gpbuff = new char[BUFF_LEN];
-			memset(gpbuff, 0, BUFF_LEN);
+			gBuffLen = len*2 + 1;
+			gpbuff = new char[gBuffLen];
+			memset(gpbuff, 0, gBuffLen);
 		}
 
-		if(gpos + len < BUFF_LEN)
+		if(gBuffEnd + len < gBuffLen)
 		{
 			strncat(gpbuff, data, len);
 		}
 		else
 		{
-			int l = sizeof(gpbuff);
-			char *tmp = new char[l];
-			memcpy(tmp, gpbuff, l);
-
-			delete[] gpbuff;
-			gpbuff = new char[l + len];
-			memcpy(gpbuff, tmp, l);
-
+			char *tmp = gpbuff;
+			gBuffLen = gBuffEnd + len + 1;
+			gpbuff = new char[gBuffLen];
+			memset(gpbuff, 0, gBuffLen);
+			memcpy(gpbuff, tmp, gBuffEnd);
 			strncat(gpbuff, data, len);
-
-			delete tmp;
+			delete[] tmp;
 		}
-		gpos += len;
+		gBuffEnd += len;
 	}
 }
 
@@ -270,7 +220,7 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
 	fprintf(fp, "<input source='%s'>\n", comp->GetName());
 
-	fprintf(fp, "<timeline>\n");
+	fprintf(fp, "<timeline>");
 
 	WAVFORMAT *fmt = input->GetFormat();
 	int freq = fmt->frequency;
@@ -282,7 +232,7 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 		char *enabled = (input->IsEnabled() ? "ON" : "OFF");
 		if(offset > 0)
 			fprintf(fp, ", "); // Separator
-		fprintf(fp, "%.3f:-1:%s", seconds, enabled);
+		fprintf(fp, "%.3f:%s", seconds, enabled);
 		if(input->GetParamCount() > 0)
 		{
 			for(int i=0; i<input->GetParamCount(); i++)
@@ -347,22 +297,29 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 		{
 		case 0:
 			input->MoveTo(atof(token) * (float)freq);
+			i++;
 			break;
 		case 1:
-			param = atoi(token);
+			if(isalpha(*token))
+			{
+				input->Enable(0==strncmp(token, "ON", 2));
+				i=0;
+			}
+			else
+			{
+				param = atoi(token);
+				i++;
+			}
 			break;
 		case 2:
 			if(param == -1)
 				input->Enable(0==strncmp(token, "ON", 2));
 			else
 				input->SetParam(param, (float)atof(token));
+			i=0;
 			break;
 		}
 		token = strtok( NULL, seps );
-		if(i>=2)
-			i=0;
-		else
-			i++;
 	}
 	input->Reset();
 }

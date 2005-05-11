@@ -30,13 +30,13 @@ COutput::COutput(char *plugin, WAVFORMAT fmt)
 		CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
 
 		if(func != NULL) {
-			printf("CreateOutput() found in %s.\n", filename);
+			//printf("CreateOutput() found in %s.\n", filename);
 			assert((fmt.bitsPerSample > 0) && (fmt.channels > 0));
 			m_plugin = func( fmt );
 			IFloopySoundOutput::SetDest( m_plugin );
 		}
 		else
- 			printf("Error: CreateOutput() not found in %s.\n", filename);
+ 			fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, filename);
    }
 }
 

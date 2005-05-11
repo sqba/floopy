@@ -189,6 +189,8 @@ char *CEngine::getStorageName(char *filename)
 			return "tonegen";
 		if(0 == strcmpi(ext, "wav"))
 			return "wavfile";
+		if(0 == strcmpi(ext, "svg"))
+			return "svgfile";
 	}
 	return NULL;
 }
