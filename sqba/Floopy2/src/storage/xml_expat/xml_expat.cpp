@@ -244,9 +244,15 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 		{
 			for(int i=0; i<input->GetParamCount(); i++)
 			{
-				char *paramName = input->GetParamName(i);
-				float paramVal = input->GetParam(i);
-				fprintf(fp, ", %.3f:%d:%.3f", seconds, i, paramVal);
+				//char *paramName = input->GetParamName(i);
+				//float paramVal = input->GetParam(i);
+				//fprintf(fp, ", %.3f:%d:%.3f", seconds, i, paramVal);
+				float paramVal = 0.f;
+				if(input->GetParam(i, &paramVal))
+				{
+					char *paramName = input->GetParamName(i);
+					fprintf(fp, ", %.3f:%d:%.3f", seconds, i, paramVal);
+				}
 			}
 		}
 		offset = input->GetNextOffset(offset);

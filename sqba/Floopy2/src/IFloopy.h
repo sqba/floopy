@@ -67,6 +67,8 @@ public:
 	virtual float GetParam(int index)		{ return 0.f; }
 	virtual char *GetParamName(int index)	{ return NULL; }
 	virtual char *GetParamDesc(int index)	{ return NULL; }
+	virtual BOOL  GetParam(int index, float *value)	{ return FALSE; }
+	virtual int   GetParamIndex(char *name)	{ return -1; }
 
 	virtual void Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
 	virtual BOOL IsEnabled()				{ return m_bEnabled; }

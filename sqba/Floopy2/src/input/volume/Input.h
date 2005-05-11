@@ -30,6 +30,7 @@ public:
 	float GetParam(int index)		{ return (float)m_volume; }
 	char *GetParamName(int index)	{ return "volume"; }
 	char *GetParamDesc(int index)	{ return "Volume"; }
+	int   GetParamIndex(char *name)	{ return (0==strcmpi(name, "volume") ? 0 : -1); }
 
 private:
 	int m_volume; // In percents

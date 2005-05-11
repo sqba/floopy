@@ -114,6 +114,15 @@ char *CInput::GetParamDesc(int index)
 	}
 }
 
+int CInput::GetParamIndex(char *name)
+{
+	if(0==strcmpi(name, "StartAt"))
+		return 0;
+	if(0==strcmpi(name, "StopAt"))
+		return 1;
+	return -1;
+}
+
 int CInput::samplesToBytes()
 {
 	WAVFORMAT *fmt = GetFormat();

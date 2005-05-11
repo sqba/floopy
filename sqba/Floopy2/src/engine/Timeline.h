@@ -16,7 +16,8 @@
 #define PARAM_VALUE_ENABLED		1000.f
 #define PARAM_VALUE_DISABLED	2000.f
 #define TIMELINE_PARAM_MOVETO		-2
-#define PARAM_VALUE_RESET			-1
+//#define TIMELINE_PARAM_RESET		-3
+//#define PARAM_VALUE_RESET			-1
 
 struct tParam
 {

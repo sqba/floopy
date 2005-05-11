@@ -29,6 +29,7 @@ public:
 	float GetParam(int index);
 	char *GetParamName(int index);
 	char *GetParamDesc(int index);
+	int   GetParamIndex(char *name);
 
 	int GetSize();
 	void MoveTo(int samples);

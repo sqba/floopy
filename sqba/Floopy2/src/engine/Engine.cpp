@@ -94,7 +94,16 @@ IFloopySoundOutput *CEngine::CreateOutput(char *filename, WAVFORMAT fmt)
 	if(plugin)
 	{
 		comp = new COutput(plugin, fmt);
-		comp->Open(filename);
+		if(!comp || !comp->GetComponent())
+		{
+			delete comp;
+			return NULL;
+		}
+		if(!comp->Open(filename))
+		{
+			delete comp;
+			return NULL;
+		}
 	}
 	else
 		comp = new COutput(filename, fmt);

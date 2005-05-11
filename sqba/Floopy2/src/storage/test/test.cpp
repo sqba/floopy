@@ -356,13 +356,14 @@ IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine)
 			volume->Enable(FALSE);
 		}*/
 
-			volume->SetParam(0, 50);
+			int i = volume->GetParamIndex("volume");
+			volume->SetParam(i, 50);
 			volume->MoveTo(44100*2);
-			volume->SetParam(0, 100);
+			volume->SetParam(i, 100);
 			volume->MoveTo(44100*3);
-			volume->SetParam(0, 150);
+			volume->SetParam(i, 150);
 			volume->MoveTo(44100*23);
-			volume->SetParam(0, 50);
+			volume->SetParam(i, 50);
 
 //			loop->SetParam(0, 3);
 
@@ -396,25 +397,26 @@ IFloopySoundInput *testCreateTrack2(IFloopyEngine *engine)
 			cache->SetSource(wavfile);
 			volume->SetSource(cache);
 		}
-		volume->SetParam(0, 10);
+		int i = volume->GetParamIndex("volume");
+		volume->SetParam(i, 10);
 		volume->MoveTo(44100);
-		volume->SetParam(0, 20);
+		volume->SetParam(i, 20);
 		volume->MoveTo(44100 + 4410*1);
-		volume->SetParam(0, 40);
+		volume->SetParam(i, 40);
 		volume->MoveTo(44100 + 4410*2);
-		volume->SetParam(0, 60);
+		volume->SetParam(i, 60);
 		volume->MoveTo(44100 + 4410*3);
-		volume->SetParam(0, 80);
+		volume->SetParam(i, 80);
 		volume->MoveTo(44100 + 4410*4);
-		volume->SetParam(0, 60);
+		volume->SetParam(i, 60);
 		volume->MoveTo(44100 + 4410*5);
-		volume->SetParam(0, 50);
+		volume->SetParam(i, 50);
 		volume->MoveTo(44100 + 4410*6);
-		volume->SetParam(0, 20);
+		volume->SetParam(i, 20);
 		volume->MoveTo(44100 + 4410*7);
-		volume->SetParam(0, 10);
+		volume->SetParam(i, 10);
 		volume->MoveTo(44100 + 4410*8);
-		volume->SetParam(0, 1);
+		volume->SetParam(i, 1);
 		//mixer->AddSource(volume);
 	}
 
@@ -439,15 +441,16 @@ IFloopySoundInput *testCreateTrack3(IFloopyEngine *engine)
 			echo->SetSource(cache);
 		}
 
+		int i = volume->GetParamIndex("volume");
 		volume->SetSource(echo);
 		volume->Reset();
-		volume->SetParam(0, 80);
+		volume->SetParam(i, 80);
 		volume->MoveTo(44100*5);
-		volume->SetParam(0, 100);
+		volume->SetParam(i, 100);
 		volume->MoveTo(44100*13);
-		volume->SetParam(0, 50);
+		volume->SetParam(i, 50);
 		volume->MoveTo(44100*17);
-		volume->SetParam(0, 200);
+		volume->SetParam(i, 200);
 		volume->MoveTo(44100*18);
 		volume->Enable(FALSE);
 		volume->MoveTo(44100*19);
@@ -479,54 +482,56 @@ IFloopySoundInput *testCreateTrack4(IFloopyEngine *engine, WAVFORMAT *fmt)
 
 	tonegen->SetFormat( fmt );
 		
+	int i = tonegen->GetParamIndex("frequency");
 	tonegen->SetParam(-333, 5);
 
 	tonegen->Reset();
 	tonegen->Enable(FALSE);
 	tonegen->Reset();
 	tonegen->MoveTo(44100*3);
-	tonegen->SetParam(0, 1800.f);
+	tonegen->SetParam(i, 1800.f);
 	tonegen->Enable(TRUE);
 	tonegen->MoveTo(44100*4);
 	tonegen->Enable(FALSE);
 	tonegen->Reset();
 	tonegen->MoveTo(44100*8);
-	tonegen->SetParam(0, 2600.f);
+	tonegen->SetParam(i, 2600.f);
 	tonegen->Enable(TRUE);
 	tonegen->MoveTo(44100*9);
 	tonegen->Enable(FALSE);
 
 	tonegen->MoveTo(44100*12);
-	tonegen->SetParam(0, 4000.f);
+	tonegen->SetParam(i, 4000.f);
 	tonegen->Enable(TRUE);
 	tonegen->MoveTo(44100*13);
-	tonegen->SetParam(0, 800.f);
+	tonegen->SetParam(i, 800.f);
 	tonegen->MoveTo(44100*14);
-	tonegen->SetParam(0, 600.f);
+	tonegen->SetParam(i, 600.f);
 	tonegen->MoveTo(44100*15);
 	tonegen->Enable(FALSE);
 
 	tonegen->MoveTo(44100*18);
-	tonegen->SetParam(0, 1000.f);
+	tonegen->SetParam(i, 1000.f);
 	tonegen->Enable(TRUE);
 	tonegen->MoveTo(44100*19);
 	tonegen->Enable(FALSE);
 
 	tonegen->MoveTo(44100*20);
-	tonegen->SetParam(0, 2000.f);
+	tonegen->SetParam(i, 2000.f);
 	tonegen->Enable(TRUE);
 	tonegen->MoveTo(44100*21);
 	tonegen->Enable(FALSE);
 
 	tonegen->Reset();
 
+	i = tonegen->GetParamIndex("volume");
 	volume->SetSource(tonegen);
 	volume->Reset();
-	volume->SetParam(0, 80);
+	volume->SetParam(i, 80);
 	volume->MoveTo(44100*8);
-	volume->SetParam(0, 100);
+	volume->SetParam(i, 100);
 	volume->MoveTo(44100*13);
-	volume->SetParam(0, 50);
+	volume->SetParam(i, 50);
 
 	return volume;
 }

@@ -135,8 +135,10 @@ void main(int argc, char* argv[])
 
 	float start = GetArg(argc, argv, "s", 0.f);
 	float end = GetArg(argc, argv, "e", 0.f);
-	region->SetParam(0, start*fmt->frequency);
-	region->SetParam(1, end*fmt->frequency);
+	int i = region->GetParamIndex("startat");
+	region->SetParam(i, start*fmt->frequency);
+	i = region->GetParamIndex("stopat");
+	region->SetParam(i, end*fmt->frequency);
 
 
 	WAVFORMAT format;
@@ -145,10 +147,14 @@ void main(int argc, char* argv[])
 	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
 	output = engine->CreateOutput(outfile, format);
 	if(!output)
+	{
+		fprintf(stderr, "Failed to create output: %s!\n", outfile);
 		return;
+	}
 
 	
-	length = fprintf(stderr, "%s < ", output->GetComponent()->GetName());
+	IFloopySoundOutput *comp = output->GetComponent();
+	length = fprintf(stderr, "%s < ", comp->GetName());
 	printTree(stdout, engine, 0, FALSE, FALSE);
 	fprintf(stderr, "\n");
 

@@ -191,11 +191,17 @@ void CInput::applyParamsAt(int offset)
 	param = m_timeline.GetParam(offset, TIMELINE_PARAM_MOVETO);
 	if(param)
 	{
-		if(param->value == PARAM_VALUE_RESET)
+		if(0.f == param->value)
 			m_source->Reset();
 		else
 			m_source->MoveTo((int)param->value);
 	}
+
+	/*param = m_timeline.GetParam(offset, TIMELINE_PARAM_RESET);
+	if(param)
+	{
+		m_source->Reset();
+	}*/
 
 	for(int i=0; i<GetParamCount(); i++)
 	{
@@ -227,22 +233,42 @@ int CInput::getEndOffset()
 
 int CInput::GetParamCount()
 {
-	//return m_plugin->GetParamCount() + LOCAL_PARAM_COUNT;
 	return m_plugin->GetParamCount();
+	//return m_plugin->GetParamCount() + LOCAL_PARAM_COUNT;
 }
 
 
 float CInput::GetParam(int index)
 {
+	return m_timeline.Get(m_offset, index);
 	/*switch(index)
 	{
 	case 0:
-		return m_timeline.Get(m_offset, PARAM_VALUE_RESET);
-	case 1:
 		return m_timeline.Get(m_offset, TIMELINE_PARAM_MOVETO);
-	default:*/
+	default:
 		return m_timeline.Get(m_offset, index-LOCAL_PARAM_COUNT);
-	//}
+	}*/
+}
+
+BOOL CInput::GetParam(int index, float *value)
+{
+	/*switch(index)
+	{
+	case 0:
+		index = TIMELINE_PARAM_MOVETO;
+		break;
+	default:
+		index -= LOCAL_PARAM_COUNT;
+		break;
+	}*/
+
+	tParam *param = m_timeline.GetParam(m_offset, index);
+	if(param)
+	{
+		*value = param->value;
+		return TRUE;
+	}
+	return FALSE;
 }
 
 void CInput::SetParam(int index, float value)
@@ -253,42 +279,53 @@ void CInput::SetParam(int index, float value)
 		return;
 	}
 
+	m_plugin->SetParam(index, value);
 	m_timeline.Set(m_offset, index, value);
 
 	/*switch(index)
 	{
 	case 0:
-		//m_source->Reset();
+		if(0.f == value)
+			m_source->Reset();
+		else
+			m_source->MoveTo((int)value);
+		m_timeline.Set(m_offset, TIMELINE_PARAM_MOVETO, value);
 		break;
-	case 1:
-		//m_source->MoveTo((int)value);
-		break;
-	default:*/
+	default:
 		m_plugin->SetParam(index-LOCAL_PARAM_COUNT, value);
-	//}
+		m_timeline.Set(m_offset, index, value);
+		break;
+	}*/
+}
+
+int CInput::GetParamIndex(char *name)
+{
+	return m_plugin->GetParamIndex(name);
+	//int result = m_plugin->GetParamIndex(name);
+	//return (result != -1 ? result+LOCAL_PARAM_COUNT : -1);
 }
 
 char *CInput::GetParamName(int index)
 {
+	return m_plugin->GetParamName(index);
+
 	/*switch(index)
 	{
 	case 0:
-		return "Reset";
-	case 1:
 		return "MoveTo";
-	default:*/
+	default:
 		return m_plugin->GetParamName(index-LOCAL_PARAM_COUNT);
-	//}
+	}*/
 }
 char *CInput::GetParamDesc(int index)
 {
+	return m_plugin->GetParamDesc(index);
+
 	/*switch(index)
 	{
 	case 0:
-		return "Reset";
-	case 1:
 		return "MoveTo";
-	default:*/
+	default:
 		return m_plugin->GetParamDesc(index-LOCAL_PARAM_COUNT);
-	//}
+	}*/
 }

@@ -33,6 +33,7 @@ public:
 	float GetParam(int index)		{ return (float)freq; }
 	char *GetParamName(int index)	{ return "Frequency"; }
 	char *GetParamDesc(int index)	{ return "Tone Frequency"; }
+	int   GetParamIndex(char *name)	{ return (0==strcmpi(name, "frequency") ? 0 : -1); }
 
 	void MoveTo(int samples)		{ if(samples==0) angle = 0.0; }
 

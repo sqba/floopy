@@ -13,7 +13,7 @@
 #include "../ifloopy.h"
 #include "timeline.h"
 
-#define LOCAL_PARAM_COUNT	2
+#define LOCAL_PARAM_COUNT	1
 
 /**
  * \class CInput
@@ -52,8 +52,10 @@ public:
 	int   GetParamCount();//					{ return m_plugin->GetParamCount(); }
 	void  SetParam(int index, float value);//	{ m_plugin->SetParam(index, value); }
 	float GetParam(int index);//				{ return m_plugin->GetParam(index); }
+	BOOL GetParam(int index, float *value);
 	char *GetParamName(int index);//			{ return m_plugin->GetParamName(index); }
 	char *GetParamDesc(int index);//			{ return m_plugin->GetParamDesc(index); }
+	int   GetParamIndex(char *name);//	{ return m_plugin->GetParamIndex(name); }
 
 	BOOL SetSource(IFloopySoundInput *src)
 	{
