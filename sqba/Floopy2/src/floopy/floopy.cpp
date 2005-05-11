@@ -6,6 +6,7 @@
 #include <time.h>
 #include "engine.h"
 #include <assert.h>
+#include "args.h"
 
 
 
@@ -101,88 +102,63 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 void main(int argc, char* argv[])
 {
 	CEngine *engine = new CEngine("engine");
-	//engine->Open(TEXT("test.xml"));
-
-//	if(!engine->Open(TEXT("test")))
-//		return;
-
 	IFloopySoundInput *region = engine->CreateInput("playrgn");
-
-	//COutput *output = NULL;
 	IFloopySoundOutput *output = NULL;
 
 	region->SetSource( engine );
 
-	char *filename = (argc >= 4 ? argv[3] : "test.test");
+	char *filename = GetArg(argc, argv, "i", "test.test");
 
-	fprintf(stderr, "Opening %s\n\n", filename);
+	fprintf(stderr, "Opening %s", filename);
 
 	if(!engine->Open(filename))
+	{
+		fprintf(stderr, ": File not found!\n", filename);
 		return;
+	}
 
-//	engine->Save("test.test");
+	fprintf(stderr, "\n\n");
 
 	WAVFORMAT *fmt = engine->GetFormat();
 	assert((fmt->frequency > 0) && (fmt->bitsPerSample > 0) && (fmt->channels > 0));
 
-	if(argc >= 2)
-	{
-		float start = (float)atof(argv[1]);
-		region->Reset();
-		region->SetParam(0, start*fmt->frequency);
-	}
-	if(argc >= 3)
-	{
-		float end = (float)atof(argv[2]);
-		region->Reset();
-		region->SetParam(1, end*fmt->frequency);
-	}
-
-
-	printTree(stdout, engine, 0, FALSE, FALSE);
-	fprintf(stderr, "\n");
+	float start = GetArg(argc, argv, "s", 0.f);
+	float end = GetArg(argc, argv, "e", 0.f);
+	region->Reset();
+	region->SetParam(0, start*fmt->frequency);
+	region->Reset();
+	region->SetParam(1, end*fmt->frequency);
 
 
 	WAVFORMAT format;
 	memcpy(&format, fmt, sizeof(WAVFORMAT));
 
-	int i = 0;
+	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
+	output = engine->CreateOutput(outfile, format);
 
-	switch(i)
-	{
-	case 0: // Render to A wav file
-		output = engine->CreateOutput("wavfile", format);
-		output->Open("floopy.wav");
-		break;
-	case 1:	// Output to speakers
-		output = engine->CreateOutput("waveout", format);
-		break;
-	case 2:	// Output to svg
-		output = engine->CreateOutput("svgfile", format);
-		output->Open("floopy.svg");
-		break;
-	}
+	
+	length = fprintf(stderr, "%s < ", output->GetComponent()->GetName());
+	printTree(stdout, engine, 0, FALSE, FALSE);
+	fprintf(stderr, "\n");
 
-	// stdout?
-/*
-	printf("%s\n", output->GetName());
-	printPath(region, 1);
-	printf("Press enter to continue...\n");
-	getchar();
-*/
+
 	fprintf(stderr, "\nPress enter to start...");
 	getchar();
+
+	fprintf(stderr, "Start: %.3f seconds\n", start);
+	fprintf(stderr, "End:   %.3f seconds\n", end);
 
 	process(region, output);
 
 	engine->Reset();
-	char *out = new char[strlen(filename) + 6];
-	memset(out, 0, strlen(filename) + 6);
-	strcat(out, "out_");
-	strcat(out, filename);
-	fprintf(stderr, "Saving to %s\n", out);
-	engine->Save(out);
-	delete[] out;
+
+	filename = GetArg(argc, argv, "v", "");
+	if(strlen(filename) > 0)
+	{
+		fprintf(stderr, "\nSaving to %s\n", filename);
+		engine->Save(filename);
+	}
+
 	fprintf(stderr, "\n");
 
 	region->Close();

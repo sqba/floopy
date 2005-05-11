@@ -105,6 +105,10 @@ SOURCE=.\floopy.rc
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\args.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Engine.h
 # End Source File
 # End Group

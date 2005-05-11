@@ -51,6 +51,8 @@ public:
 
 	//WAVFORMAT *GetFormat() { return IFloopyEngine::GetFormat(); }
 
+	IFloopySoundInput *GetComponent() { return this; }
+
 private:
 	char *getStorageName(char *filename);
 

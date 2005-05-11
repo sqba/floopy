@@ -59,6 +59,8 @@ public:
 		m_plugin->SetDest(dst);
 	}
 
+	IFloopySoundOutput *GetComponent() { return m_plugin; }
+
 private:
 	int m_offset;
 	HINSTANCE m_hinst;

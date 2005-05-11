@@ -46,6 +46,8 @@ public:
 
 //	void dump(FILE *fp) { m_plugin->dump(fp); }
 
+	IFloopySoundInput *GetComponent() { return m_plugin; }
+
 private:
 	HINSTANCE m_hinst;
 	IFloopyEngine *m_plugin;

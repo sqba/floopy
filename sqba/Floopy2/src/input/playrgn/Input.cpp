@@ -64,6 +64,7 @@ void  CInput::SetParam(int index, float value)
 	{
 	case 0:
 		m_nStartAt = (int)value * samplesToBytes();
+		Reset();
 		IFloopySoundInput::MoveTo((int)value);
 		break;
 	case 1:
