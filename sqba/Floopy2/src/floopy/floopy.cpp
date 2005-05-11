@@ -96,13 +96,12 @@ void main(int argc, char* argv[])
 
 	region->SetSource( engine );
 
-	if(argc >= 4)
-	{
-		if(!engine->Open(argv[3]))
-			return;
-	}
-	else if(!engine->Open("test.test"))
+	char *filename = (argc >= 4 ? argv[3] : "test.test");
+
+	if(!engine->Open(filename))
 		return;
+
+	engine->Save("test.test");
 
 	WAVFORMAT *fmt = engine->GetFormat();
 	assert((fmt->frequency > 0) && (fmt->bitsPerSample > 0) && (fmt->channels > 0));
@@ -153,8 +152,7 @@ void main(int argc, char* argv[])
 	process(region, output);
 
 	engine->Reset();
-//	engine->Save("test.test");
-	engine->Save("test.xml");
+//	engine->Save(filename);
 	fprintf(stderr, "\n");
 
 	region->Close();

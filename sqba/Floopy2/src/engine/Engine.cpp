@@ -62,18 +62,42 @@ void CEngine::dump(FILE *fp)
 	}
 }
 */
-IFloopySoundInput *CEngine::CreateInput(char *plugin)
+IFloopySoundInput *CEngine::CreateInput(char *filename)
 {
-	IFloopySoundInput *comp = new CInput(plugin);
+	IFloopySoundInput *comp = NULL;
 
-	add(comp);
+	// Check if a filename has been given
+	char *plugin = getStorageName(filename);
+	if(plugin)
+	{
+		comp = new CInput(plugin);
+		comp->Open(filename);
+	}
+	else
+		comp = new CInput(filename);
 
-	return comp;
+	if(comp->GetComponent())
+	{
+		add(comp);
+		return comp;
+	}
+	else
+		return NULL;
 }
 
-IFloopySoundOutput *CEngine::CreateOutput(char *plugin, WAVFORMAT fmt)
+IFloopySoundOutput *CEngine::CreateOutput(char *filename, WAVFORMAT fmt)
 {
-	IFloopySoundOutput *comp = new COutput(plugin, fmt);
+	IFloopySoundOutput *comp = NULL;
+
+	// Check if a filename has been given
+	char *plugin = getStorageName(filename);
+	if(plugin)
+	{
+		comp = new COutput(plugin, fmt);
+		comp->Open(filename);
+	}
+	else
+		comp = new COutput(filename, fmt);
 
 	add(comp);
 
@@ -161,6 +185,10 @@ char *CEngine::getStorageName(char *filename)
 			return "test";
 		if(0 == strcmpi(ext, "xml"))
 			return "xml_expat";
+		if(0 == strcmpi(ext, "hz"))
+			return "tonegen";
+		if(0 == strcmpi(ext, "wav"))
+			return "wavfile";
 	}
 	return NULL;
 }

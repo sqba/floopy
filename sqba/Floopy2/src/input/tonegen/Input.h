@@ -23,7 +23,7 @@ public:
 	int Read(BYTE *data, int size);
 	void Reset() { angle = 0.0; }
 
-	char *GetName()			{ return "tonegen"; }
+	char *GetName();//			{ return "tonegen"; }
 	char *GetDescription()	{ return "Tone generator"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
@@ -34,12 +34,16 @@ public:
 	char *GetParamName(int index)	{ return "Frequency"; }
 	char *GetParamDesc(int index)	{ return "Tone Frequency"; }
 
+	void MoveTo(int samples)		{ if(samples==0) angle = 0.0; }
+
 private:
 	int atoi(char *s);
 
 	double freq;
 	double dangle;
 	double angle;
+
+	char name[20];
 };
 
 #endif // !defined(AFX_INPUT_H__060C33B4_59B2_4E1F_9128_82DD17E998AB__INCLUDED_)

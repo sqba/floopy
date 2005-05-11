@@ -100,7 +100,7 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	input = input->GetComponent();
 
 	char *name = input->GetName();
-	int size = input->GetSize();
+	//int size = input->GetSize();
 
 	if(bTree)
 	{
@@ -123,10 +123,10 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 		//}
 
 		//len += fprintf(fp, "\n%s< %s(%d)", space, name, size);
-		len += fprintf(fp, "\n%s< %s", space, name, size);
+		len += fprintf(fp, "\n%s< %s", space, name);
 	}
 	else
-		len = fprintf(fp, "%s%s", (level>0?" < ":""), name, size);
+		len = fprintf(fp, "%s%s", (level>0?" < ":""), name);
 		//len = fprintf(fp, "%s%s(%d)", (level>0?" < ":""), name, size);
 
 	//len /= sizeof(char);

@@ -238,7 +238,7 @@ void CInput::Reset()
 
 int CInput::GetSize()
 {
-	DWORD size = 0;
+	int size = 0;
 	for(int i=0; i<m_nInputCount; i++)
 	{
 		if(m_pInputs[i]->GetSize() > size)
@@ -306,16 +306,17 @@ char *CInput::GetParamDesc(int index)
 	return NULL;
 }
 #endif // _DEBUG_TIMER_
-
 /*
 WAVFORMAT *CInput::GetFormat()
 {
 	WAVFORMAT *fmt = IFloopySoundInput::GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
+	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	if(fmt->frequency > 0)
+		return fmt;
 	for(int i=0; i<m_nInputCount; i++)
 	{
 		WAVFORMAT *tmp = m_pInputs[i]->GetFormat();
-		if(tmp->freq > 0)
+		if(tmp->frequency > 0)
 		{
 			fmt = tmp;
 			break;

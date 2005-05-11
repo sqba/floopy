@@ -38,6 +38,7 @@ public:
 
 	int Read(BYTE *data, int size);
 
+	BOOL SetSource(IFloopySoundInput *src) { return (AddSource(src) != -1); }
 	int AddSource(IFloopySoundInput *src);
 	IFloopySoundInput *GetSource(int index);
 	void RemoveSource(IFloopySoundInput *src);
