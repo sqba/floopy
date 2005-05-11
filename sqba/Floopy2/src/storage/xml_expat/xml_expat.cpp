@@ -156,6 +156,7 @@ BOOL loadXML(IFloopyEngine *engine, char *filename)
 	gInput = engine;
 	buff[0] = gInput;
 	gObjects[0].obj = engine;
+	level = 0;
 
 	FILE *fp = fopen(filename, "r");
 	if(NULL == fp)
@@ -196,6 +197,7 @@ BOOL loadXML(IFloopyEngine *engine, char *filename)
 
 BOOL saveXML(IFloopyEngine *engine, char *filename)
 {
+	level = 0;
 	FILE *fp = fopen(filename, "w");
 	if(fp)
 	{
@@ -217,10 +219,15 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 
 	IFloopySoundInput *comp = input->GetComponent();
 
-	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
-	fprintf(fp, "<input source='%s'>\n", comp->GetName());
 
-	fprintf(fp, "<timeline>");
+	char space[100] = {0};
+	if(level < 100)
+		memset(space, ' ', level);
+
+	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
+	fprintf(fp, "%s<input source='%s'>\n", space, comp->GetName());
+
+	fprintf(fp, "%s<timeline>", space);
 
 	WAVFORMAT *fmt = input->GetFormat();
 	int freq = fmt->frequency;
@@ -249,6 +256,7 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 
 	if(recursive)
 	{
+		level++;
 		if(input->GetInputCount() > 1)
 		{
 			for(int i=0; i<input->GetInputCount(); i++)
@@ -260,8 +268,10 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 			saveXML(fp, input->GetSource(), TRUE);
 	}
 
+	level--;
+
 	//fprintf(fp, "</%s>\n", input->GetName());
-	fprintf(fp, "</input>\n");
+	fprintf(fp, "%s</input>\n", space);
 }
 
 

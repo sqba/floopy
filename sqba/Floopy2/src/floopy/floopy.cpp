@@ -124,9 +124,9 @@ void main(int argc, char* argv[])
 
 	float start = GetArg(argc, argv, "s", 0.f);
 	float end = GetArg(argc, argv, "e", 0.f);
-	region->Reset();
+	//region->Reset();
 	region->SetParam(0, start*fmt->frequency);
-	region->Reset();
+	//region->Reset();
 	region->SetParam(1, end*fmt->frequency);
 
 
