@@ -223,7 +223,7 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
 	fprintf(fp, "%s<input source='%s'>\n", space, input->GetName());
 
-	fprintf(fp, "%s<timeline>", space);
+	fprintf(fp, "%s <timeline>", space);
 
 	WAVFORMAT *fmt = input->GetFormat();
 	int freq = fmt->frequency;
