@@ -28,16 +28,16 @@ class COutput : public IFloopySoundOutput
 public:
 	COutput(char *plugin, WAVFORMAT fmt);
 	virtual ~COutput();
-
+/*
 	char *GetName()			{ return "outputw"; }
 	char *GetDescription()	{ return "Floopy Output Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
-/*
-	char *GetName()			{ return (m_plugin ? m_plugin->GetName() : "outputwrapper"); }
-	char *GetDescription()	{ return (m_plugin ? m_plugin->GetDescription() : "Floopy Output Plugin Wrapper"); }
-	char *GetVersion()		{ return (m_plugin ? m_plugin->GetVersion() : "0.1"); }
-	char *GetAuthor()		{ return (m_plugin ? m_plugin->GetAuthor() : "sqba"); }
+*/
+	char *GetName()			{ return m_plugin->GetName(); }
+	char *GetDescription()	{ return m_plugin->GetDescription(); }
+	char *GetVersion()		{ return m_plugin->GetVersion(); }
+	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 /*
 	BOOL Open(char *filename);
 	UINT Write(BYTE *data, UINT size);
@@ -58,8 +58,6 @@ public:
 	{
 		m_plugin->SetDest(dst);
 	}
-
-	IFloopySoundOutput *GetComponent() { return m_plugin; }
 
 private:
 	int m_offset;

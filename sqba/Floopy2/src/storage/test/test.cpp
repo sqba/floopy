@@ -97,8 +97,6 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	if(!input)
 		return;
 
-	input = input->GetComponent();
-
 	char *name = input->GetName();
 	//int size = input->GetSize();
 
@@ -154,17 +152,9 @@ void saveTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive)
 
 	input->Reset();
 
-	IFloopySoundInput *comp = input->GetComponent();
-
-	/*if(0 == strcmpi(comp->GetName(), "ischlju.wav"))
-	//if(0 == strcmpi(comp->GetName(), "mixer"))
-	{
-		int debug=1;
-	}*/
-
 	char line[80] = {0};
 	memset(line, '-', 79);
-	fprintf(fp, "%s\n%s\n%s\n", line, comp->GetName(), line);
+	fprintf(fp, "%s\n%s\n%s\n", line, input->GetName(), line);
 
 	int offset=0;
 	do {
@@ -208,70 +198,6 @@ void saveTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive)
 			saveTimeline(fp, input->GetSource(), freq, TRUE);
 	}
 }
-
-
-
-/*
-void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
-{
-	if(NULL == input)
-		return;
-
-	input->Reset();
-
-	IFloopySoundInput *comp = input->GetComponent();
-
-	fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
-
-	int offset=0;
-	do {
-		if(input->GetParamCount() > 0)
-		{
-			fprintf(fp, "%d", offset);
-			input->MoveTo(offset);
-			for(int i=0; i<input->GetParamCount(); i++)
-			{
-				char *paramName = input->GetParamName(i);
-				float paramVal = input->GetParam(i);
-				fprintf(fp, ":%d:%s:%f-", i, (input->IsEnabled() ? "ON" : "OFF"));
-			}
-			fprintf(fp, "\n");
-		}
-		else
-		{
-			fprintf(fp, "%d", offset);
-			input->MoveTo(offset);
-			fprintf(fp, ":%d:%s:%f-", -1, (input->IsEnabled() ? "ON" : "OFF"));
-		}
-		offset = input->GetNextOffset(offset);
-	} while (offset > 0);
-
-	if(recursive)
-	{
-		if(input->GetInputCount() > 1)
-		{
-			for(int i=0; i<input->GetInputCount(); i++)
-			{
-				saveXML(fp, input->GetSource(i), TRUE);
-			}
-		}
-		else
-			saveXML(fp, input->GetSource(), TRUE);
-	}
-
-	fprintf(fp, "</%s>\n", input->GetName());
-}
-*/
-
-
-
-
-
-
-
-
-
-
 
 
 

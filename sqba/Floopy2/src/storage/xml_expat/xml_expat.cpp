@@ -86,7 +86,6 @@ void startElement(void *userData, const char *name, const char **atts)
 				IFloopySoundInput *input = gEngine->CreateInput(source);
 				if(input)
 				{
-					char *c = gInput->GetComponent()->GetName();
 					gInput->SetSource(input);
 					gInput = input;
 					gObjects[gIndex].obj = input;
@@ -217,15 +216,12 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 
 	input->Reset();
 
-	IFloopySoundInput *comp = input->GetComponent();
-
-
 	char space[100] = {0};
 	if(level < 100)
 		memset(space, ' ', level);
 
 	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
-	fprintf(fp, "%s<input source='%s'>\n", space, comp->GetName());
+	fprintf(fp, "%s<input source='%s'>\n", space, input->GetName());
 
 	fprintf(fp, "%s<timeline>", space);
 
@@ -299,7 +295,6 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 {
 	if(!input)
 		return;
-	char *c = input->GetComponent()->GetName();
 	char seps[]   = ":,";
 	char *token = strtok( data, seps );
 	int i=0;
@@ -307,18 +302,28 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 	input->Reset();
 	WAVFORMAT *fmt = input->GetFormat();
 	int freq = fmt->frequency;
+	int offset = 0;
+
+	//BOOL bTest = TRUE;
+
 	while( token != NULL )
 	{
 		switch(i)
 		{
 		case 0:
-			input->MoveTo(atof(token) * (float)freq);
+			//if(bTest)
+				offset = atof(token) * (float)freq;
+			//else
+			//	input->MoveTo(atof(token) * (float)freq);
 			i++;
 			break;
 		case 1:
 			if(isalpha(*token))
 			{
-				input->Enable(0==strncmp(token, "ON", 2));
+				//if(bTest)
+					gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
+				//else
+				//	input->Enable(0==strncmp(token, "ON", 2));
 				i=0;
 			}
 			else
@@ -329,9 +334,15 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 			break;
 		case 2:
 			if(param == -1)
-				input->Enable(0==strncmp(token, "ON", 2));
+				//if(bTest)
+					gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
+				//else
+				//	input->Enable(0==strncmp(token, "ON", 2));
 			else
-				input->SetParam(param, (float)atof(token));
+				//if(bTest)
+					gEngine->SetParamAt(input, offset, param, (float)atof(token));
+				//else
+				//	input->SetParam(param, (float)atof(token));
 			i=0;
 			break;
 		}
@@ -339,98 +350,3 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 	}
 	input->Reset();
 }
-
-/*
-void loadTimeline(IFloopySoundInput *input, char *data)
-{
-	if(!input)
-		return;
-	char *c = input->GetComponent()->GetName();
-	char seps[]   = ",";
-	char *token = strtok( data, seps );
-	int i=0;
-	int param=0;
-	input->Reset();
-	while( token != NULL )
-	{
-		char *s = strchr(token, ':');
-		while(s)
-		{
-			switch(i)
-			{
-			case 0:
-				input->MoveTo(atoi(token));
-				break;
-			case 1:
-				input->Enable(0==strcmpi(token, "ON"));
-				break;
-			case 2:
-				param = atoi(token);
-				break;
-			case 3:
-				input->SetParam(param, (float)atof(token));
-				break;
-			}
-			s = strchr(s, ':');
-			i++;
-		}
-		token = strtok( NULL, seps );
-	}
-}
-*/
-
-
-/*
-void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
-{
-	if(NULL == input)
-		return;
-
-	input->Reset();
-
-	IFloopySoundInput *comp = input->GetComponent();
-
-	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
-	fprintf(fp, "<input source='%s'>\n", comp->GetName());
-
-	fprintf(fp, "<timeline>\n");
-
-	int offset=0;
-	do {
-		input->MoveTo(offset);
-		char *enabled = (input->IsEnabled() ? "true" : "false");
-		fprintf(fp, "<offset sample='%d'>\n", enabled);
-		fprintf(fp, "<param enabled='%s'/>\n", enabled);
-		if(input->GetParamCount() > 0)
-		{
-			for(int i=0; i<input->GetParamCount(); i++)
-			{
-				char *paramName = input->GetParamName(i);
-				float paramVal = input->GetParam(i);
-				fprintf(fp, "<param index='%d' value='%f'/>\n", i, paramVal);
-			}
-			fprintf(fp, "\n");
-		}
-		fprintf(fp, "</offset>\n");
-		offset = input->GetNextOffset(offset);
-	} while (offset > 0);
-
-	fprintf(fp, "</timeline>\n");
-
-	if(recursive)
-	{
-		if(input->GetInputCount() > 1)
-		{
-			for(int i=0; i<input->GetInputCount(); i++)
-			{
-				saveXML(fp, input->GetSource(i), TRUE);
-			}
-		}
-		else
-			saveXML(fp, input->GetSource(), TRUE);
-	}
-
-	//fprintf(fp, "</%s>\n", input->GetName());
-	fprintf(fp, "</input>\n");
-}
-*/

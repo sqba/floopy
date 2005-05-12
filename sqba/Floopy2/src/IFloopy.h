@@ -73,10 +73,6 @@ public:
 	virtual void Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
 	virtual BOOL IsEnabled()				{ return m_bEnabled; }
 
-//	virtual IFloopy *GetComponent() { return this; }
-
-//	virtual void dump(FILE *fp) {}
-
 private:
 	BOOL m_bEnabled;
 };
@@ -193,14 +189,6 @@ public:
 	virtual IFloopySoundInput *GetSource()
 	{
 		return m_source;
-	}
-
-	/**
-	 * Used by wrappers to return wrapped object.
-	 */
-	virtual IFloopySoundInput *GetComponent()
-	{
-		return this;
 	}
 
 	/**
@@ -367,8 +355,6 @@ public:
 		return (NULL != m_dest ? m_dest->Write(data, size) : 0);
 	}
 
-	virtual IFloopySoundOutput *GetComponent() { return this; }
-
 protected:
 	IFloopySoundOutput *m_dest;
 };
@@ -396,6 +382,10 @@ public:
 	virtual IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT fmt) { return NULL; }
 
 	virtual BOOL Save(char *filename) { return FALSE; }
+
+	// offset is in samples!
+	virtual void SetParamAt(IFloopy *obj, int offset, int index, float value) {}
+	virtual void EnableAt(IFloopy *obj, int offset, BOOL bEnable) {}
 };
 
 

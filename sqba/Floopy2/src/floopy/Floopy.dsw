@@ -99,6 +99,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "mp3file"=".\INPUT\mp3file\mp3file.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "playrgn"=".\INPUT\playrgn\playrgn.dsp" - Package Owner=<4>
 
 Package=<5>

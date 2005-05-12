@@ -32,11 +32,16 @@ class CInput : public IFloopySoundInput
 public:
 	CInput(char *plugin);
 	virtual ~CInput();
-
+/*
 	char *GetName()			{ return "inputw"; }
 	char *GetDescription()	{ return "Floopy Input Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
+*/
+	char *GetName()			{ return m_plugin->GetName(); }
+	char *GetDescription()	{ return m_plugin->GetDescription(); }
+	char *GetVersion()		{ return m_plugin->GetVersion(); }
+	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
 	void MoveTo(int samples);
 	void Reset();
@@ -44,8 +49,6 @@ public:
 
 	void Enable(BOOL bEnable);
 	BOOL IsEnabled();
-
-	IFloopySoundInput *GetComponent() { return m_plugin; }
 
 	int GetSize();
 
@@ -72,6 +75,9 @@ public:
 
 	//WAVFORMAT *GetFormat() { return m_plugin->GetFormat(); }
 	//WAVFORMAT *GetFormat() { return IFloopySoundInput::GetFormat(); }
+
+	void SetParamAt(int offset, int index, float value);
+	void EnableAt(int offset, BOOL bEnable);
 
 private:
 	void applyParamsAt(int offset);

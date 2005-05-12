@@ -21,8 +21,6 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	if(!input)
 		return;
 
-	input = input->GetComponent();
-
 	char *name = input->GetName();
 
 	if(bTree)
@@ -153,9 +151,8 @@ void main(int argc, char* argv[])
 	}
 
 	
-	IFloopySoundOutput *comp = output->GetComponent();
-	length = fprintf(stderr, "%s < ", comp->GetName());
-	printTree(stdout, engine, 0, FALSE, FALSE);
+	length = fprintf(stderr, "%s < ", output->GetName());
+	printTree(stdout, engine->GetSource(), 0, FALSE, FALSE);
 	fprintf(stderr, "\n");
 
 
@@ -163,7 +160,8 @@ void main(int argc, char* argv[])
 	getchar();
 
 	fprintf(stderr, "Start: %.3f seconds\n", start);
-	fprintf(stderr, "End:   %.3f seconds\n", end);
+	fprintf(stderr, "End:   %.3f seconds\n", 
+		(end > 0.f ? end : (float)engine->GetSize()/(float)fmt->frequency));
 
 	process(region, output);
 

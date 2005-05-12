@@ -31,7 +31,7 @@ CEngine::~CEngine()
 	}
 }
 
-tComponent *CEngine::add(IFloopy *comp)
+tComponent *CEngine::add(IFloopy *comp, BOOL bInput)
 {
 	if(NULL == m_pLast)
 	{
@@ -39,11 +39,13 @@ tComponent *CEngine::add(IFloopy *comp)
 		memset(m_pFirst, 0, sizeof(tComponent));
 		m_pLast = m_pFirst;
 		m_pFirst->comp = comp;
+		m_pFirst->bInput = bInput;
 	}
 	else
 	{
 		tComponent *tmp = new tComponent;
 		memset(tmp, 0, sizeof(tComponent));
+		tmp->bInput = bInput;
 		tmp->prev = m_pLast;
 		tmp->comp = comp;
 		m_pLast->next = tmp;
@@ -76,13 +78,8 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 	else
 		comp = new CInput(filename);
 
-	if(comp->GetComponent())
-	{
-		add(comp);
-		return comp;
-	}
-	else
-		return NULL;
+	add(comp, TRUE);
+	return comp;
 }
 
 IFloopySoundOutput *CEngine::CreateOutput(char *filename, WAVFORMAT fmt)
@@ -94,11 +91,6 @@ IFloopySoundOutput *CEngine::CreateOutput(char *filename, WAVFORMAT fmt)
 	if(plugin)
 	{
 		comp = new COutput(plugin, fmt);
-		if(!comp || !comp->GetComponent())
-		{
-			delete comp;
-			return NULL;
-		}
 		if(!comp->Open(filename))
 		{
 			delete comp;
@@ -108,7 +100,7 @@ IFloopySoundOutput *CEngine::CreateOutput(char *filename, WAVFORMAT fmt)
 	else
 		comp = new COutput(filename, fmt);
 
-	add(comp);
+	add(comp, FALSE);
 
 	return comp;
 }
@@ -200,6 +192,38 @@ char *CEngine::getStorageName(char *filename)
 			return "wavfile";
 		if(0 == strcmpi(ext, "svg"))
 			return "svgfile";
+		if(0 == strcmpi(ext, "mp3"))
+			return "mp3file";
 	}
 	return NULL;
+}
+
+void CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
+{
+	tComponent *tmp = m_pFirst;
+	while(tmp)
+	{
+		if((obj == tmp->comp) && (tmp->bInput))
+		{
+			CInput *input = (CInput*)obj;
+			input->SetParamAt(offset, index, value);
+			return;
+		}
+		tmp = tmp->next;
+	}
+}
+
+void CEngine::EnableAt(IFloopy *obj, int offset, BOOL bEnable)
+{
+	tComponent *tmp = m_pFirst;
+	while(tmp)
+	{
+		if((obj == tmp->comp) && (tmp->bInput))
+		{
+			CInput *input = (CInput*)obj;
+			input->EnableAt(offset, bEnable);
+			return;
+		}
+		tmp = tmp->next;
+	}
 }

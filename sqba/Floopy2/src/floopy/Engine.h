@@ -17,17 +17,17 @@ class CEngine : public IFloopyEngine
 public:
 	CEngine(char *plugin);
 	virtual ~CEngine();
-
+/*
 	char *GetName()			{ return "enginew"; }
 	char *GetDescription()	{ return "Floopy Engine Plugin Wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
-/*
-	char *GetName()			{ return (m_plugin ? m_plugin->GetName() : "enginewrapper"); }
-	char *GetDescription()	{ return (m_plugin ? m_plugin->GetDescription() : "Floopy Engine Plugin Wrapper"); }
-	char *GetVersion()		{ return (m_plugin ? m_plugin->GetVersion() : "0.1"); }
-	char *GetAuthor()		{ return (m_plugin ? m_plugin->GetAuthor() : "sqba"); }
 */
+	char *GetName()			{ return m_plugin->GetName(); }
+	char *GetDescription()	{ return m_plugin->GetDescription(); }
+	char *GetVersion()		{ return m_plugin->GetVersion(); }
+	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
+
 //	IFloopyEngine *getPlugin() { return m_plugin; }
 
 	IFloopySoundInput  *CreateInput(char *plugin)
@@ -43,10 +43,6 @@ public:
 	IFloopySoundInput *GetSource() { return (m_plugin ? m_plugin->GetSource() : NULL); }
 
 	BOOL Save(char *filename) { return (m_plugin ? m_plugin->Save(filename) : FALSE); }
-
-//	void dump(FILE *fp) { m_plugin->dump(fp); }
-
-	IFloopySoundInput *GetComponent() { return m_plugin; }
 
 private:
 	HINSTANCE m_hinst;

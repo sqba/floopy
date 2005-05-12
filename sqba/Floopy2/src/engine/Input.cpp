@@ -329,3 +329,14 @@ char *CInput::GetParamDesc(int index)
 		return m_plugin->GetParamDesc(index-LOCAL_PARAM_COUNT);
 	}*/
 }
+
+void CInput::SetParamAt(int offset, int index, float value)
+{
+	m_timeline.Set(offset * samplesToBytes(), index, value);
+}
+
+void CInput::EnableAt(int offset, BOOL bEnable)
+{
+	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
+	m_timeline.Set(offset * samplesToBytes(), TIMELINE_PARAM_ENABLE, value);
+}

@@ -48,3 +48,4 @@ CEngine::~CEngine()
 	if(NULL != m_hinst)
 		FreeLibrary(m_hinst);
 }
+

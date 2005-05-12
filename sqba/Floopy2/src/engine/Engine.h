@@ -22,6 +22,7 @@ struct tComponent
 	IFloopy *comp;
 	tComponent *prev;
 	tComponent *next;
+	BOOL bInput;
 };
 
 class CEngine : public IFloopyEngine
@@ -47,18 +48,14 @@ public:
 	IFloopySoundInput  *CreateInput(char *plugin);
 	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT fmt);
 
-//	void dump(FILE *fp);
-
-	//WAVFORMAT *GetFormat() { return IFloopyEngine::GetFormat(); }
-
-	IFloopySoundInput *GetComponent() { return this; }
+	void SetParamAt(IFloopy *obj, int offset, int index, float value);
+	void EnableAt(IFloopy *obj, int offset, BOOL bEnable);
 
 private:
 	char *getStorageName(char *filename);
 
 private:
 	CTimeline m_timeline;
-//	int m_offset, m_stopAt;//, m_length;
 
 	IFloopySoundInput *testCreateMaster();
 	IFloopySoundInput *testCreateTrack1();
@@ -67,7 +64,7 @@ private:
 	IFloopySoundInput *testCreateTrack4(WAVFORMAT *fmt);
 
 	tComponent *m_pFirst, *m_pLast;
-	tComponent *add(IFloopy *comp);
+	tComponent *add(IFloopy *comp, BOOL bInput);
 };
 
 #endif // !defined(AFX_ENGINE_H__621A6F07_09D1_41D0_A981_DB32D29DA57A__INCLUDED_)
