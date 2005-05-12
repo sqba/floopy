@@ -60,3 +60,11 @@ void CInput::Reset()
 	memset(echo_buf2, 0, sizeof(echo_buf));
 	IFloopySoundInput::Reset();
 }
+/*
+BOOL CInput::SetSource(IFloopySoundInput *src)
+{
+//	WAVFORMAT *fmt = src->GetFormat();
+//	assert( fmt->bitsPerSample == 16 );
+	return IFloopySoundInput::SetSource(src);
+}
+*/

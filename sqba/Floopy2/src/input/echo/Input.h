@@ -18,13 +18,13 @@ public:
 	CInput();
 	virtual ~CInput();
 
-	int Read(BYTE *data, int size);
-
 	char *GetName()			{ return "echo"; }
 	char *GetDescription()	{ return "Echo effect"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
+	//BOOL SetSource(IFloopySoundInput *src);
+	int Read(BYTE *data, int size);
 	void Reset();
 
 private:
