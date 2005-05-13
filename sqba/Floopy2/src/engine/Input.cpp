@@ -60,6 +60,7 @@ CInput::~CInput()
 
 int CInput::Read(BYTE *data, int size)
 {
+	assert(size >= 0);
 	int s = m_offset;
 	int readBytes = 0;
 	int endpos = m_offset + size;
@@ -77,6 +78,7 @@ int CInput::Read(BYTE *data, int size)
 		if(src)
 		{
 			size = s - m_offset;
+			assert(size > 0);
 			len = src->Read(data, size);
 			readBytes += len;
 		}
@@ -99,8 +101,12 @@ int CInput::Read(BYTE *data, int size)
 		// Ovo resenje izgleda logicnije!
 		if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())	// Fix: loop problem
 		{													// Fix: loop problem
-			size = size - readBytes;
-			readBytes += src->Read(data, size);
+			if(size > readBytes)
+			{
+				size = size - readBytes;
+				assert(size > 0);
+				readBytes += src->Read(data, size);
+			}
 		} else												// Fix: loop problem
 			m_plugin->Reset();								// Fix: loop problem
 	}
@@ -130,7 +136,10 @@ int CInput::GetSize()
 	int stb = samplesToBytes();
 	
 	int end = getEndOffset();
-	if(end > m_offset)
+
+	if(end == 0)
+		size = m_plugin->GetSize();
+	else if(end > m_offset)
 		size = (end - m_offset) / stb;
 	else if(end > 0)
 		size = end / stb;

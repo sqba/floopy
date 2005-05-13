@@ -23,6 +23,10 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 
 	char *name = input->GetName();
 
+	WAVFORMAT *fmt = input->GetFormat();
+	assert(fmt->frequency > 0);
+	float size = (float)input->GetSize() / (float)fmt->frequency;
+
 	if(bTree)
 	{
 		char space[100] = {0};
@@ -37,10 +41,12 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 		space[i+1] = (char)0xc4;
 		space[i+2] = (char)0xc4;
 
-		len += fprintf(fp, "\n%s< %s", space, name);
+		len += fprintf(fp, "\n%s< %s(%.3f)", space, name, size);
+		//len += fprintf(fp, "\n%s< %s", space, name);
 	}
 	else
-		len = fprintf(fp, "%s%s", (level>0?" < ":""), name);
+		len = fprintf(fp, "%s%s(%.3f)", (level>0?" < ":""), name, size);
+		//len = fprintf(fp, "%s%s", (level>0?" < ":""), name);
 
 	length += len;
 

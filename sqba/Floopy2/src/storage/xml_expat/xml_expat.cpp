@@ -179,7 +179,7 @@ BOOL loadXML(IFloopyEngine *engine, char *filename)
 		}
 	} while (!done);
 	loadTimelines();
-	engine->Reset();
+//	engine->Reset();
 	XML_ParserFree(parser);
 	fclose(fp);
 
@@ -299,7 +299,7 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 	char *token = strtok( data, seps );
 	int i=0;
 	int param=0;
-	input->Reset();
+	//input->Reset();
 	WAVFORMAT *fmt = input->GetFormat();
 	int freq = fmt->frequency;
 	int offset = 0;
@@ -348,5 +348,5 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 		}
 		token = strtok( NULL, seps );
 	}
-	input->Reset();
+//	input->Reset();
 }

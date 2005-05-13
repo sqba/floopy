@@ -41,7 +41,7 @@ private:
 	int samplesToBytes();
 
 private:
-	int m_nPosition, m_nStartAt, m_nStopAt;
+	int m_nPosition, m_nStartAt, m_nStopAt, m_nSourceSize;
 };
 
 #endif // !defined(AFX_INPUT_H__C7D6984D_7FB9_43B3_AD16_041165A37CD1__INCLUDED_)

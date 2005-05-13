@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Input.h"
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -20,13 +21,17 @@ CInput::~CInput()
 
 int CInput::Read(BYTE *data, int size)
 {
-	int len = IFloopySoundInput::GetSize() * samplesToBytes();
+	//int len = IFloopySoundInput::GetSize() * samplesToBytes();
+	int len = m_nPosition + m_nSourceSize;
 
 	if((m_nStopAt > 0) && (len > m_nStopAt))
 		len = m_nStopAt;
 
 	if((m_nPosition + size) > len)
+	{
+		assert(len >= m_nPosition);
 		size = len - m_nPosition;
+	}
 
 	int read = IFloopySoundInput::Read(data, size);
 
@@ -37,7 +42,8 @@ int CInput::Read(BYTE *data, int size)
 
 int CInput::GetSize()
 {
-	int size = IFloopySoundInput::GetSize();
+	//int size = IFloopySoundInput::GetSize();
+	int size = m_nSourceSize / samplesToBytes();
 
 	int start = m_nStartAt;
 	int stop = (m_nStopAt > 0 ? m_nStopAt : size*samplesToBytes());
@@ -50,12 +56,14 @@ void CInput::MoveTo(int samples)
 {
 	m_nPosition = m_nStartAt + samples * samplesToBytes();
 	IFloopySoundInput::MoveTo((m_nStartAt / samplesToBytes()) + samples);
+	m_nSourceSize = IFloopySoundInput::GetSize() * samplesToBytes();
 }
 
 void CInput::Reset()
 {
 	m_nPosition = m_nStartAt;
 	IFloopySoundInput::Reset();
+	m_nSourceSize = IFloopySoundInput::GetSize() * samplesToBytes();
 }
 
 void  CInput::SetParam(int index, float value)

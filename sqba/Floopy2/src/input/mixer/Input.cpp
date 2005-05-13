@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Input.h"
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -105,6 +106,7 @@ int CInput::Read(BYTE *data, int size)
 			m_nBuffSize = m_nInputCount*size;
 			m_pBuffers = new BYTE[m_nBuffSize];
 		}
+		assert(m_nBuffSize > 0);
 		memset(m_pBuffers, 0, m_nBuffSize);
 		BYTE *pm_pBuffers = m_pBuffers;
 

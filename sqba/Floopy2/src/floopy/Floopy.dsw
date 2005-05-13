@@ -99,10 +99,30 @@ Package=<4>
 
 ###############################################################################
 
+Project: "mono2stereo"=".\INPUT\mono2stereo\mono2stereo.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/sqba/Floopy2/src/input/mono2stereo", UHDAAAAA
+    .\input\mono2stereo
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "mp3file"=".\INPUT\mp3file\mp3file.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    "$/sqba/Floopy2/src/input/mp3file", CIDAAAAA
+    .\input\mp3file
+    end source code control
 }}}
 
 Package=<4>
