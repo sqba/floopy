@@ -42,6 +42,8 @@ public:
 		IFloopySoundInput::Enable(bEnabled);
 	}*/
 
+	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+
 private:
 	int samplesToBytes();
 

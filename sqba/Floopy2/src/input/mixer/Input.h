@@ -44,6 +44,8 @@ public:
 	void RemoveSource(IFloopySoundInput *src);
 	int GetInputCount();
 
+	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+
 #ifdef _DEBUG_TIMER_
 	int   GetParamCount()			{ return 0; }
 	void  SetParam(int index, float value);// { m_bDebugTimer = (value==1.f); }

@@ -32,6 +32,8 @@ public:
 	char *GetParamDesc(int index)	{ return "Volume"; }
 	int   GetParamIndex(char *name)	{ return (0==strcmpi(name, "volume") ? 0 : -1); }
 
+	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+
 private:
 	int m_volume; // In percents
 };

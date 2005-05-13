@@ -31,6 +31,8 @@ public:
 	void Reset()				{ m_nPosition = 0; }
 	void Close();
 
+	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+
 private:
 	int samplesToBytes();
 	BOOL createBuffer();

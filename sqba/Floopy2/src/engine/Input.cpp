@@ -95,7 +95,9 @@ int CInput::Read(BYTE *data, int size)
 		// Ovde je bio problem sa loop-m.
 		// Nisam siguran da je ovo pravi nachin
 		// ali za sada radi!
-		if(IFloopy::IsEnabled() || m_plugin->GetSize() > 0)	// Fix: loop problem
+		//if(IFloopy::IsEnabled() || m_plugin->GetSize() > 0)	// Fix: loop problem
+		// Ovo resenje izgleda logicnije!
+		if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())	// Fix: loop problem
 		{													// Fix: loop problem
 			size = size - readBytes;
 			readBytes += src->Read(data, size);

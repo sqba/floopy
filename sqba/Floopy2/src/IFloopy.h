@@ -279,6 +279,8 @@ public:
 		return (NULL != m_source ? 1 : 0);
 	}
 
+	virtual BOOL ReadSourceIfDisabled()	{ return TRUE; }
+
 	// Utility
 	/*int SamplesToBytes(int samples)
 	{
