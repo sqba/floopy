@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "Input.h"
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -21,21 +21,78 @@ CInput::~CInput()
 
 int CInput::Read(BYTE *data, int size)
 {
+	//return IFloopySoundInput::Read(data, size);
+
 	BYTE *tmp = new BYTE[size/2];
+	memset(tmp, 0, size/2);
 
 	int len = IFloopySoundInput::Read(tmp, size/2);
 
-	for(int i=0; i<size/2; i++)
+	short int *mono = (short int*)tmp;
+	short int *stereo = (short int*)data;
+	int samples = size/2 / sizeof(short int);
+
+	for(int i=0; i<samples; i++)
 	{
-		*(data++) = *(data++) = *tmp;
+		*(stereo++) = *mono;
+		*(stereo++) = *(mono++);
 	}
 
 	delete[] tmp;
 
-	return 0;
+	assert(len == size/2);
+
+	return len * 2;
 }
 
+WAVFORMAT *CInput::GetFormat()
+{
+	memcpy(&m_wavformat, IFloopySoundInput::GetFormat(), sizeof(WAVFORMAT));
+	m_wavformat.channels = 2;
+	return &m_wavformat;
+}
+
+/*
 void CInput::MoveTo(int samples)
 {
 	IFloopySoundInput::MoveTo(samples/2);
 }
+
+int CInput::GetSize()
+{
+	return IFloopySoundInput::GetSize() * 2;
+}
+*/
+/*
+int CInput::Read(BYTE *data, int size)
+{
+	int len = IFloopySoundInput::Read(data, size);
+	for(int i=0; i<len-1; i++)
+	{
+		*(++data) = *(++data);
+	}
+	return len;
+}
+
+int CInput::Read(BYTE *data, int size)
+{
+	BYTE *tmp = new BYTE[size*2];
+	memset(tmp, 0, size*2);
+
+	int len = IFloopySoundInput::Read(tmp, size*2);
+
+	BYTE *pTmp = tmp;
+	BYTE *pData = data;
+	for(int i=0; i<len/2; i++)
+	{
+		*pData = *pTmp;
+		*(++pData) = *pTmp;
+		pData++;
+		pTmp+=2;
+	}
+
+	delete[] tmp;
+
+	return len / 2;
+}
+*/

@@ -39,6 +39,8 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 private:
+	int m_nHeaderLength;
+	int m_nSamplesToBytes;
 	int m_size;	// Number of samples
 	FILE *m_pFile;
 	RIFF m_riff;

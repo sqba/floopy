@@ -24,7 +24,12 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 	int Read(BYTE *data, int size);
-	void MoveTo(int samples);
+	//void MoveTo(int samples);
+	//int GetSize();
+
+	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+
+	WAVFORMAT *GetFormat();
 
 private:
 };

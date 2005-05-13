@@ -13,6 +13,8 @@ CInput::CInput()
 	m_pFile = NULL;
 	m_size = 0;
 	memset(m_filename, 0, sizeof(m_filename));
+	m_nSamplesToBytes = 0;
+	m_nHeaderLength = 0;
 }
 
 CInput::~CInput()
@@ -39,6 +41,9 @@ BOOL CInput::Open(char *filename)
 
 		memset(m_filename, 0, sizeof(m_filename));
 		strncpy(m_filename, filename, MAX_PATH);
+	
+		m_nSamplesToBytes = ((m_wavformat.bitsPerSample/8) * m_wavformat.channels);
+		m_nHeaderLength = (sizeof(RIFF) + sizeof(FMT) + sizeof(DATA));
 
 		return TRUE;
 	}
@@ -53,14 +58,13 @@ int CInput::GetSize()
 
 void CInput::MoveTo(int samples)
 {
-	int n = samples * ((m_wavformat.bitsPerSample/8) * m_wavformat.channels);
-	fseek(m_pFile, n, SEEK_SET);
+	int n = samples * m_nSamplesToBytes;
+	fseek(m_pFile, m_nHeaderLength+n, SEEK_SET);
 }
 
 void CInput::Reset()
 {
-	long hdrlen = (sizeof(RIFF)+sizeof(FMT)+sizeof(DATA));
-	fseek(m_pFile, hdrlen, SEEK_SET);
+	fseek(m_pFile, m_nHeaderLength, SEEK_SET);
 }
 
 int CInput::Read(BYTE *data, int size)
@@ -68,10 +72,9 @@ int CInput::Read(BYTE *data, int size)
 	if(NULL != m_pFile)
 	{
 		long pos = ftell(m_pFile);
-		long hdrlen = (sizeof(RIFF)+sizeof(FMT)+sizeof(DATA));
-		if(pos+size > m_data.dataSIZE+hdrlen)
+		if(pos+size > m_data.dataSIZE+m_nHeaderLength)
 		{
-			size = m_data.dataSIZE + hdrlen - pos;
+			size = m_data.dataSIZE + m_nHeaderLength - pos;
 		}
 
 		return fread( data, 1, size, m_pFile );
@@ -84,5 +87,6 @@ void CInput::Close()
 	if(NULL != m_pFile)
 	{
 		fclose(m_pFile);
+		m_pFile = NULL;
 	}
 }
