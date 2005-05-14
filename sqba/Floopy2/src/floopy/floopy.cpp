@@ -148,7 +148,8 @@ void main(int argc, char* argv[])
 	WAVFORMAT format;
 	memcpy(&format, fmt, sizeof(WAVFORMAT));
 
-	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
+//	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
+	char *outfile = GetArg(argc, argv, "o", "waveout");
 	output = engine->CreateOutput(outfile, format);
 	if(!output)
 	{

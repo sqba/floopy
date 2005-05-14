@@ -45,7 +45,15 @@ int CInput::Read(BYTE *data, int size)
 		//*(sample++) += ((float)*sample * (float)m_volume / 100.f);
 		//if(*sample < 100 || *sample > -100)
 		//	*sample = *sample;
-		*(sample++) = ((float)*sample * percent);
+//		*(sample++) = ((float)*sample * percent);
+
+		/*if(m_volume == 120.00)
+		{
+			short int d = ((float)*sample * percent);
+		}*/
+
+		*sample = ((float)*sample * percent);
+		sample++;
 
 		/*short int s = (short int)((float)*sample * m_volume);
 		if((s > -max) && (s < max))

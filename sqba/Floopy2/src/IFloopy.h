@@ -152,8 +152,8 @@ public:
 	 */
 	virtual void Close()
 	{
-		if(NULL != m_source)
-			m_source->Close();
+		//if(NULL != m_source)
+		//	m_source->Close();
 	}
 
 	/**
