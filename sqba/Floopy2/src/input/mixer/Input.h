@@ -55,6 +55,8 @@ public:
 #endif // _DEBUG_TIMER_
 
 private:
+	int sampleSize();
+	//int samplesToBytes();
 	void mixBuffers(BYTE *buffers, int count, BYTE *output, int size);
 
 	int	*m_nLengths;

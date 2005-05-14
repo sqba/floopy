@@ -227,3 +227,17 @@ void CEngine::EnableAt(IFloopy *obj, int offset, BOOL bEnable)
 		tmp = tmp->next;
 	}
 }
+
+void CEngine::Close()
+{
+	tComponent *tmp = m_pFirst;
+	while(tmp)
+	{
+		if(tmp->bInput)
+		{
+			CInput *input = (CInput*)tmp->comp;
+			input->Close();
+		}
+		tmp = tmp->next;
+	}
+}

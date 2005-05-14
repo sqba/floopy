@@ -14,6 +14,7 @@
 #include "timeline.h"
 
 #define LOCAL_PARAM_COUNT	1
+//#define _DEBUG_TIMER_
 
 /**
  * \class CInput
@@ -79,6 +80,8 @@ public:
 	void SetParamAt(int offset, int index, float value);
 	void EnableAt(int offset, BOOL bEnable);
 
+	void Close();
+
 private:
 	void applyParamsAt(int offset);
 	int samplesToBytes();
@@ -92,6 +95,13 @@ private:
 	BOOL m_bRecording;
 
 	float m_fDebug;
+
+#ifdef _DEBUG_TIMER_
+	BOOL	m_bDebugTimer;
+	DWORD	m_dwSpeed;
+	int		m_nFrameCount;
+	int		m_nFrameSize;
+#endif // _DEBUG_TIMER_
 };
 
 #endif // !defined(AFX_INPUT_H__0D3139FE_D3F2_4CAF_A696_AB92E4A51331__INCLUDED_)

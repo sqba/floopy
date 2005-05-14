@@ -208,9 +208,11 @@ void CInput::Close()
 	{
 		float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
 		float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
-		float amr = afsz / (1.024f * afmt);
+		float amr = afsz * sampleSize() / (afmt / 1000.f);
 		if(amr < 1024.f)
 			printf("Mixing rate:\t%.2f Kb/sec\n", amr);
+		else if(amr > 1024.f*1024.f)
+			printf("Mixing rate:\t%.2f Gb/sec\n", amr / (1024.f*1024.f));
 		else
 			printf("Mixing rate:\t%.2f Mb/sec\n", amr / 1024.f);
 		printf("Average frame mixing time:\t%f ms\n", afmt);
@@ -260,7 +262,7 @@ float CInput::GetParam(int index)
 {
 	float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
 	float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
-	float amr = afsz / (1.024f * afmt);
+	float amr = afsz * sampleSize() / (afmt / 1000.f);
 
 	switch(index)
 	{
@@ -325,5 +327,20 @@ WAVFORMAT *CInput::GetFormat()
 		}
 	}
 	return fmt;
+}
+*/
+
+int CInput::sampleSize()
+{
+	WAVFORMAT *fmt = GetFormat();
+	assert(fmt->bitsPerSample > 0);
+	return fmt->bitsPerSample / 8;
+}
+/*
+int CInput::samplesToBytes()
+{
+	WAVFORMAT *fmt = GetFormat();
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	return (fmt->bitsPerSample / 8) * fmt->channels;
 }
 */

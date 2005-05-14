@@ -24,6 +24,11 @@ CInput::CInput(char *plugin)
 	Enable(TRUE);
 	IFloopy::Enable(TRUE);
 
+#ifdef _DEBUG_TIMER_
+	m_bDebugTimer = TRUE;
+	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
+#endif // _DEBUG_TIMER_
+
 //	m_bRecording = FALSE;
 
 	m_fDebug = 0.f;
@@ -61,6 +66,13 @@ CInput::~CInput()
 int CInput::Read(BYTE *data, int size)
 {
 	assert(size >= 0);
+
+#ifdef _DEBUG_TIMER_
+	clock_t start = 0;
+	if(m_bDebugTimer)
+		start = clock();
+#endif // _DEBUG_TIMER_
+
 	int s = m_offset;
 	int readBytes = 0;
 	int endpos = m_offset + size;
@@ -112,6 +124,15 @@ int CInput::Read(BYTE *data, int size)
 	}
 
 	m_offset = endpos;
+
+#ifdef _DEBUG_TIMER_
+	if(m_bDebugTimer && readBytes>0)
+	{
+		m_dwSpeed += clock() - start;
+		m_nFrameSize += size / samplesToBytes();
+		m_nFrameCount++;
+	}
+#endif // _DEBUG_TIMER_
 
 	return readBytes;
 }
@@ -350,4 +371,33 @@ void CInput::EnableAt(int offset, BOOL bEnable)
 {
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
 	m_timeline.Set(offset * samplesToBytes(), TIMELINE_PARAM_ENABLE, value);
+}
+
+void CInput::Close()
+{
+	m_plugin->Close();
+
+#ifdef _DEBUG_TIMER_
+	if(m_bDebugTimer)
+	{
+		WAVFORMAT *fmt = GetFormat();
+		assert(fmt->bitsPerSample > 0);
+		int sampleSize = fmt->bitsPerSample / 8;
+
+		printf("%s\n", GetName());
+
+		float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
+		float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
+		float amr = afsz * sampleSize / (afmt / 1000.f);
+		if(amr < 1024.f)
+			printf(" read:\t%.2f Kb/sec\n", amr);
+		else if(amr > 1024.f*1024.f)
+			printf(" read:\t%.2f Gb/sec\n", amr / (1024.f*1024.f));
+		else
+			printf(" read:\t%.2f Mb/sec\n", amr / 1024.f);
+		printf(" average frame time:\t%f ms\n", afmt);
+		printf(" average frame size:\t\t%.2f samples\n", afsz);
+	}
+	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
+#endif // _DEBUG_TIMER_
 }

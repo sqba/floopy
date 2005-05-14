@@ -51,6 +51,8 @@ public:
 	void SetParamAt(IFloopy *obj, int offset, int index, float value);
 	void EnableAt(IFloopy *obj, int offset, BOOL bEnable);
 
+	void Close();
+
 private:
 	char *getStorageName(char *filename);
 
