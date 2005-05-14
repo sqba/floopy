@@ -208,13 +208,13 @@ void CInput::Close()
 	{
 		float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
 		float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
-		float amr = afsz * sampleSize() / (afmt / 1000.f);
+		float amr = afsz * (float)sampleSize() / (afmt / 1000.f);
 		if(amr < 1024.f)
-			printf("Mixing rate:\t%.2f Kb/sec\n", amr);
+			printf("Mixing rate:\t%.2f b/sec\n", amr);
 		else if(amr > 1024.f*1024.f)
-			printf("Mixing rate:\t%.2f Gb/sec\n", amr / (1024.f*1024.f));
+			printf("Mixing rate:\t%.2f Mb/sec\n", amr / (1024.f*1024.f));
 		else
-			printf("Mixing rate:\t%.2f Mb/sec\n", amr / 1024.f);
+			printf("Mixing rate:\t%.2f Kb/sec\n", amr / 1024.f);
 		printf("Average frame mixing time:\t%f ms\n", afmt);
 		printf("Average frame size:\t\t%.2f samples\n", afsz);
 	}

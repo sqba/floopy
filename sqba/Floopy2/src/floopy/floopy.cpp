@@ -184,7 +184,7 @@ void main(int argc, char* argv[])
 	fprintf(stderr, "\n");
 
 	//region->Close();
-	//output->Close();
+	output->Close();
 	engine->Close();
 
 	delete output;
