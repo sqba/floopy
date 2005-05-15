@@ -73,7 +73,12 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 	if(plugin)
 	{
 		comp = new CInput(plugin);
-		comp->Open(filename);
+		if(!comp->Open(filename))
+		{
+			delete comp;
+			return NULL;
+		}
+
 	}
 	else
 		comp = new CInput(filename);

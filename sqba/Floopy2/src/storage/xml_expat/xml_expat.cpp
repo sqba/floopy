@@ -58,6 +58,8 @@ char *gpbuff = NULL;
 
 const char *gElement = NULL;
 
+char gPath[MAX_PATH] = {0};
+
 IFloopySoundInput *buff[20]; //temp
 int level = 0;
 
@@ -83,14 +85,25 @@ void startElement(void *userData, const char *name, const char **atts)
 			char *source = (char*)atts[1];
 			if(source && (0 != strcmp(source, "engine")))
 			{
-				IFloopySoundInput *input = gEngine->CreateInput(source);
-				if(input)
+				char tmp[MAX_PATH] = {0};
+				if(strlen(gPath))
+				{
+					memcpy(tmp, gPath, strlen(gPath));
+					strcat(tmp, "\\");
+					strcat(tmp, source);
+				}
+				else
+					memcpy(tmp, source, strlen(source));
+				IFloopySoundInput *input = gEngine->CreateInput(tmp);
+				if(input && gInput)
 				{
 					gInput->SetSource(input);
 					gInput = input;
 					gObjects[gIndex].obj = input;
 					buff[++level] = gInput;
 				}
+				else
+					gInput = NULL;
 			}
 		}
 	}
@@ -156,6 +169,12 @@ BOOL loadXML(IFloopyEngine *engine, char *filename)
 	buff[0] = gInput;
 	gObjects[0].obj = engine;
 	level = 0;
+
+	char *pathend = strrchr(filename, '\\');
+	if(pathend)
+	{
+		memcpy(gPath, filename, pathend - filename);
+	}
 
 	FILE *fp = fopen(filename, "r");
 	if(NULL == fp)

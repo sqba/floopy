@@ -130,7 +130,7 @@ int CInput::Read(BYTE *data, int size)
 	return result; 
 }
 
-void CInput::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, int size)
+void CInput::mixBuffers(BYTE *m_pBuffers, int buffCount, BYTE *output, int size)
 {
 #ifdef _DEBUG_TIMER_
 	clock_t start = 0;
@@ -152,9 +152,9 @@ void CInput::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, i
 	for(int i=0; i<numsamples; i++)
 	{
 		// For each source
-		for(int n=0; n<buffm_nInputCount*numsamples; n+=numsamples)
+		for(int n=0; n<buffCount*numsamples; n+=numsamples)
 		{
-			*out += *(in+n+i) / buffm_nInputCount;
+			*out += *(in+n+i) / buffCount;
 		}
 		out++; // Move to next sample
 	}
