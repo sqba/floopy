@@ -71,6 +71,10 @@ Project: "in_floopy"=".\winamp\in_floopy.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    "$/sqba/Floopy2/src/winamp/in_floopy", JIDAAAAA
+    .\winamp
+    end source code control
 }}}
 
 Package=<4>
