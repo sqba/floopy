@@ -63,7 +63,7 @@ public:
 
 	BOOL SetSource(IFloopySoundInput *src)
 	{
-		return m_plugin->SetSource(src);
+		return (m_plugin ? m_plugin->SetSource(src) : FALSE);
 	}
 
 	IFloopySoundInput *GetSource()			{ return m_plugin->GetSource(); }
@@ -72,7 +72,7 @@ public:
 
 	int GetNextOffset(int offset);
 
-	int GetInputCount() { return m_plugin->GetInputCount(); }
+	int GetInputCount() { return (m_plugin ? m_plugin->GetInputCount() : 0); }
 
 	//WAVFORMAT *GetFormat() { return m_plugin->GetFormat(); }
 	//WAVFORMAT *GetFormat() { return IFloopySoundInput::GetFormat(); }

@@ -49,7 +49,7 @@ enum objType
 class IFloopy
 {
 public:
-	IFloopy() { m_bEnabled = TRUE; }
+	IFloopy() { m_bEnabled = TRUE; memset(m_name, 0, 50); }
 	virtual ~IFloopy() {}
 
 	//! Used for runtime identification, do not override in plugins!
@@ -73,7 +73,11 @@ public:
 	virtual void Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
 	virtual BOOL IsEnabled()				{ return m_bEnabled; }
 
+	char *GetDisplayName()			{ return m_name; }
+	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
+
 private:
+	char m_name[50];
 	BOOL m_bEnabled;
 };
 

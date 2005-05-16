@@ -4,6 +4,7 @@
 
 #include "Engine.h"
 #include <stdio.h>
+#include <direct.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -34,9 +35,24 @@ CEngine::~CEngine()
 
 BOOL CEngine::Create(char *plugin)
 {
+	/*char path[MAX_PATH] = {0};
+	getcwd(path, MAX_PATH);
+	MessageBox(NULL,path,"Path",MB_OK);
+	int c = chdir("plugins");
+	FILE *fp = fopen("in_floopy.cfg", "r");
+	if(fp)
+	{
+		fscanf(fp, "%s", path);
+		fclose(fp);
+	}
+	chdir(path);
+	memset(path, 0 , MAX_PATH);
+	strcat(path, "D:\\sqba\\Projekti\\Floopy!\\Floopy2\\Debug");*/
+
 	char *filename = new char[strlen(plugin) + 5];
 	strcpy(filename, plugin);
 	strcat(filename, PLUG_EXT);
+
 	m_hinst = LoadLibraryA(filename);
 
 	if (NULL != m_hinst)
@@ -47,10 +63,12 @@ BOOL CEngine::Create(char *plugin)
 			//printf("CreateEngine() found in %s.\n", filename);
 			m_plugin = func();
 			SetSource( m_plugin );
+			delete[] filename;
 			return TRUE;
 		}
 		else
  			fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, filename);
 	}
+	delete[] filename;
 	return FALSE;
 }

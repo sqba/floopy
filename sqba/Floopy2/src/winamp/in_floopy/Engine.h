@@ -47,6 +47,9 @@ public:
 
 	void Close() { if(m_plugin) m_plugin->Close(); }
 
+	char *GetDisplayName() { return m_plugin->GetDisplayName(); }
+	void SetDisplayName(char *name, int len) { m_plugin->SetDisplayName(name, len); }
+
 private:
 	HINSTANCE m_hinst;
 	IFloopyEngine *m_plugin;

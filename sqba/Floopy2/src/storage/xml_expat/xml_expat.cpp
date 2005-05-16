@@ -82,7 +82,17 @@ void startElement(void *userData, const char *name, const char **atts)
 		int n = XML_GetSpecifiedAttributeCount(parser);
 		if(n > 0)
 		{
-			char *source = (char*)atts[1];
+			char *source = NULL;
+			char *desc = NULL;
+			
+			for(int i=0; i<n-1; i+=2)
+			{
+				if(0==strcmp(atts[i], "source"))
+					source = (char*)atts[i+1];
+				if(0==strcmp(atts[i], "name"))
+					desc = (char*)atts[i+1];
+			}
+
 			if(source && (0 != strcmp(source, "engine")))
 			{
 				char tmp[MAX_PATH] = {0};
@@ -99,11 +109,18 @@ void startElement(void *userData, const char *name, const char **atts)
 				{
 					gInput->SetSource(input);
 					gInput = input;
+					if(desc)
+						input->SetDisplayName(desc, strlen(desc));
 					gObjects[gIndex].obj = input;
 					buff[++level] = gInput;
 				}
 				else
 					gInput = NULL;
+			}
+			else
+			{
+				if(desc)
+					gEngine->SetDisplayName(desc, strlen(desc));
 			}
 		}
 	}
@@ -318,31 +335,25 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 	char *token = strtok( data, seps );
 	int i=0;
 	int param=0;
-	//input->Reset();
 	WAVFORMAT *fmt = input->GetFormat();
 	int freq = fmt->frequency;
 	int offset = 0;
-
-	//BOOL bTest = TRUE;
 
 	while( token != NULL )
 	{
 		switch(i)
 		{
 		case 0:
-			//if(bTest)
-				offset = atof(token) * (float)freq;
-			//else
-			//	input->MoveTo(atof(token) * (float)freq);
+			offset = atof(token) * (float)freq;
 			i++;
 			break;
 		case 1:
 			if(isalpha(*token))
 			{
-				//if(bTest)
+				if(token[0]=='o' || token[0]=='O')
 					gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
-				//else
-				//	input->Enable(0==strncmp(token, "ON", 2));
+				else if(0==strncmp(token, "RESET", 5))
+					gEngine->SetParamAt(input, offset, -2, 0.f);
 				i=0;
 			}
 			else
@@ -353,19 +364,12 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 			break;
 		case 2:
 			if(param == -1)
-				//if(bTest)
-					gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
-				//else
-				//	input->Enable(0==strncmp(token, "ON", 2));
+				gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
 			else
-				//if(bTest)
-					gEngine->SetParamAt(input, offset, param, (float)atof(token));
-				//else
-				//	input->SetParam(param, (float)atof(token));
+				gEngine->SetParamAt(input, offset, param, (float)atof(token));
 			i=0;
 			break;
 		}
 		token = strtok( NULL, seps );
 	}
-//	input->Reset();
 }

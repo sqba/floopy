@@ -5,6 +5,7 @@
 #include "Engine.h"
 #include "Storage.h"
 #include <assert.h>
+#include <direct.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -72,6 +73,24 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 	char *plugin = getStorageName(filename);
 	if(plugin)
 	{
+		char path[MAX_PATH] = {0};
+		/*FILE *fp = fopen("engine.cfg", "r");
+		if(fp)
+		{
+			fscanf(fp, "%s", path);
+		}
+
+		if(strlen(path) > 0)
+		{
+			if(path[strlen(path)-1] != '\\')
+				strcat(path, "\\");
+		}
+		fclose(fp);*/
+
+		/*strcat(path, "D:\\sqba\\Projekti\\Floopy!\\Floopy2\\Debug\\");
+		strcat(path, plugin);
+		comp = new CInput(path);*/
+
 		comp = new CInput(plugin);
 		if(!comp->Open(filename))
 		{
@@ -81,7 +100,13 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 
 	}
 	else
+	{
+		char *tmp = strrchr(filename, '\\');
+		if(tmp)
+			filename = tmp+1;
+
 		comp = new CInput(filename);
+	}
 
 	add(comp, TRUE);
 	return comp;
@@ -181,10 +206,18 @@ BOOL CEngine::Save(char *filename)
 
 char *CEngine::getStorageName(char *filename)
 {
+	char path[MAX_PATH] = {0};
+	FILE *fp = fopen("engine.cfg", "r");
+	if(fp)
+	{
+		fscanf(fp, "%s", path);
+		chdir(path);
+		fclose(fp);
+	}
+
 	char *ext = strrchr(filename, '.');
 	if(ext)
 	{
-		//int i = filename+strlen(filename) - ext;
 		ext += 1;
 
 		if(0 == strcmpi(ext, "test"))

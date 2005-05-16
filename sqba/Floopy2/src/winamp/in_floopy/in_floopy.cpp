@@ -172,7 +172,7 @@ void getfileinfo(char *filename, char *title, int *length_in_ms)
 		WAVFORMAT *fmt = engine.GetFormat();
 		if(fmt->frequency > 0)
 			*length_in_ms = engine.GetSize() / fmt->frequency * 1000;
-		wsprintf(title,"Floopy test");
+		wsprintf(title, engine.GetDisplayName());
 	}
 	else
 		wsprintf(title,"%s",filename);
