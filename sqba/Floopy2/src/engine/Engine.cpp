@@ -73,7 +73,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 	char *plugin = getStorageName(filename);
 	if(plugin)
 	{
-		char path[MAX_PATH] = {0};
+		//char path[MAX_PATH] = {0};
 		/*FILE *fp = fopen("engine.cfg", "r");
 		if(fp)
 		{

@@ -19,6 +19,15 @@ CEngine::CEngine()
 {
 	m_hinst = NULL;
 	m_plugin = NULL;
+	memset(m_path, 0, MAX_PATH);
+	FILE *fp = fopen("in_floopy.cfg", "r");
+	if(fp)
+	{
+		fscanf(fp, "%s", m_path);
+		if(m_path[strlen(m_path)-1] != '\\')
+			m_path[strlen(m_path)] = '\\';
+		fclose(fp);
+	}
 }
 
 CEngine::~CEngine()
@@ -35,8 +44,7 @@ CEngine::~CEngine()
 
 BOOL CEngine::Create(char *plugin)
 {
-	/*char path[MAX_PATH] = {0};
-	getcwd(path, MAX_PATH);
+	/*getcwd(path, MAX_PATH);
 	MessageBox(NULL,path,"Path",MB_OK);
 	int c = chdir("plugins");
 	FILE *fp = fopen("in_floopy.cfg", "r");
@@ -48,9 +56,12 @@ BOOL CEngine::Create(char *plugin)
 	chdir(path);
 	memset(path, 0 , MAX_PATH);
 	strcat(path, "D:\\sqba\\Projekti\\Floopy!\\Floopy2\\Debug");*/
+	if(strlen(m_path) == 0)
+		return FALSE;
 
-	char *filename = new char[strlen(plugin) + 5];
-	strcpy(filename, plugin);
+	char *filename = new char[strlen(m_path) + strlen(plugin) + 5];
+	strcpy(filename, m_path);
+	strcat(filename, plugin);
 	strcat(filename, PLUG_EXT);
 
 	m_hinst = LoadLibraryA(filename);

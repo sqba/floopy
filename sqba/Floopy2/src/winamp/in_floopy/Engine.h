@@ -53,6 +53,7 @@ public:
 private:
 	HINSTANCE m_hinst;
 	IFloopyEngine *m_plugin;
+	char m_path[MAX_PATH];
 };
 
 #endif // !defined(AFX_ENGINE_H__2971634E_ED26_4A50_ABC1_123ADF851EA5__INCLUDED_)

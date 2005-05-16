@@ -30,7 +30,7 @@ int seek_needed; // if != -1, it is the point that the decode thread should seek
 int killDecodeThread=0;
 HANDLE thread_handle=INVALID_HANDLE_VALUE;
 int file_length=0;
-
+BOOL file_open=FALSE;
 
 //int file_length; // file length, in ms
 //return (file_length*10)/(SAMPLERATE/100*NCH*(BPS/8)); 
@@ -64,7 +64,7 @@ void config(HWND hwndParent)
 }
 void about(HWND hwndParent)
 {
-	MessageBox(hwndParent,"Floopy Player","About Floopy Player",MB_OK);
+	MessageBox(hwndParent,"Floopy Player\n  Esqban S. Simon","About Floopy Player",MB_OK);
 }
 
 void init() { }
@@ -100,6 +100,7 @@ int play(char *fn)
 		return 1;
 	}
 	seek_needed=-1;
+	file_open = TRUE;
 
 	// Mora ovako zbog toga sto se GetSize izracunava u odnosu
 	// na trenutnu poziciju!
@@ -137,6 +138,11 @@ void stop() {
 		CloseHandle(thread_handle);
 		thread_handle = INVALID_HANDLE_VALUE;
 	}
+	if (file_open)
+	{
+		engine.Close();
+		file_open = FALSE;
+	}
 
 	mod.outMod->Close();
 	mod.SAVSADeInit();
@@ -172,10 +178,12 @@ void getfileinfo(char *filename, char *title, int *length_in_ms)
 		WAVFORMAT *fmt = engine.GetFormat();
 		if(fmt->frequency > 0)
 			*length_in_ms = engine.GetSize() / fmt->frequency * 1000;
-		wsprintf(title, engine.GetDisplayName());
+		char *name = engine.GetDisplayName();
+		if(name)
+			wsprintf(title, name);
 	}
 	else
-		wsprintf(title,"%s",filename);
+		wsprintf(title,"%s", strrchr(filename, '\\')+1);
 }
 
 void eq_set(int on, char data[10], int preamp) 
