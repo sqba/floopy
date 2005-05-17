@@ -1,7 +1,6 @@
 // mixer.cpp : Defines the entry point for the DLL application.
 //
 
-#include <windows.h>
 #include "Input.h"
 
 /*

@@ -9,8 +9,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include <stdio.h>
+#include <memory.h>
 
 #define TIMELINE_PARAM_ENABLE		-1
 #define PARAM_VALUE_ENABLED		1000.f

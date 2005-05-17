@@ -4,6 +4,7 @@
 
 #include "Input.h"
 #include <assert.h>
+#include <string.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

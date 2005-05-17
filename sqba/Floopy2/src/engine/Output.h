@@ -9,10 +9,12 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include "../ifloopy.h"
 #include <stdio.h>
 #include "timeline.h"
+
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 
 /**
  * \class COutput
@@ -28,23 +30,11 @@ class COutput : public IFloopySoundOutput
 public:
 	COutput(char *plugin, SOUNDFORMAT fmt);
 	virtual ~COutput();
-/*
-	char *GetName()			{ return "outputw"; }
-	char *GetDescription()	{ return "Floopy Output Plugin Wrapper"; }
-	char *GetVersion()		{ return "0.1"; }
-	char *GetAuthor()		{ return "sqba"; }
-*/
+
 	char *GetName()			{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
-/*
-	BOOL Open(char *filename);
-	UINT Write(BYTE *data, UINT size);
-	void Close();
-*/
-//	IFloopySoundOutput *getPlugin() { return m_plugin; }
-//	IFloopySoundOutput *getPlugin() { return GetDest(); }
 
 	int   GetParamCount()					{ return m_plugin->GetParamCount(); }
 	void  SetParam(int index, float value);//	{ m_plugin->SetParam(index, value); }
@@ -59,7 +49,12 @@ public:
 		m_plugin->SetDest(dst);
 	}
 
+	char *GetLastErrorDesc() { return m_szLastError; }
+
 private:
+	char m_name[50];
+	char m_szLastError[100];
+
 	int m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundOutput *m_plugin;

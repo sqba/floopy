@@ -179,22 +179,6 @@ Package=<4>
 
 ###############################################################################
 
-Project: "test"=".\STORAGE\test\test.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-    begin source code control
-    "$/sqba/Floopy2/src/storage/test", LHDAAAAA
-    .\storage\test
-    end source code control
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
 Project: "tonegen"=".\INPUT\tonegen\tonegen.dsp" - Package Owner=<4>
 
 Package=<5>

@@ -17,12 +17,12 @@ COutput::COutput(int nSamplesPerSec, int wBitsPerSample, int nChannels)
 	memset(&m_fmt.fmtFORMAT, 0, sizeof(WAVEFORM));
 	memset(&m_data, 0, sizeof(DATA));
 
-	strcpy(m_riff.riffID, TEXT("RIFF"));
+	strcpy(m_riff.riffID, "RIFF");
 	//riff.riffSIZE = 0;//File size minus 8 bytes
-	strcpy(m_riff.riffFORMAT, TEXT("WAVE"));
+	strcpy(m_riff.riffFORMAT, "WAVE");
 
 	// set up the WAVEFORM structure.
-	strcpy(m_fmt.fmtID, TEXT("fmt "));
+	strcpy(m_fmt.fmtID, "fmt ");
 	m_fmt.fmtSIZE = 16;
 	m_fmt.fmtFORMAT.nSamplesPerSec  = 44100;	// sample rate
 	m_fmt.fmtFORMAT.wBitsPerSample  = 16;		// sample size
@@ -31,7 +31,7 @@ COutput::COutput(int nSamplesPerSec, int wBitsPerSample, int nChannels)
 	m_fmt.fmtFORMAT.nBlockAlign     = (m_fmt.fmtFORMAT.wBitsPerSample * m_fmt.fmtFORMAT.nChannels) >> 3;
 	m_fmt.fmtFORMAT.nAvgBytesPerSec = m_fmt.fmtFORMAT.nBlockAlign * m_fmt.fmtFORMAT.nSamplesPerSec;
 
-	strcpy(m_data.dataID, TEXT("data"));
+	strcpy(m_data.dataID, "data");
 	m_data.dataSIZE = 0;
 
 	memset(m_filename, 0, sizeof(m_filename));

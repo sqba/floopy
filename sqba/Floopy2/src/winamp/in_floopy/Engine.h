@@ -9,26 +9,22 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include "../ifloopy.h"
+
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 
 class CEngine : public IFloopyEngine
 {
 public:
 	CEngine();
 	virtual ~CEngine();
-/*
-	char *GetName()			{ return "enginew"; }
-	char *GetDescription()	{ return "Floopy Engine Plugin Wrapper"; }
-	char *GetVersion()		{ return "0.1"; }
-	char *GetAuthor()		{ return "sqba"; }
-*/
+
 	char *GetName()			{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
-//	IFloopyEngine *getPlugin() { return m_plugin; }
 	BOOL Create (char *plugin);
 
 	IFloopySoundInput  *CreateInput(char *plugin)
@@ -47,15 +43,18 @@ public:
 
 	void Close() { if(m_plugin) m_plugin->Close(); }
 
-	char *GetDisplayName() { return m_plugin->GetDisplayName(); }
+	char *GetDisplayName() { return (m_plugin ? m_plugin->GetDisplayName() : NULL); }
 	void SetDisplayName(char *name, int len) { m_plugin->SetDisplayName(name, len); }
 
 	void init();
+
+	char *GetLastErrorDesc() { return m_szLastError; }
 
 private:
 	HINSTANCE m_hinst;
 	IFloopyEngine *m_plugin;
 	char m_path[MAX_PATH];
+	char m_szLastError[100];
 };
 
 #endif // !defined(AFX_ENGINE_H__2971634E_ED26_4A50_ABC1_123ADF851EA5__INCLUDED_)

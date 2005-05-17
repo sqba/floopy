@@ -9,7 +9,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include <assert.h>
 #include "../../ifloopy.h"
 
@@ -34,13 +33,6 @@ public:
 	int GetSize();	//{ return -1; }
 	void MoveTo(int samples);
 	void Reset();
-	/*void Enable(BOOL bEnabled)
-	{
-		IFloopySoundInput *src = IFloopySoundInput::GetSource();
-		if(src)
-			src->Enable(bEnabled);
-		IFloopySoundInput::Enable(bEnabled);
-	}*/
 
 	BOOL ReadSourceIfDisabled()	{ return FALSE; }
 

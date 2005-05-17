@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <direct.h>
 
-#define ERR_STR_FILENOTFOUND	"File '%s' not found."
+#define ERR_STR_FILENOTFOUND	"File '%s' not found.\0"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -17,8 +17,8 @@ CEngine::CEngine()
 {
 	//m_offset = m_stopAt = m_length = 0;
 	m_pFirst = m_pLast = NULL;
-	memset(m_name, 0, 50);
-	memset(m_szLastErrDesc, 0, sizeof(m_szLastErrDesc));
+	memset(m_name, 0, sizeof(m_name));
+	memset(m_szLastError, 0, sizeof(m_szLastError));
 }
 
 CEngine::~CEngine()
@@ -98,7 +98,8 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 		comp = new CInput(plugin);
 		if(!comp->Open(filename))
 		{
-			setLastErrDesc(ERR_STR_FILENOTFOUND, filename);
+			//setLastError(ERR_STR_FILENOTFOUND, filename);
+			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
 			delete comp;
 			return NULL;
 		}
@@ -128,7 +129,8 @@ IFloopySoundOutput *CEngine::CreateOutput(char *filename, SOUNDFORMAT fmt)
 		comp = new COutput(plugin, fmt);
 		if(!comp->Open(filename))
 		{
-			setLastErrDesc(ERR_STR_FILENOTFOUND, filename);
+			//setLastError(ERR_STR_FILENOTFOUND, filename);
+			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
 			delete comp;
 			return NULL;
 		}
@@ -184,10 +186,11 @@ BOOL CEngine::Save(char *filename)
 		CStorage storage(this, name);
 		result = storage.Save(filename);
 		//if(!result)
-		//	storage.GetErrorDesc(m_szLastErrDesc, strlen(m_szLastErrDesc));
+		//	storage.GetLastError(m_szLastError, strlen(m_szLastError));
 	}
 	else
-		setLastErrDesc(ERR_STR_FILENOTFOUND, filename);
+		sprintf(m_szLastError, "Adequate storage component not found for %s.\0", filename);
+		//setLastError(ERR_STR_FILENOTFOUND, filename);
 	return result;
 }
 
@@ -281,21 +284,22 @@ void CEngine::Close()
 		tmp = tmp->next;
 	}
 }
-
+/*
 int CEngine::GetLastError()
 {
 	return 0;
 }
 
-BOOL CEngine::GetErrorDesc(char *str, int len)
+BOOL CEngine::GetLastError(char *str, int len)
 {
-	int l = sizeof(m_szLastErrDesc);
-	memcpy(str, m_szLastErrDesc, (len>l?l:len));
+	int l = sizeof(m_szLastError);
+	memcpy(str, m_szLastError, (len>l?l:len));
 	return TRUE;
 }
 
-void CEngine::setLastErrDesc(char *err, char *str)
+void CEngine::setLastError(char *err, char *str)
 {
-	memset(m_szLastErrDesc, 0, sizeof(m_szLastErrDesc));
-	sprintf(m_szLastErrDesc, err, str);
+	memset(m_szLastError, 0, sizeof(m_szLastError));
+	sprintf(m_szLastError, err, str);
 }
+*/

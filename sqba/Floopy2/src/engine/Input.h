@@ -9,9 +9,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include "../ifloopy.h"
 #include "timeline.h"
+
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 
 #define LOCAL_PARAM_COUNT	1
 //#define _DEBUG_TIMER_
@@ -83,13 +85,16 @@ public:
 
 	void Close();
 
-	int GetLastError();
-	BOOL GetErrorDesc(char *str, int len);
+//	int GetLastError();
+	BOOL GetLastError(char *str, int len);
 
 	char *GetDisplayName() { return m_name; }
 	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
 
 private:
+	char m_name[50];
+	char m_szLastError[100];
+
 	void applyParamsAt(int offset);
 	int samplesToBytes();
 	int getEndOffset();
@@ -102,8 +107,6 @@ private:
 	BOOL m_bRecording;
 
 	float m_fDebug;
-
-	char m_name[50];
 
 #ifdef _DEBUG_TIMER_
 	BOOL	m_bDebugTimer;

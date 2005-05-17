@@ -87,13 +87,21 @@ int play(char *fn)
 	
 	if(!engine.Create("engine"))
 	{
-		//MessageBox(NULL, "Failed to create engine.", "in_floopy", MB_OK);
+		char *msg = engine.GetLastErrorDesc();
+		if(msg && *msg)
+			MessageBox(NULL, msg, "in_floopy", MB_OK);
+		else
+			MessageBox(NULL, "Failed to create engine.", "in_floopy", MB_OK);
 		return 0;
 	}
 
 	if(!engine.Open(fn))
 	{
-		//MessageBox(NULL, "Failed to open file.", "in_floopy", MB_OK);
+		char *msg = engine.GetLastErrorDesc();
+		if(msg && *msg)
+			MessageBox(NULL, msg, "in_floopy", MB_OK);
+		else
+			MessageBox(NULL, "Failed to open file.", "in_floopy", MB_OK);
 		return 0;
 	}
 

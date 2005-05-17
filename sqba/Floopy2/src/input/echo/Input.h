@@ -9,7 +9,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include "../../ifloopy.h"
 
 class CInput : public IFloopySoundInput
@@ -23,7 +22,6 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
-	//BOOL SetSource(IFloopySoundInput *src);
 	int Read(BYTE *data, int size);
 	void Reset();
 

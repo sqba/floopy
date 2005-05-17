@@ -1,11 +1,10 @@
 // floopy.cpp : Defines the entry point for the console application.
 //
 
-#include <windows.h>
 #include <stdio.h>
 #include <time.h>
-#include "engine.h"
 #include <assert.h>
+#include "engine.h"
 #include "args.h"
 
 

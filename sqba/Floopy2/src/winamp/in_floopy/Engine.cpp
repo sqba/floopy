@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <direct.h>
 
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -20,6 +23,7 @@ CEngine::CEngine()
 	m_hinst = NULL;
 	m_plugin = NULL;
 	memset(m_path, 0, MAX_PATH);
+	memset(m_szLastError, 0, sizeof(m_szLastError));
 }
 
 CEngine::~CEngine()
@@ -74,8 +78,11 @@ BOOL CEngine::Create(char *plugin)
 			return TRUE;
 		}
 		else
- 			fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, filename);
+ 			sprintf(m_szLastError, "Error: %s not found in %s.\n", PROC_NAME, filename);
+ 			//fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, filename);
 	}
+	else
+		sprintf(m_szLastError, "Error: %s not found.\n", filename);
 	delete[] filename;
 	return FALSE;
 }

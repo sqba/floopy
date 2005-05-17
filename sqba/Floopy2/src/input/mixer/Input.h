@@ -11,7 +11,6 @@
 
 #define _DEBUG_TIMER_
 
-#include <windows.h>
 #include <time.h>
 #include <stdio.h>
 #include <assert.h>

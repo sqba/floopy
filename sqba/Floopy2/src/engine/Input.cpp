@@ -23,6 +23,7 @@ CInput::CInput(char *plugin)
 	m_offset = 0;
 
 	memset(m_name, 0, 50);
+	memset(m_szLastError, 0, sizeof(m_szLastError));
 
 	Enable(TRUE);
 	IFloopy::Enable(TRUE);
@@ -50,8 +51,13 @@ CInput::CInput(char *plugin)
 			IFloopySoundInput::SetSource(m_plugin);
 		}
 		else {
-			fprintf(stderr, "Error: %s() not found in %s.\n", PROC_NAME, filename);
+			//fprintf(stderr, "Error: %s() not found in %s.\n", PROC_NAME, filename);
+			sprintf(m_szLastError, "Error: %s() not found in %s.\n\0", PROC_NAME, filename);
 		}
+	}
+	else
+	{
+		sprintf(m_szLastError, "Error: %s not found.\n\0", filename);
 	}
 
 	delete[] filename;
@@ -409,13 +415,14 @@ void CInput::Close()
 	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
 #endif // _DEBUG_TIMER_
 }
-
+/*
 int CInput::GetLastError()
 {
 	return 0;
 }
 
-BOOL CInput::GetErrorDesc(char *str, int len)
+BOOL CInput::GetLastError(char *str, int len)
 {
 	return FALSE;
 }
+*/

@@ -36,8 +36,15 @@ COutput::COutput(char *plugin, SOUNDFORMAT fmt)
 			IFloopySoundOutput::SetDest( m_plugin );
 		}
 		else
- 			fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, filename);
-   }
+		{
+ 			//fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, filename);
+			sprintf(m_szLastError, "Error: %s not found in %s\0.\n", PROC_NAME, filename);
+		}
+	}
+	else
+	{
+		sprintf(m_szLastError, "Error: %s not found.\n\0", filename);
+	}
 }
 
 COutput::~COutput()

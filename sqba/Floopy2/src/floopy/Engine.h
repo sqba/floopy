@@ -9,26 +9,21 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include "../ifloopy.h"
+
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 
 class CEngine : public IFloopyEngine
 {
 public:
 	CEngine(char *plugin);
 	virtual ~CEngine();
-/*
-	char *GetName()			{ return "enginew"; }
-	char *GetDescription()	{ return "Floopy Engine Plugin Wrapper"; }
-	char *GetVersion()		{ return "0.1"; }
-	char *GetAuthor()		{ return "sqba"; }
-*/
+
 	char *GetName()			{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
-
-//	IFloopyEngine *getPlugin() { return m_plugin; }
 
 	IFloopySoundInput  *CreateInput(char *plugin)
 	{

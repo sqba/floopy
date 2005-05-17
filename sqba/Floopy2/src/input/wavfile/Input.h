@@ -9,8 +9,14 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
-#include <mmsystem.h>
+/* flags for wFormatTag field of WAVEFORMAT */
+#define WAVE_FORMAT_PCM     1
+#define MAX_PATH          260
+
+//#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+//#include <windows.h>
+//#include <mmsystem.h>
+
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>

@@ -1,10 +1,15 @@
 // xml_expat.cpp : Defines the entry point for the DLL application.
 //
 
-#include <windows.h>
+#define MAX_PATH          260
+
 #include "expat/xmlparse/xmlparse.h"
 #include "../../ifloopy.h"
 #include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
 
 

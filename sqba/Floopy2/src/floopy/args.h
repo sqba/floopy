@@ -1,3 +1,5 @@
+#include <math.h>
+#include <stdlib.h>
 
 /**
  * Vraca numericku vrednost parametra komandne linije.

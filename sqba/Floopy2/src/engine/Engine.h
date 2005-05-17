@@ -9,7 +9,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include <stdio.h>
 #include <time.h>
 #include "../ifloopy.h"
@@ -54,21 +53,23 @@ public:
 
 	void Close();
 
-	int GetLastError();
-	BOOL GetErrorDesc(char *str, int len);
+	//int GetLastError();
+	//BOOL GetLastError(char *str, int len);
+	char *GetLastErrorDesc() { return m_szLastError; }
 
 	char *GetDisplayName() { return m_name; }
 	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
 
 private:
 	char *getStorageName(char *filename);
-	void setLastErrDesc(char *err, char *str);
+	//void setLastError(char *err, char *str);
 
 private:
-	char m_szLastErrDesc[100];
+	char m_name[50];
+	char m_szLastError[100];
+
 	CTimeline m_timeline;
 
-	char m_name[50];
 
 	IFloopySoundInput *testCreateMaster();
 	IFloopySoundInput *testCreateTrack1();

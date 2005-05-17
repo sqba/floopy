@@ -9,8 +9,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include "../../ifloopy.h"
+
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 
 
 
@@ -42,13 +44,11 @@ public:
 	CInput();
 	virtual ~CInput();
 
-	//char *GetName()			{ return "mp3file"; }
 	char *GetName()			{ return (strlen(m_filename)>0 ? m_filename : "mp3file"); }
 	char *GetDescription()	{ return "Mp3 File Reader"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
-	//BOOL SetSource(IFloopySoundInput *src);
 	int Read(BYTE *data, int size);
 	void Reset();
 	BOOL Open(char *filename);
@@ -63,10 +63,8 @@ private:
 	int samplesToBytes();
 	char m_filename[MAX_PATH];
 
-	//HWND m_hWnd;
 	HINSTANCE m_hDllInstance;
 	HINSTANCE m_hinstLib;
-	WAVEFORMATEX m_wfx;
 	TCHAR m_szFileName[MAX_PATH];
 
 	HANDLE m_hInput;

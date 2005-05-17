@@ -9,8 +9,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <windows.h>
 #include "../../ifloopy.h"
+
+#include <string.h>
 
 class CInput : public IFloopySoundInput
 {
