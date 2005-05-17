@@ -78,6 +78,7 @@ public:
 	//SOUNDFORMAT *GetFormat() { return IFloopySoundInput::GetFormat(); }
 
 	void SetParamAt(int offset, int index, float value);
+	void ResetParamAt(int offset, int index);
 	void EnableAt(int offset, BOOL bEnable);
 
 	void Close();

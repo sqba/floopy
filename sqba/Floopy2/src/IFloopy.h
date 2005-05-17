@@ -124,11 +124,6 @@ public:
 	}
 
 	/**
-	 * Close source file.
-	 */
-	//virtual void Close() { }
-
-	/**
 	 * Return total sample count.
 	 * @return number of samples.
 	 */
@@ -275,15 +270,8 @@ public:
 			m_dest->Close();
 	}
 
-	virtual void SetDest(IFloopySoundOutput *dst)
-	{
-		m_dest = dst;
-	}
-
-	virtual IFloopySoundOutput *GetDest()
-	{
-		return m_dest;
-	}
+	virtual void SetDest(IFloopySoundOutput *dst)	{ m_dest = dst; }
+	virtual IFloopySoundOutput *GetDest()			{ return m_dest; }
 
 	/**
 	 * Writes a buffer to the output, whatever it may be.
@@ -324,6 +312,7 @@ public:
 
 	// offset is in samples!
 	virtual void SetParamAt(IFloopy *obj, int offset, int index, float value) {}
+	virtual void ResetParamAt(IFloopy *obj, int offset, int index) {}
 	virtual void EnableAt(IFloopy *obj, int offset, BOOL bEnable) {}
 };
 

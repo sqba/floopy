@@ -370,6 +370,11 @@ void CInput::SetParamAt(int offset, int index, float value)
 	m_timeline.Set(offset * samplesToBytes(), index, value);
 }
 
+void CInput::ResetParamAt(int offset, int index)
+{
+	m_timeline.Remove(offset * samplesToBytes(), index);
+}
+
 void CInput::EnableAt(int offset, BOOL bEnable)
 {
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);

@@ -238,6 +238,21 @@ void CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
 	}
 }
 
+void CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
+{
+	tComponent *tmp = m_pFirst;
+	while(tmp)
+	{
+		if((obj == tmp->comp) && (tmp->bInput))
+		{
+			CInput *input = (CInput*)obj;
+			input->ResetParamAt(offset, index);
+			return;
+		}
+		tmp = tmp->next;
+	}
+}
+
 void CEngine::EnableAt(IFloopy *obj, int offset, BOOL bEnable)
 {
 	tComponent *tmp = m_pFirst;
