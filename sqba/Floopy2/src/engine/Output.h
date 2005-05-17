@@ -26,7 +26,7 @@
 class COutput : public IFloopySoundOutput
 {
 public:
-	COutput(char *plugin, WAVFORMAT fmt);
+	COutput(char *plugin, SOUNDFORMAT fmt);
 	virtual ~COutput();
 /*
 	char *GetName()			{ return "outputw"; }

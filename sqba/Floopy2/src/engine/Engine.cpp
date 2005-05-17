@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <direct.h>
 
+#define ERR_STR_FILENOTFOUND	"File '%s' not found."
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -15,6 +17,8 @@ CEngine::CEngine()
 {
 	//m_offset = m_stopAt = m_length = 0;
 	m_pFirst = m_pLast = NULL;
+	memset(m_name, 0, 50);
+	memset(m_szLastErrDesc, 0, sizeof(m_szLastErrDesc));
 }
 
 CEngine::~CEngine()
@@ -94,6 +98,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 		comp = new CInput(plugin);
 		if(!comp->Open(filename))
 		{
+			setLastErrDesc(ERR_STR_FILENOTFOUND, filename);
 			delete comp;
 			return NULL;
 		}
@@ -112,7 +117,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 	return comp;
 }
 
-IFloopySoundOutput *CEngine::CreateOutput(char *filename, WAVFORMAT fmt)
+IFloopySoundOutput *CEngine::CreateOutput(char *filename, SOUNDFORMAT fmt)
 {
 	IFloopySoundOutput *comp = NULL;
 
@@ -123,6 +128,7 @@ IFloopySoundOutput *CEngine::CreateOutput(char *filename, WAVFORMAT fmt)
 		comp = new COutput(plugin, fmt);
 		if(!comp->Open(filename))
 		{
+			setLastErrDesc(ERR_STR_FILENOTFOUND, filename);
 			delete comp;
 			return NULL;
 		}
@@ -171,37 +177,18 @@ BOOL CEngine::Open(char *filename)
 
 BOOL CEngine::Save(char *filename)
 {
-	/*if(0 == strcmpi(filename, "test"))
-	{
-		CStorage storage(this, "TEST");
-		return storage.Save(filename);
-	}*/
-
+	BOOL result = FALSE;
 	char *name = getStorageName(filename);
 	if(name)
 	{
 		CStorage storage(this, name);
-		return storage.Save(filename);
+		result = storage.Save(filename);
+		//if(!result)
+		//	storage.GetErrorDesc(m_szLastErrDesc, strlen(m_szLastErrDesc));
 	}
-/*
-	// Check extension and then select apropriate plugin!
-	char *ext = strrchr(filename, '.');
-	int i = filename+strlen(filename) - ext;
-	ext = filename + i;
-
-	// Check extension and then select apropriate plugin!
-	if(0 == strcmpi(ext, "test"))
-	{
-		CStorage storage(this, "test");
-		return storage.Save(filename);
-	}
-	if(0 == strcmpi(ext, "xml"))
-	{
-		CStorage storage(this, "xml_expat");
-		return storage.Save(filename);
-	}
-*/
-	return FALSE;
+	else
+		setLastErrDesc(ERR_STR_FILENOTFOUND, filename);
+	return result;
 }
 
 char *CEngine::getStorageName(char *filename)
@@ -278,4 +265,22 @@ void CEngine::Close()
 		}
 		tmp = tmp->next;
 	}
+}
+
+int CEngine::GetLastError()
+{
+	return 0;
+}
+
+BOOL CEngine::GetErrorDesc(char *str, int len)
+{
+	int l = sizeof(m_szLastErrDesc);
+	memcpy(str, m_szLastErrDesc, (len>l?l:len));
+	return TRUE;
+}
+
+void CEngine::setLastErrDesc(char *err, char *str)
+{
+	memset(m_szLastErrDesc, 0, sizeof(m_szLastErrDesc));
+	sprintf(m_szLastErrDesc, err, str);
 }

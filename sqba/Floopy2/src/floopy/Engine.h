@@ -35,7 +35,7 @@ public:
 		return (NULL != m_plugin ? m_plugin->CreateInput(plugin) : NULL);
 	}
 
-	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT fmt)
+	IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt)
 	{
 		return (NULL != m_plugin ? m_plugin->CreateOutput(plugin, fmt) : NULL);
 	}

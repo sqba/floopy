@@ -74,13 +74,19 @@ public:
 
 	int GetInputCount() { return (m_plugin ? m_plugin->GetInputCount() : 0); }
 
-	//WAVFORMAT *GetFormat() { return m_plugin->GetFormat(); }
-	//WAVFORMAT *GetFormat() { return IFloopySoundInput::GetFormat(); }
+	//SOUNDFORMAT *GetFormat() { return m_plugin->GetFormat(); }
+	//SOUNDFORMAT *GetFormat() { return IFloopySoundInput::GetFormat(); }
 
 	void SetParamAt(int offset, int index, float value);
 	void EnableAt(int offset, BOOL bEnable);
 
 	void Close();
+
+	int GetLastError();
+	BOOL GetErrorDesc(char *str, int len);
+
+	char *GetDisplayName() { return m_name; }
+	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
 
 private:
 	void applyParamsAt(int offset);
@@ -95,6 +101,8 @@ private:
 	BOOL m_bRecording;
 
 	float m_fDebug;
+
+	char m_name[50];
 
 #ifdef _DEBUG_TIMER_
 	BOOL	m_bDebugTimer;

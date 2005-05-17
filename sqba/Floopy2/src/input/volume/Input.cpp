@@ -26,7 +26,7 @@ int CInput::Read(BYTE *data, int size)
 
 	short int *sample = (short int*)data;
 
-	WAVFORMAT *fmt = GetFormat();
+	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	//int numsamples = size / ((fmt->size/8) * fmt->channels);
 	int numsamples = len / (fmt->bitsPerSample/8);

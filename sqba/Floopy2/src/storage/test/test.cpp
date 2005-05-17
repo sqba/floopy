@@ -28,7 +28,7 @@ void saveTimeline(FILE *fp, IFloopySoundInput *input, int freq, BOOL recursive);
 //void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive);
 
 IFloopySoundInput *testCreateMaster(IFloopyEngine *engine);
-IFloopySoundInput *testCreateTrack4(IFloopyEngine *engine, WAVFORMAT *fmt);
+IFloopySoundInput *testCreateTrack4(IFloopyEngine *engine, SOUNDFORMAT *fmt);
 IFloopySoundInput *testCreateTrack3(IFloopyEngine *engine);
 IFloopySoundInput *testCreateTrack2(IFloopyEngine *engine);
 IFloopySoundInput *testCreateTrack1(IFloopyEngine *engine);
@@ -69,7 +69,7 @@ BOOL save(IFloopyEngine *engine, char *filename)
 	if(NULL == fp)
 		return FALSE;
 
-	WAVFORMAT *fmt = engine->GetFormat();
+	SOUNDFORMAT *fmt = engine->GetFormat();
 
 	fprintf(stderr, "\nEngine diagram:\n\n");
 	printTree(stderr, engine, 0, FALSE, FALSE);
@@ -400,13 +400,13 @@ IFloopySoundInput *testCreateTrack3(IFloopyEngine *engine)
 	return echo;
 }
 
-IFloopySoundInput *testCreateTrack4(IFloopyEngine *engine, WAVFORMAT *fmt)
+IFloopySoundInput *testCreateTrack4(IFloopyEngine *engine, SOUNDFORMAT *fmt)
 {
 	IFloopySoundInput *tonegen	= engine->CreateInput(TEXT("tonegen"));
 	IFloopySoundInput *volume	= engine->CreateInput(TEXT("volume"));
 	//IFloopySoundInput *echo		= CreateInput(TEXT("echo"));
 
-	tonegen->SetFormat( fmt );
+//	tonegen->SetFormat( fmt );
 		
 	int i = tonegen->GetParamIndex("frequency");
 	tonegen->SetParam(-333, 5);
@@ -477,7 +477,7 @@ IFloopySoundInput *testCreateMaster(IFloopyEngine *engine)
 	mixer->AddSource( testCreateTrack1(engine) );
 	mixer->AddSource( testCreateTrack2(engine) );
 	mixer->AddSource( testCreateTrack3(engine) );
-	WAVFORMAT *fmt = mixer->GetFormat();
+	SOUNDFORMAT *fmt = mixer->GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	mixer->AddSource( testCreateTrack4(engine, fmt) );
 

@@ -34,7 +34,7 @@ public:
 	void Reset();
 	void Close();
 	int GetSize();
-	//WAVFORMAT *GetFormat();
+	//SOUNDFORMAT *GetFormat();
 
 	int Read(BYTE *data, int size);
 

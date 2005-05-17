@@ -2,41 +2,14 @@
 #define _IFLOOPY_H_
 
 
-//#include <windows.h>	// Data type definitions (BYTE, INT, DWORD...)
-//#include <stdio.h>		// FILE
-
-
-//! Portable waveform structure
-typedef struct structWAVFormat
+//! Sound format information
+typedef struct SoundFormat
 {
-	INT   frequency;	// Audio frequency in samples per second
-	WORD  format;		// Audio data format
-	BYTE  channels;		// Number of channels: 1-mono, 2-stereo
-	DWORD bitsPerSample;
-	//BYTE  silence;	// Audio buffer silence value (calculated)
-	//WORD  samples;
-} WAVFORMAT;
-
-/*
-//! Object types definition, used for runtime identification
-enum objType
-{
-	typeFloopy,
-	typeFloopySound,
-	typeFloopySoundInput,
-	typeFloopySoundOutput,
-	typeFloopyEngine
-//	typeFloopySoundMixer,
-//	typeFloopyEvents,
-//	typeFloopyParameters,
-//	typeFloopySoundEffect,
-//	typeFloopyGUI,
-//	typeFloopyEvent,
-//	typeFloopyTrack,
-//	typeFloopyTracks,
-//	typeFloopyGUIApp
-};
-*/
+	INT		frequency;		// Audio frequency in samples per second
+	WORD	format;			// Audio data format
+	BYTE	channels;		// Number of channels: 1-mono, 2-stereo
+	DWORD	bitsPerSample;	// Sample size, in bits
+} SOUNDFORMAT;
 
 
 /*********************************************************************
@@ -49,8 +22,8 @@ enum objType
 class IFloopy
 {
 public:
-	IFloopy() { m_bEnabled = TRUE; memset(m_name, 0, 50); }
-	virtual ~IFloopy() {}
+	IFloopy()			{ m_bEnabled = TRUE; m_nLastError = 0; }
+	virtual ~IFloopy()	{ }
 
 	//! Used for runtime identification, do not override in plugins!
 	//virtual int GetType()			{ return typeFloopy; }
@@ -62,22 +35,25 @@ public:
 	virtual char *GetAuthor()		{ return "sqba"; }
 
 	// Component parameters
-	virtual int   GetParamCount()			{ return 0; }
-	virtual void  SetParam(int index, float value) { }
-	virtual float GetParam(int index)		{ return 0.f; }
-	virtual char *GetParamName(int index)	{ return NULL; }
-	virtual char *GetParamDesc(int index)	{ return NULL; }
+	virtual int   GetParamCount()					{ return 0; }
+	virtual void  SetParam(int index, float value)	{ }
+	virtual float GetParam(int index)				{ return 0.f; }
+	virtual char *GetParamName(int index)			{ return NULL; }
+	virtual char *GetParamDesc(int index)			{ return NULL; }
 	virtual BOOL  GetParam(int index, float *value)	{ return FALSE; }
-	virtual int   GetParamIndex(char *name)	{ return -1; }
+	virtual int   GetParamIndex(char *name)			{ return -1; }
 
-	virtual void Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
-	virtual BOOL IsEnabled()				{ return m_bEnabled; }
+	virtual void  Enable(BOOL bEnabled)				{ m_bEnabled = bEnabled; }
+	virtual BOOL  IsEnabled()						{ return m_bEnabled; }
 
-	char *GetDisplayName()			{ return m_name; }
-	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
+	virtual int   GetLastError()					{ return m_nLastError; }
+	virtual BOOL  GetErrorDesc(char *str, int len)	{ return FALSE; }
+
+	virtual char *GetDisplayName()					{ return NULL; }
+	virtual void  SetDisplayName(char *name, int len){ }
 
 private:
-	char m_name[50];
+	int m_nLastError;
 	BOOL m_bEnabled;
 };
 
@@ -101,15 +77,13 @@ public:
 	//virtual int GetType() { return typeFloopySound; }
 
 	// Component description
-	virtual char *GetName()			{ return "IFloopySound"; }
-	virtual char *GetDescription()	{ return "IFloopySound interface"; }
-	virtual char *GetVersion()		{ return "0.1"; }
-	virtual char *GetAuthor()		{ return "sqba"; }
+	virtual char *GetName()					{ return "IFloopySound"; }
+	virtual char *GetDescription()			{ return "IFloopySound interface"; }
 
-	virtual BOOL Open(char *filename) { return FALSE; }
-	virtual void Close() {}
+	virtual BOOL Open(char *filename)		{ return FALSE; }
+	virtual void Close()					{ }
 
-	virtual int GetNextOffset(int offset) { return 0; }
+	virtual int GetNextOffset(int offset)	{ return 0; }
 };
 
 
@@ -129,8 +103,8 @@ public:
 	IFloopySoundInput()
 	{
 		m_source = NULL;
+		memset(&m_format, 0, sizeof(SOUNDFORMAT));
 		//m_pos = 0;
-		memset(&m_wavformat, 0, sizeof(WAVFORMAT));
 	}
 	virtual ~IFloopySoundInput() {}
 
@@ -140,8 +114,6 @@ public:
 	// Component description
 	virtual char *GetName()			{ return "IFloopySoundInput"; }
 	virtual char *GetDescription()	{ return "IFloopySoundInput interface"; }
-	virtual char *GetVersion()		{ return "0.1"; }
-	virtual char *GetAuthor()		{ return "sqba"; }
 
 	/**
 	 * Open source file.
@@ -154,11 +126,7 @@ public:
 	/**
 	 * Close source file.
 	 */
-	virtual void Close()
-	{
-		//if(NULL != m_source)
-		//	m_source->Close();
-	}
+	//virtual void Close() { }
 
 	/**
 	 * Return total sample count.
@@ -169,21 +137,6 @@ public:
 		return (NULL != m_source ? m_source->GetSize() : 0);
 	}
 
-	/**
-	 * Sets total sample count.
-	 * @param size number of samples.
-	 */
-	/*virtual void SetSize(DWORD size)
-	{
-		if(NULL != m_source)
-			m_source->SetSize(size);
-	}*/
-/*
-	virtual FLOAT GetLength()
-	{
-		return (NULL != m_source ? m_source->GetLength() : 0.f);
-	};
-*/
 	virtual BOOL SetSource(IFloopySoundInput *src)
 	{
 		m_source = src;
@@ -218,7 +171,7 @@ public:
 	{
 		if(NULL != m_source)
 			m_source->MoveTo(samples);
-		//WAVFORMAT *fmt = GetFormat();
+		//SOUNDFORMAT *fmt = GetFormat();
 		//m_pos = samples * ( (fmt->size / 8) * fmt->channels );
 	}
 
@@ -241,20 +194,9 @@ public:
 		//m_pos = 0;
 	}
 
-	virtual WAVFORMAT *GetFormat()
+	virtual SOUNDFORMAT *GetFormat()
 	{
-		return (NULL != m_source ? m_source->GetFormat() : &m_wavformat);
-	}
-
-	virtual BOOL SetFormat(WAVFORMAT *fmt)
-	{
-		if(NULL != m_source)
-			return m_source->SetFormat(fmt);
-		else
-		{
-			memcpy(&m_wavformat, fmt, sizeof(WAVFORMAT));
-			return TRUE;
-		}
+		return (NULL != m_source ? m_source->GetFormat() : &m_format);
 	}
 
 	//////////////////////////////////////////////////////////////////
@@ -267,7 +209,6 @@ public:
 
 	virtual IFloopySoundInput *GetSource(int index)
 	{
-		//return (NULL != m_source ? m_source->GetSource(index) : NULL);
 		return (index > 0 ? NULL : m_source);
 	}
 
@@ -277,24 +218,20 @@ public:
 			m_source->RemoveSource(src);
 	}
 
-	virtual int GetInputCount()
-	{
-		//return (NULL != m_source ? m_source->GetInputCount() : 0);
-		return (NULL != m_source ? 1 : 0);
-	}
+	virtual int GetInputCount()			{ return (NULL != m_source ? 1 : 0); }
 
 	virtual BOOL ReadSourceIfDisabled()	{ return TRUE; }
 
 	// Utility
 	/*int SamplesToBytes(int samples)
 	{
-		WAVFORMAT *fmt = GetFormat();
+		SOUNDFORMAT *fmt = GetFormat();
 		return samples * ( (fmt->bitsPerSample / 8) * fmt->channels );
 	}*/
 
 protected:
 	IFloopySoundInput *m_source;
-	WAVFORMAT m_wavformat;
+	SOUNDFORMAT m_format;
 	//int m_pos;
 };
 
@@ -312,7 +249,7 @@ class IFloopySoundOutput : public IFloopySound
 {
 public:
 	IFloopySoundOutput() { m_dest = NULL; }
-	IFloopySoundOutput(WAVFORMAT fmt) {}
+	IFloopySoundOutput(SOUNDFORMAT fmt) {}
 	virtual ~IFloopySoundOutput() {}
 
 	//! Used for runtime identification, do not override in plugins!
@@ -320,8 +257,6 @@ public:
 
 	virtual char *GetName()			{ return "IFloopySoundOutput"; }
 	virtual char *GetDescription()	{ return "IFloopySoundOutput interface"; }
-	virtual char *GetVersion()		{ return "0.1"; }
-	virtual char *GetAuthor()		{ return "sqba"; }
 
 	/**
 	 * Opens destination (file).
@@ -381,11 +316,9 @@ public:
 
 	virtual char *GetName()			{ return "IFloopySoundEngine"; }
 	virtual char *GetDescription()	{ return "IFloopySoundEngine interface"; }
-	virtual char *GetVersion()		{ return "0.1"; }
-	virtual char *GetAuthor()		{ return "sqba"; }
 
 	virtual IFloopySoundInput  *CreateInput(char *plugin)  { return NULL; }
-	virtual IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT fmt) { return NULL; }
+	virtual IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt) { return NULL; }
 
 	virtual BOOL Save(char *filename) { return FALSE; }
 

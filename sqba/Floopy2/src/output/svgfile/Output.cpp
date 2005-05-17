@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-COutput::COutput(WAVFORMAT fmt)
+COutput::COutput(SOUNDFORMAT fmt)
 {
 	m_nSamplesPerSec = fmt.frequency;
 	m_wBitsPerSample = fmt.bitsPerSample;

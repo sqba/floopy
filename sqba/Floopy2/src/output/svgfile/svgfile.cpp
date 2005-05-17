@@ -27,7 +27,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #ifdef __cplusplus
 extern "C" {
 #endif
-__declspec( dllexport ) IFloopySoundOutput *CreateOutput(WAVFORMAT fmt)
+__declspec( dllexport ) IFloopySoundOutput *CreateOutput(SOUNDFORMAT fmt)
 {
 	return new COutput(fmt);
 }

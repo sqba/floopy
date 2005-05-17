@@ -45,11 +45,11 @@ int CInput::Read(BYTE *data, int size)
 	return len * 2;
 }
 
-WAVFORMAT *CInput::GetFormat()
+SOUNDFORMAT *CInput::GetFormat()
 {
-	memcpy(&m_wavformat, IFloopySoundInput::GetFormat(), sizeof(WAVFORMAT));
-	m_wavformat.channels = 2;
-	return &m_wavformat;
+	memcpy(&m_format, IFloopySoundInput::GetFormat(), sizeof(SOUNDFORMAT));
+	m_format.channels = 2;
+	return &m_format;
 }
 
 /*

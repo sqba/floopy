@@ -220,7 +220,7 @@ BOOL loadXML(IFloopyEngine *engine, char *filename)
 	fclose(fp);
 
 //	printTree(stdout, engine, 0, FALSE, FALSE);
-//	WAVFORMAT *fmt = engine->GetFormat();
+//	SOUNDFORMAT *fmt = engine->GetFormat();
 
 	return TRUE;
 }
@@ -261,7 +261,7 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 
 	fprintf(fp, "%s <timeline>", space);
 
-	WAVFORMAT *fmt = input->GetFormat();
+	SOUNDFORMAT *fmt = input->GetFormat();
 	int freq = fmt->frequency;
 
 	int offset=0;
@@ -315,7 +315,7 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 
 // Problem: MoveTo nece da radi kada izvor nije kompletno
 // inicijalizovan, odnosno kada nije inicijalizovana
-// WAVFORMAT struktura.
+// SOUNDFORMAT struktura.
 // Zbog toga, prvo se moraju ucitati svi objekti pa tek
 // onda njihovi timeline-ovi.
 void loadTimelines()
@@ -335,7 +335,7 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 	char *token = strtok( data, seps );
 	int i=0;
 	int param=0;
-	WAVFORMAT *fmt = input->GetFormat();
+	SOUNDFORMAT *fmt = input->GetFormat();
 	int freq = fmt->frequency;
 	int offset = 0;
 

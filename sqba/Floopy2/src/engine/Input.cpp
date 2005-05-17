@@ -21,6 +21,9 @@ CInput::CInput(char *plugin)
 	m_hinst = NULL;
 	m_plugin = NULL;
 	m_offset = 0;
+
+	memset(m_name, 0, 50);
+
 	Enable(TRUE);
 	IFloopy::Enable(TRUE);
 
@@ -207,7 +210,7 @@ BOOL CInput::IsEnabled()
 
 int CInput::samplesToBytes()
 {
-	WAVFORMAT *fmt = GetFormat();
+	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	return (fmt->bitsPerSample / 8) * fmt->channels;
 }
@@ -380,7 +383,7 @@ void CInput::Close()
 #ifdef _DEBUG_TIMER_
 	if(m_bDebugTimer)
 	{
-		WAVFORMAT *fmt = GetFormat();
+		SOUNDFORMAT *fmt = GetFormat();
 		assert(fmt->bitsPerSample > 0);
 		int sampleSize = fmt->bitsPerSample / 8;
 
@@ -400,4 +403,14 @@ void CInput::Close()
 	}
 	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
 #endif // _DEBUG_TIMER_
+}
+
+int CInput::GetLastError()
+{
+	return 0;
+}
+
+BOOL CInput::GetErrorDesc(char *str, int len)
+{
+	return FALSE;
 }

@@ -96,7 +96,7 @@ int CInput::Read(BYTE *data, int size)
 
 	if(m_nInputCount>0)
 	{
-		WAVFORMAT *fmt = GetFormat();
+		SOUNDFORMAT *fmt = GetFormat();
 		assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 
 		if(m_nBuffSize != (m_nInputCount*(int)size))
@@ -138,7 +138,7 @@ void CInput::mixBuffers(BYTE *m_pBuffers, int buffCount, BYTE *output, int size)
 		start = clock();
 #endif // _DEBUG_TIMER_
 
-	WAVFORMAT *fmt = GetFormat();
+	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	
 	int step = fmt->bitsPerSample / 8;
@@ -173,7 +173,7 @@ void CInput::mixBuffers(BYTE *m_pBuffers, int buffCount, BYTE *output, int size)
 // Maybe this one is faster? Check out...
 void CInput::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, int size)
 {
-	WAVFORMAT *fmt = GetFormat();
+	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->size > 0) && (fmt->channels > 0));
 	
 	int step = fmt->size / 8;
@@ -311,15 +311,15 @@ char *CInput::GetParamDesc(int index)
 }
 #endif // _DEBUG_TIMER_
 /*
-WAVFORMAT *CInput::GetFormat()
+SOUNDFORMAT *CInput::GetFormat()
 {
-	WAVFORMAT *fmt = IFloopySoundInput::GetFormat();
+	SOUNDFORMAT *fmt = IFloopySoundInput::GetFormat();
 	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	if(fmt->frequency > 0)
 		return fmt;
 	for(int i=0; i<m_nInputCount; i++)
 	{
-		WAVFORMAT *tmp = m_pInputs[i]->GetFormat();
+		SOUNDFORMAT *tmp = m_pInputs[i]->GetFormat();
 		if(tmp->frequency > 0)
 		{
 			fmt = tmp;
@@ -332,14 +332,14 @@ WAVFORMAT *CInput::GetFormat()
 
 int CInput::sampleSize()
 {
-	WAVFORMAT *fmt = GetFormat();
+	SOUNDFORMAT *fmt = GetFormat();
 	assert(fmt->bitsPerSample > 0);
 	return fmt->bitsPerSample / 8;
 }
 /*
 int CInput::samplesToBytes()
 {
-	WAVFORMAT *fmt = GetFormat();
+	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	return (fmt->bitsPerSample / 8) * fmt->channels;
 }

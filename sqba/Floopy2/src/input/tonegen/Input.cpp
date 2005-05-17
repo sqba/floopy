@@ -17,9 +17,9 @@ CInput::CInput()
 	angle = 0.0;
 	memset(name, 0, sizeof(name));
 	sprintf(name, "%.2f.hz", freq);
-	m_wavformat.channels = 2;
-	m_wavformat.frequency = 44100;
-	m_wavformat.bitsPerSample = 16;
+	m_format.channels = 2;
+	m_format.frequency = 44100;
+	m_format.bitsPerSample = 16;
 }
 
 CInput::~CInput()
@@ -31,7 +31,7 @@ int CInput::Read(BYTE *data, int size)
 {
 	short int *sample_buffer = (short*)data;
 
-	WAVFORMAT *fmt = GetFormat();
+	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	int numsamples = size / ((fmt->bitsPerSample/8) * fmt->channels);
 

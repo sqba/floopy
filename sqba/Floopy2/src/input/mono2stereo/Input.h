@@ -29,7 +29,7 @@ public:
 
 	BOOL ReadSourceIfDisabled()	{ return FALSE; }
 
-	WAVFORMAT *GetFormat();
+	SOUNDFORMAT *GetFormat();
 
 private:
 };

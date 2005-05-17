@@ -8,7 +8,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-COutput::COutput(WAVFORMAT fmt)
+COutput::COutput(SOUNDFORMAT fmt)
 {
 	// initialise the module variables
 	waveBlocks         = allocateBlocks(BLOCK_SIZE, BLOCK_COUNT);

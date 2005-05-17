@@ -136,7 +136,7 @@ private:
 	};*/
 
 public:
-	COutput(WAVFORMAT fmt);
+	COutput(SOUNDFORMAT fmt);
 	virtual ~COutput();
 
 	BOOL Open(char *filename);

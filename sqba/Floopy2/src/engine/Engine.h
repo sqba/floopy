@@ -46,24 +46,34 @@ public:
 //	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
 
 	IFloopySoundInput  *CreateInput(char *plugin);
-	IFloopySoundOutput *CreateOutput(char *plugin, WAVFORMAT fmt);
+	IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt);
 
 	void SetParamAt(IFloopy *obj, int offset, int index, float value);
 	void EnableAt(IFloopy *obj, int offset, BOOL bEnable);
 
 	void Close();
 
-private:
-	char *getStorageName(char *filename);
+	int GetLastError();
+	BOOL GetErrorDesc(char *str, int len);
+
+	char *GetDisplayName() { return m_name; }
+	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
 
 private:
+	char *getStorageName(char *filename);
+	void setLastErrDesc(char *err, char *str);
+
+private:
+	char m_szLastErrDesc[100];
 	CTimeline m_timeline;
+
+	char m_name[50];
 
 	IFloopySoundInput *testCreateMaster();
 	IFloopySoundInput *testCreateTrack1();
 	IFloopySoundInput *testCreateTrack2();
 	IFloopySoundInput *testCreateTrack3();
-	IFloopySoundInput *testCreateTrack4(WAVFORMAT *fmt);
+	IFloopySoundInput *testCreateTrack4(SOUNDFORMAT *fmt);
 
 	tComponent *m_pFirst, *m_pLast;
 	tComponent *add(IFloopy *comp, BOOL bInput);

@@ -32,17 +32,17 @@ BOOL CInput::Open(char *filename)
 		fread( &m_fmt,  1, sizeof(FMT),  m_pFile );
 		fread( &m_data, 1, sizeof(DATA), m_pFile );
 
-		m_wavformat.channels = (int)m_fmt.fmtFORMAT.nChannels;
-		m_wavformat.frequency = m_fmt.fmtFORMAT.nSamplesPerSec;
-		m_wavformat.bitsPerSample = m_fmt.fmtFORMAT.wBitsPerSample;
+		m_format.channels = (int)m_fmt.fmtFORMAT.nChannels;
+		m_format.frequency = m_fmt.fmtFORMAT.nSamplesPerSec;
+		m_format.bitsPerSample = m_fmt.fmtFORMAT.wBitsPerSample;
 
 		// Number of samples
-		m_size = m_data.dataSIZE / ((m_wavformat.bitsPerSample/8) * m_wavformat.channels);
+		m_size = m_data.dataSIZE / ((m_format.bitsPerSample/8) * m_format.channels);
 
 		memset(m_filename, 0, sizeof(m_filename));
 		strncpy(m_filename, filename, MAX_PATH);
 	
-		m_nSamplesToBytes = ((m_wavformat.bitsPerSample/8) * m_wavformat.channels);
+		m_nSamplesToBytes = ((m_format.bitsPerSample/8) * m_format.channels);
 		m_nHeaderLength = (sizeof(RIFF) + sizeof(FMT) + sizeof(DATA));
 
 		return TRUE;

@@ -133,7 +133,7 @@ int CInput::GetParamIndex(char *name)
 
 int CInput::samplesToBytes()
 {
-	WAVFORMAT *fmt = GetFormat();
+	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	return (fmt->bitsPerSample / 8) * fmt->channels;
 }

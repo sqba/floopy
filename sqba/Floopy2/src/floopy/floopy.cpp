@@ -23,7 +23,7 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 
 	char *name = input->GetName();
 
-	WAVFORMAT *fmt = input->GetFormat();
+	SOUNDFORMAT *fmt = input->GetFormat();
 	assert(fmt->frequency > 0);
 	float size = (float)input->GetSize() / (float)fmt->frequency;
 
@@ -68,7 +68,7 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	int samples = input->GetSize();
 	fprintf(stderr, "Reading %d samples...\n\n", samples);
 
-	WAVFORMAT *fmt = input->GetFormat();
+	SOUNDFORMAT *fmt = input->GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	int x = (fmt->bitsPerSample / 8) * fmt->channels;
 
@@ -134,7 +134,7 @@ void main(int argc, char* argv[])
 
 	fprintf(stderr, "\n\n");
 
-	WAVFORMAT *fmt = engine->GetFormat();
+	SOUNDFORMAT *fmt = engine->GetFormat();
 	assert((fmt->frequency > 0) && (fmt->bitsPerSample > 0) && (fmt->channels > 0));
 
 	float start = GetArg(argc, argv, "s", 0.f);
@@ -145,8 +145,8 @@ void main(int argc, char* argv[])
 	region->SetParam(i, end*fmt->frequency);
 
 
-	WAVFORMAT format;
-	memcpy(&format, fmt, sizeof(WAVFORMAT));
+	SOUNDFORMAT format;
+	memcpy(&format, fmt, sizeof(SOUNDFORMAT));
 
 //	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
 	char *outfile = GetArg(argc, argv, "o", "waveout");

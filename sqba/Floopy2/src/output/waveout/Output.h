@@ -29,7 +29,7 @@ static int              waveCurrentBlock;
 class COutput : public IFloopySoundOutput
 {
 public:
-	COutput(WAVFORMAT fmt);
+	COutput(SOUNDFORMAT fmt);
 	virtual ~COutput();
 
 	int Write(BYTE *data, int size);

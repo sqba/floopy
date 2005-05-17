@@ -26,7 +26,7 @@ int CInput::Read(BYTE *data, int size)
 	if(len <= 0)
 		return len;
 
-	WAVFORMAT *fmt = m_source->GetFormat();
+	SOUNDFORMAT *fmt = m_source->GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	int numsamples = len / ((fmt->bitsPerSample/8) * fmt->channels);
 
@@ -63,7 +63,7 @@ void CInput::Reset()
 /*
 BOOL CInput::SetSource(IFloopySoundInput *src)
 {
-//	WAVFORMAT *fmt = src->GetFormat();
+//	SOUNDFORMAT *fmt = src->GetFormat();
 //	assert( fmt->bitsPerSample == 16 );
 	return IFloopySoundInput::SetSource(src);
 }

@@ -11,11 +11,11 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef IFloopySoundOutput* (*CreateProc)(WAVFORMAT);
+typedef IFloopySoundOutput* (*CreateProc)(SOUNDFORMAT);
 #define PROC_NAME "CreateOutput"
 #define PLUG_EXT ".dll"
 
-COutput::COutput(char *plugin, WAVFORMAT fmt)
+COutput::COutput(char *plugin, SOUNDFORMAT fmt)
 {
 	m_hinst = NULL;
 	m_plugin = NULL;

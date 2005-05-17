@@ -125,9 +125,9 @@ BOOL CInput::Open(char *filename)
 		m_nChunkPos = 0;
 
 		//m_wfx.wFormatTag = WAVE_FORMAT_PCM;
-		m_wavformat.channels = wChannels;
-		m_wavformat.frequency = lSamprate;
-		m_wavformat.bitsPerSample = wBitsPerSample;
+		m_format.channels = wChannels;
+		m_format.frequency = lSamprate;
+		m_format.bitsPerSample = wBitsPerSample;
 		//m_wfx.nBlockAlign = m_wfx.nChannels * m_wfx.wBitsPerSample / 8;
 		//m_wfx.nAvgBytesPerSec = m_wfx.nSamplesPerSec * m_wfx.nBlockAlign;
 
@@ -160,7 +160,7 @@ void CInput::Close()
 
 int CInput::samplesToBytes()
 {
-	WAVFORMAT *fmt = GetFormat();
+	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	return (fmt->bitsPerSample / 8) * fmt->channels;
 }

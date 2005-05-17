@@ -97,7 +97,7 @@ int play(char *fn)
 		return 0;
 	}
 
-	WAVFORMAT *fmt = engine.GetFormat();
+	SOUNDFORMAT *fmt = engine.GetFormat();
 	int samplesize = fmt->bitsPerSample / 8;
 
 	maxlatency = mod.outMod->Open(SAMPLERATE,NCH,BPS, -1,-1);
@@ -165,7 +165,7 @@ int getoutputtime() { return mod.outMod->GetOutputTime(); }
 void setoutputtime(int time_in_ms)
 {
 	seek_needed=time_in_ms; 
-	/*WAVFORMAT *fmt = engine.GetFormat();
+	/*SOUNDFORMAT *fmt = engine.GetFormat();
 	int samples = (time_in_ms / 1000) * fmt->frequency;
 	engine.MoveTo( samples );*/
 }
@@ -182,7 +182,7 @@ void getfileinfo(char *filename, char *title, int *length_in_ms)
 {
 	if (!filename || !*filename)  // currently playing file
 	{
-		WAVFORMAT *fmt = engine.GetFormat();
+		SOUNDFORMAT *fmt = engine.GetFormat();
 		if(fmt->frequency > 0)
 			*length_in_ms = engine.GetSize() / fmt->frequency * 1000;
 		char *name = engine.GetDisplayName();
@@ -269,7 +269,7 @@ DWORD WINAPI __stdcall PlayThread(void *b)
 			done=0;
 			mod.outMod->Flush(decode_pos_ms);
 
-			WAVFORMAT *fmt = engine.GetFormat();
+			SOUNDFORMAT *fmt = engine.GetFormat();
 			offs = (decode_pos_ms / 1000) * fmt->frequency;
 			engine.MoveTo( offs );
 		}
