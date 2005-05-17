@@ -41,6 +41,7 @@ extern "C" {
 #endif
 __declspec( dllexport ) In_Module * winampGetInModule2()
 {
+	engine.init();
 	return &mod;
 }
 #ifdef __cplusplus
@@ -85,10 +86,16 @@ int play(char *fn)
 	unsigned long thread_id;
 	
 	if(!engine.Create("engine"))
+	{
+		//MessageBox(NULL, "Failed to create engine.", "in_floopy", MB_OK);
 		return 0;
+	}
 
 	if(!engine.Open(fn))
+	{
+		//MessageBox(NULL, "Failed to open file.", "in_floopy", MB_OK);
 		return 0;
+	}
 
 	WAVFORMAT *fmt = engine.GetFormat();
 	int samplesize = fmt->bitsPerSample / 8;

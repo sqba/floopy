@@ -50,6 +50,8 @@ public:
 	char *GetDisplayName() { return m_plugin->GetDisplayName(); }
 	void SetDisplayName(char *name, int len) { m_plugin->SetDisplayName(name, len); }
 
+	void init();
+
 private:
 	HINSTANCE m_hinst;
 	IFloopyEngine *m_plugin;
