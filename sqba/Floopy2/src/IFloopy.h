@@ -79,6 +79,8 @@ public:
 	virtual char *GetDisplayName()					{ return NULL; }
 	virtual void  SetDisplayName(char *name, int len){ }
 
+	virtual char *GetPath()							{ return NULL; }
+
 private:
 	BOOL m_bEnabled;
 

@@ -40,7 +40,7 @@ int CInput::Read(BYTE *data, int size)
 
 	delete[] tmp;
 
-	assert(len == size/2);
+//	assert(len == size/2);
 
 	return len * 2;
 }

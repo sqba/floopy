@@ -16,7 +16,7 @@ typedef IFloopySoundInput* (*CreateProc)(void);
 #define PROC_NAME "CreateInput"
 #define PLUG_EXT ".dll"
 
-CInput::CInput(char *plugin)
+CInput::CInput()
 {
 	m_hinst = NULL;
 	m_plugin = NULL;
@@ -24,6 +24,7 @@ CInput::CInput(char *plugin)
 
 	memset(m_name, 0, 50);
 	memset(m_szLastError, 0, sizeof(m_szLastError));
+	memset(m_szObjPath, 0, sizeof(m_szObjPath));
 
 	Enable(TRUE);
 	IFloopy::Enable(TRUE);
@@ -36,10 +37,17 @@ CInput::CInput(char *plugin)
 //	m_bRecording = FALSE;
 
 	m_fDebug = 0.f;
+}
 
+BOOL CInput::Create(char *plugin)
+{
+	BOOL result = FALSE;
 	char *filename = new char[strlen(plugin) + 5];
 	strcpy(filename, plugin);
 	strcat(filename, PLUG_EXT);
+
+	strcpy(m_szObjPath, filename);
+
 	m_hinst = LoadLibraryA(filename);
 
 	if (NULL != m_hinst)
@@ -49,6 +57,7 @@ CInput::CInput(char *plugin)
 		if(func != NULL) {
 			m_plugin = func();
 			IFloopySoundInput::SetSource(m_plugin);
+			result = TRUE;
 		}
 		else {
 			//fprintf(stderr, "Error: %s() not found in %s.\n", PROC_NAME, filename);
@@ -61,6 +70,7 @@ CInput::CInput(char *plugin)
 	}
 
 	delete[] filename;
+	return result;
 }
 
 CInput::~CInput()

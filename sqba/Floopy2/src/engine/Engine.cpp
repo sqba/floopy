@@ -19,6 +19,18 @@ CEngine::CEngine()
 	m_pFirst = m_pLast = NULL;
 	memset(m_name, 0, sizeof(m_name));
 	memset(m_szLastError, 0, sizeof(m_szLastError));
+	memset(m_szPath, 0, sizeof(m_szPath));
+
+	//char path[MAX_PATH] = {0};
+	//getcwd(path, MAX_PATH);
+	FILE *fp = fopen("engine.cfg", "r");
+	if(fp)
+	{
+		fscanf(fp, "%s", m_szPath);
+		//chdir(m_szPath);
+		fclose(fp);
+	}
+
 }
 
 CEngine::~CEngine()
@@ -71,7 +83,7 @@ void CEngine::dump(FILE *fp)
 */
 IFloopySoundInput *CEngine::CreateInput(char *filename)
 {
-	IFloopySoundInput *comp = NULL;
+	CInput *comp = NULL;
 
 	// Check if a filename has been given
 	char *plugin = getStorageName(filename);
@@ -95,7 +107,20 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 		strcat(path, plugin);
 		comp = new CInput(path);*/
 
-		comp = new CInput(plugin);
+		char path[MAX_PATH] = {0};
+		strcpy(path, m_szPath);
+		if(path[strlen(path)] != '\\')
+			path[strlen(path)] = '\\';
+		strcat(path, plugin);
+
+		comp = new CInput();
+		if(!comp->Create(path))
+		{
+			//setLastError(ERR_STR_FILENOTFOUND, filename);
+			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
+			delete comp;
+			return NULL;
+		}
 		if(!comp->Open(filename))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -111,7 +136,20 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 		if(tmp)
 			filename = tmp+1;
 
-		comp = new CInput(filename);
+		char path[MAX_PATH] = {0};
+		strcpy(path, m_szPath);
+		if(path[strlen(path)] != '\\')
+			path[strlen(path)] = '\\';
+		strcat(path, filename);
+
+		comp = new CInput();
+		if(!comp->Create(path))
+		{
+			//setLastError(ERR_STR_FILENOTFOUND, filename);
+			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
+			delete comp;
+			return NULL;
+		}
 	}
 
 	add(comp, TRUE);
@@ -196,15 +234,6 @@ BOOL CEngine::Save(char *filename)
 
 char *CEngine::getStorageName(char *filename)
 {
-	char path[MAX_PATH] = {0};
-	FILE *fp = fopen("engine.cfg", "r");
-	if(fp)
-	{
-		fscanf(fp, "%s", path);
-		chdir(path);
-		fclose(fp);
-	}
-
 	char *ext = strrchr(filename, '.');
 	if(ext)
 	{

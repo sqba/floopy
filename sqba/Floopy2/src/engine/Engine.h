@@ -67,6 +67,7 @@ private:
 private:
 	char m_name[50];
 	char m_szLastError[100];
+	char m_szPath[MAX_PATH];
 
 	CTimeline m_timeline;
 

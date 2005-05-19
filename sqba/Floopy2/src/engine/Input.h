@@ -33,18 +33,15 @@
 class CInput : public IFloopySoundInput
 {
 public:
-	CInput(char *plugin);
+	CInput();
 	virtual ~CInput();
-/*
-	char *GetName()			{ return "inputw"; }
-	char *GetDescription()	{ return "Floopy Input Plugin Wrapper"; }
-	char *GetVersion()		{ return "0.1"; }
-	char *GetAuthor()		{ return "sqba"; }
-*/
+
 	char *GetName()			{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
+
+	BOOL Create(char *plugin);
 
 	void MoveTo(int samples);
 	void Reset();
@@ -91,9 +88,12 @@ public:
 	char *GetDisplayName() { return m_name; }
 	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
 
+	char *GetPath() { return m_szObjPath; }
+
 private:
 	char m_name[50];
 	char m_szLastError[100];
+	char m_szObjPath[MAX_PATH];
 
 	void applyParamsAt(int offset);
 	int samplesToBytes();
