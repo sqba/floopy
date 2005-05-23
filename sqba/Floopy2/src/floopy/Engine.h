@@ -42,7 +42,7 @@ public:
 	void Close() { if(m_plugin) m_plugin->Close(); }
 
 private:
-	HINSTANCE m_hinst;
+	HMODULE m_hModule;
 	IFloopyEngine *m_plugin;
 };
 

@@ -13,14 +13,14 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef IFloopyEngine* (*CreateProc)(void);
+typedef IFloopyEngine* (*CreateProc)(HMODULE);
 #define PROC_NAME "CreateEngine"
 #define PLUG_EXT ".dll"
 
 
 CEngine::CEngine()
 {
-	m_hinst = NULL;
+	m_hModule = NULL;
 	m_plugin = NULL;
 	memset(m_path, 0, MAX_PATH);
 	memset(m_szLastError, 0, sizeof(m_szLastError));
@@ -34,8 +34,8 @@ CEngine::~CEngine()
 		delete m_plugin;
 	}
 
-	if(NULL != m_hinst)
-		FreeLibrary(m_hinst);
+	if(NULL != m_hModule)
+		FreeLibrary(m_hModule);
 }
 
 BOOL CEngine::Create(char *plugin)
@@ -63,15 +63,15 @@ BOOL CEngine::Create(char *plugin)
 
 //	MessageBox(NULL, filename, "LoadLibraryA", MB_OK);
 
-	m_hinst = LoadLibraryA(filename);
+	m_hModule = LoadLibraryA(filename);
 
-	if (NULL != m_hinst)
+	if (NULL != m_hModule)
 	{
-		CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
+		CreateProc func = (CreateProc)GetProcAddress(m_hModule, PROC_NAME); 
 
 		if(func != NULL) {
 			//printf("CreateEngine() found in %s.\n", filename);
-			m_plugin = func();
+			m_plugin = func( m_hModule );
 			SetSource( m_plugin );
 //			MessageBox(NULL, "Created engine", "In_Floopy", MB_OK);
 			delete[] filename;

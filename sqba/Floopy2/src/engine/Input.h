@@ -33,7 +33,7 @@
 class CInput : public IFloopySoundInput
 {
 public:
-	CInput();
+	CInput(UpdateCallback func);
 	virtual ~CInput();
 
 	char *GetName()			{ return m_plugin->GetName(); }
@@ -62,7 +62,9 @@ public:
 
 	BOOL SetSource(IFloopySoundInput *src)
 	{
-		return (m_plugin ? m_plugin->SetSource(src) : FALSE);
+		BOOL result = (m_plugin ? m_plugin->SetSource(src) : FALSE);
+		//if(m_callback && result) m_callback(this, m_offset/samplesToBytes(), -333);
+		return result;
 	}
 
 	IFloopySoundInput *GetSource()			{ return m_plugin->GetSource(); }
@@ -94,6 +96,8 @@ private:
 	char m_name[50];
 	char m_szLastError[100];
 	char m_szObjPath[MAX_PATH];
+
+	UpdateCallback m_callback;
 
 	void applyParamsAt(int offset);
 	int samplesToBytes();

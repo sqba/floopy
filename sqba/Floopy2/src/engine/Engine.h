@@ -27,7 +27,7 @@ struct tComponent
 class CEngine : public IFloopyEngine
 {
 public:
-	CEngine();
+	CEngine(HMODULE hModule);
 	virtual ~CEngine();
 
 	char *GetName()			{ return "engine"; }
@@ -60,16 +60,22 @@ public:
 	char *GetDisplayName() { return m_name; }
 	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
 
+	void RegisterUpdateCallback(UpdateCallback func) { m_callback = func; }
+
 private:
 	char *getStorageName(char *filename);
 	//void setLastError(char *err, char *str);
 
 private:
+	HMODULE m_hModule;
+
 	char m_name[50];
 	char m_szLastError[100];
 	char m_szPath[MAX_PATH];
 
 	CTimeline m_timeline;
+
+	UpdateCallback m_callback;
 
 
 	IFloopySoundInput *testCreateMaster();

@@ -16,11 +16,13 @@ typedef IFloopySoundInput* (*CreateProc)(void);
 #define PROC_NAME "CreateInput"
 #define PLUG_EXT ".dll"
 
-CInput::CInput()
+CInput::CInput(UpdateCallback func)
 {
 	m_hinst = NULL;
 	m_plugin = NULL;
 	m_offset = 0;
+
+	m_callback = func;
 
 	memset(m_name, 0, 50);
 	memset(m_szLastError, 0, sizeof(m_szLastError));
@@ -214,6 +216,10 @@ void CInput::Enable(BOOL bEnable)
 {
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
 	m_timeline.Set(m_offset, TIMELINE_PARAM_ENABLE, value);
+
+//	SOUNDFORMAT *fmt = GetFormat();
+//	if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
+//		m_callback(this, m_offset/samplesToBytes(), TIMELINE_PARAM_ENABLE);
 }
 
 BOOL CInput::IsEnabled()
@@ -227,16 +233,24 @@ BOOL CInput::IsEnabled()
 int CInput::samplesToBytes()
 {
 	SOUNDFORMAT *fmt = GetFormat();
-	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	return (fmt->bitsPerSample / 8) * fmt->channels;
+	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+		return (fmt->bitsPerSample / 8) * fmt->channels;
+	else
+		return 0;
 }
 
 void CInput::applyParamsAt(int offset)
 {
+	SOUNDFORMAT *fmt = GetFormat();
+
 	tParam *param = m_timeline.GetParam(offset, TIMELINE_PARAM_ENABLE);
 	if(param)
 	{
 		IFloopy::Enable( PARAM_VALUE_DISABLED != param->value );
+
+		if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
+			m_callback(this, offset/samplesToBytes(), TIMELINE_PARAM_ENABLE);
 	}
 
 	param = m_timeline.GetParam(offset, TIMELINE_PARAM_MOVETO);
@@ -246,6 +260,9 @@ void CInput::applyParamsAt(int offset)
 			m_source->Reset();
 		else
 			m_source->MoveTo((int)param->value);
+
+		if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
+			m_callback(this, offset/samplesToBytes(), TIMELINE_PARAM_MOVETO);
 	}
 
 	/*param = m_timeline.GetParam(offset, TIMELINE_PARAM_RESET);
@@ -260,6 +277,9 @@ void CInput::applyParamsAt(int offset)
 		if(param)
 		{
 			m_plugin->SetParam(param->index, param->value);
+
+			if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
+				m_callback(this, offset/samplesToBytes(), i);
 		}
 	}
 }
@@ -330,6 +350,10 @@ void CInput::SetParam(int index, float value)
 		return;
 	}
 
+	SOUNDFORMAT *fmt = GetFormat();
+	if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
+		m_callback(this, m_offset/samplesToBytes(), index);
+
 	m_plugin->SetParam(index, value);
 	m_timeline.Set(m_offset, index, value);
 
@@ -384,17 +408,26 @@ char *CInput::GetParamDesc(int index)
 void CInput::SetParamAt(int offset, int index, float value)
 {
 	m_timeline.Set(offset * samplesToBytes(), index, value);
+
+//	if(m_callback)
+//		m_callback(this, offset/samplesToBytes(), index);
 }
 
 void CInput::ResetParamAt(int offset, int index)
 {
 	m_timeline.Remove(offset * samplesToBytes(), index);
+
+//	if(m_callback)
+//		m_callback(this, offset/samplesToBytes(), index);
 }
 
 void CInput::EnableAt(int offset, BOOL bEnable)
 {
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
 	m_timeline.Set(offset * samplesToBytes(), TIMELINE_PARAM_ENABLE, value);
+
+//	if(m_callback)
+//		m_callback(this, offset/samplesToBytes(), index);
 }
 
 void CInput::Close()

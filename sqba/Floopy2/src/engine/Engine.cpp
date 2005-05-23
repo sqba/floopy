@@ -13,23 +13,32 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CEngine::CEngine()
+CEngine::CEngine(HMODULE hModule)
 {
+	m_hModule = hModule;
+
 	//m_offset = m_stopAt = m_length = 0;
 	m_pFirst = m_pLast = NULL;
 	memset(m_name, 0, sizeof(m_name));
 	memset(m_szLastError, 0, sizeof(m_szLastError));
 	memset(m_szPath, 0, sizeof(m_szPath));
 
+	m_callback = NULL;
+
 	//char path[MAX_PATH] = {0};
-	//getcwd(path, MAX_PATH);
-	FILE *fp = fopen("engine.cfg", "r");
+	//getcwd(m_szPath, MAX_PATH);
+	GetModuleFileName(hModule, m_szPath, MAX_PATH);
+	char *tmp = strrchr(m_szPath, '\\');
+	if(tmp)
+		*(tmp+1) = '\0';
+	//GetModuleFileName(GetModuleHandle(NULL), m_szPath, MAX_PATH);
+	/*FILE *fp = fopen("engine.cfg", "r");
 	if(fp)
 	{
 		fscanf(fp, "%s", m_szPath);
 		//chdir(m_szPath);
 		fclose(fp);
-	}
+	}*/
 
 }
 
@@ -113,7 +122,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 			path[strlen(path)] = '\\';
 		strcat(path, plugin);
 
-		comp = new CInput();
+		comp = new CInput(m_callback);
 		if(!comp->Create(path))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -142,7 +151,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 			path[strlen(path)] = '\\';
 		strcat(path, filename);
 
-		comp = new CInput();
+		comp = new CInput(m_callback);
 		if(!comp->Create(path))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -189,10 +198,16 @@ BOOL CEngine::Open(char *filename)
 		return storage.Load(filename);
 	}*/
 
-	char *name = getStorageName(filename);
-	if(name)
+	char *plugin = getStorageName(filename);
+	if(plugin)
 	{
-		CStorage storage(this, name);
+		char path[MAX_PATH] = {0};
+		strcpy(path, m_szPath);
+		if(path[strlen(path)-1] != '\\')
+			path[strlen(path)-1] = '\\';
+		strcat(path, plugin);
+
+		CStorage storage(this, path);
 		return storage.Load(filename);
 	}
 /*

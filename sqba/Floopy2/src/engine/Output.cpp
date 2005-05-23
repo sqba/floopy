@@ -31,9 +31,12 @@ COutput::COutput(char *plugin, SOUNDFORMAT fmt)
 
 		if(func != NULL) {
 			//printf("CreateOutput() found in %s.\n", filename);
-			assert((fmt.bitsPerSample > 0) && (fmt.channels > 0));
-			m_plugin = func( fmt );
-			IFloopySoundOutput::SetDest( m_plugin );
+			//assert((fmt.bitsPerSample > 0) && (fmt.channels > 0));
+			if((fmt.bitsPerSample > 0) && (fmt.channels > 0))
+			{
+				m_plugin = func( fmt );
+				IFloopySoundOutput::SetDest( m_plugin );
+			}
 		}
 		else
 		{

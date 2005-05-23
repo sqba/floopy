@@ -51,7 +51,7 @@ public:
 	char *GetLastErrorDesc() { return m_szLastError; }
 
 private:
-	HINSTANCE m_hinst;
+	HMODULE m_hModule;
 	IFloopyEngine *m_plugin;
 	char m_path[MAX_PATH];
 	char m_szLastError[100];

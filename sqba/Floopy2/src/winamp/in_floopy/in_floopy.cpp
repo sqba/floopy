@@ -42,6 +42,7 @@ extern "C" {
 __declspec( dllexport ) In_Module * winampGetInModule2()
 {
 	engine.init();
+	mod.FileExtensions = "xml\0Floopy XML files\0";
 	return &mod;
 }
 #ifdef __cplusplus
@@ -92,7 +93,7 @@ int play(char *fn)
 			MessageBox(NULL, msg, "in_floopy", MB_OK);
 		else
 			MessageBox(NULL, "Failed to create engine.", "in_floopy", MB_OK);
-		return 0;
+		return 1;
 	}
 
 	if(!engine.Open(fn))
@@ -102,10 +103,14 @@ int play(char *fn)
 			MessageBox(NULL, msg, "in_floopy", MB_OK);
 		else
 			MessageBox(NULL, "Failed to open file.", "in_floopy", MB_OK);
-		return 0;
+		return 1;
 	}
 
 	SOUNDFORMAT *fmt = engine.GetFormat();
+
+	if(engine.GetSize() <= 0 || fmt->frequency <= 0)
+		return 1;
+
 	int samplesize = fmt->bitsPerSample / 8;
 
 	maxlatency = mod.outMod->Open(SAMPLERATE,NCH,BPS, -1,-1);
