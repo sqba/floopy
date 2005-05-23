@@ -18,8 +18,9 @@ typedef IFloopyEngine* (*CreateProc)(HMODULE);
 #define PLUG_EXT ".dll"
 
 
-CEngine::CEngine()
+CEngine::CEngine(HINSTANCE hDLLInstance)
 {
+	m_hDLLInstance = hDLLInstance;
 	m_hModule = NULL;
 	m_plugin = NULL;
 	memset(m_path, 0, MAX_PATH);
@@ -82,16 +83,21 @@ BOOL CEngine::Create(char *plugin)
  			//fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, filename);
 	}
 	else
-		sprintf(m_szLastError, "Error: %s not found.\n", filename);
+		sprintf(m_szLastError, "Error: %s not found in %s.\n", filename, m_path);
 	delete[] filename;
 	return FALSE;
 }
 
 void CEngine::init()
 {
-//	char path[MAX_PATH] = {0};
-//	getcwd(path, MAX_PATH);
-//	MessageBox(NULL, path, "path", MB_OK);
+	//char path[MAX_PATH] = {0};
+	//getcwd(path, MAX_PATH);
+	//MessageBox(NULL, path, "path", MB_OK);
+	//GetModuleFileName(GetModuleHandle(NULL), m_path, MAX_PATH);
+	//char *tmp = strrchr(m_path, '\\');
+	//if(tmp)
+	//	*(tmp+1) = '\0';
+	//MessageBox(NULL, m_path, "path", MB_OK);
 	FILE *fp = fopen("in_floopy.cfg", "r");
 	if(fp)
 	{

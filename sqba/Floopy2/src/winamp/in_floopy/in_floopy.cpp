@@ -21,7 +21,7 @@
 
 //#define BUFF_SIZE	2048
 extern In_Module mod;
-CEngine engine;
+CEngine engine(mod.hDllInstance);
 char sample_buffer[576*NCH*(BPS/8)*2]; // sample buffer
 //char lastfn[MAX_PATH]; // currently playing file (used for getting info on the current file)
 int decode_pos_ms; // current decoding position, in milliseconds

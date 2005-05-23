@@ -17,7 +17,7 @@
 class CEngine : public IFloopyEngine
 {
 public:
-	CEngine();
+	CEngine(HINSTANCE hDLLInstance);
 	virtual ~CEngine();
 
 	char *GetName()			{ return m_plugin->GetName(); }
@@ -55,6 +55,7 @@ private:
 	IFloopyEngine *m_plugin;
 	char m_path[MAX_PATH];
 	char m_szLastError[100];
+	HINSTANCE m_hDLLInstance;
 };
 
 #endif // !defined(AFX_ENGINE_H__2971634E_ED26_4A50_ABC1_123ADF851EA5__INCLUDED_)
