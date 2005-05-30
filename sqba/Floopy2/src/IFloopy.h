@@ -31,24 +31,38 @@ typedef unsigned long       DWORD;
 #endif
 
 
-//! Sound format information
+/*********************************************************************
+ *! \struct SoundFormat
+ *  \brief Sound format information.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 13. April 2005.
+ *********************************************************************/
 typedef struct SoundFormat
 {
-	INT		frequency;		// Audio frequency in samples per second
-	WORD	format;			// Audio data format
-	BYTE	channels;		// Number of channels: 1-mono, 2-stereo
-	DWORD	bitsPerSample;	// Sample size, in bits
-//	INT		format;			// Waveform-audio format type
+	INT		frequency;		/** Audio frequency (samples per second)*/
+	WORD	format;			/** Audio data format					*/
+	BYTE	channels;		/** Number of channels: 1-mono, 2-stereo*/
+	DWORD	bitsPerSample;	/** Sample size, in bits				*/
+//	INT		format;			/** Waveform-audio format type			*/
 } SOUNDFORMAT;
 
 
+/*********************************************************************
+ *! \enum enumClassType
+ *  \brief Runtime class information.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 30. May 2005.
+ *
+ *  Returned by IFloopy::GetType().
+ *********************************************************************/
 enum enumClassType
 {
-	TYPE_FLOOPY,
-	TYPE_FLOOPY_SOUND, 
-	TYPE_FLOOPY_SOUND_INPUT,
-	TYPE_FLOOPY_SOUND_OUTPUT,
-	TYPE_FLOOPY_ENGINE
+	TYPE_FLOOPY = 0,			/** IFloopy				*/
+	TYPE_FLOOPY_SOUND_INPUT,	/** IFloopySoundInput	*/
+	TYPE_FLOOPY_SOUND_OUTPUT,	/** IFloopySound		*/
+	TYPE_FLOOPY_ENGINE			/** IFloopySoundEngine	*/
 };
 
 
@@ -57,7 +71,7 @@ enum enumClassType
  *  \brief Main object interface.
  *  \author Filip Pavlovic
  *  \version 0.0
- *  \date 13. april 2005
+ *  \date 13. April 2005.
  *********************************************************************/
 class IFloopy
 {
@@ -65,7 +79,12 @@ public:
 	IFloopy()			{ m_bEnabled = TRUE; m_nLastError = 0; }
 	virtual ~IFloopy()	{ }
 
-	// Do not override!!!
+	/**
+	 * Returns class type identificator.
+	 * Used for runtime class identification.
+	 * Do not override in implementations!!!
+	 * @return class type identificator.
+	 */
 	virtual enumClassType GetType()	{ return TYPE_FLOOPY; }
 
 	// Component description
@@ -83,60 +102,39 @@ public:
 	virtual BOOL  GetParam(int index, float *value)	{ return FALSE; }
 	virtual int   GetParamIndex(char *name)			{ return -1; }
 
-	virtual void  Enable(BOOL bEnabled)				{ m_bEnabled = bEnabled; }
-	virtual BOOL  IsEnabled()						{ return m_bEnabled; }
+	virtual void  Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
+	virtual BOOL  IsEnabled()				{ return m_bEnabled; }
 
-			int   GetLastError()					{ return m_nLastError; }
-	virtual char *GetLastErrorDesc()				{ return NULL; }
+			int   GetLastError()			{ return m_nLastError; }
+	virtual char *GetLastErrorDesc()		{ return NULL; }
 	//virtual BOOL  GetLastError(char *str, int len)	{ return FALSE; }
 
+	/** Do not override in implementations, handled by the engine */
 	virtual char *GetDisplayName()					{ return NULL; }
+
+	/** Do not override in implementations, handled by the engine */
 	virtual void  SetDisplayName(char *name, int len){ }
 
+	/** Do not override in implementations, handled by the engine */
 	virtual char *GetPath()							{ return NULL; }
 
 	virtual BOOL Open(char *filename)				{ return FALSE; }
 	virtual void Close()							{ }
 
-	// offset is in samples!
+	/**
+	 * Returns next sample position at which a parameter change occurs.
+	 * Do not override in implementations, handled by the engine.
+	 * @param offset current position, in samples.
+	 * @return next position (number of samples).
+	 */
 	virtual int GetNextOffset(int offset)			{ return 0; }
 
 private:
-	BOOL m_bEnabled;
+	BOOL m_bEnabled;	/** Is this component disabled or enabled. */
 
 protected:
-	int m_nLastError;
+	int m_nLastError;	/** Last error code. */
 };
-
-
-/*********************************************************************
- *! \class IFloopySound
- *  \brief Main sound object interface.
- *  \author Filip Pavlovic
- *  \version 0.0
- *  \date 13. april 2005
- *
- *  Interface implemented and used by all sound objects.
- *********************************************************************/
-/*class IFloopySound : public IFloopy
-{
-public:
-	IFloopySound() {}
-	virtual ~IFloopySound() {}
-
-	// Do not override!!!
-	virtual enumClassType GetType()			{ return TYPE_FLOOPY_SOUND; }
-
-	// Component description
-	virtual char *GetName()					{ return "IFloopySound"; }
-	virtual char *GetDescription()			{ return "IFloopySound interface"; }
-
-	virtual BOOL Open(char *filename)		{ return FALSE; }
-	virtual void Close()					{ }
-
-	// offset is in samples!
-	virtual int GetNextOffset(int offset)	{ return 0; }
-};*/
 
 
 /*********************************************************************
@@ -149,7 +147,7 @@ public:
  *  Interface implemented and used by all sound input objects
  *  such as sound source objects and filter (effect) objects.
  *********************************************************************/
-class IFloopySoundInput : public IFloopy//Sound
+class IFloopySoundInput : public IFloopy
 {
 public:
 	IFloopySoundInput()
@@ -160,17 +158,16 @@ public:
 	}
 	virtual ~IFloopySoundInput() {}
 
-	// Do not override!!!
-	virtual enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_INPUT; }
+	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_INPUT; }
 
 	// Component description
-	virtual char *GetName()			{ return "IFloopySoundInput"; }
-	virtual char *GetDescription()	{ return "IFloopySoundInput interface"; }
+	char *GetName()			{ return "IFloopySoundInput"; }
+	char *GetDescription()	{ return "IFloopySoundInput interface"; }
 
 	/**
 	 * Open source file.
 	 */
-	virtual BOOL Open(char *filename)
+	BOOL Open(char *filename)
 	{
 		return (NULL != m_source ? m_source->Open(filename) : FALSE);
 	}
@@ -222,12 +219,12 @@ public:
 		//m_pos = samples * ( (fmt->size / 8) * fmt->channels );
 	}
 
+	/**
+	 * Returns current sample position.
+	 */
 	virtual int GetPos()
 	{
-		if(NULL != m_source)
-			return m_source->GetPos();
-		else
-			return 0;
+		return (NULL != m_source ? m_source->GetPos() : 0);
 		//	return m_pos;
 	}
 
@@ -246,27 +243,44 @@ public:
 		return (NULL != m_source ? m_source->GetFormat() : &m_format);
 	}
 
-	//////////////////////////////////////////////////////////////////
-	// Mixer specific functions
-	//////////////////////////////////////////////////////////////////
+	/**
+	 * Mixer specific function.
+	 */
 	virtual int AddSource(IFloopySoundInput *src)
 	{
 		return (NULL != m_source ? m_source->AddSource(src) : 0);
 	}
 
+	/**
+	 * Mixer specific function.
+	 */
 	virtual IFloopySoundInput *GetSource(int index)
 	{
 		return (index > 0 ? NULL : m_source);
 	}
 
+	/**
+	 * Mixer specific function.
+	 */
 	virtual void RemoveSource(IFloopySoundInput *src)
 	{
-		if(NULL != m_source)
-			m_source->RemoveSource(src);
+		//if(NULL != m_source)
+		//	m_source->RemoveSource(src);
 	}
 
-	virtual int GetInputCount()			{ return (NULL != m_source ? 1 : 0); }
+	/**
+	 * Mixer specific function.
+	 */
+	virtual int GetInputCount()
+	{
+		return (NULL != m_source ? 1 : 0);
+	}
 
+	/**
+	 * Specifies whether the source should be read and passed on 
+	 * if this component is disabled. If false then nothing
+	 * will be read.
+	 */
 	virtual BOOL ReadSourceIfDisabled()	{ return TRUE; }
 
 	// Utility
@@ -292,23 +306,22 @@ protected:
  *  Interface implemented and used by all sound output objects
  *  such as file writers and encoders.
  *********************************************************************/
-class IFloopySoundOutput : public IFloopy//Sound
+class IFloopySoundOutput : public IFloopy
 {
 public:
 	IFloopySoundOutput() { m_dest = NULL; }
 	IFloopySoundOutput(SOUNDFORMAT fmt) { m_dest = NULL; }
 	virtual ~IFloopySoundOutput() {}
 
-	// Do not override!!!
-	virtual enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_OUTPUT; }
+	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_OUTPUT; }
 
-	virtual char *GetName()			{ return "IFloopySoundOutput"; }
-	virtual char *GetDescription()	{ return "IFloopySoundOutput interface"; }
+	char *GetName()			{ return "IFloopySoundOutput"; }
+	char *GetDescription()	{ return "IFloopySoundOutput interface"; }
 
 	/**
 	 * Opens destination (file).
 	 */
-	virtual BOOL Open(char *filename)
+	BOOL Open(char *filename)
 	{
 		return (NULL != m_dest ? m_dest->Open(filename) : FALSE);
 	}
@@ -316,7 +329,7 @@ public:
 	/**
 	 * Closes destination (file).
 	 */
-	virtual void Close()
+	void Close()
 	{
 		if(NULL != m_dest)
 			m_dest->Close();
@@ -358,11 +371,10 @@ typedef void (*UpdateCallback)(IFloopy *src, int offset, int param);
 class IFloopySoundEngine : public IFloopySoundInput
 {
 public:
-	// Do not override!!!
-	virtual enumClassType GetType() { return TYPE_FLOOPY_ENGINE; }
+	enumClassType GetType() { return TYPE_FLOOPY_ENGINE; }
 
-	virtual char *GetName()			{ return "IFloopySoundEngine"; }
-	virtual char *GetDescription()	{ return "IFloopySoundEngine interface"; }
+	char *GetName()			{ return "IFloopySoundEngine"; }
+	char *GetDescription()	{ return "IFloopySoundEngine interface"; }
 
 	/**
 	 * Creates a sound source or filter.

@@ -26,10 +26,10 @@ enum enumObjType { TYPE_INPUT, TYPE_OUTPUT, TYPE_ENGINE };
  */
 struct tComponent
 {
-	IFloopy		*obj;	/** Pointer to the object itself */
-	tComponent	*prev;	/** Pointer to the next object */
-	tComponent	*next;	/** Pointer to the previous object */
-	enumObjType	type;	/** Object type */
+	IFloopy		*obj;	/** Pointer to the object itself	*/
+	tComponent	*prev;	/** Pointer to the next object		*/
+	tComponent	*next;	/** Pointer to the previous object	*/
+	enumObjType	type;	/** Object type						*/
 };
 
 class CEngine : public IFloopySoundEngine
