@@ -38,7 +38,18 @@ typedef struct SoundFormat
 	WORD	format;			// Audio data format
 	BYTE	channels;		// Number of channels: 1-mono, 2-stereo
 	DWORD	bitsPerSample;	// Sample size, in bits
+//	INT		format;			// Waveform-audio format type
 } SOUNDFORMAT;
+
+
+enum enumClassType
+{
+	TYPE_FLOOPY,
+	TYPE_FLOOPY_SOUND, 
+	TYPE_FLOOPY_SOUND_INPUT,
+	TYPE_FLOOPY_SOUND_OUTPUT,
+	TYPE_FLOOPY_ENGINE
+};
 
 
 /*********************************************************************
@@ -53,6 +64,9 @@ class IFloopy
 public:
 	IFloopy()			{ m_bEnabled = TRUE; m_nLastError = 0; }
 	virtual ~IFloopy()	{ }
+
+	// Do not override!!!
+	virtual enumClassType GetType()	{ return TYPE_FLOOPY; }
 
 	// Component description
 	virtual char *GetName()			{ return "IFloopy"; }
@@ -81,6 +95,12 @@ public:
 
 	virtual char *GetPath()							{ return NULL; }
 
+	virtual BOOL Open(char *filename)				{ return FALSE; }
+	virtual void Close()							{ }
+
+	// offset is in samples!
+	virtual int GetNextOffset(int offset)			{ return 0; }
+
 private:
 	BOOL m_bEnabled;
 
@@ -98,11 +118,14 @@ protected:
  *
  *  Interface implemented and used by all sound objects.
  *********************************************************************/
-class IFloopySound : public IFloopy
+/*class IFloopySound : public IFloopy
 {
 public:
 	IFloopySound() {}
 	virtual ~IFloopySound() {}
+
+	// Do not override!!!
+	virtual enumClassType GetType()			{ return TYPE_FLOOPY_SOUND; }
 
 	// Component description
 	virtual char *GetName()					{ return "IFloopySound"; }
@@ -113,7 +136,7 @@ public:
 
 	// offset is in samples!
 	virtual int GetNextOffset(int offset)	{ return 0; }
-};
+};*/
 
 
 /*********************************************************************
@@ -126,7 +149,7 @@ public:
  *  Interface implemented and used by all sound input objects
  *  such as sound source objects and filter (effect) objects.
  *********************************************************************/
-class IFloopySoundInput : public IFloopySound
+class IFloopySoundInput : public IFloopy//Sound
 {
 public:
 	IFloopySoundInput()
@@ -136,6 +159,9 @@ public:
 		//m_pos = 0;
 	}
 	virtual ~IFloopySoundInput() {}
+
+	// Do not override!!!
+	virtual enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_INPUT; }
 
 	// Component description
 	virtual char *GetName()			{ return "IFloopySoundInput"; }
@@ -266,12 +292,15 @@ protected:
  *  Interface implemented and used by all sound output objects
  *  such as file writers and encoders.
  *********************************************************************/
-class IFloopySoundOutput : public IFloopySound
+class IFloopySoundOutput : public IFloopy//Sound
 {
 public:
 	IFloopySoundOutput() { m_dest = NULL; }
 	IFloopySoundOutput(SOUNDFORMAT fmt) { m_dest = NULL; }
 	virtual ~IFloopySoundOutput() {}
+
+	// Do not override!!!
+	virtual enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_OUTPUT; }
 
 	virtual char *GetName()			{ return "IFloopySoundOutput"; }
 	virtual char *GetDescription()	{ return "IFloopySoundOutput interface"; }
@@ -312,6 +341,9 @@ private:
 };
 
 
+typedef void (*UpdateCallback)(IFloopy *src, int offset, int param);
+
+
 /*********************************************************************
  *! \class IFloopyEngine
  *  \brief Floopy engine interface.
@@ -323,9 +355,12 @@ private:
  *  destruction of plugins, as well as all parameter changes on
  *  the timeline.
  *********************************************************************/
-class IFloopyEngine : public IFloopySoundInput
+class IFloopySoundEngine : public IFloopySoundInput
 {
 public:
+	// Do not override!!!
+	virtual enumClassType GetType() { return TYPE_FLOOPY_ENGINE; }
+
 	virtual char *GetName()			{ return "IFloopySoundEngine"; }
 	virtual char *GetDescription()	{ return "IFloopySoundEngine interface"; }
 
@@ -378,6 +413,12 @@ public:
 	 * @param bEnable enable or disable.
 	 */
 	virtual void EnableAt(IFloopy *obj, int offset, BOOL bEnable) {}
+
+	/**
+	 * Sets the callback function that is called on parameter changes.
+	 * @param func pointer to the function.
+	 */
+	virtual void RegisterUpdateCallback(UpdateCallback func) {}
 };
 
 

@@ -8,15 +8,14 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef BOOL (*StorageProc)(IFloopyEngine*, char*);
+typedef BOOL (*StorageProc)(IFloopySoundEngine*, char*);
 #define PROC_NAME_LOAD "Load"
 #define PROC_NAME_SAVE "Save"
 #define PLUG_EXT ".dll"
 
-CStorage::CStorage(IFloopyEngine *engine, char *plugin)
+CStorage::CStorage(IFloopySoundEngine *engine, char *plugin)
 {
 	m_hinst = NULL;
-	m_plugin = NULL;
 	m_engine = engine;
 
 	char *filename = new char[strlen(plugin) + 5];
@@ -29,9 +28,6 @@ CStorage::CStorage(IFloopyEngine *engine, char *plugin)
 
 CStorage::~CStorage()
 {
-	if(NULL != m_plugin)
-		delete m_plugin;
-
 	if(NULL != m_hinst)
 		FreeLibrary(m_hinst);
 }

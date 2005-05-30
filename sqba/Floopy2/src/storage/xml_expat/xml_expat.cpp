@@ -52,12 +52,12 @@ struct tSessionInfo
 	int level;
 
 	XML_Parser parser;
-	IFloopyEngine *gEngine;
+	IFloopySoundEngine *gEngine;
 	IFloopySoundInput *gInput;
 };
 
-BOOL loadXML(IFloopyEngine *engine, char *filename);
-BOOL saveXML(IFloopyEngine *engine, char *filename);
+BOOL loadXML(IFloopySoundEngine *engine, char *filename);
+BOOL saveXML(IFloopySoundEngine *engine, char *filename);
 
 
 void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursive);
@@ -66,12 +66,12 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 #ifdef __cplusplus
 extern "C" {
 #endif
-__declspec( dllexport ) BOOL Load(IFloopyEngine *engine, char *filename)
+__declspec( dllexport ) BOOL Load(IFloopySoundEngine *engine, char *filename)
 {
 	return loadXML(engine, filename);
 }
 
-__declspec( dllexport ) BOOL Save(IFloopyEngine *engine, char *filename)
+__declspec( dllexport ) BOOL Save(IFloopySoundEngine *engine, char *filename)
 {
 	return saveXML(engine, filename);
 }
@@ -202,7 +202,7 @@ void elementData(void *userData, const char *data, int len)
 }
 
 
-BOOL loadXML(IFloopyEngine *engine, char *filename)
+BOOL loadXML(IFloopySoundEngine *engine, char *filename)
 {
 	tSessionInfo si;
 	memset(&si, 0, sizeof(tSessionInfo));
@@ -259,7 +259,7 @@ BOOL loadXML(IFloopyEngine *engine, char *filename)
 
 
 
-BOOL saveXML(IFloopyEngine *engine, char *filename)
+BOOL saveXML(IFloopySoundEngine *engine, char *filename)
 {
 	tSessionInfo si;
 	memset(&si, 0, sizeof(tSessionInfo));

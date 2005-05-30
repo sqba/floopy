@@ -17,7 +17,7 @@
 class CStorage  
 {
 public:
-	CStorage(IFloopyEngine *engine, char *plugin);
+	CStorage(IFloopySoundEngine *engine, char *plugin);
 	virtual ~CStorage();
 
 	BOOL Load(char *filename);
@@ -25,8 +25,7 @@ public:
 
 private:
 	HINSTANCE m_hinst;
-	IFloopyEngine *m_plugin;
-	IFloopyEngine *m_engine;
+	IFloopySoundEngine *m_engine;
 };
 
 #endif // !defined(AFX_STORAGE_H__D2BE1D70_0029_47BA_9E1D_599A381DB224__INCLUDED_)

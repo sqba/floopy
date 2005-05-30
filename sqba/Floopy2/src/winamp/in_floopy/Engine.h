@@ -14,7 +14,7 @@
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 
-class CEngine : public IFloopyEngine
+class CEngine : public IFloopySoundEngine
 {
 public:
 	CEngine(HINSTANCE hDLLInstance);
@@ -52,7 +52,7 @@ public:
 
 private:
 	HMODULE m_hModule;
-	IFloopyEngine *m_plugin;
+	IFloopySoundEngine *m_plugin;
 	char m_path[MAX_PATH];
 	char m_szLastError[100];
 	HINSTANCE m_hDLLInstance;

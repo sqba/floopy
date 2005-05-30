@@ -89,11 +89,11 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	assert(fmt->frequency > 0);
 	float size = (float)input->GetSize() / (float)fmt->frequency;
 
-	char *space = new char[level+1];
-	memset(space, ' ', level);
+	char *space = new char[level*2+1];
+	memset(space, ' ', level*2);
 	//memset(space, 0xc3, level);
 	//space[level-1] = 0xc0;
-	space[level] = 0;
+	space[level*2] = 0;
 
 	//fprintf(fp, "\n%s< %s(%.3f)", space, name, size);
 	fprintf(fp, "\n%s%s", space, name);

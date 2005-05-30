@@ -14,7 +14,7 @@
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 
-class CEngine : public IFloopyEngine
+class CEngine : public IFloopySoundEngine
 {
 public:
 	CEngine(char *plugin);
@@ -43,7 +43,7 @@ public:
 
 private:
 	HMODULE m_hModule;
-	IFloopyEngine *m_plugin;
+	IFloopySoundEngine *m_plugin;
 };
 
 #endif // !defined(AFX_ENGINE_H__2971634E_ED26_4A50_ABC1_123ADF851EA5__INCLUDED_)

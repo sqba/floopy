@@ -16,7 +16,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #ifdef __cplusplus
 extern "C" {
 #endif
-__declspec( dllexport ) IFloopyEngine *CreateEngine(HMODULE hModule)
+__declspec( dllexport ) IFloopySoundEngine *CreateSoundEngine(HMODULE hModule)
 {
 	return new CEngine(hModule);
 }

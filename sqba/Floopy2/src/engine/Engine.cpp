@@ -19,9 +19,10 @@ CEngine::CEngine(HMODULE hModule)
 
 	//m_offset = m_stopAt = m_length = 0;
 	m_pFirst = m_pLast = NULL;
-	memset(m_name, 0, sizeof(m_name));
+	memset(m_szDisplayname, 0, sizeof(m_szDisplayname));
 	memset(m_szLastError, 0, sizeof(m_szLastError));
 	memset(m_szPath, 0, sizeof(m_szPath));
+	memset(m_szFileName, 0, sizeof(m_szFileName));
 
 	m_callback = NULL;
 
@@ -50,72 +51,44 @@ CEngine::~CEngine()
 	tComponent *tmp;
 	while(m_pFirst)
 	{
-		//printf("%d %d %f", first->offset, first->index, first->value);
 		tmp = m_pFirst->next;
 		delete m_pFirst;
 		m_pFirst = tmp;
 	}
 }
 
-tComponent *CEngine::add(IFloopy *comp, BOOL bInput)
+tComponent *CEngine::add(IFloopy *obj, enumObjType type)
 {
 	if(NULL == m_pLast)
 	{
 		m_pFirst = new tComponent;
 		memset(m_pFirst, 0, sizeof(tComponent));
 		m_pLast = m_pFirst;
-		m_pFirst->comp = comp;
-		m_pFirst->bInput = bInput;
+		m_pFirst->obj = obj;
+		m_pFirst->type = type;
 	}
 	else
 	{
 		tComponent *tmp = new tComponent;
 		memset(tmp, 0, sizeof(tComponent));
-		tmp->bInput = bInput;
+		tmp->type = type;
 		tmp->prev = m_pLast;
-		tmp->comp = comp;
+		tmp->obj = obj;
 		m_pLast->next = tmp;
 		m_pLast = tmp;
 	}
 	return m_pLast;
 }
-/*
-void CEngine::dump(FILE *fp)
-{
-	tComponent *tmp = m_pFirst;
-	while(tmp)
-	{
-		tmp->comp->dump(fp);
-		tmp = tmp->next;
-	}
-}
-*/
+
 IFloopySoundInput *CEngine::CreateInput(char *filename)
 {
-	IFloopySoundInput *comp = NULL;
+	IFloopySoundInput *obj = NULL;
+	enumObjType type = TYPE_INPUT;
 
 	// Check if a filename has been given
-	char *plugin = getStorageName(filename);
+	char *plugin = getPluginName(filename);
 	if(plugin)
 	{
-		//char path[MAX_PATH] = {0};
-		/*FILE *fp = fopen("engine.cfg", "r");
-		if(fp)
-		{
-			fscanf(fp, "%s", path);
-		}
-
-		if(strlen(path) > 0)
-		{
-			if(path[strlen(path)-1] != '\\')
-				strcat(path, "\\");
-		}
-		fclose(fp);*/
-
-		/*strcat(path, "D:\\sqba\\Projekti\\Floopy!\\Floopy2\\Debug\\");
-		strcat(path, plugin);
-		comp = new CInput(path);*/
-
 		char path[MAX_PATH] = {0};
 		strcpy(path, m_szPath);
 		if(path[strlen(path)-1] != '\\')
@@ -124,29 +97,33 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 
 		if(0==strcmpi(plugin, "xml_expat"))
 		{
-			comp = new CEngine(m_hModule);
-			if(comp->Open(filename))
-				return comp;
-			else
+			obj = new CEngine(m_hModule);
+			if(!obj->Open(filename))
+			{
+				sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
+				delete obj;
 				return NULL;
+			}
+			type = TYPE_ENGINE;
 		}
-
-		comp = new CInput(m_callback);
-		if(!((CInput*)comp)->Create(path))
+		else
 		{
-			//setLastError(ERR_STR_FILENOTFOUND, filename);
-			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
-			delete comp;
-			return NULL;
+			obj = new CInput(m_callback);
+			if(!((CInput*)obj)->Create(path))
+			{
+				//setLastError(ERR_STR_FILENOTFOUND, filename);
+				sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
+				delete obj;
+				return NULL;
+			}
+			if(!obj->Open(filename))
+			{
+				//setLastError(ERR_STR_FILENOTFOUND, filename);
+				sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
+				delete obj;
+				return NULL;
+			}
 		}
-		if(!comp->Open(filename))
-		{
-			//setLastError(ERR_STR_FILENOTFOUND, filename);
-			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
-			delete comp;
-			return NULL;
-		}
-
 	}
 	else
 	{
@@ -160,54 +137,50 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 			path[strlen(path)] = '\\';
 		strcat(path, filename);
 
-		comp = new CInput(m_callback);
-		if(!((CInput*)comp)->Create(path))
+		obj = new CInput(m_callback);
+		if(!((CInput*)obj)->Create(path))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
 			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
-			delete comp;
+			delete obj;
 			return NULL;
 		}
 	}
 
-	add(comp, TRUE);
-	return comp;
+	add(obj, type);
+	return obj;
 }
 
 IFloopySoundOutput *CEngine::CreateOutput(char *filename, SOUNDFORMAT fmt)
 {
-	IFloopySoundOutput *comp = NULL;
+	IFloopySoundOutput *obj = NULL;
 
 	// Check if a filename has been given
-	char *plugin = getStorageName(filename);
+	char *plugin = getPluginName(filename);
 	if(plugin)
 	{
-		comp = new COutput(plugin, fmt);
-		if(!comp->Open(filename))
+		obj = new COutput(plugin, fmt);
+		if(!obj->Open(filename))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
 			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
-			delete comp;
+			delete obj;
 			return NULL;
 		}
 	}
 	else
-		comp = new COutput(filename, fmt);
+		obj = new COutput(filename, fmt);
 
-	add(comp, FALSE);
+	add(obj, TYPE_OUTPUT);
 
-	return comp;
+	return obj;
 }
 
 BOOL CEngine::Open(char *filename)
 {
-	/*if(0 == strcmpi(filename, "test"))
-	{
-		CStorage storage(this, "TEST");
-		return storage.Load(filename);
-	}*/
+	BOOL bResult = FALSE;
 
-	char *plugin = getStorageName(filename);
+	char *plugin = getPluginName(filename);
 	if(plugin)
 	{
 		char path[MAX_PATH] = {0};
@@ -217,46 +190,58 @@ BOOL CEngine::Open(char *filename)
 		strcat(path, plugin);
 
 		CStorage storage(this, path);
-		return storage.Load(filename);
-	}
-/*
-	char *ext = strrchr(filename, '.');
-	int i = filename+strlen(filename) - ext;
-	ext = filename + i;
+		bResult = storage.Load(filename);
 
-	// Check extension and then select apropriate plugin!
-	if(0 == strcmpi(ext, "test"))
-	{
-		CStorage storage(this, "test");
-		return storage.Load(filename);
+		if(bResult)
+			strcpy(m_szFileName, filename);
 	}
-	if(0 == strcmpi(ext, "xml"))
-	{
-		CStorage storage(this, "xml_expat");
-		return storage.Load(filename);
-	}
-*/
-	return FALSE;
+	return bResult;
 }
 
 BOOL CEngine::Save(char *filename)
 {
+	if(!filename && m_szFileName)
+		filename = m_szFileName;
+
+	if(!filename)
+		return FALSE;
+
 	BOOL result = FALSE;
-	char *name = getStorageName(filename);
+	char *name = getPluginName(filename);
 	if(name)
 	{
 		CStorage storage(this, name);
 		result = storage.Save(filename);
 		//if(!result)
 		//	storage.GetLastError(m_szLastError, strlen(m_szLastError));
+
+		// Save all child engines
+		if(result)
+			saveChildEngines();
 	}
 	else
-		sprintf(m_szLastError, "Adequate storage component not found for %s.\0", filename);
+		sprintf(m_szLastError, "Adequate storage objonent not found for %s.\0", filename);
 		//setLastError(ERR_STR_FILENOTFOUND, filename);
+
 	return result;
 }
 
-char *CEngine::getStorageName(char *filename)
+void CEngine::saveChildEngines()
+{
+	// Save all child engines
+	tComponent *tmp = m_pFirst;
+	while(tmp)
+	{
+		if(tmp->type == TYPE_ENGINE)
+		{
+			CEngine *engine = (CEngine*)tmp->obj;
+			engine->Save(NULL);
+		}
+		tmp = tmp->next;
+	}
+}
+
+char *CEngine::getPluginName(char *filename)
 {
 	char *ext = strrchr(filename, '.');
 	if(ext)
@@ -284,10 +269,14 @@ void CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
 	tComponent *tmp = m_pFirst;
 	while(tmp)
 	{
-		if((obj == tmp->comp) && (tmp->bInput))
+		if(obj == tmp->obj)
 		{
-			CInput *input = (CInput*)obj;
-			input->SetParamAt(offset, index, value);
+			switch(tmp->type)
+			{
+			case TYPE_INPUT:
+				CInput *input = (CInput*)obj;
+				input->SetParamAt(offset, index, value);
+			}
 			return;
 		}
 		tmp = tmp->next;
@@ -299,10 +288,14 @@ void CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
 	tComponent *tmp = m_pFirst;
 	while(tmp)
 	{
-		if((obj == tmp->comp) && (tmp->bInput))
+		if(obj == tmp->obj)
 		{
-			CInput *input = (CInput*)obj;
-			input->ResetParamAt(offset, index);
+			switch(tmp->type)
+			{
+			case TYPE_INPUT:
+				CInput *input = (CInput*)obj;
+				input->ResetParamAt(offset, index);
+			}
 			return;
 		}
 		tmp = tmp->next;
@@ -314,10 +307,14 @@ void CEngine::EnableAt(IFloopy *obj, int offset, BOOL bEnable)
 	tComponent *tmp = m_pFirst;
 	while(tmp)
 	{
-		if((obj == tmp->comp) && (tmp->bInput))
+		if(obj == tmp->obj)
 		{
-			CInput *input = (CInput*)obj;
-			input->EnableAt(offset, bEnable);
+			switch(tmp->type)
+			{
+			case TYPE_INPUT:
+				CInput *input = (CInput*)obj;
+				input->EnableAt(offset, bEnable);
+			}
 			return;
 		}
 		tmp = tmp->next;
@@ -329,14 +326,41 @@ void CEngine::Close()
 	tComponent *tmp = m_pFirst;
 	while(tmp)
 	{
-		if(tmp->bInput)
+		switch(tmp->type)
 		{
-			CInput *input = (CInput*)tmp->comp;
-			input->Close();
+		case TYPE_INPUT:
+			{
+				CInput *input = (CInput*)tmp->obj;
+				input->Close();
+				break;
+			}
+		case TYPE_ENGINE:
+			CEngine *engine = (CEngine*)tmp->obj;
+			engine->Close();
 		}
 		tmp = tmp->next;
 	}
 }
+
+char *CEngine::GetLastErrorDesc()
+{
+	return m_szLastError;
+}
+
+char *CEngine::GetDisplayName()
+{
+	return m_szDisplayname;
+}
+void CEngine::SetDisplayName(char *name, int len)
+{
+	memcpy(m_szDisplayname, name, (len < NAME_LEN ? len : NAME_LEN));
+}
+
+void CEngine::RegisterUpdateCallback(UpdateCallback func)
+{
+	m_callback = func;
+}
+
 /*
 int CEngine::GetLastError()
 {
@@ -354,5 +378,20 @@ void CEngine::setLastError(char *err, char *str)
 {
 	memset(m_szLastError, 0, sizeof(m_szLastError));
 	sprintf(m_szLastError, err, str);
+}
+
+void CEngine::dump(FILE *fp)
+{
+	tComponent *tmp = m_pFirst;
+	while(tmp)
+	{
+		tmp->obj->dump(fp);
+		tmp = tmp->next;
+	}
+}
+*/
+/*
+enumObjType CEngine::createObject(char *filename)
+{
 }
 */

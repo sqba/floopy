@@ -16,15 +16,23 @@
 #include "output.h"
 #include "timeline.h"
 
+#define NAME_LEN	50
+
+enum enumObjType { TYPE_INPUT, TYPE_OUTPUT, TYPE_ENGINE };
+
+/**
+ * Structure used for keeping information
+ * about all objects created by this engine
+ */
 struct tComponent
 {
-	IFloopy *comp;
-	tComponent *prev;
-	tComponent *next;
-	BOOL bInput;
+	IFloopy		*obj;	/** Pointer to the object itself */
+	tComponent	*prev;	/** Pointer to the next object */
+	tComponent	*next;	/** Pointer to the previous object */
+	enumObjType	type;	/** Object type */
 };
 
-class CEngine : public IFloopyEngine
+class CEngine : public IFloopySoundEngine
 {
 public:
 	CEngine(HMODULE hModule);
@@ -37,12 +45,7 @@ public:
 
 	BOOL Open(char *filename);
 	BOOL Save(char *filename);
-
-//	int   GetParamCount()					{ return 1; }
-//	void  SetParam(int index, float value)	{ if(index==0) m_startAt = value; if(index==2) m_stopAt = value; }
-//	float GetParam(int index)				{ if(index==0) return m_startAt else if(index==2) return m_stopAt else return 0; }
-//	char *GetParamName(int index)			{ return m_plugin->GetParamName(index); }
-//	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
+	void Close();
 
 	IFloopySoundInput  *CreateInput(char *plugin);
 	IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt);
@@ -51,41 +54,31 @@ public:
 	void ResetParamAt(IFloopy *obj, int offset, int index);
 	void EnableAt(IFloopy *obj, int offset, BOOL bEnable);
 
-	void Close();
+	char *GetDisplayName();
+	void SetDisplayName(char *name, int len);
 
+	void RegisterUpdateCallback(UpdateCallback func);
+
+	char *GetLastErrorDesc();
 	//int GetLastError();
 	//BOOL GetLastError(char *str, int len);
-	char *GetLastErrorDesc() { return m_szLastError; }
-
-	char *GetDisplayName() { return m_name; }
-	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
-
-	void RegisterUpdateCallback(UpdateCallback func) { m_callback = func; }
 
 private:
-	char *getStorageName(char *filename);
+	char *getPluginName(char *filename);
+//	enumObjType createObject(char *filename);
+	tComponent *add(IFloopy *comp, enumObjType type);
+	void saveChildEngines();
 	//void setLastError(char *err, char *str);
 
 private:
-	HMODULE m_hModule;
-
-	char m_name[50];
-	char m_szLastError[100];
-	char m_szPath[MAX_PATH];
-
-	CTimeline m_timeline;
-
-	UpdateCallback m_callback;
-
-
-	IFloopySoundInput *testCreateMaster();
-	IFloopySoundInput *testCreateTrack1();
-	IFloopySoundInput *testCreateTrack2();
-	IFloopySoundInput *testCreateTrack3();
-	IFloopySoundInput *testCreateTrack4(SOUNDFORMAT *fmt);
-
-	tComponent *m_pFirst, *m_pLast;
-	tComponent *add(IFloopy *comp, BOOL bInput);
+	HMODULE m_hModule;				/** Handle to the module that created the engine */
+	char m_szDisplayname[NAME_LEN];	/** Engine name, user defined string */
+	char m_szLastError[100];		/** Last error description */
+	char m_szPath[MAX_PATH];		/** Physical location of the engine */
+	char m_szFileName[MAX_PATH];	/** File name, set after succesfull call to Open() */
+	CTimeline m_timeline;			/** Parameter changes */
+	UpdateCallback m_callback;		/** Callback function called on parameter changes while playing */
+	tComponent *m_pFirst, *m_pLast;	/** Linked list of all objects created by the engine */
 };
 
 #endif // !defined(AFX_ENGINE_H__621A6F07_09D1_41D0_A981_DB32D29DA57A__INCLUDED_)

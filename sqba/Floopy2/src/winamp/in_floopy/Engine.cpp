@@ -13,8 +13,8 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef IFloopyEngine* (*CreateProc)(HMODULE);
-#define PROC_NAME "CreateEngine"
+typedef IFloopySoundEngine* (*CreateProc)(HMODULE);
+#define PROC_NAME "CreateSoundEngine"
 #define PLUG_EXT ".dll"
 
 
@@ -71,7 +71,7 @@ BOOL CEngine::Create(char *plugin)
 		CreateProc func = (CreateProc)GetProcAddress(m_hModule, PROC_NAME); 
 
 		if(func != NULL) {
-			//printf("CreateEngine() found in %s.\n", filename);
+			//printf("CreateSoundEngine() found in %s.\n", filename);
 			m_plugin = func( m_hModule );
 			SetSource( m_plugin );
 //			MessageBox(NULL, "Created engine", "In_Floopy", MB_OK);
