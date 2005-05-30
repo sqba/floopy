@@ -131,7 +131,7 @@ void main(int argc, char* argv[])
 
 	if(!engine->Open(filename))
 	{
-		fprintf(stderr, ": File not found!\n", filename);
+		fprintf(stderr, "%s: File not found!\n", filename);
 		return;
 	}
 
