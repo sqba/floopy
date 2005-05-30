@@ -108,6 +108,11 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 
 void main(int argc, char* argv[])
 {
+	float start = 0.f;
+	float end = 0.f;
+	int i = 0;
+	char *outfile = NULL;
+
 	if(argc == 1)
 	{
 		fprintf(stderr, "Usage: %s -i [input] -s [start] -e [end] -o [output] -v [filename]\n", argv[0]);
@@ -138,11 +143,12 @@ void main(int argc, char* argv[])
 	fprintf(stderr, "\n\n");
 
 	SOUNDFORMAT *fmt = engine->GetFormat();
-	assert((fmt->frequency > 0) && (fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	if((fmt->frequency == 0) || (fmt->bitsPerSample == 0) || (fmt->channels == 0))
+		goto ERR_EXIT;
 
-	float start = GetArg(argc, argv, "s", 0.f);
-	float end = GetArg(argc, argv, "e", 0.f);
-	int i = region->GetParamIndex("startat");
+	start = GetArg(argc, argv, "s", 0.f);
+	end = GetArg(argc, argv, "e", 0.f);
+	i = region->GetParamIndex("startat");
 	region->SetParam(i, start*fmt->frequency);
 	i = region->GetParamIndex("stopat");
 	region->SetParam(i, end*fmt->frequency);
@@ -152,7 +158,7 @@ void main(int argc, char* argv[])
 	memcpy(&format, fmt, sizeof(SOUNDFORMAT));
 
 //	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
-	char *outfile = GetArg(argc, argv, "o", "waveout");
+	outfile = GetArg(argc, argv, "o", "waveout");
 	output = engine->CreateOutput(outfile, format);
 	if(!output)
 	{
@@ -187,9 +193,12 @@ void main(int argc, char* argv[])
 	fprintf(stderr, "\n");
 
 	//region->Close();
-	output->Close();
-	engine->Close();
+	if(output)
+		output->Close();
+	if(engine)
+		engine->Close();
 
+ERR_EXIT:
 	delete output;
 	delete engine;
 
