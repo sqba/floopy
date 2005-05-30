@@ -23,11 +23,44 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 }
 */
 
+
+
+struct tTimeline
+{
+	IFloopySoundInput *obj;
+	char *data;
+};
+
+
+
+
+struct tSessionInfo
+{
+	tTimeline gObjects[1024];	// Temporary solution
+	int gIndex;
+
+
+	int gBuffLen;
+	int gBuffEnd;
+	char *gpbuff;
+
+	const char *gElement;
+
+	char gPath[MAX_PATH];
+
+	IFloopySoundInput *buff[20]; //temp
+	int level;
+
+	XML_Parser parser;
+	IFloopyEngine *gEngine;
+	IFloopySoundInput *gInput;
+};
+
 BOOL loadXML(IFloopyEngine *engine, char *filename);
 BOOL saveXML(IFloopyEngine *engine, char *filename);
 
 
-void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive);
+void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursive);
 
 
 #ifdef __cplusplus
@@ -48,40 +81,18 @@ __declspec( dllexport ) BOOL Save(IFloopyEngine *engine, char *filename)
 #endif
 
 
-struct tTimeline
-{
-	IFloopySoundInput *obj;
-	char *data;
-};
-tTimeline gObjects[1024];	// Temporary solution
-int gIndex = 0;
 
-
-int gBuffLen = 0;
-int gBuffEnd = 0;
-char *gpbuff = NULL;
-
-const char *gElement = NULL;
-
-char gPath[MAX_PATH] = {0};
-
-IFloopySoundInput *buff[20]; //temp
-int level = 0;
-
-XML_Parser parser = NULL;
-
-IFloopyEngine *gEngine = NULL;
-IFloopySoundInput *gInput = NULL;
-
-void loadTimeline(IFloopySoundInput *input, char *data);
-void loadTimelines();
+void loadTimeline(tSessionInfo *si, IFloopySoundInput *input, char *data);
+void loadTimelines(tSessionInfo *si);
 
 
 
 
 void startElement(void *userData, const char *name, const char **atts)
 {
-	gElement = name;
+	tSessionInfo *si = (tSessionInfo*)userData;
+	XML_Parser parser = si->parser;
+	si->gElement = name;
 	if(0 == strcmp(name, "input"))
 	{
 		int n = XML_GetSpecifiedAttributeCount(parser);
@@ -92,40 +103,43 @@ void startElement(void *userData, const char *name, const char **atts)
 			
 			for(int i=0; i<n-1; i+=2)
 			{
-				if(0==strcmp(atts[i], "source"))
-					source = (char*)atts[i+1];
-				if(0==strcmp(atts[i], "name"))
-					desc = (char*)atts[i+1];
+				if(atts[i])
+				{
+					if(0==strcmp(atts[i], "source"))
+						source = (char*)atts[i+1];
+					if(0==strcmp(atts[i], "name"))
+						desc = (char*)atts[i+1];
+				}
 			}
 
 			if(source && (0 != strcmp(source, "engine")))
 			{
 				char tmp[MAX_PATH] = {0};
-				if(strlen(gPath))
+				if(strlen(si->gPath))
 				{
-					memcpy(tmp, gPath, strlen(gPath));
+					memcpy(tmp, si->gPath, strlen(si->gPath));
 					strcat(tmp, "\\");
 					strcat(tmp, source);
 				}
 				else
 					memcpy(tmp, source, strlen(source));
-				IFloopySoundInput *input = gEngine->CreateInput(tmp);
-				if(input && gInput)
+				IFloopySoundInput *input = si->gEngine->CreateInput(tmp);
+				if(input && si->gInput)
 				{
-					gInput->SetSource(input);
-					gInput = input;
+					si->gInput->SetSource(input);
+					si->gInput = input;
 					if(desc)
 						input->SetDisplayName(desc, strlen(desc));
-					gObjects[gIndex].obj = input;
-					buff[++level] = gInput;
+					si->gObjects[si->gIndex].obj = input;
+					si->buff[++si->level] = si->gInput;
 				}
 				else
-					gInput = NULL;
+					si->gInput = NULL;
 			}
 			else
 			{
 				if(desc)
-					gEngine->SetDisplayName(desc, strlen(desc));
+					si->gEngine->SetDisplayName(desc, strlen(desc));
 			}
 		}
 	}
@@ -133,95 +147,105 @@ void startElement(void *userData, const char *name, const char **atts)
 
 void endElement(void *userData, const char *name)
 {
-	if(gInput && (0 == strcmp(name, "input")))
+	tSessionInfo *si = (tSessionInfo*)userData;
+
+	if(si->gInput && (0 == strcmp(name, "input")))
 	{
-		gInput = buff[--level];
-		gIndex++;
+		si->gInput = si->buff[--si->level];
+		si->gIndex++;
 	}
-	else if(0 == strcmp(gElement, "timeline"))
+	else if(0 == strcmp(si->gElement, "timeline"))
 	{
-		if(gpbuff)
+		if(si->gpbuff)
 		{
-			gObjects[gIndex].data = new char[gBuffEnd];
-			memcpy(gObjects[gIndex].data, gpbuff, gBuffEnd);
-			gIndex++;
+			si->gObjects[si->gIndex].data = new char[si->gBuffEnd];
+			memcpy(si->gObjects[si->gIndex].data, si->gpbuff, si->gBuffEnd);
+			si->gIndex++;
 			//loadTimeline(gInput, gpbuff);
 
-			delete[] gpbuff;
-			gpbuff = NULL;
-			gBuffEnd = 0;
+			delete[] si->gpbuff;
+			si->gpbuff = NULL;
+			si->gBuffEnd = 0;
 		}
 	}
 }
 
 void elementData(void *userData, const char *data, int len)
 {
-	if(0 == strcmp(gElement, "timeline"))
+	tSessionInfo *si = (tSessionInfo*)userData;
+
+	if(0 == strcmp(si->gElement, "timeline"))
 	{
-		if(!gpbuff)
+		if(!si->gpbuff)
 		{
-			gBuffLen = len*2 + 1;
-			gpbuff = new char[gBuffLen];
-			memset(gpbuff, 0, gBuffLen);
+			si->gBuffLen = len*2 + 1;
+			si->gpbuff = new char[si->gBuffLen];
+			memset(si->gpbuff, 0, si->gBuffLen);
 		}
 
-		if(gBuffEnd + len < gBuffLen)
+		if(si->gBuffEnd + len < si->gBuffLen)
 		{
-			strncat(gpbuff, data, len);
+			strncat(si->gpbuff, data, len);
 		}
 		else
 		{
-			char *tmp = gpbuff;
-			gBuffLen = gBuffEnd + len + 1;
-			gpbuff = new char[gBuffLen];
-			memset(gpbuff, 0, gBuffLen);
-			memcpy(gpbuff, tmp, gBuffEnd);
-			strncat(gpbuff, data, len);
+			char *tmp = si->gpbuff;
+			si->gBuffLen = si->gBuffEnd + len + 1;
+			si->gpbuff = new char[si->gBuffLen];
+			memset(si->gpbuff, 0, si->gBuffLen);
+			memcpy(si->gpbuff, tmp, si->gBuffEnd);
+			strncat(si->gpbuff, data, len);
 			delete[] tmp;
 		}
-		gBuffEnd += len;
+		si->gBuffEnd += len;
 	}
 }
 
 
 BOOL loadXML(IFloopyEngine *engine, char *filename)
 {
-	gEngine = engine;
-	gInput = engine;
-	buff[0] = gInput;
-	gObjects[0].obj = engine;
-	level = 0;
+	tSessionInfo si;
+	memset(&si, 0, sizeof(tSessionInfo));
+
+	//XML_Parser parser = NULL;
+
+	si.gEngine = engine;
+	si.gInput = engine;
+	si.buff[0] = si.gInput;
+	si.gObjects[0].obj = engine;
+	si.level = 0;
 
 	char *pathend = strrchr(filename, '\\');
 	if(pathend)
 	{
-		memcpy(gPath, filename, pathend - filename);
+		memcpy(si.gPath, filename, pathend - filename);
 	}
 
 	FILE *fp = fopen(filename, "r");
 	if(NULL == fp)
 		return FALSE;
 	char buf[BUFSIZ];
-	parser = XML_ParserCreate(NULL);
+	si.parser = XML_ParserCreate(NULL);
 	int done;
-	int depth = 0;
-	XML_SetUserData(parser, &depth);
-	XML_SetElementHandler(parser, startElement, endElement);
-	XML_SetCharacterDataHandler(parser, elementData);
+	//int depth = 0;
+	//XML_SetUserData(parser, &depth);
+	XML_SetUserData(si.parser, &si);
+	XML_SetElementHandler(si.parser, startElement, endElement);
+	XML_SetCharacterDataHandler(si.parser, elementData);
 	do {
 		size_t len = fread(buf, 1, sizeof(buf), fp);
 		done = len < sizeof(buf);
-		if (!XML_Parse(parser, buf, len, done)) {
+		if (!XML_Parse(si.parser, buf, len, done)) {
 			fprintf(stderr,
 				"%s at line %d\n",
-				XML_ErrorString(XML_GetErrorCode(parser)),
-				XML_GetCurrentLineNumber(parser));
+				XML_ErrorString(XML_GetErrorCode(si.parser)),
+				XML_GetCurrentLineNumber(si.parser));
 			return FALSE;
 		}
 	} while (!done);
-	loadTimelines();
+	loadTimelines(&si);
 //	engine->Reset();
-	XML_ParserFree(parser);
+	XML_ParserFree(si.parser);
 	fclose(fp);
 
 //	printTree(stdout, engine, 0, FALSE, FALSE);
@@ -237,11 +261,15 @@ BOOL loadXML(IFloopyEngine *engine, char *filename)
 
 BOOL saveXML(IFloopyEngine *engine, char *filename)
 {
-	level = 0;
+	tSessionInfo si;
+	memset(&si, 0, sizeof(tSessionInfo));
+
+	si.level = 0;
+
 	FILE *fp = fopen(filename, "w");
 	if(fp)
 	{
-		saveXML(fp, engine, TRUE);
+		saveXML(&si, fp, engine, TRUE);
 		fclose(fp);
 		return TRUE;
 	}
@@ -250,7 +278,7 @@ BOOL saveXML(IFloopyEngine *engine, char *filename)
 
 
 
-void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
+void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursive)
 {
 	if(NULL == input)
 		return;
@@ -258,8 +286,8 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 	input->Reset();
 
 	char space[100] = {0};
-	if(level < 100)
-		memset(space, ' ', level);
+	if(si->level < 100)
+		memset(space, ' ', si->level);
 
 	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
 	fprintf(fp, "%s<input source='%s'>\n", space, input->GetName());
@@ -299,19 +327,19 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 
 	if(recursive)
 	{
-		level++;
+		si->level++;
 		if(input->GetInputCount() > 1)
 		{
 			for(int i=0; i<input->GetInputCount(); i++)
 			{
-				saveXML(fp, input->GetSource(i), TRUE);
+				saveXML(si, fp, input->GetSource(i), TRUE);
 			}
 		}
 		else
-			saveXML(fp, input->GetSource(), TRUE);
+			saveXML(si, fp, input->GetSource(), TRUE);
 	}
 
-	level--;
+	si->level--;
 
 	//fprintf(fp, "</%s>\n", input->GetName());
 	fprintf(fp, "%s</input>\n", space);
@@ -323,16 +351,16 @@ void saveXML(FILE *fp, IFloopySoundInput *input, BOOL recursive)
 // SOUNDFORMAT struktura.
 // Zbog toga, prvo se moraju ucitati svi objekti pa tek
 // onda njihovi timeline-ovi.
-void loadTimelines()
+void loadTimelines(tSessionInfo *si)
 {
-	for(int i=0; i<gIndex; i++)
+	for(int i=0; i<si->gIndex; i++)
 	{
-		loadTimeline(gObjects[i].obj, gObjects[i].data);
+		loadTimeline(si, si->gObjects[i].obj, si->gObjects[i].data);
 	}
 }
 
 
-void loadTimeline(IFloopySoundInput *input, char *data)
+void loadTimeline(tSessionInfo *si, IFloopySoundInput *input, char *data)
 {
 	if(!input)
 		return;
@@ -356,9 +384,9 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 			if(isalpha(*token))
 			{
 				if(token[0]=='o' || token[0]=='O')
-					gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
+					si->gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
 				else if(0==strncmp(token, "RESET", 5))
-					gEngine->SetParamAt(input, offset, -2, 0.f);
+					si->gEngine->SetParamAt(input, offset, -2, 0.f);
 				i=0;
 			}
 			else
@@ -369,9 +397,9 @@ void loadTimeline(IFloopySoundInput *input, char *data)
 			break;
 		case 2:
 			if(param == -1)
-				gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
+				si->gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
 			else
-				gEngine->SetParamAt(input, offset, param, (float)atof(token));
+				si->gEngine->SetParamAt(input, offset, param, (float)atof(token));
 			i=0;
 			break;
 		}

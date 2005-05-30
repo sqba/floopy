@@ -92,7 +92,7 @@ void CEngine::dump(FILE *fp)
 */
 IFloopySoundInput *CEngine::CreateInput(char *filename)
 {
-	CInput *comp = NULL;
+	IFloopySoundInput *comp = NULL;
 
 	// Check if a filename has been given
 	char *plugin = getStorageName(filename);
@@ -118,12 +118,21 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 
 		char path[MAX_PATH] = {0};
 		strcpy(path, m_szPath);
-		if(path[strlen(path)] != '\\')
+		if(path[strlen(path)-1] != '\\')
 			path[strlen(path)] = '\\';
 		strcat(path, plugin);
 
+		if(0==strcmpi(plugin, "xml_expat"))
+		{
+			comp = new CEngine(m_hModule);
+			if(comp->Open(filename))
+				return comp;
+			else
+				return NULL;
+		}
+
 		comp = new CInput(m_callback);
-		if(!comp->Create(path))
+		if(!((CInput*)comp)->Create(path))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
 			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
@@ -152,7 +161,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 		strcat(path, filename);
 
 		comp = new CInput(m_callback);
-		if(!comp->Create(path))
+		if(!((CInput*)comp)->Create(path))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
 			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);

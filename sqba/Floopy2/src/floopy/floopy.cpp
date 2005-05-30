@@ -13,6 +13,7 @@
 
 
 int length=0;
+/*
 void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast)
 {
 	int len=0;
@@ -32,7 +33,10 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 
 	if(bTree)
 	{
-		char space[100] = {0};
+		//char space[300] = {0}; //////////
+		char *space = new char[length+4]; //////////
+		memset(space, 0, length+4);
+		//strnset(space, '\0', length+4);
 		for(int i=0; i<length-2; i++)
 			space[i] = ' ';
 		
@@ -43,9 +47,12 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 
 		space[i+1] = (char)0xc4;
 		space[i+2] = (char)0xc4;
+		//space[i+3] = '\0';
 
 		//len += fprintf(fp, "\n%s< %s(%.3f)", space, name, size);
 		len += fprintf(fp, "\n%s< %s", space, name);
+
+		delete space;
 	}
 	else
 		//len = fprintf(fp, "%s%s(%.3f)", (level>0?" < ":""), name, size);
@@ -64,6 +71,41 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	}
 
 	length -= len;
+}
+*/
+
+void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast)
+{
+	if(!input)
+		return;
+
+	char *name = input->GetName();
+	
+	char *tmp = strrchr(name, '\\');
+	if(tmp)
+		name = tmp + 1;
+
+	SOUNDFORMAT *fmt = input->GetFormat();
+	assert(fmt->frequency > 0);
+	float size = (float)input->GetSize() / (float)fmt->frequency;
+
+	char *space = new char[level+1];
+	memset(space, ' ', level);
+	//memset(space, 0xc3, level);
+	//space[level-1] = 0xc0;
+	space[level] = 0;
+
+	//fprintf(fp, "\n%s< %s(%.3f)", space, name, size);
+	fprintf(fp, "\n%s%s", space, name);
+
+	delete space;
+
+	int count = input->GetInputCount();
+	
+	for(int i=0; i<count; i++)
+	{
+		printTree(fp, input->GetSource(i), level+1, (count>1), (i==count-1));
+	}
 }
 
 void process(IFloopySoundInput *input, IFloopySoundOutput *output)
@@ -85,7 +127,7 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	int max = samples * x;
 	int percent = 0;
 
-	fprintf(stderr, "Reading:   0%");
+	fprintf(stderr, "Reading:   0%%");
 	while((len=input->Read(buff, size)) > 0)
 	{
 		offset += len;
@@ -167,9 +209,10 @@ void main(int argc, char* argv[])
 	}
 
 	
-	length = fprintf(stderr, "%s < ", output->GetName());
-	printTree(stdout, engine->GetSource(), 0, FALSE, FALSE);
-	fprintf(stderr, "\n");
+	//length = fprintf(stdout, "%s < ", output->GetName());
+	fprintf(stdout, "%s", output->GetName());
+	printTree(stdout, engine->GetSource(), 1, FALSE, FALSE);
+	fprintf(stdout, "\n");
 
 
 	fprintf(stderr, "\nPress enter to start...");
