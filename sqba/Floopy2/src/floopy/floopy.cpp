@@ -95,8 +95,8 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	//space[level-1] = 0xc0;
 	space[level*2] = 0;
 
-	//fprintf(fp, "\n%s< %s(%.3f)", space, name, size);
-	fprintf(fp, "\n%s%s", space, name);
+	fprintf(fp, "\n%s%s (%.3f)", space, name, size);
+	//fprintf(fp, "\n%s%s", space, name);
 
 	delete space;
 

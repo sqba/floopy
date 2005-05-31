@@ -29,7 +29,7 @@ int paused; // are we paused?
 int seek_needed; // if != -1, it is the point that the decode thread should seek to, in ms.
 int killDecodeThread=0;
 HANDLE thread_handle=INVALID_HANDLE_VALUE;
-int file_length=0;
+int file_length=0; // file length, in ms
 BOOL file_open=FALSE;
 
 //int file_length; // file length, in ms
@@ -195,9 +195,10 @@ void getfileinfo(char *filename, char *title, int *length_in_ms)
 {
 	if (!filename || !*filename)  // currently playing file
 	{
-		SOUNDFORMAT *fmt = engine.GetFormat();
+		/*SOUNDFORMAT *fmt = engine.GetFormat();
 		if(fmt->frequency > 0)
-			*length_in_ms = engine.GetSize() / fmt->frequency * 1000;
+			*length_in_ms = engine.GetSize() / fmt->frequency * 1000;*/
+		*length_in_ms = file_length;
 		char *name = engine.GetDisplayName();
 		if(name)
 			wsprintf(title, name);
