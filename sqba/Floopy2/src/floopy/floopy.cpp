@@ -186,7 +186,10 @@ void main(int argc, char* argv[])
 
 	SOUNDFORMAT *fmt = engine->GetFormat();
 	if((fmt->frequency == 0) || (fmt->bitsPerSample == 0) || (fmt->channels == 0))
+	{
+		fprintf(stderr, "Engine not initialized properly!\n");
 		goto ERR_EXIT;
+	}
 
 	start = GetArg(argc, argv, "s", 0.f);
 	end = GetArg(argc, argv, "e", 0.f);
