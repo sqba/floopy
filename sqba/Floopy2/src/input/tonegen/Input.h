@@ -38,6 +38,8 @@ public:
 
 	void MoveTo(int samples)		{ if(samples==0) angle = 0.0; }
 
+	int GetSize() { return -1; }
+
 private:
 	int atoi(char *s);
 
