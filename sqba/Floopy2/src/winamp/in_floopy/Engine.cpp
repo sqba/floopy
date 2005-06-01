@@ -98,7 +98,7 @@ void CEngine::init()
 	//if(tmp)
 	//	*(tmp+1) = '\0';
 	//MessageBox(NULL, m_path, "path", MB_OK);
-	FILE *fp = fopen("in_floopy.cfg", "r");
+	FILE *fp = fopen(".\\plugins\\in_floopy.cfg", "r");
 	if(fp)
 	{
 		fscanf(fp, "%s", m_path);

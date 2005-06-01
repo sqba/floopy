@@ -50,8 +50,8 @@ int CInput::Read(BYTE *data, int size)
 	{*/
 		len = IFloopySoundInput::Read(data, size);
 
-		if(EOF == len)
-			return len;
+		//if(EOF == len)
+		//	return len;
 
 		if(len < size)
 		{

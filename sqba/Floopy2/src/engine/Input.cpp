@@ -153,13 +153,8 @@ int CInput::Read(BYTE *data, int size)
 	src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
 	if(src)
 	{
-		// Ovde je bio problem sa loop-m.
-		// Nisam siguran da je ovo pravi nachin
-		// ali za sada radi!
-		//if(IFloopy::IsEnabled() || m_plugin->GetSize() > 0)	// Fix: loop problem
-		// Ovo resenje izgleda logicnije!
-		if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())	// Fix: loop problem
-		{													// Fix: loop problem
+		if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())
+		{
 			if(size > readBytes)
 			{
 				size = size - readBytes;
@@ -168,8 +163,11 @@ int CInput::Read(BYTE *data, int size)
 				if(EOF != len)
 					readBytes += len;
 			}
-		} else												// Fix: loop problem
-			m_plugin->Reset();								// Fix: loop problem
+		}
+		/*else if(src->GetSize() == -1)
+		{
+			m_plugin->Reset();	// Ako ovo izbacim, posle pauze ne nastavlja
+		}*/
 	}
 
 	m_offset = endpos;
@@ -190,6 +188,8 @@ int CInput::Read(BYTE *data, int size)
 		int end = getEndOffset();
 		if(m_offset >= (start + end))
 			readBytes = (m_plugin->GetType() == TYPE_FLOOPY_ENGINE ? size : EOF);
+		else
+			return size;
 	}
 
 	return readBytes;
@@ -201,14 +201,13 @@ void CInput::MoveTo(int samples)
 
 	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 
+	///////////////////////////////////////////////////////////
 	int start = getStartOffset() / samplesToBytes();
 	BOOL bEngine = (m_source->GetType() == TYPE_FLOOPY_ENGINE);
-	if(bEngine)
-	{
-		char *name = m_source->GetDisplayName();
-	}
+
 	if(bEngine && start > 0 && samples > start)
 		samples -= start;
+	///////////////////////////////////////////////////////////
 
 //	if(m_bRecording)
 //		m_timeline.Set(m_offset, TIMELINE_PARAM_MOVETO, (float)m_offset);
@@ -329,6 +328,9 @@ int CInput::samplesToBytes()
 void CInput::applyParamsAt(int offset)
 {
 	SOUNDFORMAT *fmt = GetFormat();
+
+	if(offset == getStartOffset())
+		m_source->Reset();
 
 	tParam *param = m_timeline.GetParam(offset, TIMELINE_PARAM_ENABLE);
 	if(param)
@@ -649,5 +651,16 @@ int CInput::GetLastError()
 BOOL CInput::GetLastError(char *str, int len)
 {
 	return FALSE;
+}
+
+int CInput::calcRelativeOffset(int offset)
+{
+	int start = getStartOffset();
+	BOOL bEngine = (m_source->GetType() == TYPE_FLOOPY_ENGINE);
+
+	if(bEngine && start > 0 && offset > start)
+		offset -= start;
+
+	return offset;
 }
 */
