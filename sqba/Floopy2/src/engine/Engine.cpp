@@ -97,14 +97,22 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 
 		if(0==strcmpi(plugin, "xml_expat"))
 		{
-			obj = new CEngine(m_hModule);
-			if(!obj->Open(filename))
+			CEngine *engine = new CEngine(m_hModule);
+			if(!engine->Open(filename))
 			{
 				sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
+				delete engine;
+				return NULL;
+			}
+			//type = TYPE_ENGINE;
+			obj = new CInput(m_callback);
+			if(!((CInput*)obj)->Create(engine))
+			{
+				//setLastError(ERR_STR_FILENOTFOUND, filename);
+				sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
 				delete obj;
 				return NULL;
 			}
-			type = TYPE_ENGINE;
 		}
 		else
 		{
@@ -329,14 +337,10 @@ void CEngine::Close()
 		switch(tmp->type)
 		{
 		case TYPE_INPUT:
-			{
-				CInput *input = (CInput*)tmp->obj;
-				input->Close();
-				break;
-			}
+			((CInput*)tmp->obj)->Close();
+			break;
 		case TYPE_ENGINE:
-			CEngine *engine = (CEngine*)tmp->obj;
-			engine->Close();
+			((CEngine*)tmp->obj)->Close();
 		}
 		tmp = tmp->next;
 	}
@@ -351,6 +355,7 @@ char *CEngine::GetDisplayName()
 {
 	return m_szDisplayname;
 }
+
 void CEngine::SetDisplayName(char *name, int len)
 {
 	memcpy(m_szDisplayname, name, (len < NAME_LEN ? len : NAME_LEN));
@@ -360,8 +365,26 @@ void CEngine::RegisterUpdateCallback(UpdateCallback func)
 {
 	m_callback = func;
 }
-
 /*
+int CEngine::GetSize()
+{
+	int stb = samplesToBytes();
+	CInput *src = (CInput*)GetSource();
+	int start = src->getStartOffset();
+	int end = src->getEndOffset();
+	return (end - start) / stb;
+}
+
+int CEngine::samplesToBytes()
+{
+	SOUNDFORMAT *fmt = GetFormat();
+	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+		return (fmt->bitsPerSample / 8) * fmt->channels;
+	else
+		return 0;
+}
+
 int CEngine::GetLastError()
 {
 	return 0;

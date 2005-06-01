@@ -181,6 +181,15 @@ public:
 		return (NULL != m_source ? m_source->GetSize() : 0);
 	}
 
+	/**
+	 * Return total play size, in samples.
+	 * @return number of samples.
+	 */
+	virtual int GetLength()
+	{
+		return (NULL != m_source ? m_source->GetLength() : 0);
+	}
+
 	virtual BOOL SetSource(IFloopySoundInput *src)
 	{
 		m_source = src;

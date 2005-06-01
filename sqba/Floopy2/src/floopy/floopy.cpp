@@ -79,7 +79,9 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	if(!input)
 		return;
 
-	char *name = input->GetName();
+	char *name = input->GetDisplayName();
+	if(!name || strlen(name) == 0)
+		name = input->GetName();
 	
 	char *tmp = strrchr(name, '\\');
 	if(tmp)
@@ -89,13 +91,15 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	assert(fmt->frequency > 0);
 	float size = (float)input->GetSize() / (float)fmt->frequency;
 
+	float len = (float)input->GetLength() / (float)fmt->frequency;
+
 	char *space = new char[level*2+1];
 	memset(space, ' ', level*2);
 	//memset(space, 0xc3, level);
 	//space[level-1] = 0xc0;
 	space[level*2] = 0;
 
-	fprintf(fp, "\n%s%s (%.3f)", space, name, size);
+	fprintf(fp, "\n%s%s (%.3f) (%.3f)", space, name, size, len);
 	//fprintf(fp, "\n%s%s", space, name);
 
 	delete space;
@@ -214,7 +218,8 @@ void main(int argc, char* argv[])
 	
 	//length = fprintf(stdout, "%s < ", output->GetName());
 	fprintf(stdout, "%s", output->GetName());
-	printTree(stdout, engine->GetSource(), 1, FALSE, FALSE);
+	//printTree(stdout, engine->GetSource(), 1, FALSE, FALSE);
+	printTree(stdout, engine, 1, FALSE, FALSE);
 	fprintf(stdout, "\n");
 
 

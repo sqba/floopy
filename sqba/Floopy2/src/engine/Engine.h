@@ -63,7 +63,12 @@ public:
 	//int GetLastError();
 	//BOOL GetLastError(char *str, int len);
 
+	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+
+//	int GetSize();
+
 private:
+//	int samplesToBytes();
 	char *getPluginName(char *filename);
 //	enumObjType createObject(char *filename);
 	tComponent *add(IFloopy *comp, enumObjType type);

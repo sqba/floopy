@@ -42,6 +42,7 @@ public:
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
 	BOOL Create(char *plugin);
+	BOOL Create(IFloopySoundInput *src);
 
 	void MoveTo(int samples);
 	void Reset();
@@ -92,6 +93,18 @@ public:
 
 	char *GetPath() { return m_szObjPath; }
 
+	int GetLength();
+
+private:
+	void applyParamsAt(int offset);
+	int samplesToBytes();
+	int getStartOffset();
+	int getEndOffset();
+
+//	int getSize();
+//	int getRelativeSize()
+//	int getEnd();
+
 private:
 	char m_name[50];
 	char m_szLastError[100];
@@ -99,16 +112,12 @@ private:
 
 	UpdateCallback m_callback;
 
-	void applyParamsAt(int offset);
-	int samplesToBytes();
-	int getEndOffset();
-
 	int m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundInput *m_plugin;
 	CTimeline m_timeline;
 
-	BOOL m_bRecording;
+//	BOOL m_bRecording;
 
 	float m_fDebug;
 

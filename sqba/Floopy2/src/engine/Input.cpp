@@ -75,6 +75,16 @@ BOOL CInput::Create(char *plugin)
 	return result;
 }
 
+BOOL CInput::Create(IFloopySoundInput *src)
+{
+	m_plugin = src;
+	IFloopySoundInput::SetSource(m_plugin);
+	char *name = src->GetDisplayName();
+	if(name)
+		SetDisplayName(name, strlen(name));
+	return TRUE;
+}
+
 CInput::~CInput()
 {
 	if(m_plugin)
@@ -164,6 +174,15 @@ void CInput::MoveTo(int samples)
 
 	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 
+	int start = getStartOffset() / samplesToBytes();
+	BOOL bEngine = (m_source->GetType() == TYPE_FLOOPY_ENGINE);
+	if(bEngine)
+	{
+		char *name = m_source->GetDisplayName();
+	}
+	if(bEngine && start > 0 && samples > start)
+		samples -= start;
+
 //	if(m_bRecording)
 //		m_timeline.Set(m_offset, TIMELINE_PARAM_MOVETO, (float)m_offset);
 
@@ -171,8 +190,48 @@ void CInput::MoveTo(int samples)
 		m_source->MoveTo(samples);
 }
 
+int CInput::GetLength()
+{
+	int len = getEndOffset();
+	/*int len = tmp > 0 ? tmp : GetSize();
+	if(GetSource())
+	{
+		int tmp = GetSource()->GetLength();
+		if(tmp > len)
+			len = tmp;
+	}*/
+
+	if(len == 0 && GetSource())
+	{
+		len = GetSource()->GetLength();
+		/*int d=1;
+		if(GetSource())
+		{
+			int tmp = GetSource()->GetLength();
+		}*/
+		if(len == 0)
+			len = GetSize();
+	}
+	else
+		len = GetSize();
+
+	return len;
+}
+
 int CInput::GetSize()
 {
+//	int size;// = m_plugin->GetSize();
+	//if(size <= 0)
+//		size = getSize();
+/*
+	//return getSize();
+	//return IFloopySoundInput::GetSize();
+//	if(m_plugin->GetSize() > 0)
+		return m_plugin->GetSize();
+//	else 
+//		return IFloopySoundInput::GetSize();
+*/
+
 	int tmp = 0;
 	int size = 0;
 	int stb = samplesToBytes();
@@ -284,7 +343,11 @@ void CInput::applyParamsAt(int offset)
 	}
 }
 
-int CInput::getEndOffset()
+/**
+ * Returns the offset at which the track starts playing.
+ * @return number of bytes.
+ */
+int CInput::getStartOffset()
 {
 	int offset = 0;
 	int tmp = 0;
@@ -292,6 +355,30 @@ int CInput::getEndOffset()
 	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
 	{
 		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
+		if(param && (param->value == PARAM_VALUE_ENABLED))
+		{
+			offset = tmp;
+			break;
+		}
+	}
+
+	return offset;
+}
+
+/**
+ * Returns the offset at which the track ends playing.
+ * @return number of bytes.
+ */
+int CInput::getEndOffset()
+{
+	int offset = 0;
+	int tmp = 0;
+	float last = PARAM_VALUE_DISABLED;
+
+	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
+	{
+		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
+		last = param->value;
 		if(param && (param->value == PARAM_VALUE_DISABLED))
 		{
 			if(tmp > offset)
@@ -299,9 +386,57 @@ int CInput::getEndOffset()
 		}
 	}
 
+	// Proveriti da li se na kraju iskljucuje.
+	// U suprotnom vratiti duzinu!
+	if(last!=PARAM_VALUE_DISABLED)
+	{
+		//int stb = samplesToBytes();
+		//offset = (m_plugin->GetSize() * stb);
+		//offset = getStartOffset() + (m_plugin->GetSize() * stb);
+		//offset = getStartOffset() + IFloopySoundInput::GetSize();
+		//offset = m_plugin->GetLength();
+		offset = getStartOffset() + m_plugin->GetSize() * samplesToBytes();
+	}
+/*
+	if(offset == 0 && GetSource())
+	{
+		//offset = GetSource()->GetLength();
+		offset = getStartOffset() + m_plugin->GetSize();
+	}
+*/
+/*
+	int count = GetInputCount();
+	if(count > 1)
+	{
+		for(int i=0; i<count; i++)
+		{
+			CInput *input = (CInput*)GetSource(i);
+			int tmp = input->getEndOffset();
+			if(tmp > offset)
+				offset = tmp;
+		}
+	}
+*/
 	return offset;
 }
+/*
+int CInput::getSize()
+{
+	int stb   = samplesToBytes();
+	int start = 0;//getStartOffset();//m_offset;
+	//int start = m_offset * stb;
+	int end   = getEndOffset();
+//	int size  = m_plugin->GetSize();
+	//if(end > start || size == -1)
+//	if(size == -1)
+		int size = (end - start) / stb;
 
+		if(size <= 0)
+			size = m_plugin->GetSize();
+
+	return size;
+}
+*/
 int CInput::GetParamCount()
 {
 	return m_plugin->GetParamCount();
@@ -459,6 +594,24 @@ void CInput::Close()
 #endif // _DEBUG_TIMER_
 }
 /*
+int CInput::getEnd()
+{
+	int end = getEndOffset();
+	int count = GetInputCount();
+//	if(count > 1)
+//	{
+		for(int i=0; i<count; i++)
+		{
+			CInput *input = (CInput*)GetSource(i);
+			int tmp = input->getEnd();
+			if(tmp > end)
+				end = tmp;
+		}
+//	}
+
+	return end;
+}
+
 int CInput::GetLastError()
 {
 	return 0;

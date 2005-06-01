@@ -248,8 +248,10 @@ int CInput::GetSize()
 	int size = 0;
 	for(int i=0; i<m_nInputCount; i++)
 	{
-		if(m_pInputs[i]->GetSize() > size)
-			size = m_pInputs[i]->GetSize();
+		//int tmp = m_pInputs[i]->GetSize();
+		int tmp = m_pInputs[i]->GetLength();
+		if(tmp > size)
+			size = tmp;
 	}
 	return size;
 }
