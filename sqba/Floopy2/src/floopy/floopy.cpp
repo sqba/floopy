@@ -132,7 +132,7 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	int percent = 0;
 
 	fprintf(stderr, "Reading:   0%%");
-	while((len=input->Read(buff, size)) > 0)
+	while((len=input->Read(buff, size)) != EOF)
 	{
 		offset += len;
 		output->Write(buff, len);

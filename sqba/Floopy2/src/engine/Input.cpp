@@ -123,7 +123,8 @@ int CInput::Read(BYTE *data, int size)
 			size = s - m_offset;
 			assert(size > 0);
 			len = src->Read(data, size);
-			readBytes += len;
+			if(EOF != len)
+				readBytes += len;
 		}
 		else
 			len = s - m_offset;
@@ -148,7 +149,9 @@ int CInput::Read(BYTE *data, int size)
 			{
 				size = size - readBytes;
 				assert(size > 0);
-				readBytes += src->Read(data, size);
+				len = src->Read(data, size);
+				if(EOF != len)
+					readBytes += len;
 			}
 		} else												// Fix: loop problem
 			m_plugin->Reset();								// Fix: loop problem
@@ -164,6 +167,15 @@ int CInput::Read(BYTE *data, int size)
 		m_nFrameCount++;
 	}
 #endif // _DEBUG_TIMER_
+
+	if(readBytes == 0)
+	{
+		// Check if we have reached the end.
+		int start = getStartOffset();
+		int end = getEndOffset();
+		if(m_offset >= (start + end))
+			readBytes = (m_plugin->GetType() == TYPE_FLOOPY_ENGINE ? size : EOF);
+	}
 
 	return readBytes;
 }
@@ -373,7 +385,8 @@ int CInput::getEndOffset()
 {
 	int offset = 0;
 	int tmp = 0;
-	float last = PARAM_VALUE_DISABLED;
+	//float last = PARAM_VALUE_DISABLED;
+	float last = IsEnabled() ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED;
 
 	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
 	{
@@ -388,7 +401,8 @@ int CInput::getEndOffset()
 
 	// Proveriti da li se na kraju iskljucuje.
 	// U suprotnom vratiti duzinu!
-	if(last!=PARAM_VALUE_DISABLED)
+	//if(last!=PARAM_VALUE_DISABLED)
+	if(last==PARAM_VALUE_ENABLED)
 	{
 		//int stb = samplesToBytes();
 		//offset = (m_plugin->GetSize() * stb);

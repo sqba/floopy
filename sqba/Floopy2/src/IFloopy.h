@@ -31,6 +31,8 @@ typedef unsigned long       DWORD;
 #endif
 
 
+//#define EOF     (-1)	// defined in stdio
+
 /*********************************************************************
  *! \struct SoundFormat
  *  \brief Sound format information.
@@ -64,6 +66,25 @@ enum enumClassType
 	TYPE_FLOOPY_SOUND_OUTPUT,	/** IFloopySound		*/
 	TYPE_FLOOPY_ENGINE			/** IFloopySoundEngine	*/
 };
+
+
+/*********************************************************************
+ *! \class IFloopyCallback
+ *  \brief Main callback interface.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 13. April 2005.
+ *
+ *  Passed to all components.
+ *********************************************************************/
+/*class IFloopyCallback
+{
+public:
+	IFloopyCallback()	{ }
+	virtual ~IFloopyCallback()	{ }
+
+	void OnParameterUpdate(IFloopy *src, int index)
+};*/
 
 
 /*********************************************************************

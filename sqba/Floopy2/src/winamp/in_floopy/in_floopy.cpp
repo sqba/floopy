@@ -7,6 +7,7 @@
 #include <mmreg.h>
 #include <msacm.h>
 #include <math.h>
+#include <stdio.h>
 
 #include "in2.h"
 
@@ -303,7 +304,7 @@ DWORD WINAPI __stdcall PlayThread(void *b)
 			//l=get_576_samples(sample_buffer);
 			memset(sample_buffer, 0, sizeof(sample_buffer));
 			l = engine.Read((BYTE*)sample_buffer, 576*NCH*(BPS/8));
-			if (!l) 
+			if (l == EOF) 
 			{
 				done=1;
 			}

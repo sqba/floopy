@@ -2,8 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <math.h>
 #include "Input.h"
+#include <math.h>
+#include <stdio.h>
 #include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
@@ -23,6 +24,8 @@ CInput::~CInput()
 int CInput::Read(BYTE *data, int size)
 {
 	int len = IFloopySoundInput::Read(data, size);
+	if(EOF == len)
+		return len;
 
 	short int *sample = (short int*)data;
 

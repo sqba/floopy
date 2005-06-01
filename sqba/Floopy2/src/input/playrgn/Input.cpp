@@ -3,8 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Input.h"
-#include <assert.h>
 #include <string.h>
+#include <stdio.h>
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -35,6 +36,8 @@ int CInput::Read(BYTE *data, int size)
 	}
 
 	int read = IFloopySoundInput::Read(data, size);
+	if(EOF == read)
+		return read;
 
 	m_nPosition += read;
 

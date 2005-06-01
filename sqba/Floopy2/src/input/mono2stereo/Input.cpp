@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Input.h"
+#include <stdio.h>
 #include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
@@ -27,6 +28,9 @@ int CInput::Read(BYTE *data, int size)
 	memset(tmp, 0, size/2);
 
 	int len = IFloopySoundInput::Read(tmp, size/2);
+
+	if(EOF == len)
+		return len;
 
 	short int *mono = (short int*)tmp;
 	short int *stereo = (short int*)data;

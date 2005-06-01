@@ -108,13 +108,13 @@ int CInput::Read(BYTE *data, int size)
 		}
 		assert(m_nBuffSize > 0);
 		memset(m_pBuffers, 0, m_nBuffSize);
-		BYTE *pm_pBuffers = m_pBuffers;
+		BYTE *pBuffers = m_pBuffers;
 
 		// Fill source m_pBuffers;
 		for(int i=0; i<m_nInputCount; i++)
 		{
-			m_nLengths[i] = m_pInputs[i]->Read(pm_pBuffers, size);
-			pm_pBuffers += size;
+			m_nLengths[i] = m_pInputs[i]->Read(pBuffers, size);
+			pBuffers += size;
 		}
 
 		mixBuffers(m_pBuffers, m_nInputCount, data, size);

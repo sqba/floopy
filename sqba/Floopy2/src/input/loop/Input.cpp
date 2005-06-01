@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Input.h"
+#include <stdio.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -48,11 +49,20 @@ int CInput::Read(BYTE *data, int size)
 	else
 	{*/
 		len = IFloopySoundInput::Read(data, size);
+
+		if(EOF == len)
+			return len;
+
 		if(len < size)
 		{
 			// We have reached the end
 			Reset();
-			len += IFloopySoundInput::Read(data+len, size-len);
+			int l = IFloopySoundInput::Read(data+len, size-len);
+
+			if(EOF == l)
+				return l;
+
+			len += l;
 		}
 		m_nPosition += len;
 //	}
