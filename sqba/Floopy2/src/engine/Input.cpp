@@ -22,6 +22,8 @@ CInput::CInput(UpdateCallback func)
 	m_plugin = NULL;
 	m_offset = 0;
 
+	m_iCheck = 23526; // some random number
+
 	m_callback = func;
 
 	memset(m_name, 0, 50);
@@ -92,6 +94,19 @@ CInput::~CInput()
 
 	if(m_hinst)
 		FreeLibrary(m_hinst);
+}
+
+BOOL CInput::SetSource(IFloopySoundInput *src)
+{
+	// Check if src has been created by this engine.
+	if(m_iCheck != ((CInput*)src)->m_iCheck)
+		return FALSE;
+
+	BOOL result = (m_plugin ? m_plugin->SetSource(src) : FALSE);
+
+	//if(m_callback && result) m_callback(this, m_offset/samplesToBytes(), -333);
+
+	return result;
 }
 
 int CInput::Read(BYTE *data, int size)

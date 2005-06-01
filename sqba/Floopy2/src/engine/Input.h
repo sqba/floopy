@@ -61,13 +61,7 @@ public:
 	char *GetParamDesc(int index);//			{ return m_plugin->GetParamDesc(index); }
 	int   GetParamIndex(char *name);//	{ return m_plugin->GetParamIndex(name); }
 
-	BOOL SetSource(IFloopySoundInput *src)
-	{
-		BOOL result = (m_plugin ? m_plugin->SetSource(src) : FALSE);
-		//if(m_callback && result) m_callback(this, m_offset/samplesToBytes(), -333);
-		return result;
-	}
-
+	BOOL SetSource(IFloopySoundInput *src);
 	IFloopySoundInput *GetSource()			{ return m_plugin->GetSource(); }
 
 	IFloopySoundInput *GetSource(int index)	{ return m_plugin->GetSource(index); }
@@ -104,6 +98,9 @@ private:
 //	int getSize();
 //	int getRelativeSize()
 //	int getEnd();
+
+protected:
+	int m_iCheck;
 
 private:
 	char m_name[50];
