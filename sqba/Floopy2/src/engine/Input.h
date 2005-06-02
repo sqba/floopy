@@ -42,7 +42,7 @@ public:
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
 	BOOL Create(char *plugin);
-	BOOL Create(IFloopySoundInput *src);
+	BOOL Create(IFloopySoundEngine *src);
 
 	void MoveTo(int samples);
 	void Reset();
@@ -90,22 +90,29 @@ public:
 	int GetLength();
 
 private:
+	inline BOOL _isEngine() { return (m_source->GetType() == TYPE_FLOOPY_ENGINE); }
 	void applyParamsAt(int offset);
-	int samplesToBytes();
-	int getStartOffset();
-	int getEndOffset();
+	int _getSamplesToBytes();
+	int _getStartOffset();
+	int _getEndOffset();
+	void _recalcVariables();
 
 //	int getSize();
 //	int getRelativeSize()
 //	int getEnd();
 
 protected:
-	int m_iCheck;
+	int m_iCheck;	/** Some random number, used to check if the component was
+						created by the same engine */
 
 private:
 	char m_name[50];
 	char m_szLastError[100];
 	char m_szObjPath[MAX_PATH];
+
+	int m_nStartOffset;
+	int m_nEndOffset;
+	int m_nSamplesToBytes;
 
 	UpdateCallback m_callback;
 

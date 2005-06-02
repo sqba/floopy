@@ -12,19 +12,19 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+
 typedef IFloopySoundInput* (*CreateProc)(void);
 #define PROC_NAME "CreateInput"
 #define PLUG_EXT ".dll"
 
+
 CInput::CInput(UpdateCallback func)
 {
-	m_hinst = NULL;
-	m_plugin = NULL;
-	m_offset = 0;
-
-	m_iCheck = 23526; // some random number
-
-	m_callback = func;
+	m_hinst		= NULL;
+	m_plugin	= NULL;
+	m_offset	= 0;
+	m_iCheck	= 23526; // some random number
+	m_callback	= func;
 
 	memset(m_name, 0, 50);
 	memset(m_szLastError, 0, sizeof(m_szLastError));
@@ -32,8 +32,14 @@ CInput::CInput(UpdateCallback func)
 
 	Enable(TRUE);
 	IFloopy::Enable(TRUE);
+	
+	// Optimization variables
+	m_nStartOffset	= 0;
+	m_nEndOffset	= 0;
+	m_nSamplesToBytes = 0;
 
 #ifdef _DEBUG_TIMER_
+	// Timing valiables
 	m_bDebugTimer = TRUE;
 	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
 #endif // _DEBUG_TIMER_
@@ -43,6 +49,11 @@ CInput::CInput(UpdateCallback func)
 	m_fDebug = 0.f;
 }
 
+/**
+ * Create the plugin.
+ * @param plugin library name.
+ * @return TRUE if succesfull.
+ */
 BOOL CInput::Create(char *plugin)
 {
 	BOOL result = FALSE;
@@ -77,13 +88,21 @@ BOOL CInput::Create(char *plugin)
 	return result;
 }
 
-BOOL CInput::Create(IFloopySoundInput *src)
+/**
+ * Set another engine to be the source.
+ * @param src pointer to the engine.
+ * @return TRUE (if succesfull).
+ */
+BOOL CInput::Create(IFloopySoundEngine *src)
 {
 	m_plugin = src;
+	
 	IFloopySoundInput::SetSource(m_plugin);
+	
 	char *name = src->GetDisplayName();
 	if(name)
 		SetDisplayName(name, strlen(name));
+
 	return TRUE;
 }
 
@@ -99,12 +118,15 @@ CInput::~CInput()
 BOOL CInput::SetSource(IFloopySoundInput *src)
 {
 	// Check if src has been created by this engine.
-	if(m_iCheck != ((CInput*)src)->m_iCheck)
-		return FALSE;
+	// Ne radi ako je src engine!
+//	if(m_iCheck != ((CInput*)src)->m_iCheck)
+//		return FALSE;
 
 	BOOL result = (m_plugin ? m_plugin->SetSource(src) : FALSE);
+	
+	_recalcVariables();
 
-	//if(m_callback && result) m_callback(this, m_offset/samplesToBytes(), -333);
+	//if(m_callback && result) m_callback(this, m_offset/_getSamplesToBytes(), -333);
 
 	return result;
 }
@@ -112,6 +134,22 @@ BOOL CInput::SetSource(IFloopySoundInput *src)
 int CInput::Read(BYTE *data, int size)
 {
 	assert(size >= 0);
+
+	if(_isEngine())
+	{
+		// Avoid wasting processor time
+		int offset = m_offset + size;
+		if(offset < m_nStartOffset)
+		{
+			m_offset += size;
+			return size;
+		}
+		if(offset > m_nEndOffset)
+		{
+			m_offset += size;
+			return size;
+		}
+	}
 
 #ifdef _DEBUG_TIMER_
 	clock_t start = 0;
@@ -179,7 +217,7 @@ int CInput::Read(BYTE *data, int size)
 	if(m_bDebugTimer && readBytes>0)
 	{
 		m_dwSpeed += clock() - start;
-		m_nFrameSize += size / samplesToBytes();
+		m_nFrameSize += size / m_nSamplesToBytes;
 		m_nFrameCount++;
 	}
 #endif // _DEBUG_TIMER_
@@ -187,28 +225,35 @@ int CInput::Read(BYTE *data, int size)
 	if(readBytes == 0)
 	{
 		// Check if we have reached the end.
-		int start = getStartOffset();
-		int end = getEndOffset();
+		int start = m_nStartOffset;//_getStartOffset();
+		int end = m_nEndOffset;//_getEndOffset();
 		if(m_offset >= (start + end))
-			readBytes = (m_plugin->GetType() == TYPE_FLOOPY_ENGINE ? size : EOF);
+			readBytes = (_isEngine() ? origSize : EOF);
 		else
-			return size;
+			return origSize;
 	}
 
 	return readBytes;
 }
 
+/**
+ * Moves to the given position.
+ * @param samples number of samples.
+ */
 void CInput::MoveTo(int samples)
 {
-	m_offset = samples * samplesToBytes();
+//	_recalcVariables();
+
+	m_offset = samples * m_nSamplesToBytes;
 
 	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 
-	///////////////////////////////////////////////////////////
-	int start = getStartOffset() / samplesToBytes();
-	BOOL bEngine = (m_source->GetType() == TYPE_FLOOPY_ENGINE);
+//	_recalcVariables();
 
-	if(bEngine && start > 0 && samples > start)
+	///////////////////////////////////////////////////////////
+	//int start = _getStartOffset() / _getSamplesToBytes();
+	int start = m_nStartOffset / m_nSamplesToBytes;
+	if(_isEngine() && start > 0 && samples > start)
 		samples -= start;
 	///////////////////////////////////////////////////////////
 
@@ -219,9 +264,15 @@ void CInput::MoveTo(int samples)
 		m_source->MoveTo(samples);
 }
 
+/**
+ * Returns number of samples from the beginning.
+ * @return number of samples
+ */
 int CInput::GetLength()
 {
-	int len = getEndOffset();
+	_recalcVariables();
+
+	int len = m_nEndOffset;//_getEndOffset();
 	/*int len = tmp > 0 ? tmp : GetSize();
 	if(GetSource())
 	{
@@ -244,9 +295,22 @@ int CInput::GetLength()
 	else
 		len = GetSize();
 
+	/*if(_isEngine())
+	{
+		char *name = m_plugin->GetDisplayName();
+		if(0==strcmpi(name, "t.xml"))
+		{
+			int d=0;
+		}
+	}*/
+
 	return len;
 }
 
+/**
+ * Returns the size of the track source.
+ * @return number of samples
+ */
 int CInput::GetSize()
 {
 //	int size;// = m_plugin->GetSize();
@@ -260,12 +324,14 @@ int CInput::GetSize()
 //	else 
 //		return IFloopySoundInput::GetSize();
 */
+//	_recalcVariables();
 
 	int tmp = 0;
 	int size = 0;
-	int stb = samplesToBytes();
+	int stb = m_nSamplesToBytes;
 	
-	int end = getEndOffset();
+	//int end = _getEndOffset();
+	int end = m_nEndOffset;
 
 	if(end == 0)
 		size = m_plugin->GetSize();
@@ -278,6 +344,15 @@ int CInput::GetSize()
 	tmp = src->GetSize();
 	if(tmp > size)
 		size = tmp;
+
+	/*if(_isEngine())
+	{
+		char *name = m_plugin->GetDisplayName();
+		if(0==strcmpi(name, "t.xml"))
+		{
+			int d=0;
+		}
+	}*/
 
 	return size;
 }
@@ -298,6 +373,8 @@ void CInput::Reset()
 
 	m_offset = 0;
 
+//	_recalcVariables();
+
 //	if(m_bRecording)
 //		m_timeline.Set(m_offset, TIMELINE_PARAM_MOVETO, PARAM_VALUE_RESET);
 
@@ -307,21 +384,32 @@ void CInput::Reset()
 
 int CInput::GetNextOffset(int offset)
 {
-	int stb = samplesToBytes();
+	int stb = m_nSamplesToBytes;
 	int next = m_timeline.GetNextOffset(offset*stb);
 	return (next > 0 ? next / stb : 0);
 }
 
+/**
+ * Enable at the current offset.
+ * @param bEnable enable/disable.
+ */
 void CInput::Enable(BOOL bEnable)
 {
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
 	m_timeline.Set(m_offset, TIMELINE_PARAM_ENABLE, value);
 
+	_recalcVariables();
+	//m_nStartOffset = _getStartOffset();
+	//m_nEndOffset = _getEndOffset();
+
 //	SOUNDFORMAT *fmt = GetFormat();
 //	if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
-//		m_callback(this, m_offset/samplesToBytes(), TIMELINE_PARAM_ENABLE);
+//		m_callback(this, m_offset/_getSamplesToBytes(), TIMELINE_PARAM_ENABLE);
 }
 
+/**
+ * @return TRUE if the object is enabled at the current offset.
+ */
 BOOL CInput::IsEnabled()
 {
 	float value = m_timeline.Get(m_offset, TIMELINE_PARAM_ENABLE);
@@ -330,7 +418,11 @@ BOOL CInput::IsEnabled()
 }
 
 
-int CInput::samplesToBytes()
+/**
+ * Used to convert number of samples
+ * to number of bytes and vice versa.
+ */
+int CInput::_getSamplesToBytes()
 {
 	SOUNDFORMAT *fmt = GetFormat();
 	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
@@ -340,9 +432,13 @@ int CInput::samplesToBytes()
 		return 0;
 }
 
+/**
+ * Applies all parameters at the given offset.
+ * @param offset number of bytes.
+ */
 void CInput::applyParamsAt(int offset)
 {
-	/*int x = offset/samplesToBytes();
+	/*int x = offset/_getSamplesToBytes();
 	if(x >= 5342626 && x <= 5342628)
 	{
 		int d=0;
@@ -359,9 +455,15 @@ void CInput::applyParamsAt(int offset)
 		}
 	}*/
 
-	SOUNDFORMAT *fmt = GetFormat();
+	//SOUNDFORMAT *fmt = GetFormat();
+	int sample = -1;
+	//if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+	if(m_nSamplesToBytes)
+		sample = offset / m_nSamplesToBytes;
 
-	if(offset == getStartOffset())
+
+	//if(_isEngine() && (offset == _getStartOffset()))
+	if(_isEngine() && (offset == m_nStartOffset))
 		m_source->Reset();
 
 	tParam *param = m_timeline.GetParam(offset, TIMELINE_PARAM_ENABLE);
@@ -369,8 +471,8 @@ void CInput::applyParamsAt(int offset)
 	{
 		IFloopy::Enable( PARAM_VALUE_DISABLED != param->value );
 
-		if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
-			m_callback(this, offset/samplesToBytes(), TIMELINE_PARAM_ENABLE);
+		if(m_callback && sample >= 0)
+			m_callback(this, sample, TIMELINE_PARAM_ENABLE);
 	}
 
 	param = m_timeline.GetParam(offset, TIMELINE_PARAM_MOVETO);
@@ -381,8 +483,8 @@ void CInput::applyParamsAt(int offset)
 		else
 			m_source->MoveTo((int)param->value);
 
-		if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
-			m_callback(this, offset/samplesToBytes(), TIMELINE_PARAM_MOVETO);
+		if(m_callback && sample >= 0)
+			m_callback(this, sample, TIMELINE_PARAM_MOVETO);
 	}
 
 	/*param = m_timeline.GetParam(offset, TIMELINE_PARAM_RESET);
@@ -398,17 +500,17 @@ void CInput::applyParamsAt(int offset)
 		{
 			m_plugin->SetParam(param->index, param->value);
 
-			if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
-				m_callback(this, offset/samplesToBytes(), i);
+			if(m_callback && sample >= 0)
+				m_callback(this, sample, i);
 		}
 	}
 }
 
 /**
- * Returns the offset at which the track starts playing.
+ * Calculates the distance in bytes at which the track starts playing.
  * @return number of bytes.
  */
-int CInput::getStartOffset()
+int CInput::_getStartOffset()
 {
 	int offset = 0;
 	int tmp = 0;
@@ -427,10 +529,10 @@ int CInput::getStartOffset()
 }
 
 /**
- * Returns the offset at which the track ends playing.
+ * Calculates the distance in bytes at which the track ends playing.
  * @return number of bytes.
  */
-int CInput::getEndOffset()
+int CInput::_getEndOffset()
 {
 	int offset = 0;
 	int tmp = 0;
@@ -454,20 +556,21 @@ int CInput::getEndOffset()
 	// Proveriti da li se na kraju iskljucuje.
 	// U suprotnom vratiti duzinu!
 	//if(last!=PARAM_VALUE_DISABLED)
-	if(last==PARAM_VALUE_ENABLED)
+	if((last==PARAM_VALUE_ENABLED) && m_plugin)
 	{
-		//int stb = samplesToBytes();
+		//int stb = _getSamplesToBytes();
 		//offset = (m_plugin->GetSize() * stb);
-		//offset = getStartOffset() + (m_plugin->GetSize() * stb);
-		//offset = getStartOffset() + IFloopySoundInput::GetSize();
+		//offset = _getStartOffset() + (m_plugin->GetSize() * stb);
+		//offset = _getStartOffset() + IFloopySoundInput::GetSize();
 		//offset = m_plugin->GetLength();
-		offset = getStartOffset() + m_plugin->GetSize() * samplesToBytes();
+		//offset = _getStartOffset() + m_plugin->GetSize() * _getSamplesToBytes();
+		offset = m_nStartOffset + m_plugin->GetSize() * m_nSamplesToBytes;
 	}
 /*
 	if(offset == 0 && GetSource())
 	{
 		//offset = GetSource()->GetLength();
-		offset = getStartOffset() + m_plugin->GetSize();
+		offset = _getStartOffset() + m_plugin->GetSize();
 	}
 */
 /*
@@ -477,7 +580,7 @@ int CInput::getEndOffset()
 		for(int i=0; i<count; i++)
 		{
 			CInput *input = (CInput*)GetSource(i);
-			int tmp = input->getEndOffset();
+			int tmp = input->_getEndOffset();
 			if(tmp > offset)
 				offset = tmp;
 		}
@@ -485,30 +588,12 @@ int CInput::getEndOffset()
 */
 	return offset;
 }
-/*
-int CInput::getSize()
-{
-	int stb   = samplesToBytes();
-	int start = 0;//getStartOffset();//m_offset;
-	//int start = m_offset * stb;
-	int end   = getEndOffset();
-//	int size  = m_plugin->GetSize();
-	//if(end > start || size == -1)
-//	if(size == -1)
-		int size = (end - start) / stb;
 
-		if(size <= 0)
-			size = m_plugin->GetSize();
-
-	return size;
-}
-*/
 int CInput::GetParamCount()
 {
 	return m_plugin->GetParamCount();
 	//return m_plugin->GetParamCount() + LOCAL_PARAM_COUNT;
 }
-
 
 float CInput::GetParam(int index)
 {
@@ -551,12 +636,15 @@ void CInput::SetParam(int index, float value)
 		return;
 	}
 
-	SOUNDFORMAT *fmt = GetFormat();
-	if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
-		m_callback(this, m_offset/samplesToBytes(), index);
+	//SOUNDFORMAT *fmt = GetFormat();
+	//if(m_callback && (fmt->bitsPerSample > 0) && (fmt->channels > 0))
+	if(m_callback && m_nSamplesToBytes > 0)
+		m_callback(this, m_offset/m_nSamplesToBytes, index);
 
 	m_plugin->SetParam(index, value);
 	m_timeline.Set(m_offset, index, value);
+
+	_recalcVariables();
 
 	/*switch(index)
 	{
@@ -608,27 +696,40 @@ char *CInput::GetParamDesc(int index)
 
 void CInput::SetParamAt(int offset, int index, float value)
 {
-	m_timeline.Set(offset * samplesToBytes(), index, value);
+	m_timeline.Set(offset * m_nSamplesToBytes, index, value);
+
+	_recalcVariables();
 
 //	if(m_callback)
-//		m_callback(this, offset/samplesToBytes(), index);
+//		m_callback(this, offset/_getSamplesToBytes(), index);
 }
 
 void CInput::ResetParamAt(int offset, int index)
 {
-	m_timeline.Remove(offset * samplesToBytes(), index);
+	m_timeline.Remove(offset * m_nSamplesToBytes, index);
+
+	_recalcVariables();
 
 //	if(m_callback)
-//		m_callback(this, offset/samplesToBytes(), index);
+//		m_callback(this, offset/_getSamplesToBytes(), index);
 }
 
+/**
+ * Enable at the given offset.
+ * @param offset number of samples.
+ * @param bEnable enable/disable.
+ */
 void CInput::EnableAt(int offset, BOOL bEnable)
 {
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
-	m_timeline.Set(offset * samplesToBytes(), TIMELINE_PARAM_ENABLE, value);
+	m_timeline.Set(offset * m_nSamplesToBytes, TIMELINE_PARAM_ENABLE, value);
+
+	_recalcVariables();
+	//m_nStartOffset = _getStartOffset();
+	//m_nEndOffset = _getEndOffset();
 
 //	if(m_callback)
-//		m_callback(this, offset/samplesToBytes(), index);
+//		m_callback(this, offset/_getSamplesToBytes(), index);
 }
 
 void CInput::Close()
@@ -659,10 +760,21 @@ void CInput::Close()
 	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
 #endif // _DEBUG_TIMER_
 }
+
+/**
+ * Calculates optimization variables.
+ */
+void CInput::_recalcVariables()
+{
+	m_nStartOffset		= _getStartOffset();
+	m_nEndOffset		= _getEndOffset();
+	m_nSamplesToBytes	= _getSamplesToBytes();
+}
+
 /*
 int CInput::getEnd()
 {
-	int end = getEndOffset();
+	int end = _getEndOffset();
 	int count = GetInputCount();
 //	if(count > 1)
 //	{
@@ -690,12 +802,29 @@ BOOL CInput::GetLastError(char *str, int len)
 
 int CInput::calcRelativeOffset(int offset)
 {
-	int start = getStartOffset();
+	int start = _getStartOffset();
 	BOOL bEngine = (m_source->GetType() == TYPE_FLOOPY_ENGINE);
 
 	if(bEngine && start > 0 && offset > start)
 		offset -= start;
 
 	return offset;
+}
+
+int CInput::getSize()
+{
+	int stb   = _getSamplesToBytes();
+	int start = 0;//_getStartOffset();//m_offset;
+	//int start = m_offset * stb;
+	int end   = _getEndOffset();
+//	int size  = m_plugin->GetSize();
+	//if(end > start || size == -1)
+//	if(size == -1)
+		int size = (end - start) / stb;
+
+		if(size <= 0)
+			size = m_plugin->GetSize();
+
+	return size;
 }
 */

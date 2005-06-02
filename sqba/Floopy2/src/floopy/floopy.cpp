@@ -99,8 +99,9 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	//space[level-1] = 0xc0;
 	space[level*2] = 0;
 
-	fprintf(fp, "\n%s%s (%.3f) (%.3f)", space, name, size, len);
-	//fprintf(fp, "\n%s%s", space, name);
+	//fprintf(fp, "\n%s%s (%.3f) (%.3f)", space, name, size, len);
+	//fprintf(fp, "\n%s%s (%.3f-%d) (%.3f-%d)", space, name, size, input->GetSize(), len, input->GetLength());
+	fprintf(fp, "\n%s%s", space, name);
 
 	delete space;
 
@@ -114,12 +115,12 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 
 void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 {
-	int samples = input->GetSize();
+	int samples = input->GetLength();
 	fprintf(stderr, "Reading %d samples...\n\n", samples);
 
 	SOUNDFORMAT *fmt = input->GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	int x = (fmt->bitsPerSample / 8) * fmt->channels;
+	int stb = (fmt->bitsPerSample / 8) * fmt->channels;
 
 	clock_t start = clock();
 
@@ -128,7 +129,7 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	int len, size=sizeof(buff);
 	memset(buff, 0, sizeof(buff));
 
-	int max = samples * x;
+	int max = samples * stb;
 	int percent = 0;
 
 	fprintf(stderr, "Reading:   0%%");
@@ -137,7 +138,8 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 		offset += len;
 		output->Write(buff, len);
 		memset(buff, 0, sizeof(buff));
-		percent = offset * 100 / max;
+		//assert(offset < max);
+		percent = (int)((float)offset * 100.f / (float)max);
 		fprintf(stderr, "\b\b\b%2d%%", percent);
 	}
 
@@ -148,8 +150,8 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	else
 		fprintf(stderr, "\nFinished in %.3f sec\n\n", (float)speed / 1000.f);
 
-	fprintf(stderr, "Samples: %d\n", (offset / x));
-	fprintf(stderr, "Seconds: %.3f\n", (float)offset / (float)x / (float)fmt->frequency);
+	fprintf(stderr, "Samples: %d\n", (offset / stb));
+	fprintf(stderr, "Seconds: %.3f\n", (float)offset / (float)stb / (float)fmt->frequency);
 }
 
 void main(int argc, char* argv[])
@@ -171,10 +173,6 @@ void main(int argc, char* argv[])
 	}
 
 	CEngine *engine = new CEngine("engine");
-	IFloopySoundInput *region = engine->CreateInput("playrgn");
-	IFloopySoundOutput *output = NULL;
-
-	region->SetSource( engine );
 
 	char *filename = GetArg(argc, argv, "i", "test.test");
 
@@ -185,6 +183,11 @@ void main(int argc, char* argv[])
 		fprintf(stderr, "%s: File not found!\n", filename);
 		return;
 	}
+
+	IFloopySoundInput *region = engine->CreateInput("playrgn");
+	IFloopySoundOutput *output = NULL;
+
+	region->SetSource( engine );
 
 	fprintf(stderr, "\n\n");
 

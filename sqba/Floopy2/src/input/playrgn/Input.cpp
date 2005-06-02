@@ -23,6 +23,9 @@ CInput::~CInput()
 
 int CInput::Read(BYTE *data, int size)
 {
+	if((m_nStopAt > 0) && (m_nPosition >= m_nStopAt))
+		return EOF;
+
 	//int len = IFloopySoundInput::GetSize() * samplesToBytes();
 	int len = m_nPosition + m_nSourceSize;
 
@@ -37,7 +40,7 @@ int CInput::Read(BYTE *data, int size)
 
 	int read = IFloopySoundInput::Read(data, size);
 	if(EOF == read)
-		return read;
+		return EOF;
 
 	m_nPosition += read;
 
@@ -83,7 +86,10 @@ void  CInput::SetParam(int index, float value)
 		int stop = (int)value * samplesToBytes();
 		int size = IFloopySoundInput::GetSize();
 		int max = size * samplesToBytes();
-		m_nStopAt = (stop > max ? max : stop);
+		if(stop == 0)
+			m_nStopAt = max;
+		else
+			m_nStopAt = (stop > max ? max : stop);
 	}
 }
 
