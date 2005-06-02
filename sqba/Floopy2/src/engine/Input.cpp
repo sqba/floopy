@@ -135,11 +135,14 @@ int CInput::Read(BYTE *data, int size)
 		src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
 		if(src)
 		{
-			size = s - m_offset;
-			assert(size > 0);
-			len = src->Read(data, size);
-			if(EOF != len)
-				readBytes += len;
+			if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())
+			{
+				size = s - m_offset;
+				assert(size > 0);
+				len = src->Read(data, size);
+				if(EOF != len)
+					readBytes += len;
+			}
 		}
 		else
 			len = s - m_offset;
@@ -281,6 +284,18 @@ int CInput::GetSize()
 
 void CInput::Reset()
 {
+	/*if(GetSource())
+	{
+		char *name = GetSource()->GetName();
+		if(name)
+		{
+			if(0 == strcmpi(name, "D:\\sqba\\Projekti\\Floopy!\\Samples\\acid\\WAH2.WAV"))
+			{
+				int d=0;
+			}
+		}
+	}*/
+
 	m_offset = 0;
 
 //	if(m_bRecording)
@@ -327,6 +342,23 @@ int CInput::samplesToBytes()
 
 void CInput::applyParamsAt(int offset)
 {
+	/*int x = offset/samplesToBytes();
+	if(x >= 5342626 && x <= 5342628)
+	{
+		int d=0;
+	}*/
+	/*if(GetSource())
+	{
+		char *name = GetSource()->GetName();
+		if(name)
+		{
+			if(0 == strcmpi(name, "D:\\sqba\\Projekti\\Floopy!\\Samples\\acid\\WAH2.WAV"))
+			{
+				int d=0;
+			}
+		}
+	}*/
+
 	SOUNDFORMAT *fmt = GetFormat();
 
 	if(offset == getStartOffset())
@@ -408,11 +440,14 @@ int CInput::getEndOffset()
 	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
 	{
 		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
-		last = param->value;
-		if(param && (param->value == PARAM_VALUE_DISABLED))
+		if(param)
 		{
-			if(tmp > offset)
-				offset = tmp;
+			last = param->value;
+			if(param->value == PARAM_VALUE_DISABLED)
+			{
+				if(tmp > offset)
+					offset = tmp;
+			}
 		}
 	}
 

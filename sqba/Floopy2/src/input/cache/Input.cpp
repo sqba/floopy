@@ -4,6 +4,7 @@
 
 #include "Input.h"
 #include <math.h>
+#include <stdio.h>
 #include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
@@ -96,7 +97,7 @@ BOOL CInput::createBuffer()
 				if((len + size) > m_nSize)
 					size = m_nSize - len;
 				int read = src->Read(pbuff, size);
-				if(read == 0)
+				if(read == EOF)
 					break; // End of file
 				pbuff += read;
 				len += read;
