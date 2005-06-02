@@ -161,14 +161,14 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 
 IFloopySoundOutput *CEngine::CreateOutput(char *filename, SOUNDFORMAT fmt)
 {
-	IFloopySoundOutput *obj = NULL;
+	COutput *obj = NULL;
 
 	// Check if a filename has been given
 	char *plugin = getPluginName(filename);
 	if(plugin)
 	{
-		obj = new COutput(plugin, fmt);
-		if(!obj->Open(filename))
+		obj = new COutput();
+		if(!obj->Create(plugin, fmt) || !obj->Open(filename))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
 			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
@@ -177,7 +177,16 @@ IFloopySoundOutput *CEngine::CreateOutput(char *filename, SOUNDFORMAT fmt)
 		}
 	}
 	else
-		obj = new COutput(filename, fmt);
+	{
+		obj = new COutput();
+		if(!obj->Create(filename, fmt))
+		{
+			//setLastError(ERR_STR_FILENOTFOUND, filename);
+			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
+			delete obj;
+			return NULL;
+		}
+	}
 
 	add(obj, TYPE_OUTPUT);
 

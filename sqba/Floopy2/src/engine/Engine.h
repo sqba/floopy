@@ -65,6 +65,8 @@ public:
 
 	BOOL ReadSourceIfDisabled()	{ return FALSE; }
 
+	char *GetPath() { return m_szFileName; }
+
 //	int GetSize();
 
 private:

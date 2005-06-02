@@ -28,8 +28,10 @@
 class COutput : public IFloopySoundOutput
 {
 public:
-	COutput(char *plugin, SOUNDFORMAT fmt);
+	COutput();
 	virtual ~COutput();
+
+	BOOL Create(char *plugin, SOUNDFORMAT fmt);
 
 	char *GetName()			{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }

@@ -85,9 +85,11 @@ public:
 	char *GetDisplayName() { return m_name; }
 	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
 
-	char *GetPath() { return m_szObjPath; }
+	char *GetPath() { return _isEngine() ? m_source->GetPath() : m_szObjPath; }
 
 	int GetLength();
+
+	enumClassType GetType() { return _isEngine() ? TYPE_FLOOPY_ENGINE : TYPE_FLOOPY_SOUND_INPUT; }
 
 private:
 	inline BOOL _isEngine() { return (m_source->GetType() == TYPE_FLOOPY_ENGINE); }

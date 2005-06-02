@@ -212,15 +212,16 @@ void main(int argc, char* argv[])
 //	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
 	outfile = GetArg(argc, argv, "o", "waveout");
 	output = engine->CreateOutput(outfile, format);
-	if(!output)
+	/*if(!output)
 	{
 		fprintf(stderr, "Failed to create output: %s!\n", outfile);
 		return;
-	}
+	}*/
 
 	
 	//length = fprintf(stdout, "%s < ", output->GetName());
-	fprintf(stdout, "%s", output->GetName());
+	if(output)
+		fprintf(stdout, "%s", output->GetName());
 	//printTree(stdout, engine->GetSource(), 1, FALSE, FALSE);
 	printTree(stdout, engine, 1, FALSE, FALSE);
 	fprintf(stdout, "\n");
@@ -233,9 +234,12 @@ void main(int argc, char* argv[])
 	fprintf(stderr, "End:   %.3f seconds\n", 
 		(end > 0.f ? end : (float)engine->GetSize()/(float)fmt->frequency));
 
-	process(region, output);
+	if(output)
+	{
+		process(region, output);
 
-	engine->Reset();
+		engine->Reset();
+	}
 
 	filename = GetArg(argc, argv, "v", "");
 	if(strlen(filename) > 0)

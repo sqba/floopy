@@ -15,7 +15,23 @@ typedef IFloopySoundOutput* (*CreateProc)(SOUNDFORMAT);
 #define PROC_NAME "CreateOutput"
 #define PLUG_EXT ".dll"
 
-COutput::COutput(char *plugin, SOUNDFORMAT fmt)
+COutput::COutput()
+{
+	m_hinst = NULL;
+	m_plugin = NULL;
+}
+
+COutput::~COutput()
+{
+	if(NULL != m_plugin)
+		delete m_plugin;
+
+	if(NULL != m_hinst)
+		FreeLibrary(m_hinst);
+}
+
+
+BOOL COutput::Create(char *plugin, SOUNDFORMAT fmt)
 {
 	m_hinst = NULL;
 	m_plugin = NULL;
@@ -36,6 +52,7 @@ COutput::COutput(char *plugin, SOUNDFORMAT fmt)
 			{
 				m_plugin = func( fmt );
 				IFloopySoundOutput::SetDest( m_plugin );
+				return TRUE;
 			}
 		}
 		else
@@ -48,15 +65,7 @@ COutput::COutput(char *plugin, SOUNDFORMAT fmt)
 	{
 		sprintf(m_szLastError, "Error: %s not found.\n\0", filename);
 	}
-}
-
-COutput::~COutput()
-{
-	if(NULL != m_plugin)
-		delete m_plugin;
-
-	if(NULL != m_hinst)
-		FreeLibrary(m_hinst);
+	return FALSE;
 }
 
 int COutput::Write(BYTE *data, int size)

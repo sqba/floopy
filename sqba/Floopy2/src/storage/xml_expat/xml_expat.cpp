@@ -54,6 +54,9 @@ struct tSessionInfo
 	XML_Parser parser;
 	IFloopySoundEngine *gEngine;
 	IFloopySoundInput *gInput;
+
+	BOOL bInitialized;
+	//char filename[MAX_PATH];
 };
 
 BOOL loadXML(IFloopySoundEngine *engine, char *filename);
@@ -117,9 +120,14 @@ void startElement(void *userData, const char *name, const char **atts)
 				char tmp[MAX_PATH] = {0};
 				if(strlen(si->gPath))
 				{
-					memcpy(tmp, si->gPath, strlen(si->gPath));
-					strcat(tmp, "\\");
-					strcat(tmp, source);
+					if(strchr(source, ':'))	// Absolute path!
+						memcpy(tmp, source, strlen(source));
+					else
+					{
+						memcpy(tmp, si->gPath, strlen(si->gPath));
+						strcat(tmp, "\\");
+						strcat(tmp, source);
+					}
 				}
 				else
 					memcpy(tmp, source, strlen(source));
@@ -266,6 +274,12 @@ BOOL saveXML(IFloopySoundEngine *engine, char *filename)
 
 	si.level = 0;
 
+	si.bInitialized = FALSE;
+	/*strcpy(si.filename, filename);
+	char *c = strrchr(si.filename, '\\');
+	if(c)
+		*c++ = '\0';*/
+
 	FILE *fp = fopen(filename, "w");
 	if(fp)
 	{
@@ -275,7 +289,6 @@ BOOL saveXML(IFloopySoundEngine *engine, char *filename)
 	}
 	return FALSE;
 }
-
 
 
 void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursive)
@@ -289,8 +302,21 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 	if(si->level < 100)
 		memset(space, ' ', si->level);
 
+	BOOL bEngine = (input->GetType() == TYPE_FLOOPY_ENGINE);
+
 	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
-	fprintf(fp, "%s<input source='%s'>\n", space, input->GetName());
+	if(bEngine && si->bInitialized)
+	{
+		char *path = input->GetPath();
+		/*if(0 == strnicmp(path, si->filename, strlen(si->gPath)))
+			path += strlen(si->gPath);*/
+		fprintf(fp, "%s<input source='%s'>\n", space, path);
+		recursive = FALSE;
+	}
+	else
+		fprintf(fp, "%s<input source='%s'>\n", space, input->GetName());
+
+	si->bInitialized = TRUE;
 
 	fprintf(fp, "%s <timeline>", space);
 
