@@ -137,6 +137,10 @@ int CInput::Read(BYTE *data, int size)
 
 	if(_isEngine())
 	{
+		// Passed the end
+		if(m_offset > m_nEndOffset)
+			return EOF;
+
 		// Avoid wasting processor time
 		int offset = m_offset + size;
 		if(offset < m_nStartOffset)
@@ -144,11 +148,11 @@ int CInput::Read(BYTE *data, int size)
 			m_offset += size;
 			return size;
 		}
-		if(offset > m_nEndOffset)
+		/*if(offset > m_nEndOffset)
 		{
 			m_offset += size;
 			return size;
-		}
+		}*/
 	}
 
 #ifdef _DEBUG_TIMER_
