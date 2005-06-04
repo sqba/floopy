@@ -98,6 +98,7 @@ private:
 	int _getStartOffset();
 	int _getEndOffset();
 	void _recalcVariables();
+//	BOOL _isEnabledAt(int offset);
 
 //	int getSize();
 //	int getRelativeSize()

@@ -239,7 +239,21 @@ int CInput::Read(BYTE *data, int size)
 
 	return readBytes;
 }
-
+/*
+BOOL CInput::_isEnabledAt(int offset)
+{
+	int tmp = 1;
+	while((tmp=m_timeline.GetNextOffset(tmp)) < offset && tmp > 0)
+	{
+		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
+		if(param && param->value != PARAM_VALUE_ENABLED)
+		{
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+*/
 /**
  * Moves to the given position.
  * @param samples number of samples.
@@ -251,6 +265,9 @@ void CInput::MoveTo(int samples)
 	m_offset = samples * m_nSamplesToBytes;
 
 	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
+
+//	if(_isEnabledAt(m_offset))
+//		IFloopySoundInput::Enable(TRUE);
 
 //	_recalcVariables();
 
