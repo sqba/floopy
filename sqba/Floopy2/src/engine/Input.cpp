@@ -239,21 +239,7 @@ int CInput::Read(BYTE *data, int size)
 
 	return readBytes;
 }
-/*
-BOOL CInput::_isEnabledAt(int offset)
-{
-	int tmp = 1;
-	while((tmp=m_timeline.GetNextOffset(tmp)) < offset && tmp > 0)
-	{
-		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
-		if(param && param->value != PARAM_VALUE_ENABLED)
-		{
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
-*/
+
 /**
  * Moves to the given position.
  * @param samples number of samples.
@@ -266,8 +252,7 @@ void CInput::MoveTo(int samples)
 
 	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 
-//	if(_isEnabledAt(m_offset))
-//		IFloopySoundInput::Enable(TRUE);
+//	IFloopySoundInput::Enable(_isEnabledAt(m_offset));
 
 //	_recalcVariables();
 
@@ -419,6 +404,9 @@ void CInput::Enable(BOOL bEnable)
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
 	m_timeline.Set(m_offset, TIMELINE_PARAM_ENABLE, value);
 
+	if(m_plugin)
+		m_plugin->Enable(bEnable);
+
 	_recalcVariables();
 	//m_nStartOffset = _getStartOffset();
 	//m_nEndOffset = _getEndOffset();
@@ -490,7 +478,12 @@ void CInput::applyParamsAt(int offset)
 	tParam *param = m_timeline.GetParam(offset, TIMELINE_PARAM_ENABLE);
 	if(param)
 	{
-		IFloopy::Enable( PARAM_VALUE_DISABLED != param->value );
+		BOOL bEnable = ( PARAM_VALUE_DISABLED != param->value );
+		
+		IFloopy::Enable( bEnable );
+
+		if(m_plugin)
+			m_plugin->Enable(bEnable);
 
 		if(m_callback && sample >= 0)
 			m_callback(this, sample, TIMELINE_PARAM_ENABLE);
@@ -847,5 +840,19 @@ int CInput::getSize()
 			size = m_plugin->GetSize();
 
 	return size;
+}
+
+BOOL CInput::_isEnabledAt(int offset)
+{
+	int tmp = 1;
+	while((tmp=m_timeline.GetNextOffset(tmp)) < offset && tmp > 0)
+	{
+		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
+		if(param && param->value != PARAM_VALUE_ENABLED)
+		{
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 */
