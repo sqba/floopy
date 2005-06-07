@@ -26,21 +26,23 @@ CEngine::CEngine(HMODULE hModule)
 
 	m_callback = NULL;
 
-	//char path[MAX_PATH] = {0};
-	//getcwd(m_szPath, MAX_PATH);
-	GetModuleFileName(hModule, m_szPath, MAX_PATH);
-	char *tmp = strrchr(m_szPath, '\\');
-	if(tmp)
-		*(tmp+1) = '\0';
-	//GetModuleFileName(GetModuleHandle(NULL), m_szPath, MAX_PATH);
-	/*FILE *fp = fopen("engine.cfg", "r");
-	if(fp)
+	if(hModule)
 	{
-		fscanf(fp, "%s", m_szPath);
-		//chdir(m_szPath);
-		fclose(fp);
-	}*/
-
+		//char path[MAX_PATH] = {0};
+		//getcwd(m_szPath, MAX_PATH);
+		GetModuleFileName(hModule, m_szPath, MAX_PATH);
+		char *tmp = strrchr(m_szPath, '\\');
+		if(tmp)
+			*(tmp+1) = '\0';
+		//GetModuleFileName(GetModuleHandle(NULL), m_szPath, MAX_PATH);
+		/*FILE *fp = fopen("engine.cfg", "r");
+		if(fp)
+		{
+			fscanf(fp, "%s", m_szPath);
+			//chdir(m_szPath);
+			fclose(fp);
+		}*/
+	}
 }
 
 CEngine::~CEngine()
