@@ -92,9 +92,12 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 	if(plugin)
 	{
 		char path[MAX_PATH] = {0};
-		strcpy(path, m_szPath);
-		if(path[strlen(path)-1] != '\\')
-			path[strlen(path)] = '\\';
+		if(strlen(m_szPath) > 0)
+		{
+			strcpy(path, m_szPath);
+			if(path[strlen(path)-1] != '\\')
+				path[strlen(path)] = '\\';
+		}
 		strcat(path, plugin);
 
 		if(0==strcmpi(plugin, "xml_expat"))
@@ -142,9 +145,12 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 			filename = tmp+1;
 
 		char path[MAX_PATH] = {0};
-		strcpy(path, m_szPath);
-		if(path[strlen(path)] != '\\')
-			path[strlen(path)] = '\\';
+		if(strlen(m_szPath) > 0)
+		{
+			strcpy(path, m_szPath);
+			if(path[strlen(path)] != '\\')
+				path[strlen(path)] = '\\';
+		}
 		strcat(path, filename);
 
 		obj = new CInput(m_callback);
@@ -203,9 +209,12 @@ BOOL CEngine::Open(char *filename)
 	if(plugin)
 	{
 		char path[MAX_PATH] = {0};
-		strcpy(path, m_szPath);
-		if(path[strlen(path)-1] != '\\')
-			path[strlen(path)-1] = '\\';
+		if (strlen(m_szPath) > 0)
+		{
+			strcpy(path, m_szPath);
+			if(path[strlen(path)-1] != '\\')
+				path[strlen(path)-1] = '\\';
+		}
 		strcat(path, plugin);
 
 		CStorage storage(this, path);
