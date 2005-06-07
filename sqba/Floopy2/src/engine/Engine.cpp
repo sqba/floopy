@@ -311,7 +311,7 @@ void CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
 	}
 }
 
-void CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
+BOOL CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
 {
 	tComponent *tmp = m_pFirst;
 	while(tmp)
@@ -322,12 +322,13 @@ void CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
 			{
 			case TYPE_INPUT:
 				CInput *input = (CInput*)obj;
-				input->ResetParamAt(offset, index);
+				return input->ResetParamAt(offset, index);
 			}
-			return;
+			return FALSE;
 		}
 		tmp = tmp->next;
 	}
+	return FALSE;
 }
 
 void CEngine::EnableAt(IFloopy *obj, int offset, BOOL bEnable)

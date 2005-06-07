@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <memory.h>
 
+#include "../ifloopy.h"
+
 /*
 #define TIMELINE_PARAM_ENABLE		-1
 #define PARAM_VALUE_ENABLED		1000.f
@@ -38,7 +40,7 @@ public:
 
 	void Set(int offset, int index, float value);
 	float Get(int offset, int index);
-	void Remove(int offset, int index);
+	BOOL Remove(int offset, int index);
 	int GetCount();
 	int GetNextOffset(int offset);
 	tParam *GetParam(int offset, int index);

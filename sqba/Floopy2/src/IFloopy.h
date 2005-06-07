@@ -455,7 +455,7 @@ public:
 	 * @param index index of the parameter.
 	 * @param value new parameter value.
 	 */
-	virtual void ResetParamAt(IFloopy *obj, int offset, int index) {}
+	virtual BOOL ResetParamAt(IFloopy *obj, int offset, int index) { return FALSE; }
 
 	/**
 	 * Enables/disables object at specific offset.

@@ -51,7 +51,7 @@ public:
 	IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt);
 
 	void SetParamAt(IFloopy *obj, int offset, int index, float value);
-	void ResetParamAt(IFloopy *obj, int offset, int index);
+	BOOL ResetParamAt(IFloopy *obj, int offset, int index);
 	void EnableAt(IFloopy *obj, int offset, BOOL bEnable);
 
 	char *GetDisplayName();

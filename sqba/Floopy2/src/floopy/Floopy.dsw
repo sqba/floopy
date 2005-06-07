@@ -211,6 +211,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "wavein"=".\input\wavein\wavein.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "waveout"=".\output\waveout\waveout.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -235,6 +247,18 @@ Package=<5>
     "$/sqba/Floopy2/src/input/wavfile", SFDAAAAA
     .\input\wavfile
     end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "wxFloopy"=".\gui\wxFloopy\floopy.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
 }}}
 
 Package=<4>

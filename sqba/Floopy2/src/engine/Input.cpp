@@ -718,11 +718,14 @@ void CInput::SetParamAt(int offset, int index, float value)
 //		m_callback(this, offset/_getSamplesToBytes(), index);
 }
 
-void CInput::ResetParamAt(int offset, int index)
+BOOL CInput::ResetParamAt(int offset, int index)
 {
-	m_timeline.Remove(offset * m_nSamplesToBytes, index);
-
-	_recalcVariables();
+	if(m_timeline.Remove(offset * m_nSamplesToBytes, index))
+	{
+		_recalcVariables();
+		return TRUE;
+	}
+	return FALSE;
 
 //	if(m_callback)
 //		m_callback(this, offset/_getSamplesToBytes(), index);

@@ -151,7 +151,7 @@ int CTimeline::GetNextOffset(int offset)
 	return (val != offset ? val : 0);
 }
 
-void CTimeline::Remove(int offset, int index)
+BOOL CTimeline::Remove(int offset, int index)
 {
 	tParam *tmp = Find(offset, index);
 	if(tmp)
@@ -161,7 +161,9 @@ void CTimeline::Remove(int offset, int index)
 		if(p) p->next = n;
 		if(n) n->prev = p;
 		//delete tmp;
+		return TRUE;
 	}
+	return FALSE;
 }
 
 int CTimeline::GetCount()
