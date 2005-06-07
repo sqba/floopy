@@ -8,6 +8,13 @@
 //#include <windows.h>
 
 
+
+#define TIMELINE_PARAM_ENABLE		-1
+#define PARAM_VALUE_ENABLED		1000.f
+#define PARAM_VALUE_DISABLED	2000.f
+#define TIMELINE_PARAM_MOVETO		-2
+
+
 typedef int                 INT;
 typedef int                 BOOL;
 typedef unsigned short      WORD;

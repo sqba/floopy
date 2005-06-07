@@ -160,6 +160,7 @@ void CTimeline::Remove(int offset, int index)
 		tParam *n = tmp->next;
 		if(p) p->next = n;
 		if(n) n->prev = p;
+		//delete tmp;
 	}
 }
 
