@@ -379,6 +379,7 @@ char *CEngine::GetDisplayName()
 
 void CEngine::SetDisplayName(char *name, int len)
 {
+	memset(m_szDisplayname, 0, NAME_LEN);
 	memcpy(m_szDisplayname, name, (len < NAME_LEN ? len : NAME_LEN));
 }
 

@@ -83,7 +83,11 @@ public:
 	BOOL GetLastError(char *str, int len);
 
 	char *GetDisplayName() { return m_name; }
-	void SetDisplayName(char *name, int len) { memcpy(m_name, name, (len<50?len:50)); }
+	void SetDisplayName(char *name, int len)
+	{
+		memset(m_name, 0, 50);
+		memcpy(m_name, name, (len<50?len:50));
+	}
 
 	char *GetPath() { return _isEngine() ? m_source->GetPath() : m_szObjPath; }
 
