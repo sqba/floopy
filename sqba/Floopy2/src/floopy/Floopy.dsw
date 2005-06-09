@@ -163,6 +163,22 @@ Package=<4>
 
 ###############################################################################
 
+Project: "stdlib"=".\stdlib\stdlib.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/sqba/Floopy2/src/stdlib", EODAAAAA
+    .\stdlib
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "svgfile"=".\OUTPUT\svgfile\svgfile.dsp" - Package Owner=<4>
 
 Package=<5>

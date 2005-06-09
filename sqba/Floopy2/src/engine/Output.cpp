@@ -11,7 +11,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef IFloopySoundOutput* (*CreateProc)(SOUNDFORMAT);
+typedef IFloopySoundOutput* (*CreateProc)(char*, SOUNDFORMAT);
 #define PROC_NAME "CreateOutput"
 #define PLUG_EXT ".dll"
 
@@ -33,11 +33,24 @@ COutput::~COutput()
 
 BOOL COutput::Create(char *plugin, SOUNDFORMAT fmt)
 {
+	char *library = plugin;
+
+	char *sep = strrchr(plugin, '.');
+	if(sep)
+	{
+		char tmp[MAX_PATH] = {0};
+		strcpy(tmp, plugin);
+		char *sep = strrchr(tmp, '.');
+		plugin = sep+1;
+		*sep = 0;
+		library = tmp;
+	}
+
 	m_hinst = NULL;
 	m_plugin = NULL;
 
-	char *filename = new char[strlen(plugin) + 5];
-	strcpy(filename, plugin);
+	char *filename = new char[strlen(library) + 5];
+	strcpy(filename, library);
 	strcat(filename, PLUG_EXT);
 	m_hinst = LoadLibraryA(filename);
 
@@ -50,7 +63,7 @@ BOOL COutput::Create(char *plugin, SOUNDFORMAT fmt)
 			//assert((fmt.bitsPerSample > 0) && (fmt.channels > 0));
 			if((fmt.bitsPerSample > 0) && (fmt.channels > 0))
 			{
-				m_plugin = func( fmt );
+				m_plugin = func( plugin, fmt );
 				IFloopySoundOutput::SetDest( m_plugin );
 				return TRUE;
 			}

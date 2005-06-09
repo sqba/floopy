@@ -148,7 +148,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 		if(strlen(m_szPath) > 0)
 		{
 			strcpy(path, m_szPath);
-			if(path[strlen(path)] != '\\')
+			if(path[strlen(path)-1] != '\\')
 				path[strlen(path)] = '\\';
 		}
 		strcat(path, filename);
@@ -291,7 +291,7 @@ char *CEngine::getPluginName(char *filename)
 	}
 	return NULL;
 }
-
+/*
 void CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
 {
 	tComponent *tmp = m_pFirst;
@@ -349,7 +349,7 @@ void CEngine::EnableAt(IFloopy *obj, int offset, BOOL bEnable)
 		tmp = tmp->next;
 	}
 }
-
+*/
 void CEngine::Close()
 {
 	tComponent *tmp = m_pFirst;

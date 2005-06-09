@@ -18,7 +18,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #ifdef __cplusplus
 extern "C" {
 #endif
-__declspec( dllexport ) IFloopySoundInput *CreateInput()
+__declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 {
 	return new CInput();
 }

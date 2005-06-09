@@ -410,9 +410,9 @@ void loadTimeline(tSessionInfo *si, IFloopySoundInput *input, char *data)
 			if(isalpha(*token))
 			{
 				if(token[0]=='o' || token[0]=='O')
-					si->gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
+					input->EnableAt(offset, (0==strncmp(token, "ON", 2)));
 				else if(0==strncmp(token, "RESET", 5))
-					si->gEngine->SetParamAt(input, offset, -2, 0.f);
+					input->SetParamAt(offset, -2, 0.f);
 				i=0;
 			}
 			else
@@ -423,9 +423,9 @@ void loadTimeline(tSessionInfo *si, IFloopySoundInput *input, char *data)
 			break;
 		case 2:
 			if(param == -1)
-				si->gEngine->EnableAt(input, offset, (0==strncmp(token, "ON", 2)));
+				input->EnableAt(offset, (0==strncmp(token, "ON", 2)));
 			else
-				si->gEngine->SetParamAt(input, offset, param, (float)atof(token));
+				input->SetParamAt(offset, param, (float)atof(token));
 			i=0;
 			break;
 		}

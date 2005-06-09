@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-typedef IFloopySoundInput* (*CreateProc)(void);
+typedef IFloopySoundInput* (*CreateProc)(char *name);
 #define PROC_NAME "CreateInput"
 #define PLUG_EXT ".dll"
 
@@ -57,8 +57,22 @@ CInput::CInput(UpdateCallback func)
 BOOL CInput::Create(char *plugin)
 {
 	BOOL result = FALSE;
-	char *filename = new char[strlen(plugin) + 5];
-	strcpy(filename, plugin);
+
+	char *library = plugin;
+
+	char *sep = strrchr(plugin, '.');
+	if(sep)
+	{
+		char tmp[MAX_PATH] = {0};
+		strcpy(tmp, plugin);
+		char *sep = strrchr(tmp, '.');
+		plugin = sep+1;
+		*sep = 0;
+		library = tmp;
+	}
+
+	char *filename = new char[strlen(library) + 5];
+	strcpy(filename, library);
 	strcat(filename, PLUG_EXT);
 
 	strcpy(m_szObjPath, filename);
@@ -70,7 +84,7 @@ BOOL CInput::Create(char *plugin)
 		CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
 
 		if(func != NULL) {
-			m_plugin = func();
+			m_plugin = func( plugin );
 			IFloopySoundInput::SetSource(m_plugin);
 			result = TRUE;
 		}

@@ -27,14 +27,15 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #ifdef __cplusplus
 extern "C" {
 #endif
-__declspec( dllexport ) IFloopySoundInput *CreateInput()
+__declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 {
 	return new CInput();
 }
 
-__declspec( dllexport ) IFloopySoundOutput *CreateOutput(int nSamplesPerSec, int wBitsPerSample, int nChannels)
+//__declspec( dllexport ) IFloopySoundOutput *CreateOutput(int nSamplesPerSec, int wBitsPerSample, int nChannels)
+__declspec( dllexport ) IFloopySoundOutput *CreateOutput(char *name, SOUNDFORMAT fmt)
 {
-	return new COutput(nSamplesPerSec, wBitsPerSample, nChannels);
+	return new COutput(fmt.frequency, fmt.bitsPerSample, fmt.channels);
 }
 
 #ifdef __cplusplus
