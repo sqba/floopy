@@ -19,22 +19,6 @@ Package=<4>
 
 ###############################################################################
 
-Project: "floopy"=".\floopy\floopy.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
-    begin source code control
-    "$/sqba/Floopy2/src/floopy", CDDAAAAA
-    .\floopy
-    end source code control
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
 Project: "in_floopy"=".\winamp\in_floopy.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -43,18 +27,6 @@ Package=<5>
     "$/sqba/Floopy2/src/winamp/in_floopy", JIDAAAAA
     .\winamp
     end source code control
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "mp3file"=".\input\mp3file\mp3file.dsp" - Package Owner=<4>
-
-Package=<5>
-{{{
 }}}
 
 Package=<4>
