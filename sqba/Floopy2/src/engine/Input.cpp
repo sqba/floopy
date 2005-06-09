@@ -54,16 +54,19 @@ CInput::CInput(UpdateCallback func)
  * @param plugin library name.
  * @return TRUE if succesfull.
  */
-BOOL CInput::Create(char *plugin)
+BOOL CInput::Create(char *name)
 {
 	BOOL result = FALSE;
 
+	char *plugin = name;
+
 	char *library = plugin;
+
+	char tmp[MAX_PATH] = {0};
 
 	char *sep = strrchr(plugin, '.');
 	if(sep)
 	{
-		char tmp[MAX_PATH] = {0};
 		strcpy(tmp, plugin);
 		char *sep = strrchr(tmp, '.');
 		plugin = sep+1;
@@ -79,14 +82,22 @@ BOOL CInput::Create(char *plugin)
 
 	m_hinst = LoadLibraryA(filename);
 
+	if(NULL == m_hinst)
+		m_hinst = LoadLibraryA(plugin);
+
 	if (NULL != m_hinst)
 	{
 		CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
 
 		if(func != NULL) {
 			m_plugin = func( plugin );
-			IFloopySoundInput::SetSource(m_plugin);
-			result = TRUE;
+			if(m_plugin)
+			{
+				IFloopySoundInput::SetSource(m_plugin);
+				result = TRUE;
+			}
+			else
+				sprintf(m_szLastError, "Error: %s not created by %s.\n\0", plugin, filename);
 		}
 		else {
 			//fprintf(stderr, "Error: %s() not found in %s.\n", PROC_NAME, filename);
@@ -261,6 +272,8 @@ int CInput::Read(BYTE *data, int size)
 void CInput::MoveTo(int samples)
 {
 //	_recalcVariables();
+	if(m_nSamplesToBytes == 0)
+		return;
 
 	m_offset = samples * m_nSamplesToBytes;
 
@@ -333,6 +346,8 @@ int CInput::GetLength()
  */
 int CInput::GetSize()
 {
+	if(!m_plugin)
+		return 0;
 //	int size;// = m_plugin->GetSize();
 	//if(size <= 0)
 //		size = getSize();
@@ -800,6 +815,8 @@ void CInput::_recalcVariables()
 	m_nStartOffset		= _getStartOffset();
 	m_nEndOffset		= _getEndOffset();
 	m_nSamplesToBytes	= _getSamplesToBytes();
+
+//	assert(m_nSamplesToBytes > 0);
 }
 
 /*

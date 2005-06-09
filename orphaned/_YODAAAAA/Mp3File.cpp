@@ -22,6 +22,9 @@ CMp3File::CMp3File()
 //	m_hWnd = hWnd;
 	m_hDllInstance = GetModuleHandle(NULL);
 
+	//char tmp[MAX_PATH] = {0};
+	//GetModuleFileName(m_hDllInstance, tmp, MAX_PATH);
+
 	m_hinstLib = LoadLibrary("mp3.flt");
 	if (m_hinstLib != NULL) 
 	{ 

@@ -248,7 +248,7 @@ BOOL CEngine::Save(char *filename)
 			saveChildEngines();
 	}
 	else
-		sprintf(m_szLastError, "Adequate storage objonent not found for %s.\0", filename);
+		sprintf(m_szLastError, "Adequate storage component not found for %s.\0", filename);
 		//setLastError(ERR_STR_FILENOTFOUND, filename);
 
 	return result;
@@ -276,14 +276,14 @@ char *CEngine::getPluginName(char *filename)
 	{
 		ext += 1;
 
-		if(0 == strcmpi(ext, "test"))
-			return "test";
+		//if(0 == strcmpi(ext, "test"))
+		//	return "test";
 		if(0 == strcmpi(ext, "xml"))
 			return "xml_expat";
-		if(0 == strcmpi(ext, "hz"))
-			return "tonegen";
+		//if(0 == strcmpi(ext, "hz"))
+		//	return "stdlib.tonegen";
 		if(0 == strcmpi(ext, "wav"))
-			return "wavfile";
+			return "stdlib.wavfile";
 		if(0 == strcmpi(ext, "svg"))
 			return "svgfile";
 		if(0 == strcmpi(ext, "mp3"))

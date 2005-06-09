@@ -159,6 +159,31 @@ public:
 	 */
 	virtual int GetNextOffset(int offset)			{ return 0; }
 
+	/**
+	 * Schedules particular parameter's value for change at specific offset.
+	 * Do not override in implementations, handled by the engine.
+	 * @param offset position in samples at which the change occurs.
+	 * @param index index of the parameter.
+	 * @param value new parameter value.
+	 */
+	virtual void SetParamAt(int offset, int index, float value) {}
+
+	/**
+	 * Removes scheduled parameter change.
+	 * Do not override in implementations, handled by the engine.
+	 * @param offset position in samples at which the change was supposed to occur.
+	 * @param index index of the parameter.
+	 */
+	virtual BOOL ResetParamAt(int offset, int index) { return FALSE; }
+
+	/**
+	 * Enables/disables object at specific offset.
+	 * Do not override in implementations, handled by the engine.
+	 * @param offset position in samples at which the change was supposed to occur.
+	 * @param bEnable enable or disable.
+	 */
+	virtual void EnableAt(int offset, BOOL bEnable) {}
+
 private:
 	BOOL m_bEnabled;	/** Is this component disabled or enabled. */
 
@@ -180,7 +205,7 @@ protected:
 class IFloopySoundInput : public IFloopy
 {
 public:
-	IFloopySoundInput()
+	IFloopySoundInput() : IFloopy()
 	{
 		m_source = NULL;
 		memset(&m_format, 0, sizeof(SOUNDFORMAT));
@@ -348,7 +373,7 @@ protected:
 class IFloopySoundOutput : public IFloopy
 {
 public:
-	IFloopySoundOutput() { m_dest = NULL; }
+	IFloopySoundOutput() : IFloopy() { m_dest = NULL; }
 	IFloopySoundOutput(SOUNDFORMAT fmt) { m_dest = NULL; }
 	virtual ~IFloopySoundOutput() {}
 
@@ -417,57 +442,33 @@ public:
 
 	/**
 	 * Creates a sound source or filter.
-	 * @param plugin name of component.
+	 * @param name Component name (without extension).
 	 */
-	virtual IFloopySoundInput  *CreateInput(char *plugin)  { return NULL; }
+	virtual IFloopySoundInput  *CreateInput(char *name)
+	{ return NULL; }
 
 	/**
 	 * Creates a sound output.
-	 * @param plugin name of component.
+	 * @param name Component name (without extension).
 	 */
-	virtual IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt) { return NULL; }
-
-	/**
-	 * Serializes current engine state into a file.
-	 * @param filename name of the file.
-	 */
-	virtual void DeleteObject(IFloopy *obj) { }
+	virtual IFloopySoundOutput *CreateOutput(char *name, SOUNDFORMAT fmt)
+	{ return NULL; }
 
 	/**
 	 * Destroys the object created by CreateInput() or CreateOutput().
-	 * @param obj pointer to the object.
+	 * @param obj Pointer to the object being deleted.
+	 */
+	virtual void DeleteObject(IFloopy *obj) {}
+
+	/**
+	 * Serializes current engine state into a file.
+	 * @param filename Project file name.
 	 */
 	virtual BOOL Save(char *filename) { return FALSE; }
 
 	/**
-	 * Schedules a particular parameter's value for change at specific offset.
-	 * @param obj pointer to the object whose parameter is changed.
-	 * @param offset position in samples at which the change occurs.
-	 * @param index index of the parameter.
-	 * @param value new parameter value.
-	 */
-	virtual void SetParamAt(IFloopy *obj, int offset, int index, float value) {}
-
-	/**
-	 * Removes scheduled parameter change.
-	 * @param obj pointer to the object.
-	 * @param offset position in samples at which the change was supposed to occur.
-	 * @param index index of the parameter.
-	 * @param value new parameter value.
-	 */
-	virtual BOOL ResetParamAt(IFloopy *obj, int offset, int index) { return FALSE; }
-
-	/**
-	 * Enables/disables object at specific offset.
-	 * @param obj pointer to the object.
-	 * @param offset position in samples at which the change was supposed to occur.
-	 * @param bEnable enable or disable.
-	 */
-	virtual void EnableAt(IFloopy *obj, int offset, BOOL bEnable) {}
-
-	/**
 	 * Sets the callback function that is called on parameter changes.
-	 * @param func pointer to the function.
+	 * @param func Pointer to the callback function.
 	 */
 	virtual void RegisterUpdateCallback(UpdateCallback func) {}
 };

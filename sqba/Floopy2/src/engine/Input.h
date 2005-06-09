@@ -62,9 +62,9 @@ public:
 	int   GetParamIndex(char *name);//	{ return m_plugin->GetParamIndex(name); }
 
 	BOOL SetSource(IFloopySoundInput *src);
-	IFloopySoundInput *GetSource()			{ return m_plugin->GetSource(); }
+	IFloopySoundInput *GetSource()			{ return m_plugin ? m_plugin->GetSource() : NULL; }
 
-	IFloopySoundInput *GetSource(int index)	{ return m_plugin->GetSource(index); }
+	IFloopySoundInput *GetSource(int index)	{ return m_plugin ? m_plugin->GetSource(index) : NULL; }
 
 	int GetNextOffset(int offset);
 
