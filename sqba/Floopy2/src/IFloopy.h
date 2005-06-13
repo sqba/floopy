@@ -9,12 +9,16 @@
 
 
 
-#define TIMELINE_PARAM_ENABLE		-1
-#define PARAM_VALUE_ENABLED		1000.f
-#define PARAM_VALUE_DISABLED	2000.f
-#define TIMELINE_PARAM_MOVETO		-2
+#define TIMELINE_PARAM_ENABLE		-1 /// Index of the Enable/Disable parameter
+#define PARAM_VALUE_ENABLED		1000.f /// Value of the Enable parameter
+#define PARAM_VALUE_DISABLED	2000.f /// Value of the Disable parameter
+#define TIMELINE_PARAM_MOVETO		-2 /// Index of the MoveTo parameter
 
 
+
+//////////////////////////////////////////////////////////////////////
+// Defines from windows.h
+//////////////////////////////////////////////////////////////////////
 typedef int                 INT;
 typedef int                 BOOL;
 typedef unsigned short      WORD;
@@ -36,6 +40,8 @@ typedef unsigned long       DWORD;
 #ifndef TRUE
 #define TRUE                1
 #endif
+//////////////////////////////////////////////////////////////////////
+
 
 
 //#define EOF     (-1)	// defined in stdio
@@ -90,7 +96,7 @@ public:
 	IFloopyCallback()	{ }
 	virtual ~IFloopyCallback()	{ }
 
-	void OnParameterUpdate(IFloopy *src, int index)
+	void OnParameterUpdate(IFloopy *src, int offset, int param)
 };*/
 
 
@@ -184,8 +190,11 @@ public:
 	 */
 	virtual void EnableAt(int offset, BOOL bEnable) {}
 
+//	virtual void SetCallback(IFloopyCallback *cbk) { m_callback = cbk; }
+
 private:
 	BOOL m_bEnabled;	/** Is this component disabled or enabled. */
+//	IFloopyCallback *m_callback;
 
 protected:
 	int m_nLastError;	/** Last error code. */

@@ -28,25 +28,32 @@ CInput::CInput(UpdateCallback func)
 
 	memset(m_name, 0, 50);
 	memset(m_szLastError, 0, sizeof(m_szLastError));
-	memset(m_szObjPath, 0, sizeof(m_szObjPath));
+	memset(m_szObjPath,   0, sizeof(m_szObjPath));
 
 	Enable(TRUE);
 	IFloopy::Enable(TRUE);
 	
 	// Optimization variables
-	m_nStartOffset	= 0;
-	m_nEndOffset	= 0;
-	m_nSamplesToBytes = 0;
+	m_nStartOffset = m_nEndOffset = m_nSamplesToBytes = 0;
 
 #ifdef _DEBUG_TIMER_
 	// Timing valiables
 	m_bDebugTimer = TRUE;
-	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
+	m_nFrameSize = m_dwSpeed = m_nFrameCount = 0;
 #endif // _DEBUG_TIMER_
 
 //	m_bRecording = FALSE;
 
 	m_fDebug = 0.f;
+}
+
+CInput::~CInput()
+{
+	if(m_plugin)
+		delete m_plugin;
+
+	if(m_hinst)
+		FreeLibrary(m_hinst);
 }
 
 /**
@@ -58,35 +65,40 @@ BOOL CInput::Create(char *name)
 {
 	BOOL result = FALSE;
 
-	char *plugin = name;
-
-	char *library = plugin;
-
-	char tmp[MAX_PATH] = {0};
+	/////////////////////////////////////////
+	// Split name: [library].[plugin]
+	/////////////////////////////////////////
+	char *plugin  = name;
+	char *library = name;
 
 	char *sep = strrchr(plugin, '.');
 	if(sep)
 	{
+		char tmp[MAX_PATH] = {0};
 		strcpy(tmp, plugin);
 		char *sep = strrchr(tmp, '.');
 		plugin = sep+1;
 		*sep = 0;
 		library = tmp;
 	}
+	/////////////////////////////////////////
 
 	char *filename = new char[strlen(library) + 5];
 	strcpy(filename, library);
 	strcat(filename, PLUG_EXT);
 
-	strcpy(m_szObjPath, filename);
-
 	m_hinst = LoadLibraryA(filename);
 
 	if(NULL == m_hinst)
-		m_hinst = LoadLibraryA(plugin);
+	{
+		filename = plugin;
+		m_hinst = LoadLibraryA(filename);
+	}
 
 	if (NULL != m_hinst)
 	{
+		strcpy(m_szObjPath, filename);
+
 		CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
 
 		if(func != NULL) {
@@ -99,15 +111,12 @@ BOOL CInput::Create(char *name)
 			else
 				sprintf(m_szLastError, "Error: %s not created by %s.\n\0", plugin, filename);
 		}
-		else {
+		else
 			//fprintf(stderr, "Error: %s() not found in %s.\n", PROC_NAME, filename);
 			sprintf(m_szLastError, "Error: %s() not found in %s.\n\0", PROC_NAME, filename);
-		}
 	}
 	else
-	{
 		sprintf(m_szLastError, "Error: %s not found.\n\0", filename);
-	}
 
 	delete[] filename;
 	return result;
@@ -129,15 +138,6 @@ BOOL CInput::Create(IFloopySoundEngine *src)
 		SetDisplayName(name, strlen(name));
 
 	return TRUE;
-}
-
-CInput::~CInput()
-{
-	if(m_plugin)
-		delete m_plugin;
-
-	if(m_hinst)
-		FreeLibrary(m_hinst);
 }
 
 BOOL CInput::SetSource(IFloopySoundInput *src)
@@ -173,17 +173,10 @@ int CInput::Read(BYTE *data, int size)
 			m_offset += size;
 			return size;
 		}
-		/*if(offset > m_nEndOffset)
-		{
-			m_offset += size;
-			return size;
-		}*/
 	}
 
 #ifdef _DEBUG_TIMER_
-	clock_t start = 0;
-	if(m_bDebugTimer)
-		start = clock();
+	_debugStartMeasuring();
 #endif // _DEBUG_TIMER_
 
 	int s = m_offset;
@@ -234,21 +227,12 @@ int CInput::Read(BYTE *data, int size)
 					readBytes += len;
 			}
 		}
-		/*else if(src->GetSize() == -1)
-		{
-			m_plugin->Reset();	// Ako ovo izbacim, posle pauze ne nastavlja
-		}*/
 	}
 
 	m_offset = endpos;
 
 #ifdef _DEBUG_TIMER_
-	if(m_bDebugTimer && readBytes>0)
-	{
-		m_dwSpeed += clock() - start;
-		m_nFrameSize += size / m_nSamplesToBytes;
-		m_nFrameCount++;
-	}
+	_debugStopMeasuring();
 #endif // _DEBUG_TIMER_
 
 	if(readBytes == 0)
@@ -346,72 +330,29 @@ int CInput::GetLength()
  */
 int CInput::GetSize()
 {
-	if(!m_plugin)
-		return 0;
-//	int size;// = m_plugin->GetSize();
-	//if(size <= 0)
-//		size = getSize();
-/*
-	//return getSize();
-	//return IFloopySoundInput::GetSize();
-//	if(m_plugin->GetSize() > 0)
-		return m_plugin->GetSize();
-//	else 
-//		return IFloopySoundInput::GetSize();
-*/
-//	_recalcVariables();
-
-	int tmp = 0;
 	int size = 0;
-	int stb = m_nSamplesToBytes;
-	
-	//int end = _getEndOffset();
-	int end = m_nEndOffset;
 
-	if(end == 0)
-		size = m_plugin->GetSize();
-	else if(end > m_offset)
-		size = (end - m_offset) / stb;
-	else if(end > 0)
-		size = end / stb;
-
-	IFloopySoundInput *src = IFloopySoundInput::GetSource();
-	tmp = src->GetSize();
-	if(tmp > size)
-		size = tmp;
-
-	/*if(_isEngine())
+	if(m_plugin)
 	{
-		char *name = m_plugin->GetDisplayName();
-		if(0==strcmpi(name, "t.xml"))
-		{
-			int d=0;
-		}
-	}*/
+		if(m_nEndOffset == 0)
+			size = m_plugin->GetSize();
+		//else if(m_nEndOffset > m_offset)
+		//	size = (m_nEndOffset - m_offset) / m_nSamplesToBytes;
+		else if(m_nEndOffset > 0)
+			size = m_nEndOffset / m_nSamplesToBytes;
+
+		IFloopySoundInput *src = IFloopySoundInput::GetSource();
+		int tmp = src->GetSize();
+		if(tmp > size)
+			size = tmp;
+	}
 
 	return size;
 }
 
 void CInput::Reset()
 {
-	/*if(GetSource())
-	{
-		char *name = GetSource()->GetName();
-		if(name)
-		{
-			if(0 == strcmpi(name, "D:\\sqba\\Projekti\\Floopy!\\Samples\\acid\\WAH2.WAV"))
-			{
-				int d=0;
-			}
-		}
-	}*/
-
 	m_offset = 0;
-
-//	_recalcVariables();
-
-//	if(m_bRecording)
-//		m_timeline.Set(m_offset, TIMELINE_PARAM_MOVETO, PARAM_VALUE_RESET);
 
 	if(NULL != m_source)
 		m_source->Reset();
@@ -419,9 +360,8 @@ void CInput::Reset()
 
 int CInput::GetNextOffset(int offset)
 {
-	int stb = m_nSamplesToBytes;
-	int next = m_timeline.GetNextOffset(offset*stb);
-	return (next > 0 ? next / stb : 0);
+	int next = m_timeline.GetNextOffset(offset*m_nSamplesToBytes);
+	return (next > 0 ? next / m_nSamplesToBytes : 0);
 }
 
 /**
@@ -457,8 +397,7 @@ BOOL CInput::IsEnabled()
 
 
 /**
- * Used to convert number of samples
- * to number of bytes and vice versa.
+ * Used to convert number of samples to number of bytes and vice versa.
  */
 int CInput::_getSamplesToBytes()
 {
@@ -476,26 +415,7 @@ int CInput::_getSamplesToBytes()
  */
 void CInput::applyParamsAt(int offset)
 {
-	/*int x = offset/_getSamplesToBytes();
-	if(x >= 5342626 && x <= 5342628)
-	{
-		int d=0;
-	}*/
-	/*if(GetSource())
-	{
-		char *name = GetSource()->GetName();
-		if(name)
-		{
-			if(0 == strcmpi(name, "D:\\sqba\\Projekti\\Floopy!\\Samples\\acid\\WAH2.WAV"))
-			{
-				int d=0;
-			}
-		}
-	}*/
-
-	//SOUNDFORMAT *fmt = GetFormat();
 	int sample = -1;
-	//if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
 	if(m_nSamplesToBytes)
 		sample = offset / m_nSamplesToBytes;
 
@@ -579,7 +499,7 @@ int CInput::_getEndOffset()
 {
 	int offset = 0;
 	int tmp = 0;
-	//float last = PARAM_VALUE_DISABLED;
+
 	float last = IsEnabled() ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED;
 
 	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
@@ -598,70 +518,26 @@ int CInput::_getEndOffset()
 
 	// Proveriti da li se na kraju iskljucuje.
 	// U suprotnom vratiti duzinu!
-	//if(last!=PARAM_VALUE_DISABLED)
 	if((last==PARAM_VALUE_ENABLED) && m_plugin)
 	{
-		//int stb = _getSamplesToBytes();
-		//offset = (m_plugin->GetSize() * stb);
-		//offset = _getStartOffset() + (m_plugin->GetSize() * stb);
-		//offset = _getStartOffset() + IFloopySoundInput::GetSize();
-		//offset = m_plugin->GetLength();
-		//offset = _getStartOffset() + m_plugin->GetSize() * _getSamplesToBytes();
 		offset = m_nStartOffset + m_plugin->GetSize() * m_nSamplesToBytes;
 	}
-/*
-	if(offset == 0 && GetSource())
-	{
-		//offset = GetSource()->GetLength();
-		offset = _getStartOffset() + m_plugin->GetSize();
-	}
-*/
-/*
-	int count = GetInputCount();
-	if(count > 1)
-	{
-		for(int i=0; i<count; i++)
-		{
-			CInput *input = (CInput*)GetSource(i);
-			int tmp = input->_getEndOffset();
-			if(tmp > offset)
-				offset = tmp;
-		}
-	}
-*/
+
 	return offset;
 }
 
 int CInput::GetParamCount()
 {
 	return m_plugin->GetParamCount();
-	//return m_plugin->GetParamCount() + LOCAL_PARAM_COUNT;
 }
 
 float CInput::GetParam(int index)
 {
 	return m_timeline.Get(m_offset, index);
-	/*switch(index)
-	{
-	case 0:
-		return m_timeline.Get(m_offset, TIMELINE_PARAM_MOVETO);
-	default:
-		return m_timeline.Get(m_offset, index-LOCAL_PARAM_COUNT);
-	}*/
 }
 
 BOOL CInput::GetParam(int index, float *value)
 {
-	/*switch(index)
-	{
-	case 0:
-		index = TIMELINE_PARAM_MOVETO;
-		break;
-	default:
-		index -= LOCAL_PARAM_COUNT;
-		break;
-	}*/
-
 	tParam *param = m_timeline.GetParam(m_offset, index);
 	if(param)
 	{
@@ -688,53 +564,20 @@ void CInput::SetParam(int index, float value)
 	m_timeline.Set(m_offset, index, value);
 
 	_recalcVariables();
-
-	/*switch(index)
-	{
-	case 0:
-		if(0.f == value)
-			m_source->Reset();
-		else
-			m_source->MoveTo((int)value);
-		m_timeline.Set(m_offset, TIMELINE_PARAM_MOVETO, value);
-		break;
-	default:
-		m_plugin->SetParam(index-LOCAL_PARAM_COUNT, value);
-		m_timeline.Set(m_offset, index, value);
-		break;
-	}*/
 }
 
 int CInput::GetParamIndex(char *name)
 {
 	return m_plugin->GetParamIndex(name);
-	//int result = m_plugin->GetParamIndex(name);
-	//return (result != -1 ? result+LOCAL_PARAM_COUNT : -1);
 }
 
 char *CInput::GetParamName(int index)
 {
 	return m_plugin->GetParamName(index);
-
-	/*switch(index)
-	{
-	case 0:
-		return "MoveTo";
-	default:
-		return m_plugin->GetParamName(index-LOCAL_PARAM_COUNT);
-	}*/
 }
 char *CInput::GetParamDesc(int index)
 {
 	return m_plugin->GetParamDesc(index);
-
-	/*switch(index)
-	{
-	case 0:
-		return "MoveTo";
-	default:
-		return m_plugin->GetParamDesc(index-LOCAL_PARAM_COUNT);
-	}*/
 }
 
 void CInput::SetParamAt(int offset, int index, float value)
@@ -742,9 +585,6 @@ void CInput::SetParamAt(int offset, int index, float value)
 	m_timeline.Set(offset * m_nSamplesToBytes, index, value);
 
 	_recalcVariables();
-
-//	if(m_callback)
-//		m_callback(this, offset/_getSamplesToBytes(), index);
 }
 
 BOOL CInput::ResetParamAt(int offset, int index)
@@ -755,9 +595,6 @@ BOOL CInput::ResetParamAt(int offset, int index)
 		return TRUE;
 	}
 	return FALSE;
-
-//	if(m_callback)
-//		m_callback(this, offset/_getSamplesToBytes(), index);
 }
 
 /**
@@ -783,27 +620,7 @@ void CInput::Close()
 	m_plugin->Close();
 
 #ifdef _DEBUG_TIMER_
-	if(m_bDebugTimer)
-	{
-		SOUNDFORMAT *fmt = GetFormat();
-		assert(fmt->bitsPerSample > 0);
-		int sampleSize = fmt->bitsPerSample / 8;
-
-		printf("%s\n", GetName());
-
-		float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
-		float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
-		float amr = afsz * sampleSize / (afmt / 1000.f);
-		if(amr < 1024.f)
-			printf("Mixing rate:\t%.2f b/sec\n", amr);
-		else if(amr > 1024.f*1024.f)
-			printf("Mixing rate:\t%.2f Mb/sec\n", amr / (1024.f*1024.f));
-		else
-			printf("Mixing rate:\t%.2f Kb/sec\n", amr / 1024.f);
-		printf("Average frame mixing time:\t%f ms\n", afmt);
-		printf("Average frame size:\t\t%.2f samples\n", afsz);
-	}
-	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
+	_debugPrint();
 #endif // _DEBUG_TIMER_
 }
 
@@ -818,6 +635,56 @@ void CInput::_recalcVariables()
 
 //	assert(m_nSamplesToBytes > 0);
 }
+
+
+
+
+#ifdef _DEBUG_TIMER_
+void CInput::_debugStartMeasuring()
+{
+	clock_t start = 0;
+	if(m_bDebugTimer)
+		start = clock();
+}
+
+void CInput::_debugStopMeasuring()
+{
+	if(m_bDebugTimer && readBytes>0)
+	{
+		m_dwSpeed += clock() - start;
+		m_nFrameSize += size / m_nSamplesToBytes;
+		m_nFrameCount++;
+	}
+}
+
+void CInput::_debugPrint()
+{
+	if(m_bDebugTimer)
+	{
+		SOUNDFORMAT *fmt = GetFormat();
+		assert(fmt->bitsPerSample > 0);
+		int sampleSize = fmt->bitsPerSample / 8;
+
+		printf("%s\n", GetName());
+
+		float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
+		float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
+		float amr = afsz * sampleSize / (afmt / 1000.f);
+		if(amr < 1024.f)
+			printf("Read time:\t%.2f b/sec\n", amr);
+		else if(amr > 1024.f*1024.f)
+			printf("Read time:\t%.2f Mb/sec\n", amr / (1024.f*1024.f));
+		else
+			printf("Mixing rate:\t%.2f Kb/sec\n", amr / 1024.f);
+		printf("Average read time:\t%f ms\n", afmt);
+		printf("Average frame size:\t%.2f samples\n", afsz);
+	}
+	m_nFrameSize = m_dwSpeed = m_nFrameCount = 0;
+}
+#endif // _DEBUG_TIMER_
+
+
+
 
 /*
 int CInput::getEnd()
@@ -890,3 +757,25 @@ BOOL CInput::_isEnabledAt(int offset)
 	return FALSE;
 }
 */
+
+
+/*
+int CInput::_read(BYTE *data, int size)
+{
+	int result = 0;
+	IFloopySoundInput *src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
+	if(src)
+	{
+		if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())
+		{
+			assert(size > 0);
+			int len = src->Read(data, size);
+			if(EOF != len)
+				result = len;
+		}
+	}
+	else
+		result = s - m_offset;
+}
+*/
+

@@ -15,7 +15,7 @@
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 
-#define LOCAL_PARAM_COUNT	1
+//#define LOCAL_PARAM_COUNT	1
 //#define _DEBUG_TIMER_
 
 /**
@@ -103,6 +103,7 @@ private:
 	int _getEndOffset();
 	void _recalcVariables();
 //	BOOL _isEnabledAt(int offset);
+//	int _read(BYTE *data, int size);
 
 //	int getSize();
 //	int getRelativeSize()
@@ -117,10 +118,6 @@ private:
 	char m_szLastError[100];
 	char m_szObjPath[MAX_PATH];
 
-	int m_nStartOffset;
-	int m_nEndOffset;
-	int m_nSamplesToBytes;
-
 	UpdateCallback m_callback;
 
 	int m_offset;
@@ -132,7 +129,13 @@ private:
 
 	float m_fDebug;
 
+	/// Optimization variables
+	int m_nStartOffset, m_nEndOffset, m_nSamplesToBytes;
+
 #ifdef _DEBUG_TIMER_
+	void	_debugStartMeasuring();
+	void	_debugStopMeasuring();
+	void	_debugPrint();
 	BOOL	m_bDebugTimer;
 	DWORD	m_dwSpeed;
 	int		m_nFrameCount;

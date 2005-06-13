@@ -17,7 +17,6 @@ CEngine::CEngine(HMODULE hModule)
 {
 	m_hModule = hModule;
 
-	//m_offset = m_stopAt = m_length = 0;
 	m_pFirst = m_pLast = NULL;
 	memset(m_szDisplayname, 0, sizeof(m_szDisplayname));
 	memset(m_szLastError, 0, sizeof(m_szLastError));
@@ -28,20 +27,10 @@ CEngine::CEngine(HMODULE hModule)
 
 	if(hModule)
 	{
-		//char path[MAX_PATH] = {0};
-		//getcwd(m_szPath, MAX_PATH);
 		GetModuleFileName(hModule, m_szPath, MAX_PATH);
 		char *tmp = strrchr(m_szPath, '\\');
 		if(tmp)
 			*(tmp+1) = '\0';
-		//GetModuleFileName(GetModuleHandle(NULL), m_szPath, MAX_PATH);
-		/*FILE *fp = fopen("engine.cfg", "r");
-		if(fp)
-		{
-			fscanf(fp, "%s", m_szPath);
-			//chdir(m_szPath);
-			fclose(fp);
-		}*/
 	}
 }
 
@@ -109,7 +98,6 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 				delete engine;
 				return NULL;
 			}
-			//type = TYPE_ENGINE;
 			obj = new CInput(m_callback);
 			if(!((CInput*)obj)->Create(engine))
 			{
@@ -291,65 +279,7 @@ char *CEngine::getPluginName(char *filename)
 	}
 	return NULL;
 }
-/*
-void CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
-{
-	tComponent *tmp = m_pFirst;
-	while(tmp)
-	{
-		if(obj == tmp->obj)
-		{
-			switch(tmp->type)
-			{
-			case TYPE_INPUT:
-				CInput *input = (CInput*)obj;
-				input->SetParamAt(offset, index, value);
-			}
-			return;
-		}
-		tmp = tmp->next;
-	}
-}
 
-BOOL CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
-{
-	tComponent *tmp = m_pFirst;
-	while(tmp)
-	{
-		if(obj == tmp->obj)
-		{
-			switch(tmp->type)
-			{
-			case TYPE_INPUT:
-				CInput *input = (CInput*)obj;
-				return input->ResetParamAt(offset, index);
-			}
-			return FALSE;
-		}
-		tmp = tmp->next;
-	}
-	return FALSE;
-}
-
-void CEngine::EnableAt(IFloopy *obj, int offset, BOOL bEnable)
-{
-	tComponent *tmp = m_pFirst;
-	while(tmp)
-	{
-		if(obj == tmp->obj)
-		{
-			switch(tmp->type)
-			{
-			case TYPE_INPUT:
-				CInput *input = (CInput*)obj;
-				input->EnableAt(offset, bEnable);
-			}
-			return;
-		}
-		tmp = tmp->next;
-	}
-}
-*/
 void CEngine::Close()
 {
 	tComponent *tmp = m_pFirst;
@@ -438,5 +368,65 @@ void CEngine::dump(FILE *fp)
 /*
 enumObjType CEngine::createObject(char *filename)
 {
+}
+*/
+
+/*
+void CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
+{
+	tComponent *tmp = m_pFirst;
+	while(tmp)
+	{
+		if(obj == tmp->obj)
+		{
+			switch(tmp->type)
+			{
+			case TYPE_INPUT:
+				CInput *input = (CInput*)obj;
+				input->SetParamAt(offset, index, value);
+			}
+			return;
+		}
+		tmp = tmp->next;
+	}
+}
+
+BOOL CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
+{
+	tComponent *tmp = m_pFirst;
+	while(tmp)
+	{
+		if(obj == tmp->obj)
+		{
+			switch(tmp->type)
+			{
+			case TYPE_INPUT:
+				CInput *input = (CInput*)obj;
+				return input->ResetParamAt(offset, index);
+			}
+			return FALSE;
+		}
+		tmp = tmp->next;
+	}
+	return FALSE;
+}
+
+void CEngine::EnableAt(IFloopy *obj, int offset, BOOL bEnable)
+{
+	tComponent *tmp = m_pFirst;
+	while(tmp)
+	{
+		if(obj == tmp->obj)
+		{
+			switch(tmp->type)
+			{
+			case TYPE_INPUT:
+				CInput *input = (CInput*)obj;
+				input->EnableAt(offset, bEnable);
+			}
+			return;
+		}
+		tmp = tmp->next;
+	}
 }
 */
