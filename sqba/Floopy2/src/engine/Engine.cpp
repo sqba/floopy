@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "Engine.h"
-#include "Storage.h"
+#include "engine.h"
+#include "storage.h"
 #include <assert.h>
 #include <direct.h>
 

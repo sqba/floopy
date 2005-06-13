@@ -6,7 +6,7 @@
 #include <time.h>
 #include <assert.h>
 #include <stdio.h>
-#include "Input.h"
+#include "input.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
