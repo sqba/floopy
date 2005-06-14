@@ -88,22 +88,24 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 		name = tmp + 1;
 
 	SOUNDFORMAT *fmt = input->GetFormat();
-	assert(fmt->frequency > 0);
-	float size = (float)input->GetSize() / (float)fmt->frequency;
+	if(fmt->frequency > 0)
+	{
+		float size = (float)input->GetSize() / (float)fmt->frequency;
 
-	float len = (float)input->GetLength() / (float)fmt->frequency;
+		float len = (float)input->GetLength() / (float)fmt->frequency;
 
-	char *space = new char[level*2+1];
-	memset(space, ' ', level*2);
-	//memset(space, 0xc3, level);
-	//space[level-1] = 0xc0;
-	space[level*2] = 0;
+		char *space = new char[level*2+1];
+		memset(space, ' ', level*2);
+		//memset(space, 0xc3, level);
+		//space[level-1] = 0xc0;
+		space[level*2] = 0;
 
-	//fprintf(fp, "\n%s%s (%.3f) (%.3f)", space, name, size, len);
-	//fprintf(fp, "\n%s%s (%.3f-%d) (%.3f-%d)", space, name, size, input->GetSize(), len, input->GetLength());
-	fprintf(fp, "\n%s%s", space, name);
+		//fprintf(fp, "\n%s%s (%.3f) (%.3f)", space, name, size, len);
+		//fprintf(fp, "\n%s%s (%.3f-%d) (%.3f-%d)", space, name, size, input->GetSize(), len, input->GetLength());
+		fprintf(fp, "\n%s%s", space, name);
 
-	delete space;
+		delete space;
+	}
 
 	int count = input->GetInputCount();
 	
@@ -184,7 +186,13 @@ void main(int argc, char* argv[])
 		return;
 	}
 
-	IFloopySoundInput *region = engine->CreateInput("playrgn");
+	IFloopySoundInput *region = engine->CreateInput("stdlib.playrgn");
+	if(!region)
+	{
+		fprintf(stderr, "stdlib.playrgn not found!\n");
+		return;
+	}
+
 	IFloopySoundOutput *output = NULL;
 
 	region->SetSource( engine );
@@ -210,7 +218,7 @@ void main(int argc, char* argv[])
 	memcpy(&format, fmt, sizeof(SOUNDFORMAT));
 
 //	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
-	outfile = GetArg(argc, argv, "o", "waveout");
+	outfile = GetArg(argc, argv, "o", "stdlib.waveout");
 	output = engine->CreateOutput(outfile, format);
 	/*if(!output)
 	{

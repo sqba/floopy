@@ -64,9 +64,9 @@ __declspec( dllexport ) IFloopySoundOutput *CreateOutput(char *name, SOUNDFORMAT
 
 	//if( stricmp(name, "svgfile") )
 	//	return NULL;
-	if( stricmp(name, "waveout") )
+	if( 0 == stricmp(name, "waveout") )
 		return new CWaveOut(fmt);
-	if( stricmp(name, "wavfile") )
+	if( 0 == stricmp(name, "wavfile") )
 		return new CWavFileOut(fmt.frequency, fmt.bitsPerSample, fmt.channels);
 
 	return NULL;

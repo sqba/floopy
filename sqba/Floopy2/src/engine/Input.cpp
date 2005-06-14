@@ -83,7 +83,8 @@ BOOL CInput::Create(char *name)
 	}
 	/////////////////////////////////////////
 
-	char *filename = new char[strlen(library) + 5];
+	char *tmpstr = new char[strlen(library) + 5];
+	char *filename = tmpstr;
 	strcpy(filename, library);
 	strcat(filename, PLUG_EXT);
 
@@ -118,7 +119,7 @@ BOOL CInput::Create(char *name)
 	else
 		sprintf(m_szLastError, "Error: %s not found.\n\0", filename);
 
-	delete[] filename;
+	delete[] tmpstr;
 	return result;
 }
 
