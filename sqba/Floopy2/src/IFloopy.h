@@ -120,6 +120,7 @@ public:
 	virtual float GetParam(int index)				{ return 0.f; }
 	virtual float GetParamMin(int index)			{ return 0.f; }
 	virtual float GetParamMax(int index)			{ return 0.f; }
+	virtual float GetParamStep(int index)			{ return 0.f; }
 	virtual char *GetParamName(int index)			{ return NULL; }
 	virtual char *GetParamDesc(int index)			{ return NULL; }
 	virtual BOOL  GetParam(int index, float *value)	{ return FALSE; }
