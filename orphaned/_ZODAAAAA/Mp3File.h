@@ -44,7 +44,7 @@ public:
 	CMp3File();
 	virtual ~CMp3File();
 
-	char *GetName()			{ return (strlen(m_filename)>0 ? m_filename : "mp3file"); }
+	char *GetName()			{ return (strlen(m_filename)>0 ? m_filename : "stdlib.mp3file"); }
 	char *GetDescription()	{ return "Mp3 File Reader"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

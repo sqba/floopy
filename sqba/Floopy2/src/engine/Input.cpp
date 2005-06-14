@@ -36,6 +36,8 @@ CInput::CInput(UpdateCallback func)
 	// Optimization variables
 	m_nStartOffset = m_nEndOffset = m_nSamplesToBytes = 0;
 
+	m_red = m_green = m_blue = 255;
+
 #ifdef _DEBUG_TIMER_
 	// Timing valiables
 	m_bDebugTimer = TRUE;

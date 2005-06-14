@@ -17,7 +17,7 @@ public:
 	CMono2Stereo();
 	virtual ~CMono2Stereo();
 
-	char *GetName()			{ return "mono2stereo"; }
+	char *GetName()			{ return "stdlib.mono2stereo"; }
 	char *GetDescription()	{ return "Mono to stereo converter"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

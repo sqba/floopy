@@ -21,7 +21,7 @@ public:
 
 	int Read(BYTE *data, int size);
 
-	char *GetName()			{ return "volume"; }
+	char *GetName()			{ return "stdlib.volume"; }
 	char *GetDescription()	{ return "Volume control"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

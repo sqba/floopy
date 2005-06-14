@@ -17,7 +17,7 @@ public:
 	CEcho();
 	virtual ~CEcho();
 
-	char *GetName()			{ return "echo"; }
+	char *GetName()			{ return "stdlib.echo"; }
 	char *GetDescription()	{ return "Echo effect"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

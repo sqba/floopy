@@ -41,6 +41,11 @@ public:
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
+	BOOL GetColor(UINT *red, UINT *green, UINT *blue)
+		{ *red = m_red; *green = m_green; *blue = m_blue; return TRUE; }
+	void  SetColor(UINT red, UINT green, UINT blue)
+		{ m_red = red; m_green=green; m_blue=blue; }
+
 	BOOL Create(char *plugin);
 	BOOL Create(IFloopySoundEngine *src);
 
@@ -108,6 +113,7 @@ private:
 //	int getSize();
 //	int getRelativeSize()
 //	int getEnd();
+	UINT m_red, m_green, m_blue;
 
 protected:
 	int m_iCheck;	/** Some random number, used to check if the component was

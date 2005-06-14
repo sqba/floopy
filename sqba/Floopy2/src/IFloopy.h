@@ -20,6 +20,7 @@
 // Defines from windows.h
 //////////////////////////////////////////////////////////////////////
 typedef int                 INT;
+typedef unsigned int        UINT;
 typedef int                 BOOL;
 typedef unsigned short      WORD;
 typedef unsigned char       BYTE;
@@ -101,33 +102,19 @@ public:
 
 
 /*********************************************************************
- *! \class IFloopy
- *  \brief Main object interface.
+ *! \class IFloopyParam
+ *  \brief Functions for manipulating component's parameters.
  *  \author Filip Pavlovic
  *  \version 0.0
- *  \date 13. April 2005.
+ *  \date 14. June 2005.
+ *
+ *  Not to be directly overriden in implementations.
  *********************************************************************/
-class IFloopy
+class IFloopyParam
 {
 public:
-	IFloopy()			{ m_bEnabled = TRUE; m_nLastError = 0; }
-	virtual ~IFloopy()	{ }
+	IFloopyParam()			{ m_bEnabled = TRUE; }
 
-	/**
-	 * Returns class type identificator.
-	 * Used for runtime class identification.
-	 * Do not override in implementations!!!
-	 * @return class type identificator.
-	 */
-	virtual enumClassType GetType()	{ return TYPE_FLOOPY; }
-
-	// Component description
-	virtual char *GetName()			{ return "IFloopy"; }
-	virtual char *GetDescription()	{ return "IFloopy interface"; }
-	virtual char *GetVersion()		{ return "0.1"; }
-	virtual char *GetAuthor()		{ return "sqba"; }
-
-	// Component parameters
 	virtual int   GetParamCount()					{ return 0; }
 	virtual void  SetParam(int index, float value)	{ }
 	virtual float GetParam(int index)				{ return 0.f; }
@@ -141,22 +128,23 @@ public:
 	virtual void  Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
 	virtual BOOL  IsEnabled()				{ return m_bEnabled; }
 
-			int   GetLastError()			{ return m_nLastError; }
-	virtual char *GetLastErrorDesc()		{ return NULL; }
-	//virtual BOOL  GetLastError(char *str, int len)	{ return FALSE; }
+private:
+	BOOL m_bEnabled;	/** Is this component disabled or enabled. */
+};
 
-	/** Do not override in implementations, handled by the engine */
-	virtual char *GetDisplayName()					{ return NULL; }
 
-	/** Do not override in implementations, handled by the engine */
-	virtual void  SetDisplayName(char *name, int len){ }
-
-	/** Do not override in implementations, handled by the engine */
-	virtual char *GetPath()							{ return NULL; }
-
-	virtual BOOL Open(char *filename)				{ return FALSE; }
-	virtual void Close()							{ }
-
+/*********************************************************************
+ *! \class IFloopyTimeline
+ *  \brief Functions for manipulating component's the timeline.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 14. June 2005.
+ *
+ *  Not to be directly overriden in implementations.
+ *********************************************************************/
+class IFloopyTimeline : public IFloopyParam
+{
+public:
 	/**
 	 * Returns next sample position at which a parameter change occurs.
 	 * Do not override in implementations, handled by the engine.
@@ -189,11 +177,75 @@ public:
 	 * @param bEnable enable or disable.
 	 */
 	virtual void EnableAt(int offset, BOOL bEnable) {}
+};
+
+
+/*********************************************************************
+ *! \class IFloopyDisplay
+ *  \brief Functions used by the GUI.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 14. June 2005.
+ *
+ *  Not to be directly overriden in implementations.
+ *********************************************************************/
+class IFloopyDisplay : public IFloopyTimeline
+{
+public:
+	/** Do not override in implementations, handled by the engine */
+	virtual char *GetDisplayName()					{ return NULL; }
+
+	/** Do not override in implementations, handled by the engine */
+	virtual void  SetDisplayName(char *name, int len){ }
+
+	/** Do not override in implementations, handled by the engine */
+	virtual BOOL GetColor(UINT *red, UINT *green, UINT *blue) { return FALSE; }
+
+	/** Do not override in implementations, handled by the engine */
+	virtual void  SetColor(UINT red, UINT green, UINT blue){ }
+};
+
+
+/*********************************************************************
+ *! \class IFloopy
+ *  \brief Main object interface.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 13. April 2005.
+ *
+ *  Not to be directly overriden in implementations.
+ *********************************************************************/
+class IFloopy : public IFloopyDisplay
+{
+public:
+	IFloopy()			{ m_nLastError = 0; }
+	virtual ~IFloopy()	{ }
+
+	/**
+	 * Returns class type identificator.
+	 * Used for runtime class identification.
+	 * Do not override in implementations!!!
+	 * @return class type identificator.
+	 */
+	virtual enumClassType GetType()	{ return TYPE_FLOOPY; }
+
+	// Component description
+	virtual char *GetName()			{ return "IFloopy"; }
+	virtual char *GetDescription()	{ return "IFloopy interface"; }
+	virtual char *GetVersion()		{ return "0.1"; }
+	virtual char *GetAuthor()		{ return "sqba"; }
+
+			int   GetLastError()			{ return m_nLastError; }
+	virtual char *GetLastErrorDesc()		{ return NULL; }
+	//virtual BOOL  GetLastError(char *str, int len)	{ return FALSE; }
+
+	/** Do not override in implementations, handled by the engine */
+	virtual char *GetPath()							{ return NULL; }
+
+	virtual BOOL Open(char *filename)				{ return FALSE; }
+	virtual void Close()							{ }
 
 //	virtual void SetCallback(IFloopyCallback *cbk) { m_callback = cbk; }
-
-private:
-	BOOL m_bEnabled;	/** Is this component disabled or enabled. */
 //	IFloopyCallback *m_callback;
 
 protected:

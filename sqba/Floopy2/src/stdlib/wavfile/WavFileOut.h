@@ -32,7 +32,7 @@ public:
 	void Close();
 
 	//char *GetName()			{ return "wavfile"; }
-	char *GetName()			{ return (m_pFile ? m_filename : "wavfile"); }
+	char *GetName()			{ return (m_pFile ? m_filename : "stdlib.wavfile"); }
 	char *GetDescription()	{ return "WAV file writer"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

@@ -90,12 +90,37 @@ void loadTimelines(tSessionInfo *si);
 
 
 
+void loadColor(char *str, UINT *r, UINT *g, UINT *b)
+{
+	char seps[]   = ",";
+	char *token = strtok( str, seps );
+	int i=0;
+	while( token != NULL )
+	{
+		switch(i)
+		{
+		case 0:
+			*r = atoi(token);
+			break;
+		case 1:
+			*g = atoi(token);
+			break;
+		case 2:
+			*b = atoi(token);
+			break;
+		}
+		token = strtok( NULL, seps );
+		i++;
+	}
+}
+
 
 void startElement(void *userData, const char *name, const char **atts)
 {
 	tSessionInfo *si = (tSessionInfo*)userData;
 	XML_Parser parser = si->parser;
 	si->gElement = name;
+	UINT r=255, g=255, b=255;
 	if(0 == strcmp(name, "input"))
 	{
 		int n = XML_GetSpecifiedAttributeCount(parser);
@@ -112,6 +137,11 @@ void startElement(void *userData, const char *name, const char **atts)
 						source = (char*)atts[i+1];
 					if(0==strcmp(atts[i], "name"))
 						desc = (char*)atts[i+1];
+					if(0==strcmp(atts[i], "color"))
+					{
+						char *tmp = (char*)atts[i+1];
+						loadColor(tmp, &r, &g, &b);
+					}
 				}
 			}
 
@@ -131,6 +161,7 @@ void startElement(void *userData, const char *name, const char **atts)
 				}
 				else
 					memcpy(tmp, source, strlen(source));
+				
 				IFloopySoundInput *input = si->gEngine->CreateInput(tmp);
 				if(input && si->gInput)
 				{
@@ -138,6 +169,7 @@ void startElement(void *userData, const char *name, const char **atts)
 					si->gInput = input;
 					if(desc)
 						input->SetDisplayName(desc, strlen(desc));
+					input->SetColor(r, g, b);
 					si->gObjects[si->gIndex].obj = input;
 					si->buff[++si->level] = si->gInput;
 				}
@@ -304,17 +336,22 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 
 	BOOL bEngine = (input->GetType() == TYPE_FLOOPY_ENGINE);
 
+	UINT r=0, g=0, b=0;
+	input->GetColor(&r, &g, &b);
+
 	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
 	if(bEngine && si->bInitialized)
 	{
 		char *path = input->GetPath();
 		/*if(0 == strnicmp(path, si->filename, strlen(si->gPath)))
 			path += strlen(si->gPath);*/
-		fprintf(fp, "%s<input source='%s'>\n", space, path);
+		fprintf(fp, "%s<input source='%s' color='%d,%d,%d'>\n", 
+			space, path, r, g, b);
 		recursive = FALSE;
 	}
 	else
-		fprintf(fp, "%s<input source='%s'>\n", space, input->GetName());
+		fprintf(fp, "%s<input source='%s' color='%d,%d,%d'>\n", 
+		space, input->GetName(), r, g, b);
 
 	si->bInitialized = TRUE;
 

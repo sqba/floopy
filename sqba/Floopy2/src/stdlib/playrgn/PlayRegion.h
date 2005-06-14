@@ -18,7 +18,7 @@ public:
 	CPlayRegion();
 	virtual ~CPlayRegion();
 
-	char *GetName()			{ return "playrgn"; }
+	char *GetName()			{ return "stdlib.playrgn"; }
 	char *GetDescription()	{ return "Start/Stop At Sample"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

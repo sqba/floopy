@@ -24,7 +24,7 @@ public:
 	CMixer();
 	virtual ~CMixer();
 
-	char *GetName()			{ return "mixer"; }
+	char *GetName()			{ return "stdlib.mixer"; }
 	char *GetDescription()	{ return "Mixer Component"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

@@ -18,7 +18,7 @@ public:
 	CLoop();
 	virtual ~CLoop();
 
-	char *GetName()			{ return "loop"; }
+	char *GetName()			{ return "stdlib.loop"; }
 	char *GetDescription()	{ return "Looping component"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }

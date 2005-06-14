@@ -17,7 +17,7 @@ public:
 	CCache();
 	virtual ~CCache();
 
-	char *GetName()				{ return "cache"; }
+	char *GetName()				{ return "stdlib.cache"; }
 	char *GetDescription()		{ return "Stores entire source input in memory"; }
 	char *GetVersion()			{ return "0.1"; }
 	char *GetAuthor()			{ return "sqba"; }

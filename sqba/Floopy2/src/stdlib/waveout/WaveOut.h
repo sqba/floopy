@@ -38,7 +38,7 @@ public:
 
 	int Write(BYTE *data, int size);
 
-	char *GetName()			{ return "waveout"; }
+	char *GetName()			{ return "stdlib.waveout"; }
 	char *GetDescription()	{ return "Wave Out"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
