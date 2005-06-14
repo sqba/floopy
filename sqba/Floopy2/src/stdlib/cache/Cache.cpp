@@ -85,24 +85,29 @@ BOOL CCache::createBuffer()
 			// Allocate the memory
 			m_nSize = size * samplesToBytes();
 			m_pBuffer = new BYTE[m_nSize];
-			memset(m_pBuffer, 0, m_nSize);
-
-			// Fill the buffer
-			src->Reset();
-			size = (1024 < m_nSize ? 1024 : m_nSize);
-			BYTE *pbuff = m_pBuffer;
-			int len = 0;
-			while(len < m_nSize)
+			if(m_pBuffer)
 			{
-				if((len + size) > m_nSize)
-					size = m_nSize - len;
-				int read = src->Read(pbuff, size);
-				if(read == EOF)
-					break; // End of file
-				pbuff += read;
-				len += read;
+				memset(m_pBuffer, 0, m_nSize);
+
+				// Fill the buffer
+				src->Reset();
+				size = (1024 < m_nSize ? 1024 : m_nSize);
+				BYTE *pbuff = m_pBuffer;
+				int len = 0;
+				while(len < m_nSize)
+				{
+					if((len + size) > m_nSize)
+						size = m_nSize - len;
+					int read = src->Read(pbuff, size);
+					if(read == EOF)
+						break; // End of file
+					pbuff += read;
+					len += read;
+				}
+				m_nSize = len;
 			}
-			m_nSize = len;
+			else
+				return FALSE;
 		}
 	}
 

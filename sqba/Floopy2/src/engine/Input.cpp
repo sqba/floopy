@@ -204,11 +204,17 @@ int CInput::Read(BYTE *data, int size)
 				assert(size > 0);
 				len = src->Read(data, size);
 				if(EOF != len)
+				{
+					data += len;
 					readBytes += len;
+				}
 			}
 		}
 		else
+		{
 			len = s - m_offset;
+			data += len;
+		}
 		
 		m_offset += len;
 	
@@ -221,9 +227,9 @@ int CInput::Read(BYTE *data, int size)
 	{
 		if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())
 		{
-			if(size > readBytes)
+			if(origSize > readBytes)
 			{
-				size = size - readBytes;
+				size = origSize - readBytes;
 				assert(size > 0);
 				len = src->Read(data, size);
 				if(EOF != len)
@@ -421,7 +427,6 @@ void CInput::applyParamsAt(int offset)
 	int sample = -1;
 	if(m_nSamplesToBytes)
 		sample = offset / m_nSamplesToBytes;
-
 
 	//if(_isEngine() && (offset == _getStartOffset()))
 	if(_isEngine() && (offset == m_nStartOffset))
