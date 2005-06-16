@@ -112,11 +112,11 @@ BOOL CInput::Create(char *name)
 				result = TRUE;
 			}
 			else
-				sprintf(m_szLastError, "Error: %s not created by %s.\n\0", plugin, filename);
+				sprintf(m_szLastError, "Error: Plugin '%s' not created by %s.\n\0", plugin, filename);
 		}
 		else
 			//fprintf(stderr, "Error: %s() not found in %s.\n", PROC_NAME, filename);
-			sprintf(m_szLastError, "Error: %s() not found in %s.\n\0", PROC_NAME, filename);
+			sprintf(m_szLastError, "Error: Function %s not found in %s.\n\0", PROC_NAME, filename);
 	}
 	else
 		sprintf(m_szLastError, "Error: %s not found.\n\0", filename);
@@ -178,69 +178,52 @@ int CInput::Read(BYTE *data, int size)
 		}
 	}
 
-#ifdef _DEBUG_TIMER_
-	_debugStartMeasuring();
-#endif // _DEBUG_TIMER_
-
-	int s = m_offset;
+	int offset = m_offset;
 	int readBytes = 0;
 	int endpos = m_offset + size;
 	int len = 0;
 	IFloopySoundInput *src = m_plugin;
-	int origSize = size;
+//	int origSize = size;
 //	BOOL bEOF = FALSE;
+
+#ifdef _DEBUG_TIMER_
+	_debugStartMeasuring();
+#endif // _DEBUG_TIMER_
 
 	// Apply all due parameters
 	applyParamsAt( m_offset );
 
 //	while(((s=m_timeline.GetNextOffset(s)) < endpos) && (s>0) && !bEOF)
-	while(((s=m_timeline.GetNextOffset(s)) < endpos) && (s>0))
+	while(((offset=m_timeline.GetNextOffset(offset)) < endpos) && (offset>0))
 	{
 		// Fill small chunks between parameter changes
 		src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
-		if(src)
-		{
-			if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())
-			{
-				size = s - m_offset;
-				assert(size > 0);
-				len = src->Read(data, size);
-				if(EOF != len)
-				{
-					data += len;
-					readBytes += len;
-				}
-//				else
-//					bEOF = TRUE;
-			}
-		}
+		if(src && (IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled()))
+			len = src->Read(data, offset - m_offset);
 		else
+			len = offset - m_offset;
+
+		if(EOF != len)
 		{
-			len = s - m_offset;
 			data += len;
+			readBytes += len;
+			m_offset += len;
 		}
-		
-		m_offset += len;
 	
-		applyParamsAt( s );
+		applyParamsAt( offset );
 	}
 
 //	if( !bEOF )
 //	{
 		// Fill the rest of the data
 		src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
-		if(src)
+		if(src && (IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled()))
 		{
-			if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())
+			if(size > readBytes)
 			{
-				if(origSize > readBytes)
-				{
-					size = origSize - readBytes;
-					assert(size > 0);
-					len = src->Read(data, size);
-					if(EOF != len)
-						readBytes += len;
-				}
+				len = src->Read(data, size - readBytes);
+				if(EOF != len)
+					readBytes += len;
 			}
 		}
 //	}
@@ -257,9 +240,9 @@ int CInput::Read(BYTE *data, int size)
 		int start = m_nStartOffset;//_getStartOffset();
 		int end = m_nEndOffset;//_getEndOffset();
 		if(m_offset >= (start + end))
-			readBytes = (_isEngine() ? origSize : EOF);
+			readBytes = (_isEngine() ? size : EOF);
 		else
-			return origSize;
+			return size;
 	}
 
 	return readBytes;
@@ -655,6 +638,7 @@ void CInput::_recalcVariables()
 
 
 #ifdef _DEBUG_TIMER_
+
 void CInput::_debugStartMeasuring()
 {
 	clock_t start = 0;
@@ -696,6 +680,7 @@ void CInput::_debugPrint()
 	}
 	m_nFrameSize = m_dwSpeed = m_nFrameCount = 0;
 }
+
 #endif // _DEBUG_TIMER_
 
 
