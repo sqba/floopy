@@ -163,15 +163,14 @@ int CInput::Read(BYTE *data, int size)
 {
 	assert(size >= 0);
 
+	// Passed the end
+	if(m_offset >= m_nStartOffset + m_nEndOffset)
+		return EOF;
+
 	if(_isEngine())
 	{
-		// Passed the end
-		if(m_offset > m_nEndOffset)
-			return EOF;
-
 		// Avoid wasting processor time
-		int offset = m_offset + size;
-		if(offset < m_nStartOffset)
+		if((m_offset + size) < m_nStartOffset)
 		{
 			m_offset += size;
 			return size;
@@ -183,8 +182,7 @@ int CInput::Read(BYTE *data, int size)
 	int endpos = m_offset + size;
 	int len = 0;
 	IFloopySoundInput *src = m_plugin;
-//	int origSize = size;
-//	BOOL bEOF = FALSE;
+	BOOL bEOF = FALSE;
 
 #ifdef _DEBUG_TIMER_
 	_debugStartMeasuring();
@@ -193,8 +191,7 @@ int CInput::Read(BYTE *data, int size)
 	// Apply all due parameters
 	applyParamsAt( m_offset );
 
-//	while(((s=m_timeline.GetNextOffset(s)) < endpos) && (s>0) && !bEOF)
-	while(((offset=m_timeline.GetNextOffset(offset)) < endpos) && (offset>0))
+	while(((offset=m_timeline.GetNextOffset(offset)) < endpos) && (offset>0) && !bEOF)
 	{
 		// Fill small chunks between parameter changes
 		src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
@@ -209,12 +206,14 @@ int CInput::Read(BYTE *data, int size)
 			readBytes += len;
 			m_offset += len;
 		}
+		else
+			bEOF = TRUE;
 	
 		applyParamsAt( offset );
 	}
 
-//	if( !bEOF )
-//	{
+	if( !bEOF )
+	{
 		// Fill the rest of the data
 		src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
 		if(src && (IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled()))
@@ -226,24 +225,17 @@ int CInput::Read(BYTE *data, int size)
 					readBytes += len;
 			}
 		}
-//	}
-
-	m_offset = endpos;
+	}
 
 #ifdef _DEBUG_TIMER_
 	_debugStopMeasuring();
 #endif // _DEBUG_TIMER_
 
+
+	m_offset = endpos;
+
 	if(readBytes == 0)
-	{
-		// Check if we have reached the end.
-		int start = m_nStartOffset;//_getStartOffset();
-		int end = m_nEndOffset;//_getEndOffset();
-		if(m_offset >= (start + end))
-			readBytes = (_isEngine() ? size : EOF);
-		else
-			return size;
-	}
+		readBytes = size;
 
 	return readBytes;
 }
@@ -281,69 +273,21 @@ void CInput::MoveTo(int samples)
 }
 
 /**
- * Returns number of samples from the beginning.
- * @return number of samples
- */
-int CInput::GetLength()
-{
-	_recalcVariables();
-
-	int len = m_nEndOffset;//_getEndOffset();
-	/*int len = tmp > 0 ? tmp : GetSize();
-	if(GetSource())
-	{
-		int tmp = GetSource()->GetLength();
-		if(tmp > len)
-			len = tmp;
-	}*/
-
-	if(len == 0 && GetSource())
-	{
-		len = GetSource()->GetLength();
-		/*int d=1;
-		if(GetSource())
-		{
-			int tmp = GetSource()->GetLength();
-		}*/
-		if(len == 0)
-			len = GetSize();
-	}
-	else
-		len = GetSize();
-
-	/*if(_isEngine())
-	{
-		char *name = m_plugin->GetDisplayName();
-		if(0==strcmpi(name, "t.xml"))
-		{
-			int d=0;
-		}
-	}*/
-
-	return len;
-}
-
-/**
  * Returns the size of the track source.
  * @return number of samples
  */
 int CInput::GetSize()
 {
+	_recalcVariables();
+
 	int size = 0;
 
 	if(m_plugin)
 	{
-		if(m_nEndOffset == 0)
-			size = m_plugin->GetSize();
-		//else if(m_nEndOffset > m_offset)
-		//	size = (m_nEndOffset - m_offset) / m_nSamplesToBytes;
-		else if(m_nEndOffset > 0)
+		if(m_nEndOffset > 0)
 			size = m_nEndOffset / m_nSamplesToBytes;
-
-		IFloopySoundInput *src = IFloopySoundInput::GetSource();
-		int tmp = src->GetSize();
-		if(tmp > size)
-			size = tmp;
+		else
+			size = m_plugin->GetSize();
 	}
 
 	return size;

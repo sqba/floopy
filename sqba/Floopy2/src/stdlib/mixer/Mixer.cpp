@@ -248,8 +248,7 @@ int CMixer::GetSize()
 	int size = 0;
 	for(int i=0; i<m_nInputCount; i++)
 	{
-		//int tmp = m_pInputs[i]->GetSize();
-		int tmp = m_pInputs[i]->GetLength();
+		int tmp = m_pInputs[i]->GetSize();
 		if(tmp > size)
 			size = tmp;
 	}

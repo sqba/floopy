@@ -96,8 +96,6 @@ public:
 
 	char *GetPath() { return _isEngine() ? m_source->GetPath() : m_szObjPath; }
 
-	int GetLength();
-
 	enumClassType GetType() { return _isEngine() ? TYPE_FLOOPY_ENGINE : TYPE_FLOOPY_SOUND_INPUT; }
 
 private:
