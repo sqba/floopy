@@ -188,10 +188,12 @@ int CInput::Read(BYTE *data, int size)
 	int len = 0;
 	IFloopySoundInput *src = m_plugin;
 	int origSize = size;
+//	BOOL bEOF = FALSE;
 
 	// Apply all due parameters
 	applyParamsAt( m_offset );
 
+//	while(((s=m_timeline.GetNextOffset(s)) < endpos) && (s>0) && !bEOF)
 	while(((s=m_timeline.GetNextOffset(s)) < endpos) && (s>0))
 	{
 		// Fill small chunks between parameter changes
@@ -208,6 +210,8 @@ int CInput::Read(BYTE *data, int size)
 					data += len;
 					readBytes += len;
 				}
+//				else
+//					bEOF = TRUE;
 			}
 		}
 		else
@@ -221,22 +225,25 @@ int CInput::Read(BYTE *data, int size)
 		applyParamsAt( s );
 	}
 
-	// Fill the rest of the data
-	src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
-	if(src)
-	{
-		if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())
+//	if( !bEOF )
+//	{
+		// Fill the rest of the data
+		src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
+		if(src)
 		{
-			if(origSize > readBytes)
+			if(IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled())
 			{
-				size = origSize - readBytes;
-				assert(size > 0);
-				len = src->Read(data, size);
-				if(EOF != len)
-					readBytes += len;
+				if(origSize > readBytes)
+				{
+					size = origSize - readBytes;
+					assert(size > 0);
+					len = src->Read(data, size);
+					if(EOF != len)
+						readBytes += len;
+				}
 			}
 		}
-	}
+//	}
 
 	m_offset = endpos;
 
