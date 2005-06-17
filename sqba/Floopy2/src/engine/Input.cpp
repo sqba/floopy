@@ -247,29 +247,23 @@ int CInput::Read(BYTE *data, int size)
 void CInput::MoveTo(int samples)
 {
 //	_recalcVariables();
-	if(m_nSamplesToBytes == 0)
-		return;
 
-	m_offset = samples * m_nSamplesToBytes;
+	if(m_nSamplesToBytes > 0)
+	{
+		m_offset = samples * m_nSamplesToBytes;
 
-	applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
+		applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 
-//	IFloopySoundInput::Enable(_isEnabledAt(m_offset));
+		if( _isEngine() )
+		{
+			int start = m_nStartOffset / m_nSamplesToBytes;
+			if(start > 0 && samples > start)
+				samples -= start;
+		}
 
-//	_recalcVariables();
-
-	///////////////////////////////////////////////////////////
-	//int start = _getStartOffset() / _getSamplesToBytes();
-	int start = m_nStartOffset / m_nSamplesToBytes;
-	if(_isEngine() && start > 0 && samples > start)
-		samples -= start;
-	///////////////////////////////////////////////////////////
-
-//	if(m_bRecording)
-//		m_timeline.Set(m_offset, TIMELINE_PARAM_MOVETO, (float)m_offset);
-
-	if(NULL != m_source)
-		m_source->MoveTo(samples);
+		if(NULL != m_source)
+			m_source->MoveTo(samples);
+	}
 }
 
 /**
