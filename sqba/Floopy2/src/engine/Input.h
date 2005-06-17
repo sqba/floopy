@@ -41,10 +41,10 @@ public:
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
-	BOOL GetColor(UINT *red, UINT *green, UINT *blue)
-		{ *red = m_red; *green = m_green; *blue = m_blue; return TRUE; }
-	void  SetColor(UINT red, UINT green, UINT blue)
-		{ m_red = red; m_green=green; m_blue=blue; }
+	BOOL GetColor(UINT *r, UINT *g, UINT *b)
+		{ *r = m_red; *g = m_green; *b = m_blue; return TRUE; }
+	void  SetColor(UINT r, UINT g, UINT b)
+		{ m_red = r; m_green=g; m_blue=b; }
 
 	BOOL Create(char *plugin);
 	BOOL Create(IFloopySoundEngine *src);
@@ -58,25 +58,25 @@ public:
 
 	int GetSize();
 
-	int   GetParamCount();//					{ return m_plugin->GetParamCount(); }
-	void  SetParam(int index, float value);//	{ m_plugin->SetParam(index, value); }
-	float GetParam(int index);//				{ return m_plugin->GetParam(index); }
+	int   GetParamCount();
+	void  SetParam(int index, float value);
+	float GetParam(int index);
 	BOOL GetParam(int index, float *value);
-	char *GetParamName(int index);//			{ return m_plugin->GetParamName(index); }
-	char *GetParamDesc(int index);//			{ return m_plugin->GetParamDesc(index); }
-	int   GetParamIndex(char *name);//	{ return m_plugin->GetParamIndex(name); }
+	char *GetParamName(int index);
+	char *GetParamDesc(int index);
+	int   GetParamIndex(char *name);
 
 	BOOL SetSource(IFloopySoundInput *src);
-	IFloopySoundInput *GetSource()			{ return m_plugin ? m_plugin->GetSource() : NULL; }
+	IFloopySoundInput *GetSource()
+		{ return m_plugin ? m_plugin->GetSource() : NULL; }
 
-	IFloopySoundInput *GetSource(int index)	{ return m_plugin ? m_plugin->GetSource(index) : NULL; }
+	IFloopySoundInput *GetSource(int index)
+		{ return m_plugin ? m_plugin->GetSource(index) : NULL; }
 
 	int GetNextOffset(int offset);
 
-	int GetInputCount() { return (m_plugin ? m_plugin->GetInputCount() : 0); }
-
-	//SOUNDFORMAT *GetFormat() { return m_plugin->GetFormat(); }
-	//SOUNDFORMAT *GetFormat() { return IFloopySoundInput::GetFormat(); }
+	int GetInputCount()
+		{ return (m_plugin ? m_plugin->GetInputCount() : 0); }
 
 	void SetParamAt(int offset, int index, float value);
 	BOOL ResetParamAt(int offset, int index);
@@ -114,8 +114,8 @@ private:
 	UINT m_red, m_green, m_blue;
 
 protected:
-	int m_iCheck;	/** Some random number, used to check if the component was
-						created by the same engine */
+	int m_iCheck;	/** Some random number, used to check if the
+						component was created by the same engine */
 
 private:
 	char m_name[50];
@@ -137,11 +137,12 @@ private:
 	int m_nStartOffset, m_nEndOffset, m_nSamplesToBytes;
 
 #ifdef _DEBUG_TIMER_
-	void	_debugStartMeasuring();
-	void	_debugStopMeasuring();
+	clock_t	_debugStartMeasuring();
+	void	_debugStopMeasuring(clock_t start, int size);
+	void	_debugFormatBytes(int bytes, char *str);
 	void	_debugPrint();
 	BOOL	m_bDebugTimer;
-	DWORD	m_dwSpeed;
+	clock_t	m_time;
 	int		m_nFrameCount;
 	int		m_nFrameSize;
 #endif // _DEBUG_TIMER_

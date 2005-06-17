@@ -41,7 +41,7 @@ CInput::CInput(UpdateCallback func)
 #ifdef _DEBUG_TIMER_
 	// Timing valiables
 	m_bDebugTimer = TRUE;
-	m_nFrameSize = m_dwSpeed = m_nFrameCount = 0;
+	m_nFrameSize = m_time = m_nFrameCount = 0;
 #endif // _DEBUG_TIMER_
 
 //	m_bRecording = FALSE;
@@ -170,7 +170,7 @@ int CInput::Read(BYTE *data, int size)
 	if(_isEngine())
 	{
 		// Avoid wasting processor time
-		if((m_offset + size) < m_nStartOffset)
+		if((m_offset + size) <= m_nStartOffset)
 		{
 			m_offset += size;
 			return size;
@@ -185,7 +185,7 @@ int CInput::Read(BYTE *data, int size)
 	BOOL bEOF = FALSE;
 
 #ifdef _DEBUG_TIMER_
-	_debugStartMeasuring();
+	clock_t start = _debugStartMeasuring();
 #endif // _DEBUG_TIMER_
 
 	// Apply all due parameters
@@ -228,14 +228,14 @@ int CInput::Read(BYTE *data, int size)
 	}
 
 #ifdef _DEBUG_TIMER_
-	_debugStopMeasuring();
+	_debugStopMeasuring(start, size);
 #endif // _DEBUG_TIMER_
 
 
 	m_offset = endpos;
 
 	if(readBytes == 0)
-		readBytes = size;
+		readBytes = bEOF ? EOF : size;
 
 	return readBytes;
 }
@@ -284,8 +284,10 @@ int CInput::GetSize()
 
 	if(m_plugin)
 	{
-		if(m_nEndOffset > 0)
+		if(m_nEndOffset > 0 && m_nSamplesToBytes > 0)
 			size = m_nEndOffset / m_nSamplesToBytes;
+		else if (m_nSamplesToBytes > 0)
+			size = m_nStartOffset / m_nSamplesToBytes + m_plugin->GetSize();
 		else
 			size = m_plugin->GetSize();
 	}
@@ -571,9 +573,9 @@ void CInput::Close()
  */
 void CInput::_recalcVariables()
 {
+	m_nSamplesToBytes	= _getSamplesToBytes();
 	m_nStartOffset		= _getStartOffset();
 	m_nEndOffset		= _getEndOffset();
-	m_nSamplesToBytes	= _getSamplesToBytes();
 
 //	assert(m_nSamplesToBytes > 0);
 }
@@ -583,46 +585,65 @@ void CInput::_recalcVariables()
 
 #ifdef _DEBUG_TIMER_
 
-void CInput::_debugStartMeasuring()
+clock_t CInput::_debugStartMeasuring()
 {
 	clock_t start = 0;
 	if(m_bDebugTimer)
 		start = clock();
+	return start;
 }
 
-void CInput::_debugStopMeasuring()
+void CInput::_debugStopMeasuring(clock_t start, int size)
 {
-	if(m_bDebugTimer && readBytes>0)
+	if(m_bDebugTimer)
 	{
-		m_dwSpeed += clock() - start;
-		m_nFrameSize += size / m_nSamplesToBytes;
+		m_time += clock() - start;
+		m_nFrameSize += size;
 		m_nFrameCount++;
 	}
+}
+
+void CInput::_debugFormatBytes(int bytes, char *str)
+{
+	if(bytes < 1024)
+		sprintf(str, "%d b", bytes);
+	else if(bytes > 1024 * 1024)
+		sprintf(str, "%.2f Mb", (float)bytes / (1024.f*1024.f));
+	else
+		sprintf(str, "%.2f Kb", (float)bytes / 1024.f);
 }
 
 void CInput::_debugPrint()
 {
 	if(m_bDebugTimer)
 	{
-		SOUNDFORMAT *fmt = GetFormat();
-		assert(fmt->bitsPerSample > 0);
-		int sampleSize = fmt->bitsPerSample / 8;
+		if(m_nSamplesToBytes > 0)
+		{
+			printf("%s\n", GetName());
 
-		printf("%s\n", GetName());
+			float avgFrameTimeMs  = (float)m_time / (float)m_nFrameCount;
+			float avgFrameBytes   = (float)m_nFrameSize / (float)m_nFrameCount;
+			float avgFrameSamples = avgFrameBytes / (float)m_nSamplesToBytes;
+			float avgFrameTimeSec = (float)avgFrameTimeMs / 1000.f;
 
-		float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
-		float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
-		float amr = afsz * sampleSize / (afmt / 1000.f);
-		if(amr < 1024.f)
-			printf("Read time:\t%.2f b/sec\n", amr);
-		else if(amr > 1024.f*1024.f)
-			printf("Read time:\t%.2f Mb/sec\n", amr / (1024.f*1024.f));
-		else
-			printf("Mixing rate:\t%.2f Kb/sec\n", amr / 1024.f);
-		printf("Average read time:\t%f ms\n", afmt);
-		printf("Average frame size:\t%.2f samples\n", afsz);
+			printf(" Average frame time: %f ms (%f sec)\n",
+				avgFrameTimeMs, avgFrameTimeSec);
+
+			char tmp[100] = {0};
+			_debugFormatBytes((int)avgFrameBytes, tmp);
+
+			printf(" Average frame size: %d samples (%s)\n",
+				(int)avgFrameSamples, tmp);
+
+			float readTimeBytes   = avgFrameBytes / avgFrameTimeSec;
+			float readTimeSamples = avgFrameSamples / avgFrameTimeSec;
+			memset(tmp, 0, sizeof(tmp));
+			_debugFormatBytes((int)readTimeBytes, tmp);
+			printf(" Average read time:  %.2f samples/sec (%s/sec)\n",
+				readTimeSamples, tmp);
+		}
 	}
-	m_nFrameSize = m_dwSpeed = m_nFrameCount = 0;
+	m_nFrameSize = m_time = m_nFrameCount = 0;
 }
 
 #endif // _DEBUG_TIMER_
