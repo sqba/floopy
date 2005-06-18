@@ -290,12 +290,21 @@ public:
 	}
 
 	/**
-	 * Return total sample count.
+	 * Return total track size.
 	 * @return number of samples.
 	 */
 	virtual int GetSize()
 	{
 		return (NULL != m_source ? m_source->GetSize() : 0);
+	}
+
+	/**
+	 * Return source size.
+	 * @return number of samples.
+	 */
+	virtual int GetSourceSize()
+	{
+		return (NULL != m_source ? m_source->GetSourceSize() : 0);
 	}
 
 	virtual BOOL SetSource(IFloopySoundInput *src)

@@ -289,6 +289,11 @@ int CInput::GetSize()
 	return size;
 }
 
+int CInput::GetSourceSize()
+{
+	return m_plugin ? m_plugin->GetSize() : 0;
+}
+
 void CInput::Reset()
 {
 	m_offset = 0;

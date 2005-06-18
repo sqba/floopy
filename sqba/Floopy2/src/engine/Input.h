@@ -57,6 +57,7 @@ public:
 	BOOL IsEnabled();
 
 	int GetSize();
+	int GetSourceSize();
 
 	int   GetParamCount();
 	void  SetParam(int index, float value);
