@@ -291,7 +291,7 @@ int CInput::GetSize()
 
 int CInput::GetSourceSize()
 {
-	return m_plugin ? m_plugin->GetSize() : 0;
+	return m_plugin ? m_plugin->GetSourceSize() : 0;
 }
 
 void CInput::Reset()

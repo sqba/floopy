@@ -304,7 +304,8 @@ public:
 	 */
 	virtual int GetSourceSize()
 	{
-		return (NULL != m_source ? m_source->GetSourceSize() : 0);
+		//return (NULL != m_source ? m_source->GetSourceSize() : 0);
+		return GetSize();
 	}
 
 	virtual BOOL SetSource(IFloopySoundInput *src)
