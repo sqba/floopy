@@ -77,6 +77,7 @@ enum enumClassType
 {
 	TYPE_FLOOPY = 0,			/** IFloopy				*/
 	TYPE_FLOOPY_SOUND_INPUT,	/** IFloopySoundInput	*/
+	TYPE_FLOOPY_SOUND_MIXER,	/** IFloopySoundMixer	*/
 	TYPE_FLOOPY_SOUND_OUTPUT,	/** IFloopySound		*/
 	TYPE_FLOOPY_ENGINE			/** IFloopySoundEngine	*/
 };
@@ -261,8 +262,8 @@ protected:
  *  \version 0.0
  *  \date 13. april 2005
  *
- *  Interface implemented and used by all sound input objects
- *  such as sound source objects and filter (effect) objects.
+ *  Interface implemented and used by all sound
+ *  input and filter (effect) objects.
  *********************************************************************/
 class IFloopySoundInput : public IFloopy
 {
@@ -370,38 +371,6 @@ public:
 		return (NULL != m_source ? m_source->GetFormat() : &m_format);
 	}
 
-	/**
-	 * Mixer specific function.
-	 */
-	virtual int AddSource(IFloopySoundInput *src)
-	{
-		return (NULL != m_source ? m_source->AddSource(src) : 0);
-	}
-
-	/**
-	 * Mixer specific function.
-	 */
-	virtual IFloopySoundInput *GetSource(int index)
-	{
-		return (index > 0 ? NULL : m_source);
-	}
-
-	/**
-	 * Mixer specific function.
-	 */
-	virtual void RemoveSource(IFloopySoundInput *src)
-	{
-		//if(NULL != m_source)
-		//	m_source->RemoveSource(src);
-	}
-
-	/**
-	 * Mixer specific function.
-	 */
-	virtual int GetInputCount()
-	{
-		return (NULL != m_source ? 1 : 0);
-	}
 
 	/**
 	 * Specifies whether the source should be read and passed on 
@@ -422,6 +391,50 @@ protected:
 	SOUNDFORMAT m_format;
 	//int m_pos;
 };
+
+
+/*********************************************************************
+ *! \class IFloopySoundMixer
+ *  \brief Main mixer interface.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 20. june 2005
+ *
+ *  Derived from IFloopySoundInput, IFloopySoundMixer differs from it
+ *  just in the fact that it can have several inputs.
+ *********************************************************************/
+class IFloopySoundMixer : public IFloopySoundInput
+{
+public:
+	char *GetName()			{ return "IFloopySoundMixer"; }
+	char *GetDescription()	{ return "IFloopySoundMixer interface"; }
+
+	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_MIXER; }
+
+	virtual int AddSource(IFloopySoundInput *src)
+	{
+		if(NULL != m_source)
+		{
+			m_source = src;
+			return 0;
+		}
+		else
+			return -1;
+	}
+
+	virtual IFloopySoundInput *GetSource(int index)
+	{
+		return (index > 0 ? NULL : m_source);
+	}
+
+	virtual void RemoveSource(IFloopySoundInput *src)	{}
+
+	virtual int GetInputCount()
+	{
+		return (NULL != m_source ? 1 : 0);
+	}
+};
+
 
 /*********************************************************************
  *! \class IFloopySoundOutput

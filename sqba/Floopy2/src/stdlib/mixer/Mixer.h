@@ -18,7 +18,7 @@
 
 #define MAX_INPUTS	12
 
-class CMixer : public IFloopySoundInput
+class CMixer : public IFloopySoundMixer
 {
 public:
 	CMixer();

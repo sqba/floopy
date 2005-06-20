@@ -30,34 +30,19 @@
  * at which they occured. These parameters are then
  * set during execution.
  */
-class CInput : public IFloopySoundInput
+class CInput : public IFloopySoundMixer
 {
 public:
 	CInput(UpdateCallback func);
 	virtual ~CInput();
 
+	BOOL Create(char *plugin);
+	BOOL Create(IFloopySoundEngine *src);
+
 	char *GetName()			{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
-
-	BOOL GetColor(UINT *r, UINT *g, UINT *b)
-		{ *r = m_red; *g = m_green; *b = m_blue; return TRUE; }
-	void  SetColor(UINT r, UINT g, UINT b)
-		{ m_red = r; m_green=g; m_blue=b; }
-
-	BOOL Create(char *plugin);
-	BOOL Create(IFloopySoundEngine *src);
-
-	void MoveTo(int samples);
-	void Reset();
-	int Read(BYTE *data, int size);
-
-	void Enable(BOOL bEnable);
-	BOOL IsEnabled();
-
-	int GetSize();
-	int GetSourceSize();
 
 	int   GetParamCount();
 	void  SetParam(int index, float value);
@@ -67,17 +52,23 @@ public:
 	char *GetParamDesc(int index);
 	int   GetParamIndex(char *name);
 
-	BOOL SetSource(IFloopySoundInput *src);
-	IFloopySoundInput *GetSource()
-		{ return m_plugin ? m_plugin->GetSource() : NULL; }
+	BOOL GetColor(UINT *r, UINT *g, UINT *b);
+	void SetColor(UINT r, UINT g, UINT b);
 
-	IFloopySoundInput *GetSource(int index)
-		{ return m_plugin ? m_plugin->GetSource(index) : NULL; }
+	void Enable(BOOL bEnable);
+	BOOL IsEnabled();
+
+	void MoveTo(int samples);
+	void Reset();
+	int  Read(BYTE *data, int size);
+
+	int GetSize();
+	int GetSourceSize();
+
+	BOOL SetSource(IFloopySoundInput *src);
+	IFloopySoundInput *GetSource();
 
 	int GetNextOffset(int offset);
-
-	int GetInputCount()
-		{ return (m_plugin ? m_plugin->GetInputCount() : 0); }
 
 	void SetParamAt(int offset, int index, float value);
 	BOOL ResetParamAt(int offset, int index);
@@ -97,7 +88,20 @@ public:
 
 	char *GetPath() { return _isEngine() ? m_source->GetPath() : m_szObjPath; }
 
-	enumClassType GetType() { return _isEngine() ? TYPE_FLOOPY_ENGINE : TYPE_FLOOPY_SOUND_INPUT; }
+//	enumClassType GetType() { return _isEngine() ? TYPE_FLOOPY_ENGINE : TYPE_FLOOPY_SOUND_INPUT; }
+	enumClassType GetType() { return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
+
+
+
+	///////////////////////////////////////////
+	// IFloopySoundMixer functions
+	///////////////////////////////////////////
+	IFloopySoundInput *GetSource(int index);
+	int AddSource(IFloopySoundInput *src);
+	void RemoveSource(IFloopySoundInput *src);
+	int GetInputCount();
+	///////////////////////////////////////////
+
 
 private:
 	inline BOOL _isEngine() { return (m_source->GetType() == TYPE_FLOOPY_ENGINE); }

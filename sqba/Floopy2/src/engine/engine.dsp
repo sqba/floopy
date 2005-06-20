@@ -126,6 +126,10 @@ SOURCE=.\Engine.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\IFloopy.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Input.h
 # End Source File
 # Begin Source File

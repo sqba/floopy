@@ -391,11 +391,13 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 	if(recursive)
 	{
 		si->level++;
-		if(input->GetInputCount() > 1)
+		//if(input->GetInputCount() > 1)
+		if(input->GetType() == TYPE_FLOOPY_SOUND_MIXER)
 		{
-			for(int i=0; i<input->GetInputCount(); i++)
+			IFloopySoundMixer *mixer = (IFloopySoundMixer*)input;
+			for(int i=0; i<mixer->GetInputCount(); i++)
 			{
-				saveXML(si, fp, input->GetSource(i), TRUE);
+				saveXML(si, fp, mixer->GetSource(i), TRUE);
 			}
 		}
 		else

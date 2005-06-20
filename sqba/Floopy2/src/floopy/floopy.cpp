@@ -108,11 +108,20 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 		delete space;
 	}
 
-	int count = input->GetInputCount();
-	
-	for(int i=0; i<count; i++)
+	if(input->GetType() == TYPE_FLOOPY_SOUND_MIXER)
 	{
-		printTree(fp, input->GetSource(i), level+1, (count>1), (i==count-1));
+		IFloopySoundMixer *mixer = (IFloopySoundMixer*)input;
+
+		int count = mixer->GetInputCount();
+		
+		for(int i=0; i<count; i++)
+		{
+			printTree(fp, mixer->GetSource(i), level+1, (count>1), (i==count-1));
+		}
+	}
+	else
+	{
+		printTree(fp, input->GetSource(), level+1, FALSE, TRUE);
 	}
 }
 

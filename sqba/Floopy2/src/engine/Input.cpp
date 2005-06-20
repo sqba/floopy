@@ -159,6 +159,11 @@ BOOL CInput::SetSource(IFloopySoundInput *src)
 	return result;
 }
 
+IFloopySoundInput *CInput::GetSource()
+{
+	return m_plugin ? m_plugin->GetSource() : NULL;
+}
+
 int CInput::Read(BYTE *data, int size)
 {
 	assert(size >= 0);
@@ -567,6 +572,23 @@ void CInput::Close()
 #endif // _DEBUG_TIMER_
 }
 
+
+BOOL CInput::GetColor(UINT *r, UINT *g, UINT *b)
+{
+	*r = m_red;
+	*g = m_green;
+	*b = m_blue;
+	return TRUE;
+}
+
+void  CInput::SetColor(UINT r, UINT g, UINT b)
+{
+	m_red	= r;
+	m_green	= g;
+	m_blue	= b;
+}
+
+
 /**
  * Calculates optimization variables.
  */
@@ -578,6 +600,73 @@ void CInput::_recalcVariables()
 
 //	assert(m_nSamplesToBytes > 0);
 }
+
+
+
+
+
+
+
+
+
+
+int CInput::AddSource(IFloopySoundInput *src)
+{
+	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
+	{
+		return ((IFloopySoundMixer*)m_plugin)->AddSource(src);
+	}
+	else
+	{
+		m_plugin = src;
+		return 0;
+	}
+}
+/*
+IFloopySoundInput *CInput::GetSource(int index)
+{
+	if(m_plugin)
+	{
+		if(m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER)
+			return ((IFloopySoundMixer*)m_plugin)->GetSource(index);
+		else if(index == 0)
+			return m_plugin;
+	}
+	else
+		return NULL;
+}
+*/
+IFloopySoundInput *CInput::GetSource(int index)
+{
+	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
+		return ((IFloopySoundMixer*)m_plugin)->GetSource(index);
+	else
+		return m_plugin;
+}
+
+void CInput::RemoveSource(IFloopySoundInput *src)
+{
+	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
+		((IFloopySoundMixer*)m_plugin)->RemoveSource(src);
+}
+
+int CInput::GetInputCount()
+{
+	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
+		return ((IFloopySoundMixer*)m_plugin)->GetInputCount();
+	else
+		return(m_plugin ? 1 : 0);
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
