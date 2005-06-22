@@ -360,14 +360,24 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 	SOUNDFORMAT *fmt = input->GetFormat();
 	int freq = fmt->frequency;
 
+	bool bStart = TRUE;
+
 	int offset=0;
 	do {
 		float seconds = (float)offset / (float)freq;
 		input->MoveTo(offset);
-		char *enabled = (input->IsEnabled() ? "ON" : "OFF");
-		if(offset > 0)
-			fprintf(fp, ", "); // Separator
-		fprintf(fp, "%.3f:%s", seconds, enabled);
+
+		float paramVal = 0.f;
+		if(input->GetParam(TIMELINE_PARAM_ENABLE, &paramVal))
+		{
+			char *enabled = (paramVal == PARAM_VALUE_ENABLED ? "ON" : "OFF");
+			if(!bStart)
+				fprintf(fp, ", "); // Separator
+			else
+				bStart = false;
+			fprintf(fp, "%.3f:%s", seconds, enabled);
+		}
+
 		if(input->GetParamCount() > 0)
 		{
 			for(int i=0; i<input->GetParamCount(); i++)
@@ -378,8 +388,12 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 				float paramVal = 0.f;
 				if(input->GetParam(i, &paramVal))
 				{
-					char *paramName = input->GetParamName(i);
-					fprintf(fp, ", %.3f:%d:%.3f", seconds, i, paramVal);
+					//char *paramName = input->GetParamName(i);
+					if(!bStart)
+						fprintf(fp, ", "); // Separator
+					else
+						bStart = false;
+					fprintf(fp, "%.3f:%d:%.3f", seconds, i, paramVal);
 				}
 			}
 		}

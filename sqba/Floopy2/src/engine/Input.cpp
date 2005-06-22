@@ -341,6 +341,7 @@ BOOL CInput::IsEnabled()
 {
 	float value = m_timeline.Get(m_offset, TIMELINE_PARAM_ENABLE);
 	BOOL bEnabled = (PARAM_VALUE_DISABLED != value);
+	//BOOL bEnabled = (PARAM_VALUE_ENABLED == value);
 	return bEnabled;
 }
 
