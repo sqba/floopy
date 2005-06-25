@@ -19,12 +19,12 @@
 //////////////////////////////////////////////////////////////////////
 // Defines from windows.h
 //////////////////////////////////////////////////////////////////////
-typedef int                 INT;
-typedef unsigned int        UINT;
-typedef int                 BOOL;
-typedef unsigned short      WORD;
-typedef unsigned char       BYTE;
-typedef unsigned long       DWORD;
+typedef int                 INT;	/// 32-bit signed integer.
+typedef unsigned int        UINT;	/// Unsigned INT.
+typedef int                 BOOL;	/// Boolean variable (should be TRUE or FALSE).
+typedef unsigned short      WORD;	/// 16-bit unsigned integer.
+typedef unsigned char       BYTE;	/// Byte (8 bits).
+typedef unsigned long       DWORD;	/// 32-bit unsigned integer.
 
 #ifndef NULL
 #ifdef __cplusplus
