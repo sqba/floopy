@@ -46,12 +46,14 @@ public:
 	tParam *GetParam(int offset, int index);
 	int GetPrevOffset(int offset);
 	void Clear();
+	BOOL MoveParam(int offset, int index, int newoffset);
 
 //	void dump(FILE *fp);
 
 private:
 	tParam *getPrevParam(int offset);
 	void insertAfter(tParam *ref, tParam *param);
+	void remove(tParam *param);
 
 private:
 	tParam *m_pFirst, *m_pLast;

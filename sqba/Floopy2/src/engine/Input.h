@@ -90,6 +90,8 @@ public:
 //	enumClassType GetType() { return _isEngine() ? TYPE_FLOOPY_ENGINE : TYPE_FLOOPY_SOUND_INPUT; }
 	enumClassType GetType() { return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
 
+	BOOL MoveParam(int offset, int index, int newoffset);
+
 
 
 	///////////////////////////////////////////

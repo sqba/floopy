@@ -575,6 +575,16 @@ BOOL CInput::ResetParamAt(int offset, int index)
 	return FALSE;
 }
 
+BOOL CInput::MoveParam(int offset, int index, int newoffset)
+{
+	if(m_timeline.MoveParam(offset * m_nSamplesToBytes, index, newoffset * m_nSamplesToBytes))
+	{
+		_recalcVariables();
+		return TRUE;
+	}
+	return FALSE;
+}
+
 /**
  * Enable at the given offset.
  * @param offset number of samples.

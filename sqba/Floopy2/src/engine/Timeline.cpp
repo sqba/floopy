@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <assert.h>
+
 #include "Timeline.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -18,9 +20,16 @@ CTimeline::~CTimeline()
 	Clear();
 }
 
+float CTimeline::GetParamVal(int offset, int index)
+{
+	tParam *tmp = GetParam(offset, index);
+	return(tmp ? tmp->value : 0.f);
+}
+
 void CTimeline::SetParamVal(int offset, int index, float value)
 {
 	tParam *tmp = GetParam(offset, index);
+
 	if(!tmp)
 	{
 		tmp = new tParam;
@@ -33,23 +42,49 @@ void CTimeline::SetParamVal(int offset, int index, float value)
 		{
 			tParam *prev = getPrevParam(offset);
 			insertAfter(prev, tmp);
-
-			//insertAfter(m_pLast, tmp);
-
-			//m_pLast->next = tmp;
-			//tmp->prev = m_pLast;
-			//m_pLast = tmp;
 		}
 	}
+
 	tmp->offset = offset;
 	tmp->index = index;
 	tmp->value = value;
+
+//	assert( NULL != GetParam(offset, index) );
 }
 
-float CTimeline::GetParamVal(int offset, int index)
+BOOL CTimeline::MoveParam(int offset, int index, int newoffset)
 {
 	tParam *tmp = GetParam(offset, index);
-	return(tmp ? tmp->value : 0.f);
+	if(tmp)
+	{
+		tParam *prev = getPrevParam(newoffset);
+		tmp->offset = newoffset;
+		insertAfter(prev, tmp);
+//		assert( NULL != GetParam(newoffset, index) );
+		return TRUE;
+	}
+	return FALSE;
+}
+
+BOOL CTimeline::Remove(int offset, int index)
+{
+	tParam *tmp = GetParam(offset, index);
+	if(tmp)
+	{
+		remove( tmp );
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void CTimeline::remove(tParam *param)
+{
+	tParam *prev = param->prev;
+	tParam *next = param->next;
+	if(prev) prev->next = next;
+	if(next) next->prev = prev;
+	delete param;
+	//memset(param, 0, sizeof(tParam));
 }
 
 int CTimeline::GetPrevOffset(int offset)
@@ -88,22 +123,6 @@ int CTimeline::GetNextOffset(int offset)
 		tmp = tmp->next;
 	}
 	return (val != offset ? val : 0);
-}
-
-BOOL CTimeline::Remove(int offset, int index)
-{
-	tParam *tmp = GetParam(offset, index);
-	if(tmp)
-	{
-		tParam *p = tmp->prev;
-		tParam *n = tmp->next;
-		if(p) p->next = n;
-		if(n) n->prev = p;
-		//delete tmp;
-		memset(tmp, 0, sizeof(tParam));
-		return TRUE;
-	}
-	return FALSE;
 }
 
 int CTimeline::GetCount()
@@ -146,9 +165,12 @@ void CTimeline::Clear()
 void CTimeline::insertAfter(tParam *ref, tParam *param)
 {
 	tParam *tmp = ref->next;
-	ref->next   = param;
-	param->prev = ref;
-	param->next = tmp;
+	if(tmp != param)
+	{
+		ref->next   = param;
+		param->prev = ref;
+		param->next = tmp;
+	}
 }
 
 tParam *CTimeline::getPrevParam(int offset)

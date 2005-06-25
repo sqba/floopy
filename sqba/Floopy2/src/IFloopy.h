@@ -182,6 +182,8 @@ public:
 	 * @param bEnable enable or disable.
 	 */
 	virtual void EnableAt(int offset, BOOL bEnable) {}
+
+	virtual BOOL MoveParam(int offset, int index, int newoffset) { return FALSE; }
 };
 
 
