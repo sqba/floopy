@@ -30,7 +30,7 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 	int   GetParamCount()			{ return 1; }
-	void  SetParamVal(int index, float value) { if(index == 1) freq = value; }
+	void  SetParamVal(int index, float value) { if(index == 0) freq = value; }
 	BOOL  GetParamVal(int index, float *value);
 	char *GetParamName(int index)	{ return "Frequency"; }
 	char *GetParamDesc(int index)	{ return "Tone Frequency"; }

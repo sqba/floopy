@@ -38,22 +38,23 @@ public:
 	CTimeline();
 	virtual ~CTimeline();
 
-	void Set(int offset, int index, float value);
-	float Get(int offset, int index);
+	void  SetParamVal(int offset, int index, float value);
+	float GetParamVal(int offset, int index);
 	BOOL Remove(int offset, int index);
 	int GetCount();
 	int GetNextOffset(int offset);
 	tParam *GetParam(int offset, int index);
 	int GetPrevOffset(int offset);
+	void Clear();
 
-	void dump(FILE *fp);
-
-private:
-	tParam *Find(int offset, int index);
-//	tParam *GetPrevParam(int offset);
+//	void dump(FILE *fp);
 
 private:
-	tParam *first, *last;
+	tParam *getPrevParam(int offset);
+	void insertAfter(tParam *ref, tParam *param);
+
+private:
+	tParam *m_pFirst, *m_pLast;
 };
 
 #endif // !defined(AFX_TIMELINE_H__E99D9CE2_478E_4EFF_807B_852DB0AF9322__INCLUDED_)
