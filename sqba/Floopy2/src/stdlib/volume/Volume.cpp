@@ -27,43 +27,38 @@ int CVolume::Read(BYTE *data, int size)
 	if(EOF == len)
 		return len;
 
-	short int *sample = (short int*)data;
-
 	SOUNDFORMAT *fmt = GetFormat();
-	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	if((fmt->bitsPerSample == 0) || (fmt->channels == 0))
+	if((NULL == fmt) || (fmt->bitsPerSample == 0) || (fmt->channels == 0))
 		return 0;
-	//int numsamples = size / ((fmt->size/8) * fmt->channels);
-	int numsamples = len / (fmt->bitsPerSample/8);
-	//int numsamples = len / ((fmt->size / 8) * GetFormat()->channels);
 
-//	int max = (int)pow(2, fmt->size) / 2;
+
+	int numsamples = len / (fmt->bitsPerSample/8);
 
 	float percent = (float)m_volume / 100.f;
-//	float coef = (float)max * (float)m_volume / 100.f;
 
-	int i = numsamples;
-	while(i--)
+	// Only 16bit samples supported right now
+	if(fmt->bitsPerSample == 16)
 	{
-		//*(sample++) += ((float)*sample * coef);
-		//*(sample++) += coef;
-		//*(sample++) += ((float)*sample * (float)m_volume / 100.f);
-		//if(*sample < 100 || *sample > -100)
-		//	*sample = *sample;
-//		*(sample++) = ((float)*sample * percent);
+		short int *sample = (short int*)data;
 
-		/*if(m_volume == 120.00)
+		while(numsamples--)
 		{
-			short int d = ((float)*sample * percent);
-		}*/
-
-		*sample = ((float)*sample * percent);
-		sample++;
-
-		/*short int s = (short int)((float)*sample * m_volume);
-		if((s > -max) && (s < max))
-			*sample = s;
-		sample++;*/
+			*sample = ((float)*sample * percent);
+			sample++;
+		}
+		return len;
 	}
-	return len;
+	else
+		return 0;
+}
+
+BOOL CVolume::GetParamVal(int index, float *value)
+{
+	switch(index)
+	{
+	case 0:
+		*value = (float)m_volume;
+		return TRUE;
+	}
+	return FALSE;
 }

@@ -47,10 +47,10 @@ public:
 
 #ifdef _DEBUG_TIMER_
 	int   GetParamCount()			{ return 0; }
-	void  SetParam(int index, float value);// { m_bDebugTimer = (value==1.f); }
-	float GetParam(int index);//		{ return (float)m_bDebugTimer; }
-	char *GetParamName(int index);//	{ return "timer"; }
-	char *GetParamDesc(int index);//	{ return "Debug Timer"; }
+	void  SetParamVal(int index, float value);
+	BOOL  GetParamVal(int index, float *value);
+	char *GetParamName(int index);
+	char *GetParamDesc(int index);
 #endif // _DEBUG_TIMER_
 
 private:

@@ -73,7 +73,7 @@ void CPlayRegion::Reset()
 	m_nSourceSize = IFloopySoundInput::GetSize() * samplesToBytes();
 }
 
-void  CPlayRegion::SetParam(int index, float value)
+void  CPlayRegion::SetParamVal(int index, float value)
 {
 	switch(index)
 	{
@@ -93,17 +93,18 @@ void  CPlayRegion::SetParam(int index, float value)
 	}
 }
 
-float CPlayRegion::GetParam(int index)
+BOOL CPlayRegion::GetParamVal(int index, float *value)
 {
 	switch(index)
 	{
 	case 0:
-		return (float)m_nStartAt / samplesToBytes();
+		*value = (float)m_nStartAt / samplesToBytes();
+		return TRUE;
 	case 1:
-		return (float)m_nStopAt / samplesToBytes();
-	default:
-		return 0.f;
+		*value = (float)m_nStopAt / samplesToBytes();
+		return TRUE;
 	}
+	return FALSE;
 }
 
 char *CPlayRegion::GetParamName(int index)
@@ -130,15 +131,6 @@ char *CPlayRegion::GetParamDesc(int index)
 	default:
 		return NULL;
 	}
-}
-
-int CPlayRegion::GetParamIndex(char *name)
-{
-	if(0==strcmpi(name, "StartAt"))
-		return 0;
-	if(0==strcmpi(name, "StopAt"))
-		return 1;
-	return -1;
 }
 
 int CPlayRegion::samplesToBytes()

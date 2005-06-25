@@ -74,3 +74,14 @@ char *CToneGen::GetName()
 	return name;
 }
 */
+
+BOOL CToneGen::GetParamVal(int index, float *value)
+{
+	switch(index)
+	{
+	case 0:
+		*value = (float)freq;
+		return TRUE;
+	}
+	return FALSE;
+}

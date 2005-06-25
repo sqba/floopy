@@ -39,8 +39,8 @@ public:
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
 	int   GetParamCount()					{ return m_plugin->GetParamCount(); }
-	void  SetParam(int index, float value);//	{ m_plugin->SetParam(index, value); }
-	float GetParam(int index);//				{ return m_plugin->GetParam(index); }
+	BOOL  GetParamVal(int index, float *value);
+	void  SetParamVal(int index, float value);//	{ m_plugin->SetParam(index, value); }
 	char *GetParamName(int index)			{ return m_plugin->GetParamName(index); }
 	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
 

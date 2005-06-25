@@ -88,12 +88,12 @@ int COutput::Write(BYTE *data, int size)
 	return len;
 }
 
-void COutput::SetParam(int index, float value)
+BOOL COutput::GetParamVal(int index, float *value)
 {
-	m_plugin->SetParam(index, value);
+	return m_plugin->GetParamVal(index, value);
 }
 
-float COutput::GetParam(int index)
+void COutput::SetParamVal(int index, float value)
 {
-	return m_plugin->GetParam(index);
+	m_plugin->SetParamVal(index, value);
 }

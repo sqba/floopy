@@ -24,11 +24,10 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 	int   GetParamCount()	{ return 2; }
-	void  SetParam(int index, float value);
-	float GetParam(int index);
+	void  SetParamVal(int index, float value);
+	BOOL  GetParamVal(int index, float *value);
 	char *GetParamName(int index);
 	char *GetParamDesc(int index);
-	int   GetParamIndex(char *name);
 
 	int GetSize();
 	void MoveTo(int samples);

@@ -22,13 +22,7 @@ public:
 	char *GetDescription()	{ return "Looping component"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
-/*
-	int   GetParamCount()			{ return 1; }
-	void  SetParam(int index, float value);
-	float GetParam(int index)		{ return (float)m_nMaxLoops; }
-	char *GetParamName(int index)	{ return "loopcount"; }
-	char *GetParamDesc(int index)	{ return "Loop Count"; }
-*/
+
 	int Read(BYTE *data, int size);
 	int GetSize();	//{ return -1; }
 	void MoveTo(int samples);

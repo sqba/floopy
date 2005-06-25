@@ -368,7 +368,7 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 		input->MoveTo(offset);
 
 		float paramVal = 0.f;
-		if(input->GetParam(TIMELINE_PARAM_ENABLE, &paramVal))
+		if(input->GetParamVal(TIMELINE_PARAM_ENABLE, &paramVal))
 		{
 			char *enabled = (paramVal == PARAM_VALUE_ENABLED ? "ON" : "OFF");
 			if(!bStart)
@@ -382,11 +382,8 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 		{
 			for(int i=0; i<input->GetParamCount(); i++)
 			{
-				//char *paramName = input->GetParamName(i);
-				//float paramVal = input->GetParam(i);
-				//fprintf(fp, ", %.3f:%d:%.3f", seconds, i, paramVal);
 				float paramVal = 0.f;
-				if(input->GetParam(i, &paramVal))
+				if(input->GetParamVal(i, &paramVal))
 				{
 					//char *paramName = input->GetParamName(i);
 					if(!bStart)

@@ -117,15 +117,18 @@ public:
 	IFloopyParam()			{ m_bEnabled = TRUE; }
 
 	virtual int   GetParamCount()					{ return 0; }
-	virtual void  SetParam(int index, float value)	{ }
-	virtual float GetParam(int index)				{ return 0.f; }
-	virtual float GetParamMin(int index)			{ return 0.f; }
-	virtual float GetParamMax(int index)			{ return 0.f; }
-	virtual float GetParamStep(int index)			{ return 0.f; }
-	virtual char *GetParamName(int index)			{ return NULL; }
-	virtual char *GetParamDesc(int index)			{ return NULL; }
-	virtual BOOL  GetParam(int index, float *value)	{ return FALSE; }
-	virtual int   GetParamIndex(char *name)			{ return -1; }
+
+	virtual BOOL  GetParamIndex(char *name, int *index)	{ return FALSE; }
+
+	virtual BOOL  GetParamVal(int index, float *value)	{ return FALSE; }
+	virtual void  SetParamVal(int index, float value)	{ }
+
+	virtual float GetParamMin(int index)	{ return 0.f; }
+	virtual float GetParamMax(int index)	{ return 0.f; }
+	virtual float GetParamStep(int index)	{ return 0.f; }
+	virtual char *GetParamName(int index)	{ return NULL; }
+	virtual char *GetParamDesc(int index)	{ return NULL; }
+	virtual char *GetParamUnit(int index)	{ return NULL; }
 
 	virtual void  Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
 	virtual BOOL  IsEnabled()				{ return m_bEnabled; }
@@ -137,7 +140,7 @@ private:
 
 /*********************************************************************
  *! \class IFloopyTimeline
- *  \brief Functions for manipulating component's the timeline.
+ *  \brief Functions for manipulating component's timeline.
  *  \author Filip Pavlovic
  *  \version 0.0
  *  \date 14. June 2005.

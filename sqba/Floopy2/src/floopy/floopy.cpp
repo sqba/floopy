@@ -218,10 +218,10 @@ void main(int argc, char* argv[])
 
 	start = GetArg(argc, argv, "s", 0.f);
 	end = GetArg(argc, argv, "e", 0.f);
-	i = region->GetParamIndex("startat");
-	region->SetParam(i, start*fmt->frequency);
-	i = region->GetParamIndex("stopat");
-	region->SetParam(i, end*fmt->frequency);
+	if(region->GetParamIndex("startat", &i))
+		region->SetParamVal(i, start*fmt->frequency);
+	if(region->GetParamIndex("stopat", &i))
+		region->SetParamVal(i, end*fmt->frequency);
 
 
 	SOUNDFORMAT format;

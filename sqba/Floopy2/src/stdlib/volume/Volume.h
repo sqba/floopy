@@ -27,11 +27,14 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 	int   GetParamCount()			{ return 1; }
-	void  SetParam(int index, float value) { m_volume = (int)value; }
-	float GetParam(int index)		{ return (float)m_volume; }
-	char *GetParamName(int index)	{ return "volume"; }
-	char *GetParamDesc(int index)	{ return "Volume"; }
-	int   GetParamIndex(char *name)	{ return (0==strcmpi(name, "volume") ? 0 : -1); }
+	void  SetParamVal(int index, float value) { m_volume = (int)value; }
+	BOOL  GetParamVal(int index, float *value);
+	char *GetParamName(int index)	{ return (index == 0 ? "volume" : NULL); }
+	char *GetParamDesc(int index)	{ return (index == 0 ? "Volume" : NULL); }
+	char *GetParamUnit(int index)	{ return (index == 0 ? "%" : NULL); }
+	float GetParamMin(int index)	{ return 0.f; }
+	float GetParamMax(int index)	{ return 1000.f; }
+	float GetParamStep(int index)	{ return 0.01f; }
 
 	BOOL ReadSourceIfDisabled()	{ return FALSE; }
 

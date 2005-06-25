@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <assert.h>
-#include <stdio.h>
+#include <string.h>
 #include "input.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -29,6 +29,9 @@ CInput::CInput(UpdateCallback func)
 	memset(m_name, 0, 50);
 	memset(m_szLastError, 0, sizeof(m_szLastError));
 	memset(m_szObjPath,   0, sizeof(m_szObjPath));
+
+	memset(m_libraryName, 0, MAX_PATH);
+	memset(m_pluginName, 0, 50);
 
 	Enable(TRUE);
 	IFloopy::Enable(TRUE);
@@ -108,6 +111,20 @@ BOOL CInput::Create(char *name)
 			m_plugin = func( plugin );
 			if(m_plugin)
 			{
+				memset(m_libraryName, 0, MAX_PATH);
+				memset(m_pluginName, 0, 50);
+				char *tmp = strrchr(library, '\\');
+				if(tmp)
+					strcpy(m_libraryName, tmp+1);
+				else
+					strcpy(m_libraryName, library);
+				strcpy(m_pluginName, plugin);
+				
+				memset(m_fullName, 0, MAX_PATH);
+				strcpy(m_fullName, m_libraryName);
+				strcat(m_fullName, ".");
+				strcat(m_fullName, m_pluginName);
+
 				IFloopySoundInput::SetSource(m_plugin);
 				result = TRUE;
 			}
@@ -399,18 +416,12 @@ void CInput::applyParamsAt(int offset)
 			m_callback(this, sample, TIMELINE_PARAM_MOVETO);
 	}
 
-	/*param = m_timeline.GetParam(offset, TIMELINE_PARAM_RESET);
-	if(param)
-	{
-		m_source->Reset();
-	}*/
-
 	for(int i=0; i<GetParamCount(); i++)
 	{
 		param = m_timeline.GetParam(offset, i);
 		if(param)
 		{
-			m_plugin->SetParam(param->index, param->value);
+			m_plugin->SetParamVal(param->index, param->value);
 
 			if(m_callback && sample >= 0)
 				m_callback(this, sample, i);
@@ -480,12 +491,7 @@ int CInput::GetParamCount()
 	return m_plugin->GetParamCount();
 }
 
-float CInput::GetParam(int index)
-{
-	return m_timeline.Get(m_offset, index);
-}
-
-BOOL CInput::GetParam(int index, float *value)
+BOOL CInput::GetParamVal(int index, float *value)
 {
 	tParam *param = m_timeline.GetParam(m_offset, index);
 	if(param)
@@ -496,7 +502,7 @@ BOOL CInput::GetParam(int index, float *value)
 	return FALSE;
 }
 
-void CInput::SetParam(int index, float value)
+void CInput::SetParamVal(int index, float value)
 {
 	if(index == -333)
 	{
@@ -509,15 +515,38 @@ void CInput::SetParam(int index, float value)
 	if(m_callback && m_nSamplesToBytes > 0)
 		m_callback(this, m_offset/m_nSamplesToBytes, index);
 
-	m_plugin->SetParam(index, value);
+	m_plugin->SetParamVal(index, value);
 	m_timeline.Set(m_offset, index, value);
 
 	_recalcVariables();
 }
 
-int CInput::GetParamIndex(char *name)
+BOOL CInput::GetParamIndex(char *name, int *index)
 {
-	return m_plugin->GetParamIndex(name);
+	if(NULL==name || NULL==index)
+		return FALSE;
+
+	if(0==strcmpi(name, "Enable"))
+	{
+		*index = TIMELINE_PARAM_ENABLE;
+		return TRUE;
+	}
+	if(0==strcmpi(name, "MoveTo"))
+	{
+		*index = TIMELINE_PARAM_MOVETO;
+		return TRUE;
+	}
+
+	for(int i=0; i<m_plugin->GetParamCount(); i++)
+	{
+		if(0==strcmpi(m_plugin->GetParamName(i), name))
+		{
+			*index = i;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 char *CInput::GetParamName(int index)
@@ -658,9 +687,6 @@ int CInput::GetInputCount()
 	else
 		return(m_plugin ? 1 : 0);
 }
-
-
-
 
 
 

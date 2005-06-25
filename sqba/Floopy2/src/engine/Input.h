@@ -39,18 +39,17 @@ public:
 	BOOL Create(char *plugin);
 	BOOL Create(IFloopySoundEngine *src);
 
-	char *GetName()			{ return m_plugin->GetName(); }
+	char *GetName()			{ return m_fullName; }	//{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
 	int   GetParamCount();
-	void  SetParam(int index, float value);
-	float GetParam(int index);
-	BOOL GetParam(int index, float *value);
+	BOOL  GetParamVal(int index, float *value);
+	void  SetParamVal(int index, float value);
 	char *GetParamName(int index);
 	char *GetParamDesc(int index);
-	int   GetParamIndex(char *name);
+	BOOL  GetParamIndex(char *name, int *index);
 
 	BOOL GetColor(UINT *r, UINT *g, UINT *b);
 	void SetColor(UINT r, UINT g, UINT b);
@@ -126,6 +125,10 @@ private:
 	char m_name[50];
 	char m_szLastError[100];
 	char m_szObjPath[MAX_PATH];
+
+	char m_libraryName[MAX_PATH];
+	char m_pluginName[50];
+	char m_fullName[MAX_PATH];
 
 	UpdateCallback m_callback;
 

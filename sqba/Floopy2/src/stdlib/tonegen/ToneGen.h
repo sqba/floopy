@@ -30,11 +30,10 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 	int   GetParamCount()			{ return 1; }
-	void  SetParam(int index, float value) { freq = value; }
-	float GetParam(int index)		{ return (float)freq; }
+	void  SetParamVal(int index, float value) { if(index == 1) freq = value; }
+	BOOL  GetParamVal(int index, float *value);
 	char *GetParamName(int index)	{ return "Frequency"; }
 	char *GetParamDesc(int index)	{ return "Tone Frequency"; }
-	int   GetParamIndex(char *name)	{ return (0==strcmpi(name, "frequency") ? 0 : -1); }
 
 	void MoveTo(int samples)		{ if(samples==0) angle = 0.0; }
 
