@@ -12,7 +12,7 @@
 #include <assert.h>
 #include "../../ifloopy.h"
 
-class CLoop : public IFloopySoundInput
+class CLoop : public IFloopySoundFilter
 {
 public:
 	CLoop();

@@ -11,7 +11,7 @@
 
 #include "../../ifloopy.h"
 
-class CMono2Stereo : public IFloopySoundInput
+class CMono2Stereo : public IFloopySoundFilter
 {
 public:
 	CMono2Stereo();

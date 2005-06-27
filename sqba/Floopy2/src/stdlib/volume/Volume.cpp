@@ -23,7 +23,7 @@ CVolume::~CVolume()
 
 int CVolume::Read(BYTE *data, int size)
 {
-	int len = IFloopySoundInput::Read(data, size);
+	int len = IFloopySoundFilter::Read(data, size);
 	if(EOF == len)
 		return len;
 

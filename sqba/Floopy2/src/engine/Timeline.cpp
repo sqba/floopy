@@ -12,7 +12,7 @@
 
 CTimeline::CTimeline()
 {
-	m_pFirst = m_pLast = NULL;
+	m_pFirst = m_pLast = m_pTemp = NULL;
 }
 
 CTimeline::~CTimeline()
@@ -104,6 +104,7 @@ int CTimeline::GetPrevOffset(int offset)
 
 int CTimeline::GetNextOffset(int offset)
 {
+/*
 	tParam *tmp = m_pFirst;
 	int max = offset;
 
@@ -123,6 +124,25 @@ int CTimeline::GetNextOffset(int offset)
 		tmp = tmp->next;
 	}
 	return (val != offset ? val : 0);
+*/
+	// Pretpostavka je da su ofseti poredjani u rastucem redosledu!
+	tParam *tmp = m_pFirst;
+	int val = 0;
+
+	if(m_pTemp && m_pTemp->offset <= offset)
+		tmp = m_pTemp;
+
+	while(tmp)
+	{
+		if(tmp->offset > offset)
+		{
+			m_pTemp = tmp;
+			val = tmp->offset;
+			break;
+		}
+		tmp = tmp->next;
+	}
+	return val;
 }
 
 int CTimeline::GetCount()
@@ -141,6 +161,10 @@ int CTimeline::GetCount()
 tParam *CTimeline::GetParam(int offset, int index)
 {
 	tParam *tmp = m_pFirst;
+
+	if(m_pTemp && m_pTemp->offset <= offset)
+		tmp = m_pTemp;
+
 	while(tmp)
 	{
 		if((tmp->offset == offset) && (tmp->index == index))

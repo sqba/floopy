@@ -13,7 +13,7 @@
 
 #include <string.h>
 
-class CVolume : public IFloopySoundInput
+class CVolume : public IFloopySoundFilter
 {
 public:
 	CVolume();

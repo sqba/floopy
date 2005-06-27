@@ -77,9 +77,10 @@ enum enumClassType
 {
 	TYPE_FLOOPY = 0,			/** IFloopy				*/
 	TYPE_FLOOPY_SOUND_INPUT,	/** IFloopySoundInput	*/
+	TYPE_FLOOPY_SOUND_FILTER,	/** IFloopySoundFilter	*/
 	TYPE_FLOOPY_SOUND_MIXER,	/** IFloopySoundMixer	*/
 	TYPE_FLOOPY_SOUND_OUTPUT,	/** IFloopySound		*/
-	TYPE_FLOOPY_ENGINE			/** IFloopySoundEngine	*/
+	TYPE_FLOOPY_SOUND_ENGINE	/** IFloopySoundEngine	*/
 };
 
 
@@ -275,9 +276,7 @@ class IFloopySoundInput : public IFloopy
 public:
 	IFloopySoundInput() : IFloopy()
 	{
-		m_source = NULL;
 		memset(&m_format, 0, sizeof(SOUNDFORMAT));
-		//m_pos = 0;
 	}
 	virtual ~IFloopySoundInput() {}
 
@@ -290,40 +289,13 @@ public:
 	/**
 	 * Open source file.
 	 */
-	BOOL Open(char *filename)
-	{
-		return (NULL != m_source ? m_source->Open(filename) : FALSE);
-	}
+	BOOL Open(char *filename)				{ return FALSE; }
 
 	/**
 	 * Return total track size.
 	 * @return number of samples.
 	 */
-	virtual int GetSize()
-	{
-		return (NULL != m_source ? m_source->GetSize() : 0);
-	}
-
-	/**
-	 * Return source size.
-	 * @return number of samples.
-	 */
-	virtual int GetSourceSize()
-	{
-		//return (NULL != m_source ? m_source->GetSourceSize() : 0);
-		return GetSize();
-	}
-
-	virtual BOOL SetSource(IFloopySoundInput *src)
-	{
-		m_source = src;
-		return TRUE;
-	}
-
-	virtual IFloopySoundInput *GetSource()
-	{
-		return m_source;
-	}
+	virtual int GetSize()=0;//					{ return 0; }
 
 	/**
 	 * Fills given buffer with sound data.
@@ -332,49 +304,25 @@ public:
 	 * @param offset number of bytes to skip.
 	 * @return number of bytes read from data.
 	 */
-	virtual int Read(BYTE *data, int size)
-	{
-		//int len = (NULL != m_source ? m_source->Read(data, size) : 0);
-		//m_pos += len;
-		//return len;
-		return (NULL != m_source ? m_source->Read(data, size) : 0);
-	}
+	virtual int Read(BYTE *data, int size)=0;//	{ return 0; }
 
 	/**
 	 * Moves the starting position.
 	 * @param samples number of samples to move from the start.
 	 */
-	virtual void MoveTo(int samples)
-	{
-		if(NULL != m_source)
-			m_source->MoveTo(samples);
-		//SOUNDFORMAT *fmt = GetFormat();
-		//m_pos = samples * ( (fmt->size / 8) * fmt->channels );
-	}
+	virtual void MoveTo(int samples)		{}
 
 	/**
 	 * Returns current sample position.
 	 */
-	virtual int GetPos()
-	{
-		return (NULL != m_source ? m_source->GetPos() : 0);
-		//	return m_pos;
-	}
+	virtual int GetPos()					{ return 0; }
 
 	/**
 	 * Moves to the starting position.
 	 */
-	virtual void Reset()
-	{
-		if(NULL != m_source)
-			m_source->Reset();
-		//m_pos = 0;
-	}
+	virtual void Reset()					{}
 
-	virtual SOUNDFORMAT *GetFormat()
-	{
-		return (NULL != m_source ? m_source->GetFormat() : &m_format);
-	}
+	virtual SOUNDFORMAT *GetFormat()		{ return &m_format; }
 
 
 	/**
@@ -391,10 +339,96 @@ public:
 		return samples * ( (fmt->bitsPerSample / 8) * fmt->channels );
 	}*/
 
+	/** Do not override in implementations! */
+	virtual BOOL IsFilter()				{ return FALSE; }
+
 protected:
-	IFloopySoundInput *m_source;
 	SOUNDFORMAT m_format;
 	//int m_pos;
+};
+
+
+/*********************************************************************
+ *! \class IFloopySoundFilter
+ *  \brief Main sound filter interface.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 26. june 2005
+ *
+ *  Interface implemented and used by all sound objects that process
+ *  input from some other source instead of generating it.
+ *  IFloopySoundInput::IsFilter() function is called by objects that
+ *  need to know if there is some other source before this object.
+ *********************************************************************/
+class IFloopySoundFilter : public IFloopySoundInput
+{
+public:
+	IFloopySoundFilter() : IFloopySoundInput()	{ m_source = NULL; }
+
+	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_FILTER; }
+
+
+	/** Do not override in implementations! */
+	virtual BOOL IsFilter()				{ return TRUE; }
+
+	/**
+	 * Return source size.
+	 * @return number of samples.
+	 */
+	virtual int GetSourceSize()
+	{
+		return GetSize();
+	}
+
+	virtual BOOL SetSource(IFloopySoundInput *src)
+	{
+		m_source = src;
+		return TRUE;
+	}
+
+	virtual IFloopySoundInput *GetSource()
+	{
+		return m_source;
+	}
+
+
+	virtual BOOL Open(char *filename)
+	{
+		return (NULL != m_source ? m_source->Open(filename) : FALSE);
+	}
+
+	virtual int GetSize()
+	{
+		return (NULL != m_source ? m_source->GetSize() : 0);
+	}
+
+	virtual int Read(BYTE *data, int size)
+	{
+		return (NULL != m_source ? m_source->Read(data, size) : 0);
+	}
+
+	virtual void MoveTo(int samples)
+	{
+		if(NULL != m_source) m_source->MoveTo(samples);
+	}
+
+	virtual int GetPos()
+	{
+		return (NULL != m_source ? m_source->GetPos() : 0);
+	}
+
+	virtual void Reset()
+	{
+		if(NULL != m_source) m_source->Reset();
+	}
+
+	virtual SOUNDFORMAT *GetFormat()
+	{
+		return (NULL != m_source ? m_source->GetFormat() : &m_format);
+	}
+
+protected:
+	IFloopySoundInput *m_source;
 };
 
 
@@ -408,7 +442,7 @@ protected:
  *  Derived from IFloopySoundInput, IFloopySoundMixer differs from it
  *  just in the fact that it can have several inputs.
  *********************************************************************/
-class IFloopySoundMixer : public IFloopySoundInput
+class IFloopySoundMixer : public IFloopySoundFilter
 {
 public:
 	char *GetName()			{ return "IFloopySoundMixer"; }
@@ -454,8 +488,8 @@ public:
 class IFloopySoundOutput : public IFloopy
 {
 public:
-	IFloopySoundOutput() : IFloopy() { m_dest = NULL; }
-	IFloopySoundOutput(SOUNDFORMAT fmt) { m_dest = NULL; }
+	IFloopySoundOutput() : IFloopy()				{ m_dest = NULL; }
+	IFloopySoundOutput(SOUNDFORMAT fmt) : IFloopy() { m_dest = NULL; }
 	virtual ~IFloopySoundOutput() {}
 
 	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_OUTPUT; }
@@ -513,10 +547,10 @@ typedef void (*UpdateCallback)(IFloopy *src, int offset, int param);
  *  destruction of plugins, as well as all parameter changes on
  *  the timeline.
  *********************************************************************/
-class IFloopySoundEngine : public IFloopySoundInput
+class IFloopySoundEngine : public IFloopySoundFilter
 {
 public:
-	enumClassType GetType() { return TYPE_FLOOPY_ENGINE; }
+	enumClassType GetType() { return TYPE_FLOOPY_SOUND_ENGINE; }
 
 	char *GetName()			{ return "IFloopySoundEngine"; }
 	char *GetDescription()	{ return "IFloopySoundEngine interface"; }

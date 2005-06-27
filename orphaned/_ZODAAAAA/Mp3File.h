@@ -38,7 +38,7 @@ typedef DWORD	(FAR PASCAL *ReadFilterInput)		(HANDLE hInput, unsigned char *bufo
 
 
 
-class CMp3File : public IFloopySoundInput
+class CMp3File : public IFloopySoundFilter
 {
 public:
 	CMp3File();

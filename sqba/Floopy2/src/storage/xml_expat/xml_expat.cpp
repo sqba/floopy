@@ -165,13 +165,16 @@ void startElement(void *userData, const char *name, const char **atts)
 				IFloopySoundInput *input = si->gEngine->CreateInput(tmp);
 				if(input && si->gInput)
 				{
-					si->gInput->SetSource(input);
-					si->gInput = input;
-					if(desc)
-						input->SetDisplayName(desc, strlen(desc));
-					input->SetColor(r, g, b);
-					si->gObjects[si->gIndex].obj = input;
-					si->buff[++si->level] = si->gInput;
+					if( si->gInput->IsFilter() )
+					{
+						((IFloopySoundFilter*)si->gInput)->SetSource(input);
+						si->gInput = input;
+						if(desc)
+							input->SetDisplayName(desc, strlen(desc));
+						input->SetColor(r, g, b);
+						si->gObjects[si->gIndex].obj = input;
+						si->buff[++si->level] = si->gInput;
+					}
 				}
 				else
 					si->gInput = NULL;
@@ -334,7 +337,7 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 	if(si->level < 100)
 		memset(space, ' ', si->level);
 
-	BOOL bEngine = (input->GetType() == TYPE_FLOOPY_ENGINE);
+	BOOL bEngine = (input->GetType() == TYPE_FLOOPY_SOUND_ENGINE);
 
 	UINT r=0, g=0, b=0;
 	input->GetColor(&r, &g, &b);
@@ -411,8 +414,8 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 				saveXML(si, fp, mixer->GetSource(i), TRUE);
 			}
 		}
-		else
-			saveXML(si, fp, input->GetSource(), TRUE);
+		else if( input->IsFilter() )
+			saveXML(si, fp, ((IFloopySoundFilter*)input)->GetSource(), TRUE);
 	}
 
 	si->level--;

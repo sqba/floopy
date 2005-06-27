@@ -22,7 +22,7 @@ CEcho::~CEcho()
 
 int CEcho::Read(BYTE *data, int size)
 {
-	int len = IFloopySoundInput::Read(data, size);
+	int len = IFloopySoundFilter::Read(data, size);
 	if(len <= 0)
 		return len;
 
@@ -58,13 +58,13 @@ void CEcho::Reset()
 {
 	memset(echo_buf, 0, sizeof(echo_buf));
 	memset(echo_buf2, 0, sizeof(echo_buf));
-	IFloopySoundInput::Reset();
+	IFloopySoundFilter::Reset();
 }
 /*
 BOOL CEcho::SetSource(IFloopySoundInput *src)
 {
 //	SOUNDFORMAT *fmt = src->GetFormat();
 //	assert( fmt->bitsPerSample == 16 );
-	return IFloopySoundInput::SetSource(src);
+	return IFloopySoundFilter::SetSource(src);
 }
 */

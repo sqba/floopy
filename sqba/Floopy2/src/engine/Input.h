@@ -105,7 +105,7 @@ public:
 
 
 private:
-	inline BOOL _isEngine() { return (m_source->GetType() == TYPE_FLOOPY_ENGINE); }
+	inline BOOL _isEngine() { return (m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE); }
 	void applyParamsAt(int offset);
 	int _getSamplesToBytes();
 	int _getStartOffset();

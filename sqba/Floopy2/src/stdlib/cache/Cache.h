@@ -11,7 +11,7 @@
 
 #include "../../ifloopy.h"
 
-class CCache : public IFloopySoundInput
+class CCache : public IFloopySoundFilter
 {
 public:
 	CCache();

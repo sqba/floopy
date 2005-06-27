@@ -11,7 +11,7 @@
 
 #include "../../ifloopy.h"
 
-class CEcho : public IFloopySoundInput
+class CEcho : public IFloopySoundFilter
 {
 public:
 	CEcho();

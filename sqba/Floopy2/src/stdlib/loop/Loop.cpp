@@ -29,7 +29,7 @@ int CLoop::Read(BYTE *data, int size)
 	int len = 0;
 /*	int origSize = size;
 	
-	int srclen = IFloopySoundInput::GetSize();
+	int srclen = IFloopySoundFilter::GetSize();
 	srclen *= samplesToBytes();
 
 	if((m_nPosition + size) > srclen)
@@ -37,18 +37,18 @@ int CLoop::Read(BYTE *data, int size)
 		if(srclen > m_nPosition)
 		{
 			size = srclen - m_nPosition;
-			len = IFloopySoundInput::Read(data, size);
+			len = IFloopySoundFilter::Read(data, size);
 			size = origSize - size;
 		}
 		Reset();
 //		m_nPosition = 0;
 //		m_nLoops++;
-		len += IFloopySoundInput::Read(data, size);
+		len += IFloopySoundFilter::Read(data, size);
 		m_nPosition += len;
 	}
 	else
 	{*/
-		len = IFloopySoundInput::Read(data, size);
+		len = IFloopySoundFilter::Read(data, size);
 
 		//if(EOF == len)
 		//	return len;
@@ -57,7 +57,7 @@ int CLoop::Read(BYTE *data, int size)
 		{
 			// We have reached the end
 			Reset();
-			int l = IFloopySoundInput::Read(data+len, size-len);
+			int l = IFloopySoundFilter::Read(data+len, size-len);
 
 			if(EOF == l)
 				return l;
@@ -86,7 +86,7 @@ int CLoop::GetSize()
 
 void CLoop::MoveTo(int samples)
 {
-	int size = IFloopySoundInput::GetSize();
+	int size = IFloopySoundFilter::GetSize();
 
 	/*if((m_nMaxLoops > 0) && (samples > (size * m_nMaxLoops)))
 	{
@@ -107,9 +107,9 @@ void CLoop::MoveTo(int samples)
 		samples = size * (samples % size) / 10;*/
 		//samples = size - (samples % size);
 		samples = samples % size;
-		IFloopySoundInput::Reset();
+		IFloopySoundFilter::Reset();
 	}
-	IFloopySoundInput::MoveTo(samples);
+	IFloopySoundFilter::MoveTo(samples);
 
 //	m_nPosition = samples * samplesToBytes();
 }
@@ -117,7 +117,7 @@ void CLoop::MoveTo(int samples)
 /*
 void CLoop::MoveTo(int samples)
 {
-	int size = IFloopySoundInput::GetSize();
+	int size = IFloopySoundFilter::GetSize();
 
 	if((samples > (size * m_nMaxLoops)) && (m_nMaxLoops > 0))
 	{
@@ -134,7 +134,7 @@ void CLoop::MoveTo(int samples)
 			samples -= (s * size);
 		Reset();
 	}
-	IFloopySoundInput::MoveTo(samples);
+	IFloopySoundFilter::MoveTo(samples);
 
 	m_nPosition = samples * samplesToBytes();
 }
@@ -143,7 +143,7 @@ void CLoop::Reset()
 {
 	m_nPosition = 0;
 //	m_nLoops=0;
-	IFloopySoundInput::Reset();
+	IFloopySoundFilter::Reset();
 }
 
 int CLoop::samplesToBytes()

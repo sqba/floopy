@@ -44,7 +44,7 @@ BOOL CCache::SetSource(IFloopySoundInput *src)
 	if(	createBuffer() )
 		return FALSE;
 
-	return IFloopySoundInput::SetSource(src);
+	return IFloopySoundFilter::SetSource(src);
 }
 
 void CCache::Close()
@@ -54,7 +54,7 @@ void CCache::Close()
 
 	m_nPosition = 0;
 
-	IFloopySoundInput::Close();
+	IFloopySoundFilter::Close();
 }
 
 int CCache::samplesToBytes()

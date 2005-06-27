@@ -125,7 +125,7 @@ BOOL CInput::Create(char *name)
 				strcat(m_fullName, ".");
 				strcat(m_fullName, m_pluginName);
 
-				IFloopySoundInput::SetSource(m_plugin);
+				IFloopySoundFilter::SetSource(m_plugin);
 				result = TRUE;
 			}
 			else
@@ -151,7 +151,7 @@ BOOL CInput::Create(IFloopySoundEngine *src)
 {
 	m_plugin = src;
 	
-	IFloopySoundInput::SetSource(m_plugin);
+	IFloopySoundFilter::SetSource(m_plugin);
 	
 	char *name = src->GetDisplayName();
 	if(name)
@@ -167,9 +167,14 @@ BOOL CInput::SetSource(IFloopySoundInput *src)
 //	if(m_iCheck != ((CInput*)src)->m_iCheck)
 //		return FALSE;
 
-	BOOL result = (m_plugin ? m_plugin->SetSource(src) : FALSE);
+	BOOL result = FALSE;
+	if(m_plugin && m_plugin->IsFilter())
+	{
+		result = ((IFloopySoundFilter*)m_plugin)->SetSource(src);
 	
-	_recalcVariables();
+		if(result)
+			_recalcVariables();
+	}
 
 	//if(m_callback && result) m_callback(this, m_offset/_getSamplesToBytes(), -333);
 
@@ -178,7 +183,10 @@ BOOL CInput::SetSource(IFloopySoundInput *src)
 
 IFloopySoundInput *CInput::GetSource()
 {
-	return m_plugin ? m_plugin->GetSource() : NULL;
+	if(m_plugin && m_plugin->IsFilter())
+		return ((IFloopySoundFilter*)m_plugin)->GetSource();
+	return NULL;
+
 }
 
 int CInput::Read(BYTE *data, int size)
@@ -216,8 +224,22 @@ int CInput::Read(BYTE *data, int size)
 	while(((offset=m_timeline.GetNextOffset(offset)) < endpos) && (offset>0) && !bEOF)
 	{
 		// Fill small chunks between parameter changes
-		src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
-		if(src && (IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled()))
+
+		if( IFloopy::IsEnabled() )
+			src = m_plugin;
+		else if( m_plugin->IsFilter() && m_plugin->ReadSourceIfDisabled() )
+			src = ((IFloopySoundFilter*)m_plugin)->GetSource();
+		else
+			src = NULL;
+
+		/*src = m_plugin;//(IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
+
+		if( !IFloopy::IsEnabled() && m_plugin->IsFilter() && m_plugin->ReadSourceIfDisabled() )
+		{
+			src = ((IFloopySoundFilter*)m_plugin)->GetSource();
+		}*/
+
+		if(src)// && (IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled()))
 			len = src->Read(data, offset - m_offset);
 		else
 			len = offset - m_offset;
@@ -237,8 +259,22 @@ int CInput::Read(BYTE *data, int size)
 	if( !bEOF )
 	{
 		// Fill the rest of the data
-		src = (IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
-		if(src && (IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled()))
+
+		if( IFloopy::IsEnabled() )
+			src = m_plugin;
+		else if( m_plugin->IsFilter() && m_plugin->ReadSourceIfDisabled() )
+			src = ((IFloopySoundFilter*)m_plugin)->GetSource();
+		else
+			src = NULL;
+
+		/*src = m_plugin;//(IFloopy::IsEnabled() ? m_plugin : m_plugin->GetSource());
+	
+		if( !IFloopy::IsEnabled() && m_plugin->IsFilter() && m_plugin->ReadSourceIfDisabled() )
+		{
+			src = ((IFloopySoundFilter*)m_plugin)->GetSource();
+		}*/
+
+		if(src)// && (IFloopy::IsEnabled() || m_plugin->ReadSourceIfDisabled()))
 		{
 			if(size > readBytes)
 			{
@@ -313,7 +349,9 @@ int CInput::GetSize()
 
 int CInput::GetSourceSize()
 {
-	return m_plugin ? m_plugin->GetSourceSize() : 0;
+	if(m_plugin && m_plugin->IsFilter())
+		return ((IFloopySoundFilter*)m_plugin)->GetSourceSize();
+	return 0;
 }
 
 void CInput::Reset()
@@ -808,7 +846,7 @@ BOOL CInput::GetLastError(char *str, int len)
 int CInput::calcRelativeOffset(int offset)
 {
 	int start = _getStartOffset();
-	BOOL bEngine = (m_source->GetType() == TYPE_FLOOPY_ENGINE);
+	BOOL bEngine = (m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE);
 
 	if(bEngine && start > 0 && offset > start)
 		offset -= start;

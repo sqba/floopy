@@ -56,7 +56,7 @@ private:
 	void remove(tParam *param);
 
 private:
-	tParam *m_pFirst, *m_pLast;
+	tParam *m_pFirst, *m_pLast, *m_pTemp;
 };
 
 #endif // !defined(AFX_TIMELINE_H__E99D9CE2_478E_4EFF_807B_852DB0AF9322__INCLUDED_)

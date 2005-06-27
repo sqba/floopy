@@ -98,12 +98,12 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 		//space[level-1] = 0xc0;
 		space[level*2] = 0;
 
-		//fprintf(fp, "\n%s%s (%.3f)", space, name, size);
+		fprintf(fp, "\n%s%s (%.3f)", space, name, size);
 		//fprintf(fp, "\n%s%s", space, name);
-		float srcsize = (float)input->GetSourceSize();
+		/*float srcsize = (float)input->GetSourceSize();
 		if(srcsize > 0)
 			srcsize = (float)input->GetSourceSize() / (float)fmt->frequency;
-		fprintf(fp, "\n%s%s (%.3f) (%.3f)", space, name, size, srcsize);
+		fprintf(fp, "\n%s%s (%.3f) (%.3f)", space, name, size, srcsize);*/
 
 		delete space;
 	}
@@ -121,7 +121,8 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	}
 	else
 	{
-		printTree(fp, input->GetSource(), level+1, FALSE, TRUE);
+		if( input->IsFilter() )
+			printTree(fp, ((IFloopySoundFilter*)input)->GetSource(), level+1, FALSE, TRUE);
 	}
 }
 
@@ -205,7 +206,7 @@ void main(int argc, char* argv[])
 
 	IFloopySoundOutput *output = NULL;
 
-	region->SetSource( engine );
+	((IFloopySoundFilter*)region)->SetSource( engine );
 
 	fprintf(stderr, "\n\n");
 

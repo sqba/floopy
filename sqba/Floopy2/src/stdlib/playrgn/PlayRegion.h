@@ -12,7 +12,7 @@
 #include <assert.h>
 #include "../../ifloopy.h"
 
-class CPlayRegion : public IFloopySoundInput
+class CPlayRegion : public IFloopySoundFilter
 {
 public:
 	CPlayRegion();

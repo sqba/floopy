@@ -22,12 +22,12 @@ CMono2Stereo::~CMono2Stereo()
 
 int CMono2Stereo::Read(BYTE *data, int size)
 {
-	//return IFloopySoundInput::Read(data, size);
+	//return IFloopySoundFilter::Read(data, size);
 
 	BYTE *tmp = new BYTE[size/2];
 	memset(tmp, 0, size/2);
 
-	int len = IFloopySoundInput::Read(tmp, size/2);
+	int len = IFloopySoundFilter::Read(tmp, size/2);
 
 	if(EOF == len)
 		return len;
@@ -51,7 +51,7 @@ int CMono2Stereo::Read(BYTE *data, int size)
 
 SOUNDFORMAT *CMono2Stereo::GetFormat()
 {
-	memcpy(&m_format, IFloopySoundInput::GetFormat(), sizeof(SOUNDFORMAT));
+	memcpy(&m_format, IFloopySoundFilter::GetFormat(), sizeof(SOUNDFORMAT));
 	m_format.channels = 2;
 	return &m_format;
 }
@@ -59,18 +59,18 @@ SOUNDFORMAT *CMono2Stereo::GetFormat()
 /*
 void CMono2Stereo::MoveTo(int samples)
 {
-	IFloopySoundInput::MoveTo(samples/2);
+	IFloopySoundFilter::MoveTo(samples/2);
 }
 
 int CMono2Stereo::GetSize()
 {
-	return IFloopySoundInput::GetSize() * 2;
+	return IFloopySoundFilter::GetSize() * 2;
 }
 */
 /*
 int CMono2Stereo::Read(BYTE *data, int size)
 {
-	int len = IFloopySoundInput::Read(data, size);
+	int len = IFloopySoundFilter::Read(data, size);
 	for(int i=0; i<len-1; i++)
 	{
 		*(++data) = *(++data);
@@ -83,7 +83,7 @@ int CMono2Stereo::Read(BYTE *data, int size)
 	BYTE *tmp = new BYTE[size*2];
 	memset(tmp, 0, size*2);
 
-	int len = IFloopySoundInput::Read(tmp, size*2);
+	int len = IFloopySoundFilter::Read(tmp, size*2);
 
 	BYTE *pTmp = tmp;
 	BYTE *pData = data;
