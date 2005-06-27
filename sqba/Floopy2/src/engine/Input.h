@@ -50,6 +50,10 @@ public:
 	char *GetParamName(int index);
 	char *GetParamDesc(int index);
 	BOOL  GetParamIndex(char *name, int *index);
+	float GetParamMax(int index)	{ return m_plugin->GetParamMax(index); }
+	float GetParamMin(int index)	{ return m_plugin->GetParamMin(index); }
+	char *GetParamUnit(int index)	{ return m_plugin->GetParamUnit(index); }
+	float GetParamStep(int index)	{ return m_plugin->GetParamStep(index); }
 
 	BOOL GetColor(UINT *r, UINT *g, UINT *b);
 	void SetColor(UINT r, UINT g, UINT b);

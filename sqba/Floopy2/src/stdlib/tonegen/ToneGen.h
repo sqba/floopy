@@ -34,6 +34,9 @@ public:
 	BOOL  GetParamVal(int index, float *value);
 	char *GetParamName(int index)	{ return "Frequency"; }
 	char *GetParamDesc(int index)	{ return "Tone Frequency"; }
+	float GetParamMax(int index)	 { return(index == 0 ? 20000.f : 0.f); }
+	float GetParamMin(int index)	 { return 0.f; }
+	char *GetParamUnit(int index)	 { return(index == 0 ? "hz" : NULL); }
 
 	void MoveTo(int samples)		{ if(samples==0) angle = 0.0; }
 
