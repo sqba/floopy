@@ -177,7 +177,7 @@ public:
 	 * @param index index of the parameter.
 	 * @param value new parameter value.
 	 */
-	virtual BOOL GetParamAt(int offset, int index, float value) {}
+	virtual BOOL GetParamAt(int offset, int index, float value) { return FALSE; }
 
 	/**
 	 * Removes scheduled parameter change.

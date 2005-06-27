@@ -602,12 +602,12 @@ char *CInput::GetParamDesc(int index)
 	return m_plugin->GetParamDesc(index);
 }
 
-BOOL CInput::GetParamAt(int offset, int index, float value)
+BOOL CInput::GetParamAt(int offset, int index, float *value)
 {
 	tParam *param = m_timeline.GetParam(offset * m_nSamplesToBytes, index);
 	if( param )
 	{
-		value = param->value;
+		*value = param->value;
 		return TRUE;
 	}
 	return FALSE;
