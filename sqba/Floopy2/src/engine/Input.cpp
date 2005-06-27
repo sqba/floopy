@@ -368,6 +368,12 @@ int CInput::GetNextOffset(int offset)
 	return (next > 0 ? next / m_nSamplesToBytes : 0);
 }
 
+int CInput::GetPrevOffset(int offset)
+{
+	int prev = m_timeline.GetPrevOffset(offset*m_nSamplesToBytes);
+	return (prev > 0 ? prev / m_nSamplesToBytes : 0);
+}
+
 /**
  * Enable at the current offset.
  * @param bEnable enable/disable.
@@ -594,6 +600,17 @@ char *CInput::GetParamName(int index)
 char *CInput::GetParamDesc(int index)
 {
 	return m_plugin->GetParamDesc(index);
+}
+
+BOOL CInput::GetParamAt(int offset, int index, float value)
+{
+	tParam *param = m_timeline.GetParam(offset * m_nSamplesToBytes, index);
+	if( param )
+	{
+		value = param->value;
+		return TRUE;
+	}
+	return FALSE;
 }
 
 void CInput::SetParamAt(int offset, int index, float value)

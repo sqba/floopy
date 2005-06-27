@@ -159,6 +159,8 @@ public:
 	 */
 	virtual int GetNextOffset(int offset)			{ return 0; }
 
+	virtual int GetPrevOffset(int offset)			{ return 0; }
+
 	/**
 	 * Schedules particular parameter's value for change at specific offset.
 	 * Do not override in implementations, handled by the engine.
@@ -167,6 +169,15 @@ public:
 	 * @param value new parameter value.
 	 */
 	virtual void SetParamAt(int offset, int index, float value) {}
+
+	/**
+	 * Schedules particular parameter's value for change at specific offset.
+	 * Do not override in implementations, handled by the engine.
+	 * @param offset position in samples at which the change occurs.
+	 * @param index index of the parameter.
+	 * @param value new parameter value.
+	 */
+	virtual BOOL GetParamAt(int offset, int index, float value) {}
 
 	/**
 	 * Removes scheduled parameter change.

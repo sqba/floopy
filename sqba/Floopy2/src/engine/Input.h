@@ -68,7 +68,9 @@ public:
 	IFloopySoundInput *GetSource();
 
 	int GetNextOffset(int offset);
+	int GetPrevOffset(int offset);
 
+	BOOL GetParamAt(int offset, int index, float value);
 	void SetParamAt(int offset, int index, float value);
 	BOOL ResetParamAt(int offset, int index);
 	void EnableAt(int offset, BOOL bEnable);
