@@ -490,7 +490,7 @@ void CTrack::loadRegions()
 		float paramVal = 0.f;
 		if(m_pInput->GetParamVal(TIMELINE_PARAM_ENABLE, &paramVal))
 		{
-			if(paramVal == PARAM_VALUE_ENABLED && (start == -1))
+			if((paramVal == PARAM_VALUE_ENABLED) && (start == -1))
 				start = offset;
 			else if((paramVal == PARAM_VALUE_DISABLED) && (start >= 0))
 			{
