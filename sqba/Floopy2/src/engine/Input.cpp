@@ -143,6 +143,11 @@ BOOL CInput::Create(char *name)
 						IFloopy::Enable(FALSE);
 					}
 				}
+				/*else
+				{
+					Enable(FALSE);
+					IFloopy::Enable(FALSE);
+				}*/
 
 				result = TRUE;
 			}
@@ -175,6 +180,30 @@ BOOL CInput::Create(IFloopySoundEngine *src)
 	if(name)
 		SetDisplayName(name, strlen(name));
 
+
+
+	SOUNDFORMAT *fmt = m_plugin->GetFormat();
+	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+	{
+		if(m_plugin->GetType() == TYPE_FLOOPY_SOUND_FILTER)
+		{
+			Enable(TRUE);
+			IFloopy::Enable(TRUE);
+		}
+		else
+		{
+			Enable(FALSE);
+			IFloopy::Enable(FALSE);
+		}
+	}
+	/*else
+	{
+		Enable(FALSE);
+		IFloopy::Enable(FALSE);
+	}*/
+
+
+
 	return TRUE;
 }
 
@@ -195,6 +224,15 @@ BOOL CInput::Open(char *filename)
 		}
 	}
 	return FALSE;
+}
+
+void CInput::Close()
+{
+	m_plugin->Close();
+
+#ifdef _DEBUG_TIMER_
+	_debugPrint();
+#endif // _DEBUG_TIMER_
 }
 
 BOOL CInput::SetSource(IFloopySoundInput *src)
@@ -347,7 +385,8 @@ void CInput::MoveTo(int samples)
 	{
 		m_offset = samples * m_nSamplesToBytes;
 
-		_applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
+		//_applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
+		_applyParamsUntil( m_offset );
 
 		if( _isEngine() )
 		{
@@ -443,149 +482,6 @@ BOOL CInput::IsEnabled()
 	return bEnabled;
 }
 
-
-/**
- * Used to convert number of samples to number of bytes and vice versa.
- */
-int CInput::_getSamplesToBytes()
-{
-	SOUNDFORMAT *fmt = GetFormat();
-	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
-		return (fmt->bitsPerSample / 8) * fmt->channels;
-	else
-		return 0;
-}
-
-/**
- * Applies all parameters at the given offset.
- * @param offset number of bytes.
- */
-void CInput::_applyParamsAt(int offset)
-{
-	int sample = -1;
-	if(m_nSamplesToBytes)
-		sample = offset / m_nSamplesToBytes;
-
-	//if(_isEngine() && (offset == _getStartOffset()))
-	if(_isEngine() && (offset == m_nStartOffset))
-		m_source->Reset();
-
-	tParam *param = m_timeline.GetParam(offset, TIMELINE_PARAM_ENABLE);
-	if(param)
-	{
-		BOOL bEnable = ( PARAM_VALUE_DISABLED != param->value );
-		
-		IFloopy::Enable( bEnable );
-
-		if(m_plugin)
-			m_plugin->Enable(bEnable);
-
-		if(m_callback && sample >= 0)
-			m_callback(this, sample, TIMELINE_PARAM_ENABLE);
-	}
-
-	param = m_timeline.GetParam(offset, TIMELINE_PARAM_MOVETO);
-	if(param)
-	{
-		if(0.f == param->value)
-			m_source->Reset();
-		else
-			m_source->MoveTo((int)param->value);
-
-		if(m_callback && sample >= 0)
-			m_callback(this, sample, TIMELINE_PARAM_MOVETO);
-	}
-
-	int count = GetParamCount();
-	if(count > 0)
-	{
-		for(int i=0; i<count; i++)
-		{
-			param = m_timeline.GetParam(offset, i);
-			if(param)
-			{
-				m_plugin->SetParamVal(param->index, param->value);
-
-				if(m_callback && sample >= 0)
-					m_callback(this, sample, i);
-			}
-		}
-	}
-}
-
-
-void CInput::_applyParamsUntil(int endoffset)
-{
-	int offset = 0;
-	do {
-		_applyParamsAt( offset );
-		offset = m_timeline.GetNextOffset(offset);
-	} while((offset > 0) && (offset < endoffset));
-}
-
-/**
- * Calculates the distance in bytes at which the track starts playing.
- * @return number of bytes.
- */
-int CInput::_getStartOffset()
-{
-	int offset = 0;
-	int tmp = 0;
-
-	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
-	{
-		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
-		if(param && (param->value == PARAM_VALUE_ENABLED))
-		{
-			offset = tmp;
-			break;
-		}
-	}
-
-	return offset;
-}
-
-/**
- * Calculates the distance in bytes at which the track ends playing.
- * @return number of bytes.
- */
-int CInput::_getEndOffset()
-{
-	int offset = 0;
-	int tmp = 0;
-
-	float last = IsEnabled() ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED;
-
-	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
-	{
-		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
-		if(param)
-		{
-			last = param->value;
-			if(param->value == PARAM_VALUE_DISABLED)
-			{
-				if(tmp > offset)
-					offset = tmp;
-			}
-		}
-	}
-
-	// Proveriti da li se na kraju iskljucuje.
-	// U suprotnom vratiti duzinu!
-	if((last==PARAM_VALUE_ENABLED) && m_plugin)
-	{
-		offset = m_nStartOffset + m_plugin->GetSize() * m_nSamplesToBytes;
-	}
-
-	return offset;
-}
-
-int CInput::GetParamCount()
-{
-	return m_plugin->GetParamCount();
-}
-
 BOOL CInput::GetParamVal(int index, float *value)
 {
 	tParam *param = m_timeline.GetParam(m_offset, index);
@@ -644,15 +540,6 @@ BOOL CInput::GetParamIndex(char *name, int *index)
 	return FALSE;
 }
 
-char *CInput::GetParamName(int index)
-{
-	return m_plugin->GetParamName(index);
-}
-char *CInput::GetParamDesc(int index)
-{
-	return m_plugin->GetParamDesc(index);
-}
-
 BOOL CInput::GetParamAt(int offset, int index, float *value)
 {
 	tParam *param = m_timeline.GetParam(offset * m_nSamplesToBytes, index);
@@ -709,15 +596,6 @@ void CInput::EnableAt(int offset, BOOL bEnable)
 //		m_callback(this, offset/_getSamplesToBytes(), index);
 }
 
-void CInput::Close()
-{
-	m_plugin->Close();
-
-#ifdef _DEBUG_TIMER_
-	_debugPrint();
-#endif // _DEBUG_TIMER_
-}
-
 
 BOOL CInput::GetColor(UINT *r, UINT *g, UINT *b)
 {
@@ -734,18 +612,6 @@ void  CInput::SetColor(UINT r, UINT g, UINT b)
 	m_blue	= b;
 }
 
-
-/**
- * Calculates optimization variables.
- */
-void CInput::_recalcVariables()
-{
-	m_nSamplesToBytes	= _getSamplesToBytes();
-	m_nStartOffset		= _getStartOffset();
-	m_nEndOffset		= _getEndOffset();
-
-//	assert(m_nSamplesToBytes > 0);
-}
 
 
 
@@ -768,20 +634,7 @@ int CInput::AddSource(IFloopySoundInput *src)
 		return 0;
 	}
 }
-/*
-IFloopySoundInput *CInput::GetSource(int index)
-{
-	if(m_plugin)
-	{
-		if(m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER)
-			return ((IFloopySoundMixer*)m_plugin)->GetSource(index);
-		else if(index == 0)
-			return m_plugin;
-	}
-	else
-		return NULL;
-}
-*/
+
 IFloopySoundInput *CInput::GetSource(int index)
 {
 	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
@@ -803,6 +656,161 @@ int CInput::GetInputCount()
 	else
 		return(m_plugin ? 1 : 0);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Calculates optimization variables.
+ */
+void CInput::_recalcVariables()
+{
+	m_nSamplesToBytes	= _getSamplesToBytes();	// 1
+	m_nStartOffset		= _getStartOffset();	// 2
+	m_nEndOffset		= _getEndOffset();		// 3
+}
+
+/**
+ * Used to convert number of samples to number of bytes and vice versa.
+ */
+int CInput::_getSamplesToBytes()
+{
+	SOUNDFORMAT *fmt = GetFormat();
+	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+		return (fmt->bitsPerSample / 8) * fmt->channels;
+	else
+		return 0;
+}
+
+/**
+ * Applies all parameters at the given offset.
+ * @param offset number of bytes.
+ */
+void CInput::_applyParamsAt(int offset)
+{
+	int sample = -1;
+	if(m_nSamplesToBytes)
+		sample = offset / m_nSamplesToBytes;
+
+	//if(_isEngine() && (offset == _getStartOffset()))
+	if(offset == m_nStartOffset)
+		m_source->Reset();
+
+	tParam *param = m_timeline.GetParam(offset, TIMELINE_PARAM_ENABLE);
+	if(param)
+	{
+		BOOL bEnable = ( PARAM_VALUE_DISABLED != param->value );
+		
+		IFloopy::Enable( bEnable );
+
+		if(m_plugin)
+			m_plugin->Enable(bEnable);
+
+		if(m_callback && sample >= 0)
+			m_callback(this, sample, TIMELINE_PARAM_ENABLE);
+	}
+
+	param = m_timeline.GetParam(offset, TIMELINE_PARAM_MOVETO);
+	if(param)
+	{
+		if(0.f == param->value)
+			m_source->Reset();
+		else
+			m_source->MoveTo((int)param->value);
+
+		if(m_callback && sample >= 0)
+			m_callback(this, sample, TIMELINE_PARAM_MOVETO);
+	}
+
+	int count = GetParamCount();
+	if(count > 0)
+	{
+		for(int i=0; i<count; i++)
+		{
+			param = m_timeline.GetParam(offset, i);
+			if(param)
+			{
+				m_plugin->SetParamVal(param->index, param->value);
+
+				if(m_callback && sample >= 0)
+					m_callback(this, sample, i);
+			}
+		}
+	}
+}
+
+void CInput::_applyParamsUntil(int endoffset)
+{
+	int offset = 0;
+	do {
+		_applyParamsAt( offset );
+		offset = m_timeline.GetNextOffset(offset);
+	} while((offset > 0) && (offset < endoffset));
+}
+
+/**
+ * Calculates the distance in bytes at which the track starts playing.
+ * @return number of bytes.
+ */
+int CInput::_getStartOffset()
+{
+	int offset = 0;
+	int tmp = 0;
+
+	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
+	{
+		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
+		if(param && (param->value == PARAM_VALUE_ENABLED))
+		{
+			offset = tmp;
+			break;
+		}
+	}
+
+	return offset;
+}
+
+/**
+ * Calculates the distance in bytes at which the track ends playing.
+ * @return number of bytes.
+ */
+int CInput::_getEndOffset()
+{
+	int offset = 0;
+	int tmp = 0;
+
+	float last = IsEnabled() ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED;
+
+	while((tmp=m_timeline.GetNextOffset(tmp)) > 0)
+	{
+		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
+		if(param)
+		{
+			last = param->value;
+			if((param->value == PARAM_VALUE_DISABLED) && (tmp > offset))
+				offset = tmp;
+		}
+	}
+
+	// Proveriti da li se na kraju iskljucuje.
+	// U suprotnom vratiti duzinu!
+	if((last==PARAM_VALUE_ENABLED) && m_plugin)
+	{
+		offset = m_nStartOffset + m_plugin->GetSize() * m_nSamplesToBytes;
+	}
+
+	return offset;
+}
+
 
 
 

@@ -44,11 +44,11 @@ public:
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
-	int   GetParamCount();
+	int   GetParamCount()			{ return m_plugin->GetParamCount(); }
 	BOOL  GetParamVal(int index, float *value);
 	void  SetParamVal(int index, float value);
-	char *GetParamName(int index);
-	char *GetParamDesc(int index);
+	char *GetParamName(int index)	{ return m_plugin->GetParamName(index); }
+	char *GetParamDesc(int index)	{ return m_plugin->GetParamDesc(index); }
 	BOOL  GetParamIndex(char *name, int *index);
 	float GetParamMax(int index)	{ return m_plugin->GetParamMax(index); }
 	float GetParamMin(int index)	{ return m_plugin->GetParamMin(index); }
@@ -113,22 +113,14 @@ public:
 
 
 private:
-	inline BOOL _isEngine() { return (m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE); }
+	inline BOOL _isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : FALSE); }
 	void _applyParamsAt(int offset);
 	void _applyParamsUntil(int endoffset);
 	int _getSamplesToBytes();
 	int _getStartOffset();
 	int _getEndOffset();
 	void _recalcVariables();
-//	bool _isEnabledAt(int offset);
-//	BOOL _isEnabledAt(int offset);
-//	int _read(BYTE *data, int size);
-	void _debugBreak();
 
-//	int getSize();
-//	int getRelativeSize()
-//	int getEnd();
-	UINT m_red, m_green, m_blue;
 
 protected:
 	int m_iCheck;	/** Some random number, used to check if the
@@ -142,6 +134,8 @@ private:
 	char m_szLibraryName[MAX_PATH];
 	char m_szPluginName[50];
 	char m_szFullName[MAX_PATH];
+
+	UINT m_red, m_green, m_blue;
 
 	UpdateCallback m_callback;
 
