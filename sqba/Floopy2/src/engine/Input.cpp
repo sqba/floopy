@@ -460,15 +460,19 @@ void CInput::applyParamsAt(int offset)
 			m_callback(this, sample, TIMELINE_PARAM_MOVETO);
 	}
 
-	for(int i=0; i<GetParamCount(); i++)
+	int count = GetParamCount();
+	if(count > 0)
 	{
-		param = m_timeline.GetParam(offset, i);
-		if(param)
+		for(int i=0; i<count; i++)
 		{
-			m_plugin->SetParamVal(param->index, param->value);
+			param = m_timeline.GetParam(offset, i);
+			if(param)
+			{
+				m_plugin->SetParamVal(param->index, param->value);
 
-			if(m_callback && sample >= 0)
-				m_callback(this, sample, i);
+				if(m_callback && sample >= 0)
+					m_callback(this, sample, i);
+			}
 		}
 	}
 }

@@ -71,6 +71,10 @@ Project: "wxFloopy"=".\gui\wxFloopy\floopy.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
+    begin source code control
+    "$/sqba/Floopy2/src/wxFloopy", TPDAAAAA
+    .\gui\wxfloopy
+    end source code control
 }}}
 
 Package=<4>

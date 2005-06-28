@@ -326,6 +326,53 @@ BOOL saveXML(IFloopySoundEngine *engine, char *filename)
 }
 
 
+
+
+
+
+
+/*
+void saveParamTimeline(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, int index)
+{
+	char space[100] = {0};
+	if(si->level < 100)
+		memset(space, ' ', si->level+1);
+
+	UINT r=0, g=0, b=0;
+	input->GetColor(&r, &g, &b);
+
+	SOUNDFORMAT *fmt = input->GetFormat();
+	int freq = fmt->frequency;
+
+	fprintf(fp, "%s<param name='%s' index='%d' color='%d,%d,%d'>", 
+			space, input->GetParamName(index), index, r, g, b);
+
+	bool bStart = true;
+	int offset = 0;
+	do {
+		float seconds = (float)offset / (float)freq;
+		float value = 0.f;
+		
+		if(input->GetParamAt(offset, index, &value))
+		{
+			if(!bStart)
+				fprintf(fp, ", "); // Separator
+			else
+				bStart = false;
+
+			fprintf(fp, "%.3f:%.3f", seconds, value);
+		}
+		
+		offset = input->GetNextOffset(offset);
+	} while (offset > 0);
+
+	fprintf(fp, "</param>\n");
+}
+*/
+
+
+
+
 void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursive)
 {
 	if(NULL == input)
@@ -357,6 +404,22 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 		space, input->GetName(), r, g, b);
 
 	si->bInitialized = TRUE;
+
+
+
+
+
+
+/*
+	for(int index=0; index<input->GetParamCount(); index++)
+	{
+		saveParamTimeline(si, fp, input, index);
+	}
+*/
+
+
+
+
 
 	fprintf(fp, "%s <timeline>", space);
 
@@ -423,6 +486,7 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 	//fprintf(fp, "</%s>\n", input->GetName());
 	fprintf(fp, "%s</input>\n", space);
 }
+
 
 
 // Problem: MoveTo nece da radi kada izvor nije kompletno

@@ -1,0 +1,187 @@
+// TracksView.cpp: implementation of the CTracksView class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#include "TracksView.h"
+//#include "../FloopyDoc.h"
+
+
+BEGIN_EVENT_TABLE(CTracksView, CCaretView)
+	EVT_MOUSE_EVENTS(CTracksView::OnMouseEvent)
+	EVT_KEY_DOWN( CTracksView::OnKeyDown )
+END_EVENT_TABLE()
+
+
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+
+
+CTracksView::CTracksView(wxWindow* parent, wxScrolledWindow *labels, CTracks *tracks)
+ : CCaretView(parent, tracks)
+{
+	m_pObjMenu		= NULL;
+	m_bDrag			= FALSE;
+	m_pLabelsView	= labels;
+	m_pTracks		= tracks;
+	m_pSelectedObj	= NULL;
+	m_ptPrev.x = m_ptPrev.y = 0;
+	m_pTracks->SetTracksView(this);
+	
+	SetCursor( wxCURSOR_PENCIL );
+
+	wxLog::AddTraceMask(_T("CTracksView"));
+}
+
+CTracksView::~CTracksView()
+{
+	/*if(m_pObjMenu) {
+		wxMenuBar *menubar = GetFrame()->GetMenuBar();
+		menubar->Remove(menubar->GetMenuCount()-1);
+	}*/
+}
+
+void CTracksView::OnDraw(wxDC &dc)
+{
+	m_pTracks->DrawBG(dc);		// Draw track backgrounds
+	CCaretView::OnDraw(dc);		// Draw grid
+	m_pTracks->DrawFore(dc);	// Draw track foregrounds
+}
+
+void CTracksView::ScrollWindow( int dx, int dy, const wxRect *rect )
+{
+	CCaretView::ScrollWindow( dx, dy, rect );
+
+	if(0 != dy)
+		m_pLabelsView->ScrollWindow( 0, dy, NULL );
+}
+
+void CTracksView::OnKeyDown(wxKeyEvent& event)
+{
+	IFloopyObj *tmp = m_pTracks->GetSelectedObj();
+	if(tmp)
+		tmp->OnKeyDown(event);
+}
+
+void CTracksView::OnMouseEvent(wxMouseEvent& event)
+{
+	try {
+	int x, y, xScrollUnits, yScrollUnits;
+	GetViewStart(&x, &y);
+	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+
+	IFloopyObj *obj = m_pTracks->GetChildAt(event.GetX() + x*xScrollUnits,
+											event.GetY() + y*yScrollUnits);
+
+	if( event.Dragging() && m_pSelectedObj ) {
+		if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion))) {
+			if(0 != m_ptPrev.x) {
+				int dx = event.GetX() - m_ptPrev.x;
+				m_pTracks->MoveSelectedRegions(dx);
+			}
+		} else { // Border
+			if(0 != m_ptPrev.x) {
+				int dx = event.GetX() - m_ptPrev.x;
+				int dy = event.GetY() - m_ptPrev.y;
+				m_pSelectedObj->Move(dx, dy, m_pTracks->GetPixelsPerSecond());
+			}
+		}
+		if(obj) { // Outside of tracks
+			m_ptPrev.x = event.GetX();
+			m_ptPrev.y = event.GetY();
+		}
+		//RefreshRulers();
+		return;
+	}
+
+	if(obj) {
+		SetCursor( obj->GetCursor() );
+
+		wxMenu *mnu = obj->GetMenu();
+
+		if(mnu) {
+			if(event.RightUp()) {
+				PopupMenu(mnu, event.GetPosition());
+				return;
+			}
+		}
+
+		if(event.LeftDown()) {
+			m_pSelectedObj = obj;
+
+			if(obj->IsKindOf(CLASSINFO(CTrack))) {
+				CTrack *track = (CTrack*)obj;
+				wxCaret *caret = GetCaret();
+				caret->Show(FALSE);
+
+				int x=0;
+				caret->GetPosition(&x, NULL);
+
+				int xScrollUnits=0, yScrollUnits=0;
+				GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+				int xOrig=0, yOrig=0;
+				GetViewStart(&xOrig, &yOrig);
+				xOrig *= xScrollUnits;
+				yOrig *= yScrollUnits;
+			
+				if( track->IsSelected() ) {
+					caret->SetSize(1, track->GetHeight());
+					caret->Move( x-xOrig, track->GetTop()-yOrig );
+				} else {
+					m_pTracks->DeselectAllTracks();
+					m_pTracks->DeselectAllRegions();
+
+					caret->SetSize(1, GetSize().GetHeight());
+					caret->Move( x-xOrig, 0 );
+				}
+				caret->Show(TRUE);
+
+				///////////////////////////////////////////
+				// Add new region
+				int x1 = event.GetX() + xOrig;
+				CRegion *region = track->AddNewRegionAt(x1);
+				m_pSelectedObj = region->GetBorder(FALSE);
+				region->Refresh();
+				///////////////////////////////////////////
+			} else if(obj->IsKindOf(CLASSINFO(CRegion))) {
+				if( !event.ShiftDown() && !m_bDrag ) {
+					m_pTracks->DeselectAllRegions();
+				} else
+					m_bDrag = TRUE;
+
+				m_pSelectedObj->Select();
+				m_pSelectedObj->Refresh();
+
+				return; // Don't move the caret
+			}
+		}
+
+		if( event.LeftUp() && m_pSelectedObj ) {
+			if(m_pSelectedObj->IsKindOf(CLASSINFO(CTrack))) {
+				m_bDrag = FALSE;
+
+			} else if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion))) {
+				m_pTracks->UpdateSelectedRegions();
+			} else if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion::CBorder))) {
+				CRegion *region = (CRegion*)m_pSelectedObj->GetParent();
+				CTrack *trk = (CTrack*)region->GetParent();
+				if(region->GetWidth() <= 10)
+					trk->RemoveRegion( region );
+				else
+					region->Update();
+				m_pSelectedObj = NULL;
+			}
+		}
+	} else 
+		SetCursor( *wxSTANDARD_CURSOR );
+
+	m_ptPrev.x = event.GetX();
+	m_ptPrev.y = event.GetY();
+
+	} catch(...)
+	{
+		wxLogTrace(_T("CTracksView"), _T("OnMouseEvent exception"));
+	}
+
+	CCaretView::OnMouseEvent(event);
+}

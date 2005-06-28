@@ -1,0 +1,63 @@
+// TracksView.h: interface for the CTracksView class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#if !defined(AFX_GRIDCANVAS_H__5756201B_EA96_4005_A65A_EB12C24993BC__INCLUDED_)
+#define AFX_GRIDCANVAS_H__5756201B_EA96_4005_A65A_EB12C24993BC__INCLUDED_
+
+#if _MSC_VER > 1000
+#pragma once
+#endif // _MSC_VER > 1000
+
+#ifdef __GNUG__
+// #pragma implementation
+#endif
+
+// For compilers that support precompilation, includes "wx/wx.h".
+#include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
+
+#if !wxUSE_DOC_VIEW_ARCHITECTURE
+#error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
+#endif
+
+//#include <wx/dragimag.h>
+//#include <wx/generic/dragimgg.h>
+
+#include <wx/docview.h>
+
+#include "labelsview.h"
+#include "caretview.h"
+#include "../engine/tracks.h"
+
+class CTracksView : public CCaretView
+{
+    DECLARE_EVENT_TABLE()
+
+public:
+	CTracksView(wxWindow *parent, wxScrolledWindow *labels, CTracks *tracks);
+	virtual ~CTracksView();
+
+	void OnDraw(wxDC& dc);
+	void ScrollWindow( int dx, int dy, const wxRect *rect );
+    void OnMouseEvent(wxMouseEvent& event);
+	void OnKeyDown(wxKeyEvent& event);
+	//void OnKeyUp(wxKeyEvent& event);
+
+protected:
+	wxPoint				m_ptPrev;
+	IFloopyObj			*m_pSelectedObj;
+	wxScrolledWindow	*m_pLabelsView;
+	CTracks				*m_pTracks;
+	bool				m_bDrag;
+	wxMenu				*m_pObjMenu;
+};
+
+#endif // !defined(AFX_GRIDCANVAS_H__5756201B_EA96_4005_A65A_EB12C24993BC__INCLUDED_)
