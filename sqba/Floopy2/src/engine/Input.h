@@ -39,7 +39,7 @@ public:
 	BOOL Create(char *plugin);
 	BOOL Create(IFloopySoundEngine *src);
 
-	char *GetName()			{ return m_fullName; }	//{ return m_plugin->GetName(); }
+	char *GetName()			{ return m_szFullName; }	//{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
@@ -60,6 +60,8 @@ public:
 
 	void Enable(BOOL bEnable);
 	BOOL IsEnabled();
+
+	BOOL Open(char *filename);
 
 	void MoveTo(int samples);
 	void Reset();
@@ -84,11 +86,11 @@ public:
 //	int GetLastError();
 	BOOL GetLastError(char *str, int len);
 
-	char *GetDisplayName() { return m_name; }
+	char *GetDisplayName() { return m_szDisplayName; }
 	void SetDisplayName(char *name, int len)
 	{
-		memset(m_name, 0, 50);
-		memcpy(m_name, name, (len<50?len:50));
+		memset(m_szDisplayName, 0, 50);
+		memcpy(m_szDisplayName, name, (len<50?len:50));
 	}
 
 	char *GetPath() { return _isEngine() ? m_source->GetPath() : m_szObjPath; }
@@ -112,13 +114,16 @@ public:
 
 private:
 	inline BOOL _isEngine() { return (m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE); }
-	void applyParamsAt(int offset);
+	void _applyParamsAt(int offset);
+	void _applyParamsUntil(int endoffset);
 	int _getSamplesToBytes();
 	int _getStartOffset();
 	int _getEndOffset();
 	void _recalcVariables();
+//	bool _isEnabledAt(int offset);
 //	BOOL _isEnabledAt(int offset);
 //	int _read(BYTE *data, int size);
+	void _debugBreak();
 
 //	int getSize();
 //	int getRelativeSize()
@@ -130,13 +135,13 @@ protected:
 						component was created by the same engine */
 
 private:
-	char m_name[50];
+	char m_szDisplayName[50];
 	char m_szLastError[100];
 	char m_szObjPath[MAX_PATH];
 
-	char m_libraryName[MAX_PATH];
-	char m_pluginName[50];
-	char m_fullName[MAX_PATH];
+	char m_szLibraryName[MAX_PATH];
+	char m_szPluginName[50];
+	char m_szFullName[MAX_PATH];
 
 	UpdateCallback m_callback;
 

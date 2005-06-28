@@ -26,12 +26,12 @@ CInput::CInput(UpdateCallback func)
 	m_iCheck	= 23526; // some random number
 	m_callback	= func;
 
-	memset(m_name, 0, 50);
+	memset(m_szDisplayName, 0, 50);
 	memset(m_szLastError, 0, sizeof(m_szLastError));
 	memset(m_szObjPath,   0, sizeof(m_szObjPath));
 
-	memset(m_libraryName, 0, MAX_PATH);
-	memset(m_pluginName, 0, 50);
+	memset(m_szLibraryName, 0, MAX_PATH);
+	memset(m_szPluginName, 0, 50);
 
 	Enable(TRUE);
 	IFloopy::Enable(TRUE);
@@ -111,21 +111,39 @@ BOOL CInput::Create(char *name)
 			m_plugin = func( plugin );
 			if(m_plugin)
 			{
-				memset(m_libraryName, 0, MAX_PATH);
-				memset(m_pluginName, 0, 50);
+				memset(m_szLibraryName, 0, MAX_PATH);
+				memset(m_szPluginName, 0, 50);
 				char *tmp = strrchr(library, '\\');
 				if(tmp)
-					strcpy(m_libraryName, tmp+1);
+					strcpy(m_szLibraryName, tmp+1);
 				else
-					strcpy(m_libraryName, library);
-				strcpy(m_pluginName, plugin);
+					strcpy(m_szLibraryName, library);
+				strcpy(m_szPluginName, plugin);
 				
-				memset(m_fullName, 0, MAX_PATH);
-				strcpy(m_fullName, m_libraryName);
-				strcat(m_fullName, ".");
-				strcat(m_fullName, m_pluginName);
+				memset(m_szFullName, 0, MAX_PATH);
+				strcpy(m_szFullName, m_szLibraryName);
+				strcat(m_szFullName, ".");
+				strcat(m_szFullName, m_szPluginName);
+
+				SetDisplayName(plugin, strlen(plugin));
 
 				IFloopySoundFilter::SetSource(m_plugin);
+
+				SOUNDFORMAT *fmt = m_plugin->GetFormat();
+				if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+				{
+					if(m_plugin->GetType() == TYPE_FLOOPY_SOUND_FILTER)
+					{
+						Enable(TRUE);
+						IFloopy::Enable(TRUE);
+					}
+					else
+					{
+						Enable(FALSE);
+						IFloopy::Enable(FALSE);
+					}
+				}
+
 				result = TRUE;
 			}
 			else
@@ -158,6 +176,25 @@ BOOL CInput::Create(IFloopySoundEngine *src)
 		SetDisplayName(name, strlen(name));
 
 	return TRUE;
+}
+
+BOOL CInput::Open(char *filename)
+{
+	if(m_plugin)
+	{
+		if(m_plugin->Open(filename))
+		{
+			char *tmp = strrchr(filename, '\\');
+			if(tmp)
+				tmp+= 1;
+			else
+				tmp = filename;
+			SetDisplayName(tmp, strlen(tmp));
+
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
 
 BOOL CInput::SetSource(IFloopySoundInput *src)
@@ -219,7 +256,7 @@ int CInput::Read(BYTE *data, int size)
 #endif // _DEBUG_TIMER_
 
 	// Apply all due parameters
-	applyParamsAt( m_offset );
+	_applyParamsAt( m_offset );
 
 	while(((offset=m_timeline.GetNextOffset(offset)) < endpos) && (offset>0) && !bEOF)
 	{
@@ -253,7 +290,7 @@ int CInput::Read(BYTE *data, int size)
 		else
 			bEOF = TRUE;
 	
-		applyParamsAt( offset );
+		_applyParamsAt( offset );
 	}
 
 	if( !bEOF )
@@ -310,7 +347,7 @@ void CInput::MoveTo(int samples)
 	{
 		m_offset = samples * m_nSamplesToBytes;
 
-		applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
+		_applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 
 		if( _isEngine() )
 		{
@@ -424,7 +461,7 @@ int CInput::_getSamplesToBytes()
  * Applies all parameters at the given offset.
  * @param offset number of bytes.
  */
-void CInput::applyParamsAt(int offset)
+void CInput::_applyParamsAt(int offset)
 {
 	int sample = -1;
 	if(m_nSamplesToBytes)
@@ -475,6 +512,16 @@ void CInput::applyParamsAt(int offset)
 			}
 		}
 	}
+}
+
+
+void CInput::_applyParamsUntil(int endoffset)
+{
+	int offset = 0;
+	do {
+		_applyParamsAt( offset );
+		offset = m_timeline.GetNextOffset(offset);
+	} while((offset > 0) && (offset < endoffset));
 }
 
 /**
