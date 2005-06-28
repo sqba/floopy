@@ -102,6 +102,21 @@ int CTimeline::GetPrevOffset(int offset)
 	return max;
 }
 
+int CTimeline::GetPrevOffset(int offset, int index)
+{
+	int max = 0;
+	tParam *tmp = m_pFirst;
+	while(tmp)
+	{
+		if((index == tmp->index) && (tmp->offset < offset) && (tmp->offset > max))
+		{
+			max = tmp->offset;
+		}
+		tmp = tmp->next;
+	}
+	return max;
+}
+
 int CTimeline::GetNextOffset(int offset)
 {
 /*

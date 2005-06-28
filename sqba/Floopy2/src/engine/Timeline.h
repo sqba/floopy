@@ -47,6 +47,7 @@ public:
 	int GetPrevOffset(int offset);
 	void Clear();
 	BOOL MoveParam(int offset, int index, int newoffset);
+	int GetPrevOffset(int offset, int index);
 
 //	void dump(FILE *fp);
 

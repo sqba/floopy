@@ -9,14 +9,16 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "../ifloopy.h"
-#include "timeline.h"
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
 
-//#define LOCAL_PARAM_COUNT	1
+#include "../ifloopy.h"
+#include "timeline.h"
+
+
 //#define _DEBUG_TIMER_
+
 
 /**
  * \class CInput
@@ -39,7 +41,7 @@ public:
 	BOOL Create(char *plugin);
 	BOOL Create(IFloopySoundEngine *src);
 
-	char *GetName()			{ return m_szFullName; }	//{ return m_plugin->GetName(); }
+	char *GetName()			{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
@@ -95,7 +97,6 @@ public:
 
 	char *GetPath() { return _isEngine() ? m_source->GetPath() : m_szObjPath; }
 
-//	enumClassType GetType() { return _isEngine() ? TYPE_FLOOPY_ENGINE : TYPE_FLOOPY_SOUND_INPUT; }
 	enumClassType GetType() { return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
 
 	BOOL MoveParam(int offset, int index, int newoffset);
@@ -114,12 +115,15 @@ public:
 
 private:
 	inline BOOL _isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : FALSE); }
+	inline BOOL _isFilter() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_FILTER : FALSE); }
 	void _applyParamsAt(int offset);
-	void _applyParamsUntil(int endoffset);
+	//void _applyParamsUntil(int endoffset);
+	void _applyPreviousParams(int offset);
 	int _getSamplesToBytes();
 	int _getStartOffset();
 	int _getEndOffset();
 	void _recalcVariables();
+	inline IFloopySoundInput *_getSource();
 
 
 protected:
@@ -131,10 +135,6 @@ private:
 	char m_szLastError[100];
 	char m_szObjPath[MAX_PATH];
 
-	char m_szLibraryName[MAX_PATH];
-	char m_szPluginName[50];
-	char m_szFullName[MAX_PATH];
-
 	UINT m_red, m_green, m_blue;
 
 	UpdateCallback m_callback;
@@ -143,10 +143,6 @@ private:
 	HINSTANCE m_hinst;
 	IFloopySoundInput *m_plugin;
 	CTimeline m_timeline;
-
-//	BOOL m_bRecording;
-
-	float m_fDebug;
 
 	/// Optimization variables
 	int m_nStartOffset, m_nEndOffset, m_nSamplesToBytes;
