@@ -186,6 +186,7 @@ void main(int argc, char* argv[])
 	}
 
 	CEngine *engine = new CEngine("engine");
+	IFloopySoundOutput *output = NULL;
 
 	char *filename = GetArg(argc, argv, "i", "test.test");
 
@@ -204,10 +205,6 @@ void main(int argc, char* argv[])
 		return;
 	}
 
-	IFloopySoundOutput *output = NULL;
-
-	((IFloopySoundFilter*)region)->SetSource( engine );
-
 	fprintf(stderr, "\n\n");
 
 	SOUNDFORMAT *fmt = engine->GetFormat();
@@ -216,6 +213,8 @@ void main(int argc, char* argv[])
 		fprintf(stderr, "Engine not initialized properly!\n");
 		goto ERR_EXIT;
 	}
+
+	((IFloopySoundFilter*)region)->SetSource( engine );
 
 	start = GetArg(argc, argv, "s", 0.f);
 	end = GetArg(argc, argv, "e", 0.f);

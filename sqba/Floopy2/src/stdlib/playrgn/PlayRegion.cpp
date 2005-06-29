@@ -13,7 +13,8 @@
 
 CPlayRegion::CPlayRegion()
 {
-	m_nStartAt = m_nStopAt = m_nPosition = 0;
+	m_startOffset = m_endOffset = m_offset = 0;
+//	m_startSample = m_endSample = 0;
 }
 
 CPlayRegion::~CPlayRegion()
@@ -23,26 +24,29 @@ CPlayRegion::~CPlayRegion()
 
 int CPlayRegion::Read(BYTE *data, int size)
 {
-	if((m_nStopAt > 0) && (m_nPosition >= m_nStopAt))
+	if((m_endOffset > 0) && (m_offset >= m_endOffset))
 		return EOF;
 
+//	m_startOffset = m_startSample * samplesToBytes();
+//	m_endOffset = m_endSample * samplesToBytes();
+
 	//int len = IFloopySoundFilter::GetSize() * samplesToBytes();
-	int len = m_nPosition + m_nSourceSize;
+	int len = m_offset + m_nSourceSize;
 
-	if((m_nStopAt > 0) && (len > m_nStopAt))
-		len = m_nStopAt;
+	if((m_endOffset > 0) && (len > m_endOffset))
+		len = m_endOffset;
 
-	if((m_nPosition + size) > len)
+	if((m_offset + size) > len)
 	{
-		assert(len >= m_nPosition);
-		size = len - m_nPosition;
+		assert(len >= m_offset);
+		size = len - m_offset;
 	}
 
 	int read = IFloopySoundFilter::Read(data, size);
 	if(EOF == read)
 		return EOF;
 
-	m_nPosition += read;
+	m_offset += read;
 
 	return read;
 }
@@ -52,23 +56,25 @@ int CPlayRegion::GetSize()
 	//int size = IFloopySoundFilter::GetSize();
 	int size = m_nSourceSize / samplesToBytes();
 
-	int start = m_nStartAt;
-	int stop = (m_nStopAt > 0 ? m_nStopAt : size*samplesToBytes());
+	int start = m_startOffset;
+	int stop = (m_endOffset > 0 ? m_endOffset : size*samplesToBytes());
 	size = (stop - start) / samplesToBytes();
 
 	return size;
+
+//	return m_endSample - m_startSample;
 }
 
 void CPlayRegion::MoveTo(int samples)
 {
-	m_nPosition = m_nStartAt + samples * samplesToBytes();
-	IFloopySoundFilter::MoveTo((m_nStartAt / samplesToBytes()) + samples);
+	m_offset = m_startOffset + samples * samplesToBytes();
+	IFloopySoundFilter::MoveTo((m_startOffset / samplesToBytes()) + samples);
 	m_nSourceSize = IFloopySoundFilter::GetSize() * samplesToBytes();
 }
 
 void CPlayRegion::Reset()
 {
-	m_nPosition = m_nStartAt;
+	m_offset = m_startOffset;
 	IFloopySoundFilter::Reset();
 	m_nSourceSize = IFloopySoundFilter::GetSize() * samplesToBytes();
 }
@@ -78,7 +84,8 @@ void  CPlayRegion::SetParamVal(int index, float value)
 	switch(index)
 	{
 	case 0:
-		m_nStartAt = (int)value * samplesToBytes();
+//		m_startSample = (int)value;
+		m_startOffset = (int)value * samplesToBytes();
 		Reset();
 		IFloopySoundFilter::MoveTo((int)value);
 		break;
@@ -87,9 +94,10 @@ void  CPlayRegion::SetParamVal(int index, float value)
 		int size = IFloopySoundFilter::GetSize();
 		int max = size * samplesToBytes();
 		if(stop == 0)
-			m_nStopAt = max;
+			m_endOffset = max;
 		else
-			m_nStopAt = (stop > max ? max : stop);
+			m_endOffset = (stop > max ? max : stop);
+//		m_endSample = (int)value;// > size ? size : (int)value;
 	}
 }
 
@@ -98,10 +106,10 @@ BOOL CPlayRegion::GetParamVal(int index, float *value)
 	switch(index)
 	{
 	case 0:
-		*value = (float)m_nStartAt / samplesToBytes();
+		*value = (float)m_startOffset / samplesToBytes();
 		return TRUE;
 	case 1:
-		*value = (float)m_nStopAt / samplesToBytes();
+		*value = (float)m_endOffset / samplesToBytes();
 		return TRUE;
 	}
 	return FALSE;

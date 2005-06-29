@@ -217,7 +217,17 @@ BOOL CInput::SetSource(IFloopySoundInput *src)
 
 	return result;
 }
-
+/*
+SOUNDFORMAT *CInput::GetFormat()
+{
+	if(m_plugin && m_plugin->IsFilter())
+		return ((IFloopySoundFilter*)m_plugin)->GetFormat();
+	else if(m_plugin)
+		return ((IFloopySoundInput*)m_plugin)->GetFormat();
+	else
+		return IFloopySoundInput::GetFormat();
+}
+*/
 IFloopySoundInput *CInput::GetSource()
 {
 	if(m_plugin && m_plugin->IsFilter())

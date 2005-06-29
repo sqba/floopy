@@ -125,6 +125,8 @@ private:
 	void _recalcVariables();
 	inline IFloopySoundInput *_getSource();
 
+//	SOUNDFORMAT *GetFormat();
+
 
 protected:
 	int m_iCheck;	/** Some random number, used to check if the
