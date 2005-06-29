@@ -169,11 +169,6 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 
 void main(int argc, char* argv[])
 {
-	float start = 0.f;
-	float end = 0.f;
-	int i = 0;
-	char *outfile = NULL;
-
 	if(argc == 1)
 	{
 		fprintf(stderr, "Usage: %s -i [input] -s [start] -e [end] -o [output] -v [filename]\n", argv[0]);
@@ -185,23 +180,21 @@ void main(int argc, char* argv[])
 		return;
 	}
 
+	float start = 0.f;
+	float end = 0.f;
+	int i = 0;
+//	char *outfile = NULL;
+
 	CEngine *engine = new CEngine("engine");
 	IFloopySoundOutput *output = NULL;
+	IFloopySoundInput *input = engine;
 
 	char *filename = GetArg(argc, argv, "i", "test.test");
 
 	fprintf(stderr, "Opening %s", filename);
-
 	if(!engine->Open(filename))
 	{
 		fprintf(stderr, "%s: File not found!\n", filename);
-		return;
-	}
-
-	IFloopySoundInput *region = engine->CreateInput("stdlib.playrgn");
-	if(!region)
-	{
-		fprintf(stderr, "stdlib.playrgn not found!\n");
 		return;
 	}
 
@@ -214,22 +207,31 @@ void main(int argc, char* argv[])
 		goto ERR_EXIT;
 	}
 
-	((IFloopySoundFilter*)region)->SetSource( engine );
-
 	start = GetArg(argc, argv, "s", 0.f);
-	end = GetArg(argc, argv, "e", 0.f);
-	if(region->GetParamIndex("startat", &i))
-		region->SetParamVal(i, start*fmt->frequency);
-	if(region->GetParamIndex("stopat", &i))
-		region->SetParamVal(i, end*fmt->frequency);
+	end   = GetArg(argc, argv, "e", 0.f);
+	if(start > 0.f && end > 0.f)
+	{
+		input = engine->CreateInput("stdlib.playrgn");
+		if(!input)
+		{
+			fprintf(stderr, "stdlib.playrgn not found!\n");
+			return;
+		}
+
+		((IFloopySoundFilter*)input)->SetSource( engine );
+
+		if(input->GetParamIndex("startat", &i))
+			input->SetParamVal(i, start*fmt->frequency);
+		if(input->GetParamIndex("stopat", &i))
+			input->SetParamVal(i, end*fmt->frequency);
+	}
 
 
-	SOUNDFORMAT format;
-	memcpy(&format, fmt, sizeof(SOUNDFORMAT));
+	//SOUNDFORMAT format;
+	//memcpy(&format, fmt, sizeof(SOUNDFORMAT));
 
-//	char *outfile = GetArg(argc, argv, "o", "floopy.wav");
-	outfile = GetArg(argc, argv, "o", "stdlib.waveout");
-	output = engine->CreateOutput(outfile, format);
+	filename = GetArg(argc, argv, "o", "stdlib.waveout");
+	output   = engine->CreateOutput(filename, *fmt);
 	/*if(!output)
 	{
 		fprintf(stderr, "Failed to create output: %s!\n", outfile);
@@ -254,7 +256,7 @@ void main(int argc, char* argv[])
 
 	if(output)
 	{
-		process(region, output);
+		process(input, output);
 
 		engine->Reset();
 	}

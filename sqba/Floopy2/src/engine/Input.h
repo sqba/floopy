@@ -123,6 +123,7 @@ private:
 	int _getStartOffset();
 	int _getEndOffset();
 	void _recalcVariables();
+	void _recalcSourceVariables();
 	inline IFloopySoundInput *_getSource();
 
 //	SOUNDFORMAT *GetFormat();

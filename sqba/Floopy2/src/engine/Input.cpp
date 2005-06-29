@@ -183,6 +183,8 @@ BOOL CInput::Open(char *filename)
 			tmp = filename;
 		SetDisplayName(tmp, strlen(tmp));
 
+		_recalcVariables();
+
 		return TRUE;
 	}
 	return FALSE;
@@ -350,12 +352,12 @@ int CInput::GetSize()
 
 	if(m_plugin)
 	{
+		size = m_plugin->GetSize();
+
 		if(m_nEndOffset > 0 && m_nSamplesToBytes > 0)
 			size = m_nEndOffset / m_nSamplesToBytes;
 		else if (m_nSamplesToBytes > 0)
-			size = m_nStartOffset / m_nSamplesToBytes + m_plugin->GetSize();
-		else
-			size = m_plugin->GetSize();
+			size += m_nStartOffset / m_nSamplesToBytes;
 	}
 
 	return size;
@@ -597,9 +599,32 @@ int CInput::GetInputCount()
  */
 void CInput::_recalcVariables()
 {
+	_recalcSourceVariables();
+
 	m_nSamplesToBytes	= _getSamplesToBytes();	// 1
 	m_nStartOffset		= _getStartOffset();	// 2
 	m_nEndOffset		= _getEndOffset();		// 3
+}
+
+/**
+ * A little trick to update all source variables.
+ */
+void CInput::_recalcSourceVariables()
+{
+	IFloopySoundInput *src = this->GetSource();
+	if(src)
+	{
+		if(src->GetType() == TYPE_FLOOPY_SOUND_MIXER)
+		{
+			IFloopySoundMixer *mixer = (IFloopySoundMixer*)src;
+			for(int i=0; i<mixer->GetInputCount(); i++)
+			{
+				mixer->GetSource(i)->GetSize();
+			}
+		}
+		else
+			src->GetSize();
+	}
 }
 
 /**
