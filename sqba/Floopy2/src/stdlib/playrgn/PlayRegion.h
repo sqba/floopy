@@ -37,10 +37,12 @@ public:
 
 private:
 	int samplesToBytes();
+	void calcVariables();
 
 private:
 	int m_offset, m_startOffset, m_endOffset, m_nSourceSize;
-//	int m_startSample, m_endSample;
+	int m_startSample, m_endSample;
+	int m_samplesToBytes;
 };
 
 #endif // !defined(AFX_PLAYREGION_H__296D45BA_8272_498F_A8B6_E99A25106F8B__INCLUDED_)

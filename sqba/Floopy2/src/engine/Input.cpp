@@ -485,6 +485,8 @@ BOOL CInput::GetParamAt(int offset, int index, float *value)
 void CInput::SetParamAt(int offset, int index, float value)
 {
 	m_timeline.SetParamVal(offset * m_nSamplesToBytes, index, value);
+	if(offset == 0)
+		m_plugin->SetParamVal(index, value);
 	_recalcVariables();
 }
 
