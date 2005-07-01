@@ -88,7 +88,8 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc, int pps)
 				int x = offset / hres;
 				int y = (int)((float)bottom - (value * scale));
 				
-				dc.DrawRectangle(prevX-2, y-2, 5, 5);
+				//dc.DrawRectangle(prevX-2, y-2, 5, 5);
+				dc.DrawCircle(prevX+1, y, 3);
 				
 				if(prevX > left)
 					dc.DrawLine(prevX, prevY, prevX, y);
