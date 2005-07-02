@@ -36,14 +36,15 @@ CTracks::CTracks() : IFloopyObj(NULL)
 
 	m_bSnapTo = TRUE;
 
-	m_pPlayThread = new CPlayThread(this);
+	m_pPlayThread = NULL;
 }
 
 CTracks::~CTracks()
 {
 	WX_CLEAR_LIST(TracksList, m_tracks);
 	delete m_pBorder;
-	delete m_pPlayThread;
+	if(m_pPlayThread)
+		delete m_pPlayThread;
 
 	if(NULL != m_pEngine)
 	{
@@ -567,6 +568,7 @@ BOOL CTracks::Open(char *filename)
 		m_pEngine->Reset();
 		m_length = (float)m_pEngine->GetSize() / freq;
 		//RefreshRulers();
+		m_pPlayThread = new CPlayThread(this);
 		Refresh();
 		return TRUE;
 	}
@@ -623,6 +625,11 @@ void CTracks::loadTracks(IFloopySoundInput *input, int level)
 
 void CTracks::Clear()
 {
+	if(m_pPlayThread)
+	{
+		delete m_pPlayThread;
+		m_pPlayThread = NULL;
+	}
 	WX_CLEAR_LIST(TracksList, m_tracks);
 	Refresh();
 }
@@ -722,6 +729,9 @@ int CTracks::CalcStep(int mindist)
 
 void CTracks::Play()
 {
+	if(NULL == m_pPlayThread)
+		return;
+
 	int x=0, y=0;
 	
 //	int width1=0, height1=0;
@@ -738,11 +748,17 @@ void CTracks::Play()
 
 void CTracks::Pause()
 {
+	if(NULL == m_pPlayThread)
+		return;
+
 	m_pPlayThread->Pause();
 }
 
 void CTracks::Stop()
 {
+	if(NULL == m_pPlayThread)
+		return;
+
 	m_pPlayThread->Stop();
 }
 
