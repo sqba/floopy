@@ -19,6 +19,8 @@ COutput::COutput()
 {
 	m_hinst = NULL;
 	m_plugin = NULL;
+	m_offset = 0;
+	m_samplesToBytes = 0;
 }
 
 COutput::~COutput()
@@ -65,6 +67,7 @@ BOOL COutput::Create(char *plugin, SOUNDFORMAT fmt)
 			{
 				m_plugin = func( plugin, fmt );
 				IFloopySoundOutput::SetDest( m_plugin );
+				m_samplesToBytes = (fmt.bitsPerSample / 8) * fmt.channels;
 				return TRUE;
 			}
 		}
@@ -84,7 +87,7 @@ BOOL COutput::Create(char *plugin, SOUNDFORMAT fmt)
 int COutput::Write(BYTE *data, int size)
 {
 	int len = (NULL != m_plugin ? m_plugin->Write(data, size) : 0);
-	m_offset += len;
+	m_offset += len / m_samplesToBytes;
 	return len;
 }
 
@@ -96,4 +99,17 @@ BOOL COutput::GetParamVal(int index, float *value)
 void COutput::SetParamVal(int index, float value)
 {
 	m_plugin->SetParamVal(index, value);
+}
+
+int COutput::GetWrittenSamples()
+{
+	int result = m_offset;// * m_samplesToBytes;
+	if(m_plugin->GetWrittenSamples() > result)
+		result = m_plugin->GetWrittenSamples();
+	return result;
+}
+
+void COutput::Reset()
+{
+	m_offset = 0;
 }

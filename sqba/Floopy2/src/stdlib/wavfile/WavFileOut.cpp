@@ -66,8 +66,8 @@ int CWavFileOut::Write(BYTE *data, int size)
 	int written = 0;
 	if(NULL != m_pFile)
 	{
-		written = fwrite(data, size, 1, m_pFile);
-		m_data.dataSIZE += (written * size);
+		written = fwrite(data, 1, size, m_pFile);
+		m_data.dataSIZE += written;//(written * size);
 		fflush(m_pFile);
 	}
 	return written;

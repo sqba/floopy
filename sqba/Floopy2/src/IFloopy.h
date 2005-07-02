@@ -539,6 +539,17 @@ public:
 	virtual void SetDest(IFloopySoundOutput *dst)	{ m_dest = dst; }
 	virtual IFloopySoundOutput *GetDest()			{ return m_dest; }
 
+	virtual int GetWrittenSamples()
+	{
+		return (NULL != m_dest ? m_dest->GetWrittenSamples() : 0);
+	}
+
+	virtual void Reset()
+	{
+		if(NULL != m_dest)
+			m_dest->Reset();
+	}
+
 private:
 	IFloopySoundOutput *m_dest;
 };

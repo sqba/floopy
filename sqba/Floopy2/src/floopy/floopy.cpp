@@ -145,7 +145,8 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	int max = samples * stb;
 	int percent = 0;
 
-	fprintf(stderr, "Reading:   0%%");
+	int del = 0;
+	fprintf(stderr, "Reading: ");//  0%%");
 	while((len=input->Read(buff, size)) != EOF)
 	{
 		offset += len;
@@ -153,7 +154,9 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 		memset(buff, 0, sizeof(buff));
 		//assert(offset < max);
 		percent = (int)((float)offset * 100.f / (float)max);
-		fprintf(stderr, "\b\b\b%2d%%", percent);
+		for(int i=0; i<del; i++)
+			fprintf(stderr, "\b");
+		del = fprintf(stderr, "%d%% - %d", percent, output->GetWrittenSamples());
 	}
 
 	DWORD speed = clock() - start;

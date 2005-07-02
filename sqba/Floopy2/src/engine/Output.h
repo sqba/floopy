@@ -53,10 +53,14 @@ public:
 
 	char *GetLastErrorDesc() { return m_szLastError; }
 
+	int GetWrittenSamples();
+	void Reset();
+
 private:
 	char m_name[50];
 	char m_szLastError[100];
 
+	int m_samplesToBytes;
 	int m_offset;
 	HINSTANCE m_hinst;
 	IFloopySoundOutput *m_plugin;

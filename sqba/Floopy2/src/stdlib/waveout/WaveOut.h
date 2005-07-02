@@ -27,7 +27,7 @@
 // module level variables
 static CRITICAL_SECTION waveCriticalSection;
 static WAVEHDR*         waveBlocks;
-static volatile int     waveFreeBlockCount;
+//static volatile int     waveFreeBlockCount;
 static int              waveCurrentBlock;
 
 class CWaveOut : public IFloopySoundOutput
@@ -43,12 +43,20 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
+	int GetWrittenSamples();
+	void Reset();
+
+	int waveFreeBlockCount;
+	int samplesToBytes;
+	int bytesRead;
+
 private:
 	// function prototypes
 	static void CALLBACK	waveOutProc(HWAVEOUT, UINT, DWORD, DWORD, DWORD);
 	static WAVEHDR*			allocateBlocks(int size, int count);
 	static void				freeBlocks(WAVEHDR* blockArray);
-	static void				writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size);
+//	static void				writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size);
+	void writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size);
 
 	HWAVEOUT hWaveOut;	// device handle
 	WAVEFORMATEX wfx;	// look this up in your documentation

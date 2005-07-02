@@ -26,6 +26,9 @@ CWaveOut::CWaveOut(SOUNDFORMAT fmt)
 	wfx.wFormatTag      = WAVE_FORMAT_PCM;
 	wfx.nBlockAlign     = (wfx.wBitsPerSample * wfx.nChannels) >> 3;
 	wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
+
+	bytesRead = 0;
+	samplesToBytes = (wfx.wBitsPerSample / 8) * wfx.nChannels;
 	
 	// try to open the default wave device. WAVE_MAPPER is
 	// a constant defined in mmsystem.h, it always points to the
@@ -36,7 +39,8 @@ CWaveOut::CWaveOut(SOUNDFORMAT fmt)
 		WAVE_MAPPER, 
 		&wfx, 
 		(LONG)waveOutProc, 
-		(LONG)&waveFreeBlockCount, 
+//		(LONG)&waveFreeBlockCount, 
+		(LONG)this, 
 		CALLBACK_FUNCTION
 		) != MMSYSERR_NOERROR) {
 		fprintf(stderr, "Unable to open wave mapper device\n");
@@ -79,8 +83,11 @@ void CALLBACK CWaveOut::waveOutProc(
     DWORD dwParam2     
 )
 {
+	CWaveOut *pWaveOut = (CWaveOut*)dwInstance;
+	int* freeBlockCounter = &pWaveOut->waveFreeBlockCount;
+
 	// pointer to free block counter
-	int* freeBlockCounter = (int*)dwInstance;
+//	int* freeBlockCounter = (int*)dwInstance;
 	
 	// ignore calls that occur due to openining and closing the device.
 	if(uMsg != WOM_DONE)
@@ -89,6 +96,8 @@ void CALLBACK CWaveOut::waveOutProc(
 	EnterCriticalSection(&waveCriticalSection);
 	(*freeBlockCounter)++;
 	LeaveCriticalSection(&waveCriticalSection);
+
+	pWaveOut->bytesRead += BLOCK_SIZE * sizeof(char);
 }
 
 WAVEHDR* CWaveOut::allocateBlocks(int size, int count)
@@ -165,4 +174,14 @@ void CWaveOut::writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size)
 		current = &waveBlocks[waveCurrentBlock];
 		current->dwUser = 0;
 	}
+}
+
+int CWaveOut::GetWrittenSamples()
+{
+	return bytesRead / samplesToBytes;
+}
+
+void CWaveOut::Reset()
+{
+	bytesRead = 0;
 }
