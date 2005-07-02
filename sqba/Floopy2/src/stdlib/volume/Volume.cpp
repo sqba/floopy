@@ -27,6 +27,9 @@ int CVolume::Read(BYTE *data, int size)
 	if(EOF == len)
 		return len;
 
+	if(m_volume == 100)
+		return len;
+
 	SOUNDFORMAT *fmt = GetFormat();
 	if((NULL == fmt) || (fmt->bitsPerSample == 0) || (fmt->channels == 0))
 		return 0;

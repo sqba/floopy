@@ -411,20 +411,15 @@ void CInput::Enable(BOOL bEnable)
  */
 BOOL CInput::IsEnabled()
 {
-	float value = m_timeline.GetParamVal(m_offset, TIMELINE_PARAM_ENABLE);
+	float value = PARAM_VALUE_ENABLED;
+	m_timeline.GetParamVal(m_offset, TIMELINE_PARAM_ENABLE, &value);
 	BOOL bEnabled = (PARAM_VALUE_DISABLED != value);
 	return bEnabled;
 }
 
 BOOL CInput::GetParamVal(int index, float *value)
 {
-	tParam *param = m_timeline.GetParam(m_offset, index);
-	if(param)
-	{
-		*value = param->value;
-		return TRUE;
-	}
-	return FALSE;
+	return m_timeline.GetParamVal(m_offset, index, value);
 }
 
 void CInput::SetParamVal(int index, float value)
@@ -475,13 +470,7 @@ BOOL CInput::GetParamIndex(char *name, int *index)
 
 BOOL CInput::GetParamAt(int offset, int index, float *value)
 {
-	tParam *param = m_timeline.GetParam(offset * m_nSamplesToBytes, index);
-	if( param )
-	{
-		*value = param->value;
-		return TRUE;
-	}
-	return FALSE;
+	return m_timeline.GetParamVal(offset * m_nSamplesToBytes, index, value);
 }
 
 void CInput::SetParamAt(int offset, int index, float value)
@@ -494,7 +483,7 @@ void CInput::SetParamAt(int offset, int index, float value)
 
 BOOL CInput::ResetParamAt(int offset, int index)
 {
-	if(m_timeline.Remove(offset * m_nSamplesToBytes, index))
+	if(m_timeline.RemoveParam(offset * m_nSamplesToBytes, index))
 	{
 		_recalcVariables();
 		return TRUE;
@@ -649,10 +638,11 @@ void CInput::_applyParamsAt(int offset)
 	if(m_nSamplesToBytes)
 		sample = offset / m_nSamplesToBytes;
 
-	tParam *param = m_timeline.GetParam(offset, TIMELINE_PARAM_ENABLE);
-	if(param)
+	float value = 0.f;
+
+	if( m_timeline.GetParamVal(offset, TIMELINE_PARAM_ENABLE, &value) )
 	{
-		BOOL bEnable = ( PARAM_VALUE_DISABLED != param->value );
+		BOOL bEnable = ( PARAM_VALUE_DISABLED != value );
 		IFloopy::Enable( bEnable );
 		if(m_plugin)
 			m_plugin->Enable(bEnable);
@@ -661,13 +651,12 @@ void CInput::_applyParamsAt(int offset)
 			m_callback(this, sample, TIMELINE_PARAM_ENABLE);
 	}
 
-	param = m_timeline.GetParam(offset, TIMELINE_PARAM_MOVETO);
-	if(param)
+	if( m_timeline.GetParamVal(offset, TIMELINE_PARAM_MOVETO, &value) )
 	{
-		if(0.f == param->value)
+		if(0.f == value)
 			m_plugin->Reset();
 		else
-			m_plugin->MoveTo((int)param->value);
+			m_plugin->MoveTo((int)value);
 
 		if(m_callback && sample >= 0)
 			m_callback(this, sample, TIMELINE_PARAM_MOVETO);
@@ -678,10 +667,9 @@ void CInput::_applyParamsAt(int offset)
 	{
 		for(int index=0; index<count; index++)
 		{
-			param = m_timeline.GetParam(offset, index);
-			if(param)
+			if( m_timeline.GetParamVal(offset, index, &value) )
 			{
-				m_plugin->SetParamVal(param->index, param->value);
+				m_plugin->SetParamVal(index, value);
 
 				if(m_callback && sample >= 0)
 					m_callback(this, sample, index);
@@ -692,24 +680,24 @@ void CInput::_applyParamsAt(int offset)
 
 void CInput::_applyPreviousParams(int offset)
 {
+	float value = 0.f;
+
 	int prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_ENABLE);
-	tParam *param = m_timeline.GetParam(prevOffset, TIMELINE_PARAM_ENABLE);
-	if(param)
+	if( m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_ENABLE, &value) )
 	{
-		BOOL bEnable = ( PARAM_VALUE_DISABLED != param->value );
+		BOOL bEnable = ( PARAM_VALUE_DISABLED != value );
 		IFloopy::Enable( bEnable );
 		if(m_plugin)
 			m_plugin->Enable(bEnable);
 	}
 
 	prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_MOVETO);
-	param = m_timeline.GetParam(prevOffset, TIMELINE_PARAM_MOVETO);
-	if(param)
+	if( m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_MOVETO, &value) )
 	{
-		if(0.f == param->value)
+		if(0.f == value)
 			m_source->Reset();
 		else
-			m_source->MoveTo((int)param->value);
+			m_source->MoveTo((int)value);
 	}
 
 	int count = GetParamCount();
@@ -718,9 +706,8 @@ void CInput::_applyPreviousParams(int offset)
 		for(int index=0; index<count; index++)
 		{
 			prevOffset = m_timeline.GetPrevOffset(offset, index);
-			param = m_timeline.GetParam(prevOffset, index);
-			if(param)
-				m_plugin->SetParamVal(param->index, param->value);
+			if( m_timeline.GetParamVal(prevOffset, index, &value) )
+				m_plugin->SetParamVal(index, value);
 		}
 	}
 }
@@ -731,19 +718,23 @@ void CInput::_applyPreviousParams(int offset)
  */
 int CInput::_getStartOffset()
 {
-	int offset = 0;
+	return m_timeline.GetStartOffset();
+	/*int offset = 0;
 	int tmp = 0;
+	float value = 0.f;
 
 	do {
-		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
-		if(param && (param->value == PARAM_VALUE_ENABLED))
+		if( m_timeline.GetParamVal(tmp, TIMELINE_PARAM_ENABLE, &value) )
 		{
-			offset = tmp;
-			break;
+			if(value == PARAM_VALUE_ENABLED)
+			{
+				offset = tmp;
+				break;
+			}
 		}
 	} while((tmp=m_timeline.GetNextOffset(tmp)) > 0);
 
-	return offset;
+	return offset;*/
 }
 
 /**
@@ -754,15 +745,15 @@ int CInput::_getEndOffset()
 {
 	int offset = 0;
 	int tmp = 0;
+	float value = 0.f;
 
 	float last = IsEnabled() ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED;
 
 	do {
-		tParam *param = m_timeline.GetParam(tmp, TIMELINE_PARAM_ENABLE);
-		if(param)
+		if( m_timeline.GetParamVal(tmp, TIMELINE_PARAM_ENABLE, &value) )
 		{
-			last = param->value;
-			if((param->value == PARAM_VALUE_DISABLED) && (tmp > offset))
+			last = value;
+			if((value == PARAM_VALUE_DISABLED) && (tmp > offset))
 				offset = tmp;
 		}
 	} while((tmp=m_timeline.GetNextOffset(tmp)) > 0);
@@ -844,7 +835,7 @@ void CInput::_debugPrint()
 	{
 		if(m_nSamplesToBytes > 0)
 		{
-			printf("%s\n", GetName());
+			printf("%s (%s)\n", GetName(), GetDisplayName());
 
 			float avgFrameTimeMs  = (float)m_time / (float)m_nFrameCount;
 			float avgFrameBytes   = (float)m_nFrameSize / (float)m_nFrameCount;
