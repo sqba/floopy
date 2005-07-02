@@ -35,12 +35,15 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	createEngine("engine");
 
 	m_bSnapTo = TRUE;
+
+	m_pPlayThread = new CPlayThread(this);
 }
 
 CTracks::~CTracks()
 {
 	WX_CLEAR_LIST(TracksList, m_tracks);
 	delete m_pBorder;
+	delete m_pPlayThread;
 
 	if(NULL != m_pEngine)
 	{
@@ -510,11 +513,6 @@ void CTracks::Dump(ostream& stream)
 	stream << '\n';*/
 }
 
-void CTracks::Play()
-{
-
-}
-
 
 
 
@@ -721,3 +719,30 @@ int CTracks::CalcStep(int mindist)
 
 	return iStep;
 }
+
+void CTracks::Play()
+{
+	int x=0, y=0;
+	
+//	int width1=0, height1=0;
+//	m_pTracksView->GetVirtualSize(&width1, &height1);
+
+	// Get previous caret position
+	int xc1=0, yc1=0;
+
+	wxCaret *caret = m_pTracksView->GetCaret();
+	caret->GetPosition(&x, &y);
+	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+	m_pPlayThread->Play(xc1*GetSamplesPerPixel());
+}
+
+void CTracks::Pause()
+{
+	m_pPlayThread->Pause();
+}
+
+void CTracks::Stop()
+{
+	m_pPlayThread->Stop();
+}
+

@@ -7,7 +7,6 @@
 
 #include "views/labelsview.h"
 #include "views/tracksview.h"
-#include "engine/PlayThread.h"
 
 
 class CFloopyFrame : public wxFrame
@@ -66,7 +65,6 @@ private:
 	CLabelsView			*m_pLabelsView;
 	CTracksView			*m_pTracksView;
 	CTracks				*m_pTracks;
-	CPlayThread			*m_pPlayThread;
 
 private:
     DECLARE_EVENT_TABLE()

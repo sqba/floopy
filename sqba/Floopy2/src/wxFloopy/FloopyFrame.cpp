@@ -56,8 +56,6 @@ CFloopyFrame::CFloopyFrame(const wxChar *title, int xpos, int ypos, int width, i
 
 	m_pTracks = new CTracks();
 
-	m_pPlayThread = new CPlayThread(m_pTracks);
-
 	m_pDropTarget = new CDropTarget( this );
 	SetDropTarget( m_pDropTarget );
 
@@ -78,7 +76,6 @@ CFloopyFrame::CFloopyFrame(const wxChar *title, int xpos, int ypos, int width, i
 CFloopyFrame::~CFloopyFrame()
 {
 	delete m_pSplitter;
-	delete m_pPlayThread;
 	delete m_pTracks;
 }
 
@@ -210,15 +207,15 @@ void CFloopyFrame::initPanes()
 
 void CFloopyFrame::OnPlay( wxCommandEvent &WXUNUSED(event) )
 {
-	m_pPlayThread->Play(0);
+	m_pTracks->Play();
 }
 
 void CFloopyFrame::OnPause( wxCommandEvent &WXUNUSED(event) )
 {
-	m_pPlayThread->Pause();
+	m_pTracks->Pause();
 }
 
 void CFloopyFrame::OnStop( wxCommandEvent &WXUNUSED(event) )
 {
-	m_pPlayThread->Stop();
+	m_pTracks->Stop();
 }

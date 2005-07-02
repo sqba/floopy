@@ -124,6 +124,10 @@ SOURCE=.\engine\parameter.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\engine\PlayThread.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\engine\Region.cpp
 # End Source File
 # Begin Source File

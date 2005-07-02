@@ -16,6 +16,7 @@
 //#include <SDL.h>
 //#include <wx/generic/dragimgg.h>
 //#include <wx/dynarray.h>
+#include <wx/thread.h>
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -38,6 +39,7 @@ class CTrack;
 class CRegion;
 class CRegionBorder;
 class CParameter;
+class CPlayThread;
 //class CDragObjects;
 
 WX_DECLARE_LIST(CTrack, TracksList);
@@ -168,7 +170,7 @@ public:
 
 	void Dump(ostream& stream);
 
-	void Play();
+//	void Play();
 
 //	TracksList &GetTracks() { return m_tracks; }
 
@@ -196,6 +198,10 @@ public:
 
 	int CalcStep(int mindist);
 
+	void Play();
+	void Pause();
+	void Stop();
+
 private:
 	int					m_pps, m_bpm;
 //	int					m_hres;		//! Samples per pixel
@@ -212,6 +218,8 @@ private:
 //	wxScrolledWindow	*m_pPanel;
 
 	BOOL m_bSnapTo;
+
+	CPlayThread			*m_pPlayThread;
 };
 
 class CTrack : public IFloopyObj  
@@ -458,6 +466,24 @@ private:
 	int		m_iSamplePos, m_iPrevSamplePos;
 	CPoint	*m_pPoint;
 //	OffsetArrays m_Offsets;
+};
+
+
+class CPlayThread : public wxThread  
+{
+public:
+	CPlayThread(CTracks *pTracks);
+	virtual ~CPlayThread();
+
+	void *Entry();
+
+	void Play(int sample);
+	void Pause();
+	void Stop();
+
+private:
+	CTracks *m_pTracks;
+	BOOL m_bPlaying;
 };
 
 

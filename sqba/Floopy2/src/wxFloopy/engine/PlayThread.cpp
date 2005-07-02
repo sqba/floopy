@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "PlayThread.h"
+#include "tracks.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -17,7 +17,8 @@ CPlayThread::CPlayThread(CTracks *pTracks)
 
 CPlayThread::~CPlayThread()
 {
-
+	if( IsRunning() )
+		Stop();
 }
 
 #define BUFFER_LENGTH	5120 //512
