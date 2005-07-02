@@ -156,7 +156,7 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 		percent = (int)((float)offset * 100.f / (float)max);
 		for(int i=0; i<del; i++)
 			fprintf(stderr, "\b");
-		del = fprintf(stderr, "%d%% - %d", percent, output->GetWrittenSamples());
+		del = fprintf(stderr, "%d - %d%%", output->GetWrittenSamples(), percent);
 	}
 
 	DWORD speed = clock() - start;

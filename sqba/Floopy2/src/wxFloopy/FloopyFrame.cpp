@@ -18,7 +18,10 @@ enum
 	ID_SAVEAS,
 	ID_CLOSE,
 	ID_EXIT,
-	ID_ABOUT
+	ID_ABOUT,
+	ID_PLAY,
+	ID_PAUSE,
+	ID_STOP
 };
 
 //IMPLEMENT_DYNAMIC_CLASS(CFloopyFrame, wxFrame)
@@ -34,6 +37,9 @@ BEGIN_EVENT_TABLE(CFloopyFrame, wxFrame)
 	EVT_MENU(ID_CLOSE,		CFloopyFrame::OnFileClose)
 	EVT_MENU(ID_EXIT,		CFloopyFrame::OnQuit)
 	EVT_MENU(ID_ABOUT,		CFloopyFrame::OnAbout)
+	EVT_MENU(ID_PLAY,		CFloopyFrame::OnPlay)
+	EVT_MENU(ID_PAUSE,		CFloopyFrame::OnPause)
+	EVT_MENU(ID_STOP,		CFloopyFrame::OnStop)
 END_EVENT_TABLE()
 
 
@@ -50,16 +56,29 @@ CFloopyFrame::CFloopyFrame(const wxChar *title, int xpos, int ypos, int width, i
 
 	m_pTracks = new CTracks();
 
+	m_pPlayThread = new CPlayThread(m_pTracks);
+
 	m_pDropTarget = new CDropTarget( this );
 	SetDropTarget( m_pDropTarget );
 
 	initMenus();
 	initPanes();
+
+	// create the toolbar and add our 1 tool to it
+	wxToolBar *toolbar = CreateToolBar();
+	//wxBitmap aboutImage("res/help.bmp", wxBITMAP_TYPE_BMP);
+	wxBitmap aboutImage("CSQUERY", wxBITMAP_TYPE_RESOURCE);
+	toolbar->AddTool(ID_ABOUT, _("About"), aboutImage, _("About Floopy"));
+	toolbar->AddTool(ID_PLAY, _("Play"), aboutImage, _("Play"));
+	toolbar->AddTool(ID_PAUSE, _("Pause"), aboutImage, _("Pause"));
+	toolbar->AddTool(ID_STOP, _("Stop"), aboutImage, _("Stop"));
+	toolbar->Realize();
 }
 
 CFloopyFrame::~CFloopyFrame()
 {
 	delete m_pSplitter;
+	delete m_pPlayThread;
 	delete m_pTracks;
 }
 
@@ -187,4 +206,19 @@ void CFloopyFrame::initPanes()
 
 	m_pTracks->SetTracksView( m_pTracksView );
 	m_pTracks->SetLabelsView( m_pLabelsView );
+}
+
+void CFloopyFrame::OnPlay( wxCommandEvent &WXUNUSED(event) )
+{
+	m_pPlayThread->Play(0);
+}
+
+void CFloopyFrame::OnPause( wxCommandEvent &WXUNUSED(event) )
+{
+	m_pPlayThread->Pause();
+}
+
+void CFloopyFrame::OnStop( wxCommandEvent &WXUNUSED(event) )
+{
+	m_pPlayThread->Stop();
 }

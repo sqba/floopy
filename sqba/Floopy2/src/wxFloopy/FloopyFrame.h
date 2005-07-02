@@ -7,6 +7,7 @@
 
 #include "views/labelsview.h"
 #include "views/tracksview.h"
+#include "engine/PlayThread.h"
 
 
 class CFloopyFrame : public wxFrame
@@ -49,6 +50,9 @@ public:
     void OnFileOpen(wxCommandEvent &WXUNUSED(event));
     void OnFileSave(wxCommandEvent &WXUNUSED(event));
     void OnFileClose(wxCommandEvent &WXUNUSED(event));
+	void OnPlay( wxCommandEvent &WXUNUSED(event) );
+	void OnPause( wxCommandEvent &WXUNUSED(event) );
+	void OnStop( wxCommandEvent &WXUNUSED(event) );
 
 	void Open(char *filename);
 
@@ -62,6 +66,7 @@ private:
 	CLabelsView			*m_pLabelsView;
 	CTracksView			*m_pTracksView;
 	CTracks				*m_pTracks;
+	CPlayThread			*m_pPlayThread;
 
 private:
     DECLARE_EVENT_TABLE()
