@@ -444,6 +444,18 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 			fprintf(fp, "%.3f:%s", seconds, enabled);
 		}
 
+		if(input->GetParamVal(TIMELINE_PARAM_MOVETO, &paramVal))
+		{
+			if(!bStart)
+				fprintf(fp, ", "); // Separator
+			else
+				bStart = false;
+			if(paramVal==0.f)
+				fprintf(fp, "%.3f:RESET", seconds);
+			else
+				fprintf(fp, "%.3f:%s", seconds, paramVal);
+		}
+
 		if(input->GetParamCount() > 0)
 		{
 			for(int i=0; i<input->GetParamCount(); i++)
