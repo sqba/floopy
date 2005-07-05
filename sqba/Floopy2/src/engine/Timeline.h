@@ -47,7 +47,7 @@ public:
 private:
 	tParam *getParam(int offset, int index);
 	tParam *getPrevParam(int offset);
-	void insertAfter(tParam *ref, tParam *param);
+	void insertAfter(tParam *prev, tParam *param);
 	void removeParam(tParam *param);
 
 private:

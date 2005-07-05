@@ -46,11 +46,25 @@ void CTracksView::OnDraw(wxDC &dc)
 	m_pTracks->DrawBG(dc);		// Draw track backgrounds
 	CCaretView::OnDraw(dc);		// Draw grid
 	m_pTracks->DrawFore(dc);	// Draw track foregrounds
+
+	/*int width, height;
+	GetClientSize(&width, &height);
+	int x=0, y=0, x1=0, y1=0;
+	GetViewStart(&x, &y);
+	//CalcScrolledPosition(x, y, &x1, &y1);
+	dc.DrawRectangle(x, y, width, 20);*/
 }
 
 void CTracksView::ScrollWindow( int dx, int dy, const wxRect *rect )
 {
 	CCaretView::ScrollWindow( dx, dy, rect );
+
+	/*int width, height;
+	GetClientSize(&width, &height);
+	int x=0, y=0, x1=0, y1=0;
+	GetViewStart(&x, &y);
+	//CalcScrolledPosition(x, y, &x1, &y1);
+	RefreshRect(wxRect(x, y, width, 20));*/
 
 	if(0 != dy)
 		m_pLabelsView->ScrollWindow( 0, dy, NULL );

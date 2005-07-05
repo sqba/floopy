@@ -411,6 +411,7 @@ private:
 	void loadParameters(IFloopySoundInput *obj);
 	//void drawParametersBG(wxDC& dc, wxRect& rc, int pps);
 	void drawParametersFore(wxDC& dc, wxRect& rc, int pps);
+	//void ddump();
 
 private:
 	BOOL			m_bEdit;

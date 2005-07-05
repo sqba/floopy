@@ -59,6 +59,7 @@ void CTimeline::SetParamVal(int offset, int index, float value)
 
 BOOL CTimeline::MoveParam(int offset, int index, int newoffset)
 {
+	//int count = GetCount();
 	tParam *tmp = getParam(offset, index);
 	if(tmp)
 	{
@@ -67,9 +68,13 @@ BOOL CTimeline::MoveParam(int offset, int index, int newoffset)
 		{
 			tmp->offset = newoffset;
 			insertAfter(prev, tmp);
+			//assert(count == GetCount());
 			return TRUE;
 		}
+//		assert(FALSE);
 	}
+//	assert(FALSE);
+	//assert(count == GetCount());
 	return FALSE;
 }
 
@@ -207,15 +212,27 @@ CTimeline::tParam *CTimeline::getParam(int offset, int index)
 	return NULL;
 }
 
-void CTimeline::insertAfter(tParam *ref, tParam *param)
+void CTimeline::insertAfter(tParam *prev, tParam *param)
 {
-	tParam *tmp = ref->next;
-	if(tmp != param)
+	if(prev == param)
 	{
-		ref->next   = param;
-		param->prev = ref;
-		param->next = tmp;
+		prev->offset = param->offset;
+		return;
 	}
+
+	tParam *next = prev->next;
+	if(next != param)
+	{
+		if(param->prev)
+			param->prev->next = param->next;
+		if(param->next)
+			param->next->prev = param->prev;
+
+		prev->next  = param;
+		param->prev = prev;
+		param->next = next;
+	}
+//	assert(NULL != getParam(param->offset, param->index));
 }
 
 CTimeline::tParam *CTimeline::getPrevParam(int offset)

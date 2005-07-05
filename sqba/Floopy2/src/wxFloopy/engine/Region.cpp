@@ -309,32 +309,60 @@ void CRegion::Update()
 {
 	IFloopySoundInput *track = getTrack()->GetInput();
 
+//	float value=0.f;
+
 	if((m_iPrevStart >= 0.f) && (m_iPrevStart != m_iStartSample))
 	{
 		//assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE) );
 		//track->EnableAt(m_iStartSample, TRUE);
+//		ddump();
+//		assert( track->GetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, &value) );
 		assert( track->MoveParam(m_iPrevStart, TIMELINE_PARAM_ENABLE, m_iStartSample) );
+//		assert( track->GetParamAt(m_iStartSample, TIMELINE_PARAM_ENABLE, &value) );
 	}
 
 	if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))
 	{
 		//assert( track->ResetParamAt(m_iPrevEnd, TIMELINE_PARAM_ENABLE) );
 		//track->EnableAt(m_iEndSample, FALSE);
+//		ddump();
+//		assert( track->GetParamAt(m_iPrevEnd, TIMELINE_PARAM_ENABLE, &value) );
 		assert( track->MoveParam(m_iPrevEnd, TIMELINE_PARAM_ENABLE, m_iEndSample) );
+//		assert( track->GetParamAt(m_iEndSample, TIMELINE_PARAM_ENABLE, &value) );
 	}
 
 	// Move params!!!
 
-	wxLogTrace(_T("CRegion"), _T("m_iPrevStart=%d m_iStartSample=%d"),
+	/*wxLogTrace(_T("CRegion"), _T("m_iPrevStart=%d m_iStartSample=%d"),
 		m_iPrevStart, m_iStartSample);
 	wxLogTrace(_T("CRegion"), _T("m_iPrevEnd=%d m_iEndSample=%d"),
-		m_iPrevEnd, m_iEndSample);
+		m_iPrevEnd, m_iEndSample);*/
 
 	m_iPrevStart = m_iPrevEnd = -1;
 
 	m_bEdit = FALSE;
 }
+/*
+void CRegion::ddump()
+{
+	IFloopySoundInput *track = getTrack()->GetInput();
+	int offset = 0;
+	do
+	{
+		float value = 0.f;
+		if(track->GetParamAt(offset, TIMELINE_PARAM_ENABLE, &value))
+			wxLogTrace(_T("CRegion"), _T("%d\t%s"), offset, value==PARAM_VALUE_ENABLED?"ON":"OFF");
 
+		//for(int index=0; index<track->GetParamCount(); index++)
+		//{
+		//	float value = 0;
+		//	if(track->GetParamAt(offset, index, &value))
+		//		wxLogTrace(_T("CRegion"), _T("%d\t%d:%.3f"), offset, index, value);
+		//}
+		offset = track->GetNextOffset(offset);
+	} while(offset > 0);
+}
+*/
 void CRegion::CancelUpdate()
 {
 	m_iStartSample = m_iPrevStart;
