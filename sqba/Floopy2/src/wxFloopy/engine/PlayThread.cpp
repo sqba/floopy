@@ -11,13 +11,14 @@
 CPlayThread::CPlayThread(CTracks *pTracks)
 {
 	m_pTracks = pTracks;
-	m_bPlaying = FALSE;
-	Create();
+	if(wxTHREAD_NO_ERROR != wxThread::Create())
+	{
+	}
 }
 
 CPlayThread::~CPlayThread()
 {
-	if( IsRunning() )
+	if( wxThread::IsRunning() )
 		Stop();
 }
 
@@ -47,36 +48,53 @@ void *CPlayThread::Entry()
 	int max = samples * stb;
 	int percent = 0;
 
-	while(((len=input->Read(buff, size)) != EOF) && m_bPlaying)
+	while((len=input->Read(buff, size)) != EOF)
 	{
+		if ( TestDestroy() )
+			break;
+
 		offset += len;
 		output->Write(buff, len);
 		memset(buff, 0, sizeof(buff));
 		percent = (int)((float)offset * 100.f / (float)max);
 		//del = fprintf(stderr, "%d - %d%%", output->GetWrittenSamples(), percent);
+//		int samples = output->GetWrittenSamples();
+//		m_pTracks->SetCaretPos( samples );
 	}
-
-	m_bPlaying = FALSE;
 
 	return NULL;
 }
 
 void CPlayThread::Play(int sample)
 {
-	m_bPlaying = TRUE;
-	m_pTracks->GetEngine()->MoveTo(sample);
-	Run();
+	if( wxThread::IsPaused() )
+		wxThread::Resume();
+	else
+	{
+		//if(wxTHREAD_NO_ERROR != wxThread::Create())
+		//{
+			m_pTracks->GetEngine()->MoveTo(sample);
+			wxThread::Run();
+		//}
+	}
 }
 
 void CPlayThread::Pause()
 {
-	if( IsPaused() )
-		Resume();
-	else
-		Pause();
+	if( wxThread::IsPaused() )
+		wxThread::Resume();
+	else if( wxThread::IsRunning() )
+		wxThread::Pause();
 }
 
 void CPlayThread::Stop()
 {
-	m_bPlaying = FALSE;
+	if( wxThread::IsRunning() )
+		wxThread::Delete();
+		//wxThread::Exit();
+}
+
+void CPlayThread::OnExit()
+{
+
 }

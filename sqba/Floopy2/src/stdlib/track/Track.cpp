@@ -10,7 +10,7 @@
 
 CTrack::CTrack()
 {
-
+//	m_bEnabled = FALSE;
 }
 
 CTrack::~CTrack()

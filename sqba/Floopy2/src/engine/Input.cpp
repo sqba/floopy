@@ -243,7 +243,7 @@ int CInput::Read(BYTE *data, int size)
 	assert(size >= 0);
 
 	// Passed the end
-	if(m_offset >= m_nEndOffset)
+	if((m_nEndOffset > 0) && (m_offset >= m_nEndOffset))
 		return EOF;
 
 	if(_isEngine())
@@ -354,11 +354,13 @@ int CInput::GetSize()
 	{
 		size = m_plugin->GetSize();
 
-		if(m_nEndOffset > 0 && m_nSamplesToBytes > 0)
+		if((m_nEndOffset > 0) && (m_nSamplesToBytes > 0))
 			size = m_nEndOffset / m_nSamplesToBytes;
 		else if (m_nSamplesToBytes > 0)
 			size += m_nStartOffset / m_nSamplesToBytes;
 	}
+
+	size = size > 0 ? size : -1;
 
 	return size;
 }

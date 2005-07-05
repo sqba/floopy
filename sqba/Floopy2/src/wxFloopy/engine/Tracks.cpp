@@ -24,7 +24,7 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_pTracksView = NULL;
 	m_pLabelsView = NULL;
 //	m_hres   = 2756; // samples per pixel
-	m_pps    = 16;	// pixels per second
+	m_pps    = 2;	// pixels per second
 	m_bpm    = 120;	// beats per minute
 	m_length = 60;	// seconds
 
@@ -603,7 +603,8 @@ void CTracks::loadTracks(IFloopySoundInput *input, int level)
 		return;
 
 
-	AddTrack(input, level);
+	if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+		AddTrack(input, 0);
 
 
 	if(input->GetType() == TYPE_FLOOPY_SOUND_MIXER)
@@ -732,18 +733,7 @@ void CTracks::Play()
 	if(NULL == m_pPlayThread)
 		return;
 
-	int x=0, y=0;
-	
-//	int width1=0, height1=0;
-//	m_pTracksView->GetVirtualSize(&width1, &height1);
-
-	// Get previous caret position
-	int xc1=0, yc1=0;
-
-	wxCaret *caret = m_pTracksView->GetCaret();
-	caret->GetPosition(&x, &y);
-	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
-	m_pPlayThread->Play(xc1*GetSamplesPerPixel());
+	m_pPlayThread->Play( GetCaretPos() );
 }
 
 void CTracks::Pause()
@@ -762,3 +752,25 @@ void CTracks::Stop()
 	m_pPlayThread->Stop();
 }
 
+void CTracks::SetCaretPos(int samples)
+{
+	int x=0, y=0;
+	int xc1=0, yc1=0;
+	wxCaret *caret = m_pTracksView->GetCaret();
+	caret->GetPosition(&x, &y);
+	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+
+	x += samples/GetSamplesPerPixel();
+	m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+	caret->Move(xc1, yc1);
+}
+
+int CTracks::GetCaretPos()
+{
+	int x=0, y=0;
+	int xc1=0, yc1=0;
+	wxCaret *caret = m_pTracksView->GetCaret();
+	caret->GetPosition(&x, &y);
+	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+	return xc1 * GetSamplesPerPixel();
+}

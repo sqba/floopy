@@ -130,6 +130,10 @@ SOURCE=.\tonegen\ToneGen.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\track\Track.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\volume\Volume.cpp
 # End Source File
 # Begin Source File
@@ -183,6 +187,10 @@ SOURCE=.\playrgn\PlayRegion.h
 # Begin Source File
 
 SOURCE=.\tonegen\ToneGen.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\track\Track.h
 # End Source File
 # Begin Source File
 

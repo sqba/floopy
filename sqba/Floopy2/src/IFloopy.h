@@ -80,7 +80,8 @@ enum enumClassType
 	TYPE_FLOOPY_SOUND_FILTER,	/** IFloopySoundFilter	*/
 	TYPE_FLOOPY_SOUND_MIXER,	/** IFloopySoundMixer	*/
 	TYPE_FLOOPY_SOUND_OUTPUT,	/** IFloopySound		*/
-	TYPE_FLOOPY_SOUND_ENGINE	/** IFloopySoundEngine	*/
+	TYPE_FLOOPY_SOUND_ENGINE,	/** IFloopySoundEngine	*/
+	TYPE_FLOOPY_SOUND_TRACK		/** Just a track */
 };
 
 

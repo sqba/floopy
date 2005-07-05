@@ -17,6 +17,7 @@
 #include "tonegen/tonegen.h"
 #include "volume/volume.h"
 #include "wavfile/wavfilein.h"
+#include "track/track.h"
 
 // Output classes
 #include "wavfile/wavfileout.h"
@@ -53,6 +54,8 @@ __declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 	//	return NULL;
 	if( 0 == stricmp(name, "wavfile") )
 		return new CWavFileIn();
+	if( 0 == stricmp(name, "track") )
+		return new CTrack();
 
 	return NULL;
 }

@@ -129,6 +129,9 @@ public:
 	void SetCaret(wxCaret *caret)		{ m_pCaret = caret; }
 	wxCaret *GetCaret()					{ return m_pCaret; }
 
+	void SetCaretPos(int samples);
+	int  GetCaretPos();
+
 	void SetPixelsPerSecond(int pps);
 	int GetPixelsPerSecond();
 
@@ -482,9 +485,10 @@ public:
 	void Pause();
 	void Stop();
 
+	void OnExit();
+
 private:
 	CTracks *m_pTracks;
-	BOOL m_bPlaying;
 };
 
 
