@@ -53,12 +53,12 @@ float CParameter::GetValueAt(int x)
 	return 0.f;
 }
 /*
-void CParameter::DrawBG(wxDC& dc, wxRect& rc, int pps)
+void CParameter::DrawBG(wxDC& dc, wxRect& rc)
 {
 
 }
 */
-void CParameter::DrawFore(wxDC& dc, wxRect& rc, int pps)
+void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 {
 	IFloopySoundInput *input = getTrack()->GetInput();
 	int max = input->GetParamMax(m_index);
@@ -109,7 +109,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc, int pps)
 	}
 }
 /*
-void CParameter::DrawPreview(wxDC& dc, wxRect& rc, int pps)
+void CParameter::DrawPreview(wxDC& dc, wxRect& rc)
 {
 
 }
@@ -199,6 +199,6 @@ bool CParameter::HitTest(int x, int y)
 	return FALSE;
 }
 
-void CParameter::CPoint::Move(int dx, int WXUNUSED(dy), int pps)
+void CParameter::CPoint::Move(int dx, int WXUNUSED(dy))
 {
 }

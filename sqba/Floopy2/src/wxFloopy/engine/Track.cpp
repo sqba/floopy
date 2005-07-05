@@ -120,10 +120,9 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 //! Draws track's background.
 //! \param dc [in] reference to the device context
 //! \param rc [in] track's rectangle
-//! \param pps [in] horizontal resolution (pixels per second)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CTrack::DrawBG(wxDC& dc, wxRect& rc, int WXUNUSED(pps))
+void CTrack::DrawBG(wxDC& dc, wxRect& rc)
 {
 /*
 	wxBrush oldBrush = dc.GetBrush();
@@ -155,10 +154,9 @@ void CTrack::DrawBG(wxDC& dc, wxRect& rc, int WXUNUSED(pps))
 //! Draws track's foreground.
 //! \param dc [in] reference to the device context
 //! \param rc [in] track's rectangle
-//! \param pps [in] horizontal resolution (pixels per second)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CTrack::DrawFore(wxDC& dc, wxRect& rc, int pps)
+void CTrack::DrawFore(wxDC& dc, wxRect& rc)
 {
 	wxBrush oldBrush = dc.GetBrush();
 
@@ -170,8 +168,8 @@ void CTrack::DrawFore(wxDC& dc, wxRect& rc, int pps)
 	while (node)
 	{
 		CRegion *region = (CRegion*)node->GetData();
-		region->DrawBG(dc, rc, pps);
-		region->DrawFore(dc, rc, pps);
+		region->DrawBG(dc, rc);
+		region->DrawFore(dc, rc);
 		node = node->GetNext();
 	}
 
@@ -183,10 +181,9 @@ void CTrack::DrawFore(wxDC& dc, wxRect& rc, int pps)
 //! Draws track preview (in the preview bar).
 //! \param dc [in] reference to the device context
 //! \param rc [in] track's preview rectangle
-//! \param pps [in] horizontal resolution (pixels per second)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CTrack::DrawPreview(wxDC& dc, wxRect& rc, int pps)
+void CTrack::DrawPreview(wxDC& dc, wxRect& rc)
 {
 	wxBrush oldBrush = dc.GetBrush();
 	wxPen oldpen = dc.GetPen();
@@ -197,7 +194,7 @@ void CTrack::DrawPreview(wxDC& dc, wxRect& rc, int pps)
 	while (node)
 	{
 		CRegion *region = (CRegion*)node->GetData();
-		region->DrawPreview(dc, rc, pps);
+		region->DrawPreview(dc, rc);
 		node = node->GetNext();
 	}
 
@@ -359,7 +356,7 @@ void CTrack::MoveSelectedRegions(int dx)
 			//wxRect rc;
 			//region->GetRect(rc);
 			region->Refresh();
-			region->Move(dx, 0, GetTracks()->GetPixelsPerSecond());
+			region->Move(dx, 0);
 			region->Refresh();
 		}
 		node = node->GetNext();
@@ -407,7 +404,7 @@ void CTrack::SetHeight(int height)
 	}
 }
 
-void CTrack::Move(int dx, int dy, int pps)
+void CTrack::Move(int dx, int dy)
 {
 	if( 0 != dx) {
 	}

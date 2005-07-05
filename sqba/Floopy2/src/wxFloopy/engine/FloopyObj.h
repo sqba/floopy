@@ -78,8 +78,8 @@ public:
 	virtual IFloopyObj *GetParent()			{ return m_pParent; }
 
 
-	virtual void DrawBG  (wxDC& WXUNUSED(dc), wxRect& WXUNUSED(rc), int WXUNUSED(pps)) {};
-	virtual void DrawFore(wxDC& WXUNUSED(dc), wxRect& WXUNUSED(rc), int WXUNUSED(pps)) {};
+	virtual void DrawBG  (wxDC& WXUNUSED(dc), wxRect& WXUNUSED(rc)) {};
+	virtual void DrawFore(wxDC& WXUNUSED(dc), wxRect& WXUNUSED(rc)) {};
 
 	virtual void Refresh() {}
 
@@ -88,7 +88,7 @@ public:
 	virtual wxCursor GetCursor()	{ return *wxSTANDARD_CURSOR; }
 	virtual wxMenu *GetMenu()		{ return m_pMenu; }
 
-	virtual void Move(int WXUNUSED(dx), int WXUNUSED(dy), int WXUNUSED(pps)) {}
+	virtual void Move(int WXUNUSED(dx), int WXUNUSED(dy)) {}
 
 	virtual IFloopyObj *GetSelectedObj() { return NULL; }
 

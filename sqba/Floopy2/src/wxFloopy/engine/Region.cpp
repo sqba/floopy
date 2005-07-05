@@ -67,10 +67,9 @@ void CRegion::remove(IFloopyObj *evt)
 //! Draws region's background.
 //! \param dc [in] reference to the device context
 //! \param rc [in] track's rectangle
-//! \param pps [in] horizontal resolution (pixels per second)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CRegion::DrawBG(wxDC& dc, wxRect& rc, int pps)
+void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 {
 	int left=0, right=0;
 	calcPos(&left, &right);
@@ -103,10 +102,9 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc, int pps)
 //! Draws region's foreground.
 //! \param dc [in] reference to the device context
 //! \param rc [in] track's rectangle
-//! \param pps [in] horizontal resolution (pixels per second)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CRegion::DrawFore(wxDC& dc, wxRect& rc, int pps)
+void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 {
 	IFloopyObj *disp = getTrack()->GetDisplay();
 
@@ -115,8 +113,8 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc, int pps)
 	int width = right - left;
 	wxRect rce(left, rc.GetTop()+1, width, GetHeight()-3);
 	if(disp)
-		disp->DrawFore(dc, rce, pps);
-	drawParametersFore(dc, rce, pps);
+		disp->DrawFore(dc, rce);
+	drawParametersFore(dc, rce);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -124,12 +122,11 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc, int pps)
 //! Draws region preview (in the preview bar).
 //! \param dc [in] reference to the device context
 //! \param rc [in] track's preview rectangle
-//! \param pps [in] horizontal resolution (pixels per second)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CRegion::DrawPreview(wxDC& dc, wxRect& rc, int pps)
+void CRegion::DrawPreview(wxDC& dc, wxRect& rc)
 {
-	SOUNDFORMAT *fmt = getTrack()->GetInput()->GetFormat();
+	/*SOUNDFORMAT *fmt = getTrack()->GetInput()->GetFormat();
 	float freq = fmt->frequency;//44100.f;
 	float fStart = (float)m_iStartSample / freq;
 	float fEnd   = (float)m_iEndSample   / freq;
@@ -137,7 +134,7 @@ void CRegion::DrawPreview(wxDC& dc, wxRect& rc, int pps)
 	int left  = fStart * (float)pps;
 	int right = fEnd * (float)pps;
 	int width = right - left;
-	dc.DrawRectangle(left, rc.GetTop(), width, rc.GetHeight());
+	dc.DrawRectangle(left, rc.GetTop(), width, rc.GetHeight());*/
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -160,10 +157,9 @@ bool CRegion::HitTest(int x, int y)
 // Move
 //! Moves the region horizontally for the dx offset.
 //! \param dx [in] offset in pixels
-//! \param pps [in] horizontal resolution (pixels per second)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CRegion::Move(int dx, int WXUNUSED(dy), int WXUNUSED(pps))
+void CRegion::Move(int dx, int WXUNUSED(dy))
 {
 	int left=0, right=0;
 	calcPos(&left, &right);
@@ -269,10 +265,9 @@ IFloopyObj *CRegion::GetSelectedObj()
 //! Resizes the region.
 //! \param dl [out] number of pixels to move the left side (start)
 //! \param dr [out] number of pixels to move the right side (end)
-//! \param pps [in] horizontal resolution (pixels per second)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CRegion::Resize(int dl, int dr, int pps)
+void CRegion::Resize(int dl, int dr)
 {
 	int left=0, right=0;
 	calcPos(&left, &right);
@@ -396,12 +391,12 @@ void CRegion::OnKeyDown(wxKeyEvent& event)
 	{
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
-		Move(+1, 0, getTracks()->GetPixelsPerSecond());
+		Move(+1, 0);
 		Refresh();
 		break;
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
-		Move(-1, 0, getTracks()->GetPixelsPerSecond());
+		Move(-1, 0);
 		Refresh();
 		break;
 	case WXK_UP:
@@ -469,6 +464,13 @@ void CRegion::calcPos(int *left, int *right)
 
 	*left  = m_iStartSample / nSamplesPerPixel;
 	*right = m_iEndSample   / nSamplesPerPixel;
+
+	/*if(*left > *right)
+	{
+		int tmp = *right;
+		*right = *left;
+		*left = tmp;
+	}*/
 }
 
 int CRegion::GetLeft()
@@ -496,13 +498,13 @@ void CRegion::loadParameters(IFloopySoundInput *obj)
 	}
 }
 
-void CRegion::drawParametersFore(wxDC& dc, wxRect& rc, int pps)
+void CRegion::drawParametersFore(wxDC& dc, wxRect& rc)
 {
 	ParameterList::Node *node = m_Parameters.GetFirst();
 	while (node)
 	{
 		CParameter *param = (CParameter*)node->GetData();
-		param->DrawFore(dc, rc, pps);
+		param->DrawFore(dc, rc);
 		node = node->GetNext();
 	}
 }

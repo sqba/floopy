@@ -25,7 +25,7 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_pLabelsView = NULL;
 //	m_hres   = 2756; // samples per pixel
 	m_pps    = 2;	// pixels per second
-	m_bpm    = 120;	// beats per minute
+//	m_bpm    = 120;	// beats per minute
 	m_length = 60;	// seconds
 
 	m_pBorder = new CBorder(this);
@@ -71,7 +71,7 @@ void CTracks::DrawBG(wxDC& dc)
 		CTrack *track = (CTrack*)node->GetData();
 		if( !track->IsHidden() )
 		{
-			track->DrawBG(dc, rc, m_pps);
+			track->DrawBG(dc, rc);
 			rc.Offset(0, track->GetHeight());
 		}
 		node = node->GetNext();
@@ -94,7 +94,7 @@ void CTracks::DrawFore(wxDC& dc)
 		CTrack *track = (CTrack*)node->GetData();
 		if( !track->IsHidden() )
 		{
-			track->DrawFore(dc, rc, m_pps);
+			track->DrawFore(dc, rc);
 			rc.Offset(0, track->GetHeight());
 		}
 		node = node->GetNext();
@@ -141,7 +141,7 @@ void CTracks::DrawLabels(wxDC& dc, wxSize size)
 /////////////////////////////////////////////////////////////////////////////
 void CTracks::DrawPreview(wxDC& dc, wxSize size)
 {
-	//int n = m_tracks.GetCount();
+/*	//int n = m_tracks.GetCount();
 
 	int n = 0;
 	TracksList::Node *node = m_tracks.GetFirst();
@@ -162,7 +162,6 @@ void CTracks::DrawPreview(wxDC& dc, wxSize size)
 	int t = 0;//(size.GetHeight() - (h * n)) / 2;
 	int y = t > 0 ? t : 0;
 	int trackwidth = m_pTracksView->GetVirtualSize().GetWidth();
-	int pps = size.GetWidth() * m_pps / trackwidth;
 
 	if(h < 1)
 		h = 1;
@@ -178,7 +177,7 @@ void CTracks::DrawPreview(wxDC& dc, wxSize size)
 			y += h;
 		}
 		node = node->GetNext();
-	}
+	}*/
 }
 
 CTrack *CTracks::AddTrack(IFloopySoundInput *input, int level)
@@ -426,7 +425,7 @@ void CTracks::SetPixelsPerSecond(int pps)
 
 int CTracks::GetPixelsPerBeat()
 {
-	return (int)(((float)m_bpm / 60.f) * (float)GetPixelsPerSecond());
+	return 0;//(int)(((float)m_bpm / 60.f) * (float)GetPixelsPerSecond());
 }
 
 int CTracks::GetPixelsPerSecond()

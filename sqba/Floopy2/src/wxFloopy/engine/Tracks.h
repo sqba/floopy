@@ -79,7 +79,7 @@ class CTracks : public IFloopyObj
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZEWE); }
 
-		void Move(int dx, int WXUNUSED(dy), int WXUNUSED(pps))
+		void Move(int dx, int WXUNUSED(dy))
 		{
 			getTracks()->SetWidth(getTracks()->GetWidth() + dx);
 		}
@@ -89,7 +89,7 @@ class CTracks : public IFloopyObj
 			if(event.Dragging() && (0 != m_ptPrev.x)) {
 				int dx = event.GetX() - m_ptPrev.x;
 				int dy = event.GetY() - m_ptPrev.y;
-				Move(dx, dy, getTracks()->GetPixelsPerSecond());
+				Move(dx, dy);
 			}
 
 			IFloopyObj::OnMouseEvent(event);
@@ -105,7 +105,7 @@ class CTracks : public IFloopyObj
 		CSelectedEvents(CTracks *tracks) : IFloopyObj(tracks) {}
 		virtual ~CSelectedEvents() {}
 
-		void Move(int dx, int WXUNUSED(dy), int WXUNUSED(pps))
+		void Move(int dx, int WXUNUSED(dy))
 		{
 			getTracks()->MoveSelectedRegions(dx);
 		}
@@ -206,7 +206,8 @@ public:
 	void Stop();
 
 private:
-	int					m_pps, m_bpm;
+	int					m_pps;
+//	int					m_pps, m_bpm;
 //	int					m_hres;		//! Samples per pixel
 	bool				m_bInit;
 	float				m_length;	// In seconds
@@ -237,7 +238,7 @@ class CTrack : public IFloopyObj
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZENS); }
 
-		void Move(int WXUNUSED(dx), int dy, int WXUNUSED(pps))
+		void Move(int WXUNUSED(dx), int dy)
 		{
 			int height = getTrack()->GetHeight();
 			getTrack()->SetHeight(height + dy);
@@ -254,9 +255,9 @@ public:
 
 	//void Draw(wxDC& dc, wxRect& rc);
 	void DrawLabel(wxDC& dc, wxRect& rc);
-	void DrawBG   (wxDC& dc, wxRect& rc, int WXUNUSED(pps));
-	void DrawFore (wxDC& dc, wxRect& rc, int pps);
-	void DrawPreview(wxDC& dc, wxRect& rc, int pps);
+	void DrawBG   (wxDC& dc, wxRect& rc);
+	void DrawFore (wxDC& dc, wxRect& rc);
+	void DrawPreview(wxDC& dc, wxRect& rc);
 
 	bool GetName(wxString& name) { name = _T("Track"); return TRUE; }
 	int GetWidth()				{ return GetTracks()->GetWidth(); }
@@ -285,7 +286,7 @@ public:
 
 	void Refresh();
 
-	void Move(int dx, int dy, int pps);
+	void Move(int dx, int dy);
 
 	void MoveSelectedRegions(int dx);
 	void RemoveSelectedObjects();
@@ -349,12 +350,12 @@ public:
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZEWE); }
 
-		void Move(int dx, int WXUNUSED(dy), int pps)
+		void Move(int dx, int WXUNUSED(dy))
 		{
 			if(m_bLeft) {
-				getRegion()->Resize(dx, 0, pps);
+				getRegion()->Resize(dx, 0);
 			} else {
-				getRegion()->Resize(0, dx, pps);
+				getRegion()->Resize(0, dx);
 			}
 		}
 
@@ -369,9 +370,9 @@ public:
 	CRegion(CTrack *track, UINT startSample, UINT endSample);
 	virtual ~CRegion();
 
-	void DrawBG  (wxDC& dc, wxRect& rc, int pps);
-	void DrawFore(wxDC& dc, wxRect& rc, int pps);
-	void DrawPreview(wxDC& dc, wxRect& rc, int pps);
+	void DrawBG  (wxDC& dc, wxRect& rc);
+	void DrawFore(wxDC& dc, wxRect& rc);
+	void DrawPreview(wxDC& dc, wxRect& rc);
 
 	int GetLeft();
 	int GetRight();
@@ -386,10 +387,10 @@ public:
 	IFloopyObj *GetSelectedObj();// { return IsSelected() ? this : NULL; }
 	IFloopyObj *GetChildAt(int x, int y);
 
-	void Move(int dx, int WXUNUSED(dy), int WXUNUSED(pps));
+	void Move(int dx, int WXUNUSED(dy));
 	bool HitTest(int x, int y);
 	void Refresh();
-	void Resize(int dl, int dr, int pps);
+	void Resize(int dl, int dr);
 	void Update();
 	void CancelUpdate();
 	void Remove();
@@ -412,8 +413,8 @@ private:
 	//inline CTracks *getTracks()	{ return getTrack()->GetTracks(); }
 	inline CTracks *getTracks()	{ return (CTracks*)getTrack()->GetParent(); }
 	void loadParameters(IFloopySoundInput *obj);
-	//void drawParametersBG(wxDC& dc, wxRect& rc, int pps);
-	void drawParametersFore(wxDC& dc, wxRect& rc, int pps);
+	//void drawParametersBG(wxDC& dc, wxRect& rc);
+	void drawParametersFore(wxDC& dc, wxRect& rc);
 	//void ddump();
 
 private:
@@ -438,7 +439,7 @@ public:
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZENS); }
 
-		void Move(int dx, int WXUNUSED(dy), int pps);
+		void Move(int dx, int WXUNUSED(dy));
 
 		int m_offset;
 	};
@@ -453,9 +454,9 @@ public:
 
 	float GetValueAt(int x);
 
-	//void DrawBG  (wxDC& dc, wxRect& rc, int pps);
-	void DrawFore(wxDC& dc, wxRect& rc, int pps);
-	//void DrawPreview(wxDC& dc, wxRect& rc, int pps);
+	//void DrawBG  (wxDC& dc, wxRect& rc);
+	void DrawFore(wxDC& dc, wxRect& rc);
+	//void DrawPreview(wxDC& dc, wxRect& rc);
 
 	bool HitTest(int x, int y);
 

@@ -97,7 +97,7 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 			if(0 != m_ptPrev.x) {
 				int dx = event.GetX() - m_ptPrev.x;
 				int dy = event.GetY() - m_ptPrev.y;
-				m_pSelectedObj->Move(dx, dy, m_pTracks->GetPixelsPerSecond());
+				m_pSelectedObj->Move(dx, dy);
 			}
 		}
 		if(obj) { // Outside of tracks
