@@ -557,19 +557,42 @@ BOOL CTracks::createEngine(char *plugin)
 
 BOOL CTracks::Open(char *filename)
 {
-	if(m_pEngine && m_pEngine->Open(filename))
+	if(m_pEngine)
 	{
-		Clear();
-		loadTracks(m_pEngine, 0);
-		//loadTracks(m_pEngine->GetSource(), 0);
-		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-		float freq = fmt->frequency;
-		m_pEngine->Reset();
-		m_length = (float)m_pEngine->GetSize() / freq;
-		//RefreshRulers();
-		m_pPlayThread = new CPlayThread(this);
-		Refresh();
-		return TRUE;
+		if(m_pEngine->Open(filename))
+		{
+			Clear();
+			loadTracks(m_pEngine, 0);
+			//loadTracks(m_pEngine->GetSource(), 0);
+			SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+			float freq = fmt->frequency;
+			m_pEngine->Reset();
+			m_length = (float)m_pEngine->GetSize() / freq;
+			//RefreshRulers();
+			m_pPlayThread = new CPlayThread(this);
+			Refresh();
+			return TRUE;
+		}
+		else
+		{
+			SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+			IFloopySoundInput *input = m_pEngine->CreateInput(filename, *fmt);
+			if(input)
+			{
+				IFloopySoundMixer *mixer = getMixer();
+				if(!mixer)
+				{
+					mixer = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
+					m_pEngine->SetSource(mixer);
+				}
+				IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateInput("stdlib.track");
+				track->SetSource(input);
+				mixer->AddSource(track);
+				AddTrack(track, 0);
+				Refresh();
+				return TRUE;
+			}
+		}
 	}
 	return FALSE;
 }
@@ -772,4 +795,28 @@ int CTracks::GetCaretPos()
 	caret->GetPosition(&x, &y);
 	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 	return xc1 * GetSamplesPerPixel();
+}
+
+IFloopySoundMixer *CTracks::getMixer()
+{
+	IFloopySoundInput *tmp = m_pEngine->GetSource();
+	while(tmp)
+	{
+		switch(tmp->GetType())
+		{
+		case TYPE_FLOOPY_SOUND_MIXER:
+			return (IFloopySoundMixer*)tmp;
+		case TYPE_FLOOPY_SOUND_INPUT:
+			return NULL;
+		default:
+			tmp = (IFloopySoundFilter*)((IFloopySoundFilter*)tmp)->GetSource();
+		}
+		/*if(tmp->GetType() == TYPE_FLOOPY_SOUND_MIXER)
+			return (IFloopySoundMixer*)tmp;
+		else if(tmp->GetType() != TYPE_FLOOPY_SOUND_INPUT)
+			tmp = (IFloopySoundFilter*)((IFloopySoundFilter*)tmp)->GetSource();
+		else
+			tmp = NULL;*/
+	}
+	return NULL;
 }

@@ -206,6 +206,9 @@ public:
 	void Stop();
 
 private:
+	IFloopySoundMixer *getMixer();
+
+private:
 	int					m_pps;
 //	int					m_pps, m_bpm;
 //	int					m_hres;		//! Samples per pixel
