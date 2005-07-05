@@ -48,6 +48,7 @@ public:
 	void Close();
 
 	IFloopySoundInput  *CreateInput(char *plugin);
+	IFloopySoundInput  *CreateInput(char *name, SOUNDFORMAT fmt);
 	IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt);
 
 //	void SetParamAt(IFloopy *obj, int offset, int index, float value);

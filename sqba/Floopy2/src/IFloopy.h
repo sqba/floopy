@@ -586,6 +586,13 @@ public:
 	{ return NULL; }
 
 	/**
+	 * Creates a sound source or filter with apropriate convertors.
+	 * @param name Component name (without extension).
+	 */
+	virtual IFloopySoundInput  *CreateInput(char *name, SOUNDFORMAT fmt)
+	{ return NULL; }
+
+	/**
 	 * Creates a sound output.
 	 * @param name Component name (without extension).
 	 */

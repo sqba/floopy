@@ -155,6 +155,21 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 	return obj;
 }
 
+IFloopySoundInput *CEngine::CreateInput(char *name, SOUNDFORMAT fmt)
+{
+	IFloopySoundInput *input = CreateInput(name);
+	if((fmt.channels == 2) && (input->GetFormat()->channels == 1))
+	{
+		IFloopySoundFilter *filter = (IFloopySoundFilter*)CreateInput("stdlib.mono2stereo");
+		if(filter)
+		{
+			filter->SetSource(input);
+			input = filter;
+		}
+	}
+	return input;
+}
+
 IFloopySoundOutput *CEngine::CreateOutput(char *filename, SOUNDFORMAT fmt)
 {
 	COutput *obj = NULL;
