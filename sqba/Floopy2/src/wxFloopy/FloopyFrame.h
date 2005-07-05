@@ -57,7 +57,7 @@ public:
 
 private:
 	void initMenus();
-	void initPanes();
+	void initViews();
 
 private:
 	CDropTarget			*m_pDropTarget;

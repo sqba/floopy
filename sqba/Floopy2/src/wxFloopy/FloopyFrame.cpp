@@ -60,7 +60,7 @@ CFloopyFrame::CFloopyFrame(const wxChar *title, int xpos, int ypos, int width, i
 	SetDropTarget( m_pDropTarget );
 
 	initMenus();
-	initPanes();
+	initViews();
 
 	// create the toolbar and add our 1 tool to it
 	wxToolBar *toolbar = CreateToolBar();
@@ -188,7 +188,7 @@ void CFloopyFrame::initMenus()
 	this->SetMenuBar(menu_bar);
 }
 
-void CFloopyFrame::initPanes()
+void CFloopyFrame::initViews()
 {
 	m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400), wxSP_NOBORDER | wxSP_LIVE_UPDATE, _T("TrackView"));
 	//m_pSplitter->SetBackgroundColour( *wxWHITE );
