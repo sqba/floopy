@@ -11,6 +11,7 @@
 CTrack::CTrack()
 {
 //	m_bEnabled = FALSE;
+	Enable( FALSE );
 }
 
 CTrack::~CTrack()

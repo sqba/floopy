@@ -115,9 +115,8 @@ public:
 
 private:
 	inline BOOL _isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : FALSE); }
-	inline BOOL _isFilter() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_FILTER : FALSE); }
+//	inline BOOL _isTrack() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_TRACK : FALSE); }
 	void _applyParamsAt(int offset);
-	//void _applyParamsUntil(int endoffset);
 	void _applyPreviousParams(int offset);
 	int _getSamplesToBytes();
 	int _getStartOffset();
@@ -126,6 +125,7 @@ private:
 	void _recalcSourceVariables();
 	inline IFloopySoundInput *_getSource();
 
+	//void _applyParamsUntil(int endoffset);
 //	SOUNDFORMAT *GetFormat();
 
 

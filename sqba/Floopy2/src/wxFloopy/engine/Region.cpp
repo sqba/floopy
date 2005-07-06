@@ -304,6 +304,9 @@ void CRegion::Update()
 {
 	IFloopySoundInput *track = getTrack()->GetInput();
 
+	if(m_iStartSample < 0)
+		m_iStartSample = 0;
+
 //	float value=0.f;
 
 	if((m_iPrevStart >= 0.f) && (m_iPrevStart != m_iStartSample))

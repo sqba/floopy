@@ -38,7 +38,7 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour co
 		name = tmp + 1;
 
 	m_name    = name;
-	m_height  = MIN_HEIGHT;
+	m_height  = MIN_HEIGHT*3;
 	m_top     = 0;
 	m_colour  = colour;
 	m_pBitmap = new wxBitmap();
@@ -54,6 +54,9 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour co
 
 	loadRegions();
 
+	m_pButtonLoop = new CLoopButton(this);
+	m_pButtonCache = new CCacheButton(this);
+
 #ifdef _DEBUG	// test only ///////////////////////
 //	LoadDisplay(_T("WavDisplay"));
 #endif
@@ -68,6 +71,8 @@ CTrack::~CTrack()
 		delete m_pDisplay;
 		m_libDisplay.Unload();
 	}
+	delete m_pButtonLoop;
+	delete m_pButtonCache;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -82,18 +87,15 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	m_rcLabel = rc;
 
 	wxBrush oldBrush = dc.GetBrush();
+	wxPen oldpen = dc.GetPen();
+
+	wxPen pen( *wxLIGHT_GREY );
+	pen.SetWidth(2);
+	dc.SetPen( pen );
 
 	//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
 	wxBrush brush(m_colour, wxSOLID);
 	dc.SetBrush(brush);
-
-	wxFont font = dc.GetFont();
-	font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
-	font.SetPointSize(m_height / 2);
-	dc.SetFont(font);
-	//wxFont font(12, wxDEFAULT, wxITALIC, (IsSelected() ? wxBOLD : wxNORMAL));
-	//dc.SetFont(font);
-	////dc.SetFont((IsSelected() ? *wxITALIC_FONT : *wxNORMAL_FONT));
 
 	// Draw background
 	int left   = m_nLevel*4+1;
@@ -102,16 +104,42 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	int height = m_height-2;
 	dc.DrawRoundedRectangle(left, top, width, height, 4);
 
+
+	wxFont font = dc.GetFont();
+	font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
+	font.SetPointSize(m_height / 4);
+	dc.SetFont(font);
+	//wxFont font(12, wxDEFAULT, wxITALIC, (IsSelected() ? wxBOLD : wxNORMAL));
+	//dc.SetFont(font);
+	////dc.SetFont((IsSelected() ? *wxITALIC_FONT : *wxNORMAL_FONT));
+
 	// Get text dimensions
 	wxCoord w=0, h=0;
 	dc.GetTextExtent(m_name, &w, &h);
 
+	/*int ptSize = m_height / 2;
+	// Get text dimensions
+	wxCoord w=0, h=0;
+	do {
+		font.SetPointSize(ptSize);
+		dc.GetTextExtent(m_name, &w, &h);
+		ptSize--;
+	} while (w>width && ptSize > 5);*/
+
+
 	// Draw text
-	int x = left + width/2 - w/2;
-	int y = (rc.GetTop() + (m_height/2) - h/2);
+	int x = left + 5;//width/2 - w/2;
+	int y = (rc.GetTop() + (m_height/4) - h/2);
 	dc.DrawText( m_name, x, y );
 	m_rcLabel.SetHeight(m_height);
 
+
+	int n = m_height/2-2;
+	drawLoopSign(dc, wxRect(5, top+n, n, n));
+	drawCacheSign(dc, wxRect(n+5+1, top+n, n, n));
+
+
+	dc.SetPen(oldpen);
 	dc.SetBrush( oldBrush );
 }
 
@@ -673,4 +701,19 @@ void CTrack::CheckIntersections(CRegion *pEvent1, int &left, int &right, bool bR
 	}
 	
 //	assert(left>0 && right>0);
+}
+
+void CTrack::drawLoopSign(wxDC& dc, wxRect& rc)
+{
+	m_pButtonLoop->DrawFore(dc, rc);
+}
+
+void CTrack::drawCacheSign(wxDC& dc, wxRect& rc)
+{
+	m_pButtonCache->DrawFore(dc, rc);
+}
+
+BOOL CTrack::isLooped()
+{
+	return FALSE;
 }

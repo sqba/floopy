@@ -220,6 +220,14 @@ void CTimeline::insertAfter(tParam *prev, tParam *param)
 		return;
 	}
 
+	if((prev->index == param->index) && (prev->offset == param->offset))
+	{
+		prev->value = param->value;
+		//delete param;
+		//param = prev;
+		return;
+	}
+
 	tParam *next = prev->next;
 	if(next != param)
 	{

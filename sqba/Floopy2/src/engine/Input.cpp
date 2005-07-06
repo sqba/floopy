@@ -105,14 +105,20 @@ BOOL CInput::Create(char *name)
 			m_plugin = func( plugin );
 			if(m_plugin)
 			{
-				SetDisplayName(plugin, strlen(plugin));
+				char *tmp = strrchr(plugin, '\\');
+				if(tmp)
+					SetDisplayName(tmp+1, strlen(plugin));
+				else
+					SetDisplayName(plugin, strlen(plugin));
 
 				IFloopySoundFilter::SetSource(m_plugin);
 
-				SOUNDFORMAT *fmt = m_plugin->GetFormat();
-				if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
-				{
-					if( _isFilter() )
+//				SOUNDFORMAT *fmt = m_plugin->GetFormat();
+//				if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+//				{
+					//Enable( !_isTrack() );
+					Enable( m_plugin->IsEnabled() ); // Default
+					/*if( _isSource() )
 					{
 						Enable(TRUE);
 						IFloopy::Enable(TRUE);
@@ -121,8 +127,8 @@ BOOL CInput::Create(char *name)
 					{
 						Enable(FALSE);
 						IFloopy::Enable(FALSE);
-					}
-				}
+					}*/
+//				}
 
 				result = TRUE;
 			}
@@ -154,9 +160,9 @@ BOOL CInput::Create(IFloopySoundEngine *src)
 	if(name)
 		SetDisplayName(name, strlen(name));
 
-	SOUNDFORMAT *fmt = m_plugin->GetFormat();
-	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
-	{
+//	SOUNDFORMAT *fmt = m_plugin->GetFormat();
+//	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+//	{
 		/*if( _isFilter() )
 		{
 			Enable(TRUE);
@@ -165,9 +171,9 @@ BOOL CInput::Create(IFloopySoundEngine *src)
 		else
 		{*/
 			Enable(FALSE);
-			IFloopy::Enable(FALSE);
+//			IFloopy::Enable(FALSE);
 		//}
-	}
+//	}
 
 	return TRUE;
 }
@@ -402,8 +408,10 @@ void CInput::Enable(BOOL bEnable)
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
 	m_timeline.SetParamVal(m_offset, TIMELINE_PARAM_ENABLE, value);
 
-	if(m_plugin)
-		m_plugin->Enable(bEnable);
+//	if(m_plugin)
+//		m_plugin->Enable(bEnable);
+
+	IFloopy::Enable(bEnable);
 
 	_recalcVariables();
 }
@@ -771,7 +779,7 @@ int CInput::_getEndOffset()
 
 IFloopySoundInput *CInput::_getSource()
 {
-	if( IFloopy::IsEnabled() )
+	if( IFloopy::IsEnabled() )// || _isSource() )
 		return m_plugin;
 	else if( m_plugin->IsFilter() && m_plugin->ReadSourceIfDisabled() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();

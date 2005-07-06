@@ -234,6 +234,7 @@ class CTrack : public IFloopyObj
 {
     DECLARE_DYNAMIC_CLASS(CTrack)
 
+	////////////////////////////////////////////////////////////
 	class CBorder : public IFloopyObj
 	{
 	public:
@@ -246,6 +247,84 @@ class CTrack : public IFloopyObj
 		{
 			int height = getTrack()->GetHeight();
 			getTrack()->SetHeight(height + dy);
+		}
+
+	private:
+		CTrack *getTrack() { return (CTrack*)GetParent(); }
+	};
+
+	////////////////////////////////////////////////////////////
+	class CLoopButton : public IFloopyObj
+	{
+	public:
+		CLoopButton(CTrack *track) : IFloopyObj(track) {}
+		virtual ~CLoopButton() {}
+
+		wxCursor GetCursor() { return wxCursor(wxCURSOR_HAND); }
+
+		void DrawFore(wxDC& dc, wxRect& rc)
+		{
+			wxBrush oldBrush = dc.GetBrush();
+			wxPen oldpen = dc.GetPen();
+
+			wxPen pen( *wxLIGHT_GREY );
+			pen.SetWidth(2);
+			dc.SetPen( pen );
+
+			//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
+			wxBrush brush(getTrack()->GetColour(), wxSOLID);
+			dc.SetBrush(brush);
+
+			// Draw background
+			int left   = rc.GetX();
+			int top    = rc.GetTop();
+			int width  = rc.GetWidth();
+			int height = rc.GetHeight();
+			dc.DrawRoundedRectangle(left, top, width, height, 2);
+
+			dc.DrawCircle(left+width/2, top+height/2, height/3);
+
+			dc.SetPen(oldpen);
+			dc.SetBrush( oldBrush );
+		}
+
+	private:
+		CTrack *getTrack() { return (CTrack*)GetParent(); }
+	};
+
+	////////////////////////////////////////////////////////////
+	class CCacheButton : public IFloopyObj
+	{
+	public:
+		CCacheButton(CTrack *track) : IFloopyObj(track) {}
+		virtual ~CCacheButton() {}
+
+		wxCursor GetCursor() { return wxCursor(wxCURSOR_HAND); }
+
+		void DrawFore(wxDC& dc, wxRect& rc)
+		{
+			wxBrush oldBrush = dc.GetBrush();
+			wxPen oldpen = dc.GetPen();
+
+			wxPen pen( *wxLIGHT_GREY );
+			pen.SetWidth(2);
+			dc.SetPen( pen );
+
+			//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
+			wxBrush brush(getTrack()->GetColour(), wxSOLID);
+			dc.SetBrush(brush);
+
+			// Draw background
+			int left   = rc.GetX();
+			int top    = rc.GetTop();
+			int width  = rc.GetWidth();
+			int height = rc.GetHeight();
+			dc.DrawRoundedRectangle(left, top, width, height, 2);
+
+		//	dc.DrawCircle(left+width/2, top+height/2, height/3);
+
+			dc.SetPen(oldpen);
+			dc.SetBrush( oldBrush );
 		}
 
 	private:
@@ -314,9 +393,12 @@ public:
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();
-	int	 m_nLevel;
+	void drawLoopSign(wxDC& dc, wxRect& rc);
+	void drawCacheSign(wxDC& dc, wxRect& rc);
+	BOOL isLooped();
 
 private:
+	int			m_nLevel;
 	bool		m_bHide;
 	RegionList	m_regions;
 	wxRect		m_rcLabel;
@@ -329,6 +411,9 @@ private:
 	IFloopyObj	*m_pDisplay;
 	wxDynamicLibrary	m_libDisplay;
 	IFloopySoundInput *m_pInput;
+
+	CLoopButton		*m_pButtonLoop;
+	CCacheButton	*m_pButtonCache;
 };
 
 class CRegion : public IFloopyObj
