@@ -395,13 +395,13 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 		char *path = input->GetPath();
 		/*if(0 == strnicmp(path, si->filename, strlen(si->gPath)))
 			path += strlen(si->gPath);*/
-		fprintf(fp, "%s<input source='%s' color='%d,%d,%d'>\n", 
-			space, path, r, g, b);
+		fprintf(fp, "%s<input source='%s' name='%s' color='%d,%d,%d'>\n", 
+			space, path, input->GetDisplayName(), r, g, b);
 		recursive = FALSE;
 	}
 	else
-		fprintf(fp, "%s<input source='%s' color='%d,%d,%d'>\n", 
-		space, input->GetName(), r, g, b);
+		fprintf(fp, "%s<input source='%s' name='%s' color='%d,%d,%d'>\n", 
+		space, input->GetName(), input->GetDisplayName(), r, g, b);
 
 	si->bInitialized = TRUE;
 

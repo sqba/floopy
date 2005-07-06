@@ -219,7 +219,8 @@ private:
 	wxScrolledWindow	*m_pTracksView, *m_pLabelsView;
 	CBorder				*m_pBorder;
 
-	IFloopySoundEngine *m_pEngine;
+	IFloopySoundEngine	*m_pEngine;
+	IFloopySoundMixer	*m_pMixer;
 	wxDynamicLibrary	m_libEngine;
 
 //	wxScrolledWindow	*m_pPanel;

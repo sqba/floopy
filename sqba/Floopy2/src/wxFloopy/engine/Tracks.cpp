@@ -31,6 +31,7 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_pBorder = new CBorder(this);
 
 	m_pEngine = NULL;
+	m_pMixer = NULL;
 
 	createEngine("engine");
 
@@ -571,6 +572,7 @@ BOOL CTracks::Open(char *filename)
 			//RefreshRulers();
 			m_pPlayThread = new CPlayThread(this);
 			Refresh();
+			m_pMixer = getMixer();
 			return TRUE;
 		}
 		else
@@ -579,15 +581,16 @@ BOOL CTracks::Open(char *filename)
 			IFloopySoundInput *input = m_pEngine->CreateInput(filename, *fmt);
 			if(input)
 			{
-				IFloopySoundMixer *mixer = getMixer();
-				if(!mixer)
+				if(!m_pMixer)
 				{
-					mixer = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
-					m_pEngine->SetSource(mixer);
+					m_pMixer = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
+					m_pMixer->Enable(TRUE);
+					m_pEngine->SetSource(m_pMixer);
 				}
 				IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateInput("stdlib.track");
 				track->SetSource(input);
-				mixer->AddSource(track);
+				track->SetDisplayName(filename, strlen(filename));
+				m_pMixer->AddSource(track);
 				AddTrack(track, 0);
 				Refresh();
 				return TRUE;
