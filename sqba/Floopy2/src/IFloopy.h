@@ -14,6 +14,8 @@
 #define PARAM_VALUE_DISABLED	2000.f /// Value of the Disable parameter
 #define TIMELINE_PARAM_MOVETO		-2 /// Index of the MoveTo parameter
 
+#define SIZE_INFINITE				-1
+
 
 
 //////////////////////////////////////////////////////////////////////

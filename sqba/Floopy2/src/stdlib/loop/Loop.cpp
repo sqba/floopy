@@ -81,7 +81,7 @@ int CLoop::GetSize()
 //	if(m_nMaxLoops > 0)
 //		return (NULL != m_source ? m_source->GetSize()*m_nMaxLoops : 0);
 //	else
-		return -1;
+		return SIZE_INFINITE;
 }
 
 void CLoop::MoveTo(int samples)
