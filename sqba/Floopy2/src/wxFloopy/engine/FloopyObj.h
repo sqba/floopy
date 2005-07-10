@@ -88,6 +88,8 @@ public:
 	virtual wxCursor GetCursor()	{ return *wxSTANDARD_CURSOR; }
 	virtual wxMenu *GetMenu()		{ return m_pMenu; }
 
+	wxColour GetColour()			{ return m_colour; }
+
 	virtual void Move(int WXUNUSED(dx), int WXUNUSED(dy)) {}
 
 	virtual IFloopyObj *GetSelectedObj() { return NULL; }

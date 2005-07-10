@@ -95,6 +95,14 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 
 	dc.SetPen(oldpen);
 	dc.SetBrush(oldbrush);
+
+	///////////////////////////////////////////////////////
+	dc.SetPen(wxPen(*wxLIGHT_GREY));
+	IFloopyObj *disp = getTrack()->GetDisplay();
+	if(disp)
+		disp->DrawBG(dc, wxRect(left+border, top+border, width-border*2, height-border*2));
+	dc.SetPen(oldpen);
+	///////////////////////////////////////////////////////
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -106,14 +114,20 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 /////////////////////////////////////////////////////////////////////////////
 void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 {
-	IFloopyObj *disp = getTrack()->GetDisplay();
-
 	int left=0, right=0;
 	calcPos(&left, &right);
 	int width = right - left;
-	wxRect rce(left, rc.GetTop()+1, width, GetHeight()-3);
+	int border = (IsSelected() ? 2 : 1);
+	int top    = rc.GetTop() + border + 1;
+	int height = GetHeight() - border - 2;
+	wxRect rce(left, top, width, height);
+
+	///////////////////////////////////////////////////////
+	IFloopyObj *disp = getTrack()->GetDisplay();
 	if(disp)
 		disp->DrawFore(dc, rce);
+	///////////////////////////////////////////////////////
+
 	drawParametersFore(dc, rce);
 }
 

@@ -104,6 +104,10 @@ SOURCE=.\FloopyApp.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FloopyControl.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\FloopyFrame.cpp
 # End Source File
 # Begin Source File
@@ -142,6 +146,10 @@ SOURCE=.\engine\Tracks.cpp
 
 SOURCE=.\views\tracksview.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\WaveDisplay.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -153,6 +161,10 @@ SOURCE=.\views\caretview.h
 # Begin Source File
 
 SOURCE=.\FloopyApp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FloopyControl.h
 # End Source File
 # Begin Source File
 

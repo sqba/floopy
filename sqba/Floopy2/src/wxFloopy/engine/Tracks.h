@@ -18,6 +18,8 @@
 //#include <wx/dynarray.h>
 #include <wx/thread.h>
 
+#include "../FloopyControl.h"
+
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
@@ -47,6 +49,10 @@ WX_DECLARE_LIST(CRegion, RegionList);
 WX_DECLARE_LIST(CParameter, ParameterList);
 //WX_DECLARE_LIST(IFloopyObj, GraphicObjList);
 //WX_DEFINE_ARRAY(int, OffsetArrays);
+//WX_DECLARE_LIST(wxPoint, PointList);
+WX_DEFINE_ARRAY_PTR(short int, PeaksArray);
+
+
 
 
 /*! \class CTracks
@@ -254,13 +260,11 @@ class CTrack : public IFloopyObj
 	};
 
 	////////////////////////////////////////////////////////////
-	class CLoopButton : public IFloopyObj
+	class CLoopButton : public CFloopyControl
 	{
 	public:
-		CLoopButton(CTrack *track) : IFloopyObj(track) {}
+		CLoopButton(CTrack *track) : CFloopyControl(track) {}
 		virtual ~CLoopButton() {}
-
-		wxCursor GetCursor() { return wxCursor(wxCURSOR_HAND); }
 
 		void DrawFore(wxDC& dc, wxRect& rc)
 		{
@@ -271,16 +275,13 @@ class CTrack : public IFloopyObj
 			pen.SetWidth(2);
 			dc.SetPen( pen );
 
-			//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
 			wxBrush brush(getTrack()->GetColour(), wxSOLID);
 			dc.SetBrush(brush);
 
-			// Draw background
 			int left   = rc.GetX();
 			int top    = rc.GetTop();
 			int width  = rc.GetWidth();
 			int height = rc.GetHeight();
-			dc.DrawRoundedRectangle(left, top, width, height, 2);
 
 			dc.DrawCircle(left+width/2, top+height/2, height/3);
 
@@ -293,13 +294,11 @@ class CTrack : public IFloopyObj
 	};
 
 	////////////////////////////////////////////////////////////
-	class CCacheButton : public IFloopyObj
+	class CCacheButton : public CFloopyControl
 	{
 	public:
-		CCacheButton(CTrack *track) : IFloopyObj(track) {}
+		CCacheButton(CTrack *track) : CFloopyControl(track) {}
 		virtual ~CCacheButton() {}
-
-		wxCursor GetCursor() { return wxCursor(wxCURSOR_HAND); }
 
 		void DrawFore(wxDC& dc, wxRect& rc)
 		{
@@ -319,9 +318,8 @@ class CTrack : public IFloopyObj
 			int top    = rc.GetTop();
 			int width  = rc.GetWidth();
 			int height = rc.GetHeight();
-			dc.DrawRoundedRectangle(left, top, width, height, 2);
 
-		//	dc.DrawCircle(left+width/2, top+height/2, height/3);
+			//dc.DrawCircle(left+width/2, top+height/2, height/3);
 
 			dc.SetPen(oldpen);
 			dc.SetBrush( oldBrush );
@@ -347,7 +345,7 @@ public:
 	int GetHeight()				{ return m_height; }
 	int GetTop()				{ return m_top; }
 	void SetHeight(int height);
-	wxColour GetColour()		{ return m_colour; }
+//	wxColour GetColour()		{ return m_colour; }
 	wxString GetName()			{ return m_name; }
 	wxBitmap *GetBitmap()		{ return m_pBitmap; }
 	wxCursor GetCursor() { return wxCursor(wxCURSOR_PENCIL); }
@@ -402,7 +400,7 @@ private:
 	bool		m_bHide;
 	RegionList	m_regions;
 	wxRect		m_rcLabel;
-	wxColour	m_colour;
+//	wxColour	m_colour;
 	int			m_top;
 	int			m_height;
 	wxString	m_name;
@@ -579,6 +577,28 @@ public:
 
 private:
 	CTracks *m_pTracks;
+};
+
+
+class CWaveDisplay : public IFloopyObj  
+{
+public:
+	CWaveDisplay(CTrack *track);
+	virtual ~CWaveDisplay();
+
+	void DrawBG(wxDC& dc, wxRect& rc);
+	void DrawFore(wxDC& dc, wxRect& rc);
+
+	void LoadPeaks();
+
+private:
+	void drawDBLines(wxDC& dc, wxRect& rc);
+	void drawWaveform(wxDC& dc, wxRect& rc, int start);
+
+private:
+	float m_fdB;
+//	PointList m_points;
+	PeaksArray m_peaks;
 };
 
 

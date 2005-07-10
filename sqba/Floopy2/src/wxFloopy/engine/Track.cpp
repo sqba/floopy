@@ -44,7 +44,7 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour co
 	m_pBitmap = new wxBitmap();
 	m_pBitmap->LoadFile("res/help.bmp", wxBITMAP_TYPE_BMP);
 	m_pBorder = new CBorder(this);
-	m_pDisplay = NULL;
+//	m_pDisplay = NULL;
 
 	m_pMenu = new CMenu( this );
 	m_pMenu->Append(_T("&New track..."), NULL);
@@ -56,6 +56,8 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour co
 
 	m_pButtonLoop = new CLoopButton(this);
 	m_pButtonCache = new CCacheButton(this);
+
+	m_pDisplay = new CWaveDisplay(this);
 
 #ifdef _DEBUG	// test only ///////////////////////
 //	LoadDisplay(_T("WavDisplay"));
@@ -69,7 +71,7 @@ CTrack::~CTrack()
 	delete m_pBorder;
 	if(m_pDisplay) {
 		delete m_pDisplay;
-		m_libDisplay.Unload();
+		//m_libDisplay.Unload();
 	}
 	delete m_pButtonLoop;
 	delete m_pButtonCache;
@@ -449,7 +451,7 @@ bool CTrack::LoadDisplay(wxString strType)
 	bool result = FALSE;
 	//wxDynamicLibrary dlib;
 
-	if( m_libDisplay.Load(strType) ) {
+	/*if( m_libDisplay.Load(strType) ) {
 		typedef IFloopyObj* (*funcType)(void);
 		//typedef void (*funcType)(IFloopyObj**);
 		funcType func = (funcType)m_libDisplay.GetSymbol(_T("CreateDisplay"));
@@ -465,7 +467,7 @@ bool CTrack::LoadDisplay(wxString strType)
 				m_libDisplay.Unload();
 			}
 		}
-	}
+	}*/
 	return result;
 }
 
@@ -705,11 +707,13 @@ void CTrack::CheckIntersections(CRegion *pEvent1, int &left, int &right, bool bR
 
 void CTrack::drawLoopSign(wxDC& dc, wxRect& rc)
 {
+	m_pButtonLoop->DrawBG(dc, rc);
 	m_pButtonLoop->DrawFore(dc, rc);
 }
 
 void CTrack::drawCacheSign(wxDC& dc, wxRect& rc)
 {
+	m_pButtonCache->DrawBG(dc, rc);
 	m_pButtonCache->DrawFore(dc, rc);
 }
 
