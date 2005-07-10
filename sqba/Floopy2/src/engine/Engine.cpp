@@ -32,6 +32,12 @@ CEngine::CEngine(HMODULE hModule)
 		if(tmp)
 			*(tmp+1) = '\0';
 	}
+
+	// Default values
+	m_format.frequency = 44100;
+	//m_format.format = 
+	m_format.channels = 2;
+	m_format.bitsPerSample = 16;
 }
 
 CEngine::~CEngine()
@@ -155,8 +161,10 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 	return obj;
 }
 
-IFloopySoundInput *CEngine::CreateInput(char *name, SOUNDFORMAT fmt1)
+IFloopySoundInput *CEngine::CreateTrack(char *name)
 {
+	SOUNDFORMAT *fmt1 = GetFormat();
+
 	IFloopySoundInput *input = CreateInput(name);
 	SOUNDFORMAT *pfmt2 = input->GetFormat();
 
@@ -165,7 +173,7 @@ IFloopySoundInput *CEngine::CreateInput(char *name, SOUNDFORMAT fmt1)
 	//	return NULL;
 	//}
 
-	if((fmt1.channels == 2) && (pfmt2->channels == 1))
+	if((fmt1->channels == 2) && (pfmt2->channels == 1))
 	{
 		IFloopySoundFilter *filter = (IFloopySoundFilter*)CreateInput("stdlib.mono2stereo");
 		if(filter)
@@ -175,19 +183,19 @@ IFloopySoundInput *CEngine::CreateInput(char *name, SOUNDFORMAT fmt1)
 		}
 	}
 
-	if((fmt1.channels == 1) && (pfmt2->channels == 2))
+	if((fmt1->channels == 1) && (pfmt2->channels == 2))
 	{
 		// Stereo2mono
 		return NULL;
 	}
 
-	if(fmt1.frequency != pfmt2->frequency)
+	if(fmt1->frequency != pfmt2->frequency)
 	{
 		// Find adequate resampling component instead
 		return NULL;
 	}
 
-	if(fmt1.bitsPerSample != pfmt2->bitsPerSample)
+	if(fmt1->bitsPerSample != pfmt2->bitsPerSample)
 	{
 		// Find adequate conversion component instead
 		return NULL;

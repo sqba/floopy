@@ -591,7 +591,7 @@ public:
 	 * Creates a sound source or filter with apropriate convertors.
 	 * @param name Component name (without extension).
 	 */
-	virtual IFloopySoundInput  *CreateInput(char *name, SOUNDFORMAT fmt)
+	virtual IFloopySoundInput  *CreateTrack(char *name)
 	{ return NULL; }
 
 	/**

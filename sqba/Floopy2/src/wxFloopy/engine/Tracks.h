@@ -594,11 +594,13 @@ public:
 private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
 	void drawWaveform(wxDC& dc, wxRect& rc, int start);
+	IFloopySoundInput *getInput();
 
 private:
 	float m_fdB;
 //	PointList m_points;
 	PeaksArray m_peaks;
+	IFloopySoundInput *m_pInput;
 };
 
 

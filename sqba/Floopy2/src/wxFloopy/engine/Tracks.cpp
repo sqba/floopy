@@ -26,7 +26,7 @@ CTracks::CTracks() : IFloopyObj(NULL)
 //	m_hres   = 2756; // samples per pixel
 	m_pps    = 2;	// pixels per second
 //	m_bpm    = 120;	// beats per minute
-	m_length = 60;	// seconds
+	m_length = 120;	// seconds
 
 	m_pBorder = new CBorder(this);
 
@@ -577,8 +577,7 @@ BOOL CTracks::Open(char *filename)
 		}
 		else
 		{
-			SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-			IFloopySoundInput *input = m_pEngine->CreateInput(filename, *fmt);
+			IFloopySoundInput *input = m_pEngine->CreateTrack(filename);
 			if(input)
 			{
 				if(!m_pMixer)
