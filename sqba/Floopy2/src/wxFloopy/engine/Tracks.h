@@ -43,6 +43,7 @@ class CRegionBorder;
 class CParameter;
 class CPlayThread;
 //class CDragObjects;
+class CRegionDisplay;
 
 WX_DECLARE_LIST(CTrack, TracksList);
 WX_DECLARE_LIST(CRegion, RegionList);
@@ -510,6 +511,7 @@ private:
 	wxRect			m_rcRegion;
 	CBorder			*m_pLeftBorder, *m_pRightBorder;
 	ParameterList	m_Parameters;
+	CRegionDisplay	*m_pDisplay;
 };
 
 
@@ -597,6 +599,30 @@ private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
 	void drawWaveform(wxDC& dc, wxRect& rc, int start);
 	IFloopySoundInput *getInput();
+
+private:
+	float m_fdB;
+//	PointList m_points;
+	PeaksArray m_peaks;
+	IFloopySoundInput *m_pInput;
+};
+
+
+class CRegionDisplay : public IFloopyObj  
+{
+public:
+	CRegionDisplay(CRegion *region);
+	virtual ~CRegionDisplay();
+
+	void DrawBG(wxDC& dc, wxRect& rc);
+	void DrawFore(wxDC& dc, wxRect& rc);
+
+	void LoadPeaks();
+
+private:
+	void drawDBLines(wxDC& dc, wxRect& rc);
+	void drawWaveform(wxDC& dc, wxRect& rc, int start);
+	IFloopySoundInput *getInput(CTrack *track);
 
 private:
 	float m_fdB;

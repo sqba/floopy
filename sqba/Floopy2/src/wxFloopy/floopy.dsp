@@ -136,6 +136,10 @@ SOURCE=.\engine\Region.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\RegionDisplay.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\engine\Track.cpp
 # End Source File
 # Begin Source File

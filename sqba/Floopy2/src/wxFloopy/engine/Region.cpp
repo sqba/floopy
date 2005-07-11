@@ -30,6 +30,8 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 	wxLog::AddTraceMask(_T("CRegion"));
 
 	loadParameters( getTrack()->GetInput() );
+
+	m_pDisplay = new CRegionDisplay(this);
 }
 
 CRegion::~CRegion()
@@ -38,6 +40,8 @@ CRegion::~CRegion()
 	delete m_pRightBorder;
 //	delete m_pMenu; // Deleted in ~IFloopyObj()
 	WX_CLEAR_LIST(ParameterList, m_Parameters);
+	if(m_pDisplay)
+		delete m_pDisplay;
 }
 
 void CRegion::createMenu()
@@ -98,7 +102,8 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 
 	///////////////////////////////////////////////////////
 	dc.SetPen(wxPen(*wxLIGHT_GREY));
-	IFloopyObj *disp = getTrack()->GetDisplay();
+	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
+	CRegionDisplay *disp = m_pDisplay;
 	if(disp)
 		disp->DrawBG(dc, wxRect(left+border, top+border, width-border*2, height-border*2));
 	dc.SetPen(oldpen);
@@ -123,7 +128,8 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	wxRect rce(left, top, width, height);
 
 	///////////////////////////////////////////////////////
-	CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
+	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
+	CRegionDisplay *disp = m_pDisplay;
 	if(disp)
 		//disp->DrawRegion(this, dc, rce);
 		disp->DrawFore(dc, rce);
@@ -364,6 +370,16 @@ void CRegion::Update()
 			track->EnableAt(m_iEndSample, FALSE);
 	}
 
+	if((m_iPrevEnd-m_iPrevStart) != (m_iEndSample-m_iStartSample))
+	{
+		// Resize
+		///////////////////////////////////////////////////////
+		CRegionDisplay *disp = m_pDisplay;
+		if(disp)
+			disp->LoadPeaks();
+		///////////////////////////////////////////////////////
+		Refresh();
+	}
 	// Move params!!!
 
 	/*wxLogTrace(_T("CRegion"), _T("m_iPrevStart=%d m_iStartSample=%d"),
