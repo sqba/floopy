@@ -90,7 +90,8 @@ void CRegionDisplay::LoadPeaks()
 	m_pInput->MoveTo(start);
 	samples = m_pInput->Read((BYTE*)buffer, bytes);
 
-	int interval = samples / samplesPerPixel;
+//	int interval = samples / samplesPerPixel;
+	int interval = samplesPerPixel;
 
 	int counter=0;;
 	int step=1;

@@ -447,6 +447,9 @@ public:
 			} else {
 				getRegion()->Resize(0, dx);
 			}
+			// Too slow
+			//getRegion()->Invalidate();
+			//getRegion()->Refresh();
 		}
 
 	private:
