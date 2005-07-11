@@ -177,6 +177,7 @@ public:
 	IFloopyObj *GetChildAt(int x, int y);
 
 	void Refresh();
+	void Invalidate();
 
 	void Dump(ostream& stream);
 
@@ -367,6 +368,7 @@ public:
 	void DeselectAllRegions();
 
 	void Refresh();
+	void Invalidate();
 
 	void Move(int dx, int dy);
 
@@ -478,6 +480,7 @@ public:
 	void Move(int dx, int WXUNUSED(dy));
 	bool HitTest(int x, int y);
 	void Refresh();
+	void Invalidate();
 	void Resize(int dl, int dr);
 	void Update();
 	void CancelUpdate();

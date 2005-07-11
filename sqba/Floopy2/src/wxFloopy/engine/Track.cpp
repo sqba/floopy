@@ -370,6 +370,17 @@ void CTrack::Refresh()
 	}
 }
 
+void CTrack::Invalidate()
+{
+	RegionList::Node *node = m_regions.GetFirst();
+	while (node)
+	{
+		CRegion *region = (CRegion*)node->GetData();
+		region->Invalidate();
+		node = node->GetNext();
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // MoveSelectedRegions
 //! Horizontally moves all selected events for the dx offset.

@@ -374,6 +374,17 @@ void CTracks::Refresh()
 	}
 }
 
+void CTracks::Invalidate()
+{
+	TracksList::Node *node = m_tracks.GetFirst();
+	while (node)
+	{
+		CTrack *track = (CTrack*)node->GetData();
+		track->Invalidate();
+		node = node->GetNext();
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // SetPixelsPerSecond
 //! Sets new horizontal resolution (pixels per second).
@@ -404,6 +415,7 @@ void CTracks::SetPixelsPerSecond(int pps)
 
 		m_pps = pps;
 
+		Invalidate();
 		Refresh();
 
 

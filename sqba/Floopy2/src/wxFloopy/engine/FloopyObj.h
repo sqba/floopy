@@ -82,6 +82,7 @@ public:
 	virtual void DrawFore(wxDC& WXUNUSED(dc), wxRect& WXUNUSED(rc)) {};
 
 	virtual void Refresh() {}
+	virtual void Invalidate() {}
 
 	virtual IFloopyObj *GetChildAt(int WXUNUSED(x), int WXUNUSED(y)) { return NULL; }
 

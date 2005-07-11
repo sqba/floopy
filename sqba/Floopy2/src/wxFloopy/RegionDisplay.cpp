@@ -69,7 +69,8 @@ void CRegionDisplay::LoadPeaks()
 	CTrack  *track  = (CTrack*)region->GetParent();
 	CTracks *tracks = (CTracks*)track->GetParent();
 
-	m_pInput = getInput(track);
+//	m_pInput = getInput(track);
+	m_pInput = track->GetInput();
 	if(NULL == m_pInput)
 		return;
 
@@ -82,7 +83,7 @@ void CRegionDisplay::LoadPeaks()
 	int channels		= fmt->channels;
 //	int maxSample		= (int)pow(2, fmt->bitsPerSample) / 2;
 
-	int bytes = samples * sizeof(short int) * channels;
+	int bytes = samples * channels * sizeof(short int);
 	short int *buffer = new short int[bytes];
 	memset(buffer, 0, bytes);
 
@@ -164,10 +165,10 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 
 	wxPoint ptPrev(start, mid);
 
-	int step = count > width ? count / width : 1;
+	int step = channels;//count > width ? count / width : 1;
 	int i=start;
 	int y=mid;
-	for(int x=start; x<width&&i<count; x++)
+	for(int x=0; x<width&&i<count; x++)
 	{
 		y = (int)((float)mid + m_peaks.Item(i)/yscale);
 		dc.DrawLine(left+ptPrev.x, ptPrev.y, left+x, y);
@@ -183,8 +184,9 @@ IFloopySoundInput *CRegionDisplay::getInput(CTrack *track)
 {
 	CTracks *tracks = (CTracks*)track->GetParent();
 
-	IFloopySoundInput *input = ((IFloopySoundFilter*)track->GetInput())->GetSource();
-
+//	IFloopySoundInput *input = ((IFloopySoundFilter*)track->GetInput())->GetSource();
+	IFloopySoundInput *input = track->GetInput();
+/*
 	int samples	= input->GetSize();
 	if(SIZE_INFINITE == samples)
 		input = track->GetInput();
@@ -192,6 +194,6 @@ IFloopySoundInput *CRegionDisplay::getInput(CTrack *track)
 	samples	= input->GetSize();
 	if(SIZE_INFINITE == samples)
 		input = NULL;
-
+*/
 	return input;
 }

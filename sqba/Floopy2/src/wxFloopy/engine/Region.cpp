@@ -215,6 +215,15 @@ void CRegion::Refresh()
 	}
 }
 
+void CRegion::Invalidate()
+{
+	///////////////////////////////////////////////////////
+	CRegionDisplay *disp = m_pDisplay;
+	if(disp)
+		disp->LoadPeaks();
+	///////////////////////////////////////////////////////
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // GetRect
 //! Calculates region's rectangle.
@@ -373,10 +382,11 @@ void CRegion::Update()
 	if((m_iPrevEnd-m_iPrevStart) != (m_iEndSample-m_iStartSample))
 	{
 		// Resize
+		Invalidate();
 		///////////////////////////////////////////////////////
-		CRegionDisplay *disp = m_pDisplay;
+		/*CRegionDisplay *disp = m_pDisplay;
 		if(disp)
-			disp->LoadPeaks();
+			disp->LoadPeaks();*/
 		///////////////////////////////////////////////////////
 		Refresh();
 	}
