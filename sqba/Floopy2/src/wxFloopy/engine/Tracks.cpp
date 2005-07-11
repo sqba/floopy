@@ -24,7 +24,7 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_pTracksView = NULL;
 	m_pLabelsView = NULL;
 //	m_hres   = 2756; // samples per pixel
-	m_pps    = 2;	// pixels per second
+	m_pps    = 16;	// pixels per second
 //	m_bpm    = 120;	// beats per minute
 	m_length = 120;	// seconds
 

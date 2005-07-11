@@ -591,6 +591,8 @@ public:
 
 	void LoadPeaks();
 
+	void DrawRegion(CRegion *region, wxDC& dc, wxRect& rc);
+
 private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
 	void drawWaveform(wxDC& dc, wxRect& rc, int start);

@@ -240,10 +240,6 @@ SOURCE=.\wx\msw\folder2.ico
 # End Source File
 # Begin Source File
 
-SOURCE=.\wx\msw\hand.cur
-# End Source File
-# Begin Source File
-
 SOURCE=.\wx\msw\magnif1.cur
 # End Source File
 # Begin Source File

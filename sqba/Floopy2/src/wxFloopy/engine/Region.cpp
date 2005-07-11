@@ -123,8 +123,9 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	wxRect rce(left, top, width, height);
 
 	///////////////////////////////////////////////////////
-	IFloopyObj *disp = getTrack()->GetDisplay();
+	CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
 	if(disp)
+		//disp->DrawRegion(this, dc, rce);
 		disp->DrawFore(dc, rce);
 	///////////////////////////////////////////////////////
 
