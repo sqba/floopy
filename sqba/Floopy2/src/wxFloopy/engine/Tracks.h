@@ -363,7 +363,7 @@ public:
 
 	IFloopyObj *GetChildAt(int x, int y);
 	IFloopyObj *GetSelectedObj();
-	IFloopyObj *GetDisplay() { return m_pDisplay; }
+//	IFloopyObj *GetDisplay() { return m_pDisplay; }
 
 	void DeselectAllRegions();
 
@@ -409,8 +409,8 @@ private:
 	wxString	m_name;
 	wxBitmap	*m_pBitmap;
 	CBorder		*m_pBorder;
-	IFloopyObj	*m_pDisplay;
-	wxDynamicLibrary	m_libDisplay;
+//	IFloopyObj	*m_pDisplay;
+//	wxDynamicLibrary	m_libDisplay;
 	IFloopySoundInput *m_pInput;
 
 	CLoopButton		*m_pButtonLoop;
@@ -587,7 +587,7 @@ private:
 	CTracks *m_pTracks;
 };
 
-
+/*
 class CWaveDisplay : public IFloopyObj  
 {
 public:
@@ -612,9 +612,9 @@ private:
 	PeaksArray m_peaks;
 	IFloopySoundInput *m_pInput;
 };
+*/
 
-
-class CRegionDisplay : public IFloopyObj  
+class CRegionDisplay// : public wxThread  
 {
 public:
 	CRegionDisplay(CRegion *region);
@@ -625,16 +625,21 @@ public:
 
 	void LoadPeaks();
 
+	void *Entry();
+
 private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
 	void drawWaveform(wxDC& dc, wxRect& rc, int start);
 	IFloopySoundInput *getInput(CTrack *track);
+	void loadPeaks();
 
 private:
 	float m_fdB;
 //	PointList m_points;
 	PeaksArray m_peaks;
 	IFloopySoundInput *m_pInput;
+	CRegion *m_pRegion;
+//	wxMutex *m_pMutex;
 };
 
 

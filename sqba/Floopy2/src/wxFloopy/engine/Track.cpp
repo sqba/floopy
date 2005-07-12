@@ -57,7 +57,7 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour co
 	m_pButtonLoop = new CLoopButton(this);
 	m_pButtonCache = new CCacheButton(this);
 
-	m_pDisplay = new CWaveDisplay(this);
+//	m_pDisplay = new CWaveDisplay(this);
 
 #ifdef _DEBUG	// test only ///////////////////////
 //	LoadDisplay(_T("WavDisplay"));
@@ -69,10 +69,10 @@ CTrack::~CTrack()
 	WX_CLEAR_LIST(RegionList, m_regions);
 	delete m_pBitmap;
 	delete m_pBorder;
-	if(m_pDisplay) {
+	/*if(m_pDisplay) {
 		delete m_pDisplay;
 		//m_libDisplay.Unload();
-	}
+	}*/
 	delete m_pButtonLoop;
 	delete m_pButtonCache;
 }

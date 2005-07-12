@@ -32,6 +32,7 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 	loadParameters( getTrack()->GetInput() );
 
 	m_pDisplay = new CRegionDisplay(this);
+//	m_pDisplay->Run();
 }
 
 CRegion::~CRegion()
@@ -220,6 +221,7 @@ void CRegion::Invalidate()
 	///////////////////////////////////////////////////////
 	CRegionDisplay *disp = m_pDisplay;
 	if(disp)
+		//m_pDisplay->Run();
 		disp->LoadPeaks();
 	///////////////////////////////////////////////////////
 }

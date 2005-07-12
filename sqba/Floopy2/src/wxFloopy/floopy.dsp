@@ -150,10 +150,6 @@ SOURCE=.\engine\Tracks.cpp
 
 SOURCE=.\views\tracksview.cpp
 # End Source File
-# Begin Source File
-
-SOURCE=.\WaveDisplay.cpp
-# End Source File
 # End Group
 # Begin Group "Header Files"
 

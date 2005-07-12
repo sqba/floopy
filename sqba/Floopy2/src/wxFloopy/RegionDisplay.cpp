@@ -9,10 +9,13 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
+CRegionDisplay::CRegionDisplay(CRegion *region)
 {
+	m_pRegion = region;
+//	m_pMutex = new wxMutex();
 	m_pInput = NULL;
 	m_fdB = -6.0;
+//	Create();
 	LoadPeaks();
 }
 
@@ -58,14 +61,22 @@ void CRegionDisplay::DrawFore(wxDC& dc, wxRect& rc)
 	}
 }
 
-
-
-// Do this in another thread!!!
 void CRegionDisplay::LoadPeaks()
 {
+//	Create();
+//	Run();
+	loadPeaks();
+}
+
+// Do this in another thread!!!
+void CRegionDisplay::loadPeaks()
+{
+//	m_pMutex->Lock();
+
+
 	m_peaks.Empty();
 
-	CRegion *region = (CRegion*)GetParent();
+	CRegion *region = m_pRegion;//(CRegion*)GetParent();
 	CTrack  *track  = (CTrack*)region->GetParent();
 	CTracks *tracks = (CTracks*)track->GetParent();
 
@@ -118,6 +129,8 @@ void CRegionDisplay::LoadPeaks()
 	}
 
 	delete buffer;
+
+//	m_pMutex->Unlock();
 }
 
 
@@ -151,6 +164,8 @@ void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
  */
 void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 {
+//	wxMutexLocker lock(*m_pMutex);
+
 	int left	= rc.GetX();
 	int width	= rc.GetWidth();
 	int height	= rc.GetHeight();
@@ -197,4 +212,10 @@ IFloopySoundInput *CRegionDisplay::getInput(CTrack *track)
 		input = NULL;
 */
 	return input;
+}
+
+void *CRegionDisplay::Entry()
+{
+	loadPeaks();
+	return NULL;
 }
