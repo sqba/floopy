@@ -48,26 +48,30 @@ int CLoop::Read(BYTE *data, int size)
 	}
 	else
 	{*/
-		len = IFloopySoundFilter::Read(data, size);
+		//len = IFloopySoundFilter::Read(data, size);
 
 		//if(EOF == len)
 		//	return len;
 
-		if(len < size)
+		int result = 0;
+		while(result < size)
 		{
-			// We have reached the end
-			Reset();
-			int l = IFloopySoundFilter::Read(data+len, size-len);
+			len = IFloopySoundFilter::Read(data+result, size-result);
 
-			if(EOF == l)
-				return l;
-
-			len += l;
+			if(EOF == len)
+			{
+				Reset();
+				len = 0;
+			}
+			else
+			{
+				m_nPosition += len;
+				result += len;
+			}
 		}
-		m_nPosition += len;
 //	}
 
-	return len;
+	return result;
 }
 /*
 void CLoop::SetParam(int index, float value)

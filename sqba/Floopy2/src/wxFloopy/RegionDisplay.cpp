@@ -94,19 +94,18 @@ void CRegionDisplay::loadPeaks()
 	int end		= region->GetEndOffset();
 	int samples	= (end - start) * channels;
 
-	int bytes = samples * channels * sizeof(short int);
-	short int *buffer = new short int[bytes];
+	short int *buffer = new short int[samples];
+	int bytes = samples * sizeof(short int);
+	//int bytes = samples * (fmt->bitsPerSample / 8);
 	memset(buffer, 0, bytes);
 
 	m_pInput->MoveTo(start);
-	samples = m_pInput->Read((BYTE*)buffer, bytes);
+	int bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
+	samples = bytesRead / (fmt->bitsPerSample / 8);
 
 //	int interval = samples / samplesPerPixel;
-	int interval = samplesPerPixel;
-
+	int interval = samplesPerPixel / channels;
 	int counter=0;;
-	int step=1;
-
 	int avg[2] = {0};
 	int n=0;
 
@@ -122,7 +121,6 @@ void CRegionDisplay::loadPeaks()
 				m_peaks.Add(avg[n]/interval);
 				avg[n] = 0;
 			}
-
 			counter = 0;
 		} else
 			counter++;

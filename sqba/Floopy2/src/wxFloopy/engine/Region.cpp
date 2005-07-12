@@ -129,11 +129,16 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	wxRect rce(left, top, width, height);
 
 	///////////////////////////////////////////////////////
+	wxPen oldpen = dc.GetPen();
+	wxColor color = GetColour();
+	color.Set(color.Red()/2, color.Green()/2, color.Blue()/2);
+	dc.SetPen(wxPen(color, 1));
 	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
 	CRegionDisplay *disp = m_pDisplay;
 	if(disp)
 		//disp->DrawRegion(this, dc, rce);
 		disp->DrawFore(dc, rce);
+	dc.SetPen(oldpen);
 	///////////////////////////////////////////////////////
 
 	drawParametersFore(dc, rce);
