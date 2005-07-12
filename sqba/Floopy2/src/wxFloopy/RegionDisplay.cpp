@@ -16,6 +16,8 @@ CRegionDisplay::CRegionDisplay(CRegion *region)
 	m_pInput = NULL;
 	m_fdB = -6.0;
 //	Create();
+	m_bLoaded = FALSE;
+//	m_pLoadThread = NULL;
 	LoadPeaks();
 }
 
@@ -66,11 +68,21 @@ void CRegionDisplay::LoadPeaks()
 //	Create();
 //	Run();
 	loadPeaks();
+/*
+	if(m_pLoadThread)
+		delete m_pLoadThread;
+
+	m_pLoadThread = new CLoadThread(this);
+	m_pLoadThread->Create();
+	m_pLoadThread->Run();
+*/
 }
 
 // Do this in another thread!!!
 void CRegionDisplay::loadPeaks()
 {
+	m_bLoaded = FALSE;
+
 //	m_pMutex->Lock();
 
 
@@ -129,6 +141,8 @@ void CRegionDisplay::loadPeaks()
 	delete buffer;
 
 //	m_pMutex->Unlock();
+
+	m_bLoaded = TRUE;
 }
 
 
@@ -162,6 +176,9 @@ void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
  */
 void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 {
+	if(!m_bLoaded)
+		return;
+
 //	wxMutexLocker lock(*m_pMutex);
 
 	int left	= rc.GetX();
@@ -211,9 +228,10 @@ IFloopySoundInput *CRegionDisplay::getInput(CTrack *track)
 */
 	return input;
 }
-
+/*
 void *CRegionDisplay::Entry()
 {
 	loadPeaks();
 	return NULL;
 }
+*/

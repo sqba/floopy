@@ -616,6 +616,17 @@ private:
 
 class CRegionDisplay// : public wxThread  
 {
+	/*class CLoadThread : public wxThread
+	{
+	public:
+		CLoadThread(CRegionDisplay *display) { m_pDisplay = display; }
+		//virtual ~CLoadThread();
+	
+		void *Entry() { m_pDisplay->loadPeaks(); return NULL; }
+
+		CRegionDisplay *m_pDisplay;
+	};*/
+
 public:
 	CRegionDisplay(CRegion *region);
 	virtual ~CRegionDisplay();
@@ -625,7 +636,7 @@ public:
 
 	void LoadPeaks();
 
-	void *Entry();
+//	void *Entry();
 
 private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
@@ -640,6 +651,8 @@ private:
 	IFloopySoundInput *m_pInput;
 	CRegion *m_pRegion;
 //	wxMutex *m_pMutex;
+	BOOL m_bLoaded;
+//	CLoadThread *m_pLoadThread;
 };
 
 
