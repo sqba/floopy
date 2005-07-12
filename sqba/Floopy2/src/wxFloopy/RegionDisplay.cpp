@@ -85,14 +85,14 @@ void CRegionDisplay::loadPeaks()
 	if(NULL == m_pInput)
 		return;
 
-	int start	= region->GetStartOffset();
-	int end		= region->GetEndOffset();
-	int samples	= end - start;
-
 	SOUNDFORMAT *fmt	= m_pInput->GetFormat();
 	int samplesPerPixel = tracks->GetSamplesPerPixel();
 	int channels		= fmt->channels;
 //	int maxSample		= (int)pow(2, fmt->bitsPerSample) / 2;
+
+	int start	= region->GetStartOffset();
+	int end		= region->GetEndOffset();
+	int samples	= (end - start) * channels;
 
 	int bytes = samples * channels * sizeof(short int);
 	short int *buffer = new short int[bytes];
