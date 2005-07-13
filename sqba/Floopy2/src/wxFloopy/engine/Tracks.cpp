@@ -681,11 +681,13 @@ void CTracks::OnKeyDown(wxKeyEvent& event)
 	case WXK_NUMPAD_LEFT:
 	case '-':
 		pps /= 2;
+		SetPixelsPerSecond( pps );
 		break;
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
 	case '+':
 		pps *= 2;
+		SetPixelsPerSecond( pps );
 		break;
 	case WXK_UP:
 	case WXK_NUMPAD_UP:
@@ -703,7 +705,6 @@ void CTracks::OnKeyDown(wxKeyEvent& event)
 		return;
 	}
 
-	SetPixelsPerSecond( pps );
 	//RefreshRulers();
 }
 
