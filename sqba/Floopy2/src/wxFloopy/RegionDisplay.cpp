@@ -118,20 +118,31 @@ void CRegionDisplay::loadPeaks()
 //	int interval = samples / samplesPerPixel;
 	int interval = samplesPerPixel / channels;
 	int counter=0;;
-	int avg[2] = {0};
+	int tmp[2] = {0};
 	int n=0;
 
 	for(int i=0; i<samples; i++)
 	{
 		for(n=0; n<channels; n++)
-			avg[n] += buffer[i+n];
+		{
+			if( ((i+n)%2) == 0 )
+			{
+				if(buffer[i+n] > tmp[n])
+					tmp[n] = buffer[i+n];
+			}
+			else
+			{
+				if(buffer[i+n] < tmp[n])
+					tmp[n] = buffer[i+n];
+			}
+		}
 
 		if(counter >= interval)
 		{
 			for(n=0; n<channels; n++)
 			{
-				m_peaks.Add(avg[n]/interval);
-				avg[n] = 0;
+				m_peaks.Add(tmp[n]);
+				tmp[n] = 0;
 			}
 			counter = 0;
 		} else

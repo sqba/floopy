@@ -315,8 +315,7 @@ public:
 	 * Fills given buffer with sound data.
 	 * @param data pointer to the buffer to be filled.
 	 * @param size size of the buffer in bytes.
-	 * @param offset number of bytes to skip.
-	 * @return number of bytes read from data.
+	 * @return number of bytes read.
 	 */
 	virtual int Read(BYTE *data, int size)=0;//	{ return 0; }
 
@@ -618,6 +617,14 @@ public:
 	 * @param func Pointer to the callback function.
 	 */
 	virtual void RegisterUpdateCallback(UpdateCallback func) {}
+
+	/**
+	 * Fills given buffer with silence.
+	 * @param data pointer to the buffer to be filled.
+	 * @param size size of the buffer in bytes.
+	 * @return number of bytes written.
+	 */
+	virtual int EmptyBuffer(BYTE *data, int size) { return 0; }
 };
 
 

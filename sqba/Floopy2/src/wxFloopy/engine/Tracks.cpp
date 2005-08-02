@@ -770,7 +770,13 @@ void CTracks::Play()
 	if(NULL == m_pPlayThread)
 		return;
 
-	m_pPlayThread->Play( GetCaretPos() );
+	if(wxTHREAD_NO_ERROR == m_pPlayThread->Create())
+		m_pPlayThread->Play( GetCaretPos() );
+}
+
+void CTracks::OnExitThread()
+{
+	m_pPlayThread = new CPlayThread(this);
 }
 
 void CTracks::Pause()

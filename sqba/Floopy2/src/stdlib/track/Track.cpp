@@ -11,10 +11,29 @@
 CTrack::CTrack()
 {
 //	m_bEnabled = FALSE;
+	m_bReset = TRUE;
 	Enable( FALSE );
 }
 
 CTrack::~CTrack()
 {
 
+}
+
+BOOL CTrack::GetParamVal(int index, float *value)
+{
+	if(index==0)
+	{
+		*value = (float)m_bReset;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void CTrack::Enable(BOOL bEnabled)
+{
+	if(m_bReset)
+		IFloopySoundFilter::Reset();
+
+	IFloopySoundFilter::Enable(bEnabled);
 }

@@ -212,6 +212,7 @@ public:
 	void Play();
 	void Pause();
 	void Stop();
+	void OnExitThread();
 
 private:
 	IFloopySoundMixer *getMixer();

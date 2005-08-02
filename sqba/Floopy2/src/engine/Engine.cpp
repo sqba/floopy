@@ -366,6 +366,27 @@ void CEngine::RegisterUpdateCallback(UpdateCallback func)
 {
 	m_callback = func;
 }
+
+int CEngine::EmptyBuffer(BYTE *data, int size)
+{
+	SOUNDFORMAT *fmt = GetFormat();
+
+	if(fmt)
+	{
+		switch(fmt->bitsPerSample)
+		{
+		case 8:
+			memset(data, 128, size);
+			return size;
+		case 16:
+			memset(data, 0, size);
+			return size;
+		}
+	}
+
+	return 0;
+}
+
 /*
 int CEngine::GetSize()
 {

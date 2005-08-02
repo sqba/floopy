@@ -68,6 +68,8 @@ public:
 
 	char *GetPath() { return m_szFileName; }
 
+	int EmptyBuffer(BYTE *data, int size);
+
 //	int GetSize();
 
 private:

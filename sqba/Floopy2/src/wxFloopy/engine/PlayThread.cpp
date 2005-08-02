@@ -11,9 +11,9 @@
 CPlayThread::CPlayThread(CTracks *pTracks)
 {
 	m_pTracks = pTracks;
-	if(wxTHREAD_NO_ERROR != wxThread::Create())
+	/*if(wxTHREAD_NO_ERROR != wxThread::Create())
 	{
-	}
+	}*/
 }
 
 CPlayThread::~CPlayThread()
@@ -96,5 +96,5 @@ void CPlayThread::Stop()
 
 void CPlayThread::OnExit()
 {
-
+	m_pTracks->OnExitThread();
 }

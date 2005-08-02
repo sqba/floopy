@@ -88,6 +88,11 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 											event.GetY() + y*yScrollUnits);
 
 	if( event.Dragging() && m_pSelectedObj ) {
+		wxRect rc = this->GetRect();
+		rc.Offset(-rc.GetX(), -rc.GetY());
+		if(!rc.Inside(event.GetX(), event.GetY()))
+			return;
+
 		if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion))) {
 			if(0 != m_ptPrev.x) {
 				int dx = event.GetX() - m_ptPrev.x;

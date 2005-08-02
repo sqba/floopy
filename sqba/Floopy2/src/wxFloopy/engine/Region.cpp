@@ -386,7 +386,7 @@ void CRegion::Update()
 			track->EnableAt(m_iEndSample, FALSE);
 	}
 
-	if((m_iPrevEnd-m_iPrevStart) != (m_iEndSample-m_iStartSample))
+	//if((m_iPrevEnd-m_iPrevStart) != (m_iEndSample-m_iStartSample))
 	{
 		// Resize
 		Invalidate();
