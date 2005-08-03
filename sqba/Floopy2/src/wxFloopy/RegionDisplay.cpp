@@ -117,8 +117,11 @@ void CRegionDisplay::loadPeaks()
 
 //	int interval = samples / samplesPerPixel;
 	int interval = samplesPerPixel / channels;
-	int counter=0;;
+	int counter=0;
 	int ch=0;
+
+	if(interval < 0)
+		return;
 
 	short int peak[2] = {0};
 	int peakcount=0;
@@ -183,6 +186,65 @@ void CRegionDisplay::loadPeaks()
 			}
 			counter = 0;
 			peakcount++;
+		} else
+			counter++;
+	}
+*/
+/*
+	short int min[2]={0}, max[2]={0};
+	int peakcount=0;
+	counter = interval;
+
+	for(int pos=0; pos<samples; pos+=channels)
+	{
+		for(ch=0; ch<channels; ch++)
+		{
+			short int sample = buffer[pos+ch];
+
+			if(sample > max[ch])
+				max[ch] = sample;
+			else if(sample < min[ch])
+				min[ch] = sample;
+		}
+
+		if(counter >= interval)
+		{
+			for(ch=0; ch<channels; ch++)
+			{
+				if( abs(min[ch]) < abs(max[ch]) )
+					m_peaks.Add( max[ch] );
+				else
+					m_peaks.Add( min[ch] );
+				
+				max[ch] = min[ch] = 0;
+			}
+			counter = 0;
+			peakcount++;
+		} else
+			counter++;
+	}
+*/
+/*
+	short int peak[2] = {0};
+
+	for(int pos=0; pos<samples; pos+=channels)
+	{
+		for(ch=0; ch<channels; ch++)
+		{
+			short int sample = buffer[pos+ch];
+
+			if(abs(sample) > abs(peak[ch]))
+				peak[ch] = sample;
+		}
+
+		if(counter >= interval)
+		{
+			for(ch=0; ch<channels; ch++)
+			{
+				m_peaks.Add(peak[ch]);
+				peak[ch] = 0;
+			}
+			counter = 0;
 		} else
 			counter++;
 	}
