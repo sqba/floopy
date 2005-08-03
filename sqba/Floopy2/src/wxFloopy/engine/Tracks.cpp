@@ -38,6 +38,8 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_bSnapTo = TRUE;
 
 	m_pPlayThread = NULL;
+
+	m_pPlayThread = new CPlayThread(this);
 }
 
 CTracks::~CTracks()
@@ -216,6 +218,7 @@ bool CTracks::RemoveTrack(CTrack *track)
 void CTracks::init()
 {
 	wxLogTrace(_T("CTracks"), _T("Initialization"));
+//	m_pPlayThread = new CPlayThread(this);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -582,7 +585,7 @@ BOOL CTracks::Open(char *filename)
 			m_pEngine->Reset();
 			m_length = (float)m_pEngine->GetSize() / freq;
 			//RefreshRulers();
-			m_pPlayThread = new CPlayThread(this);
+//			m_pPlayThread = new CPlayThread(this);
 			Refresh();
 			m_pMixer = getMixer();
 			return TRUE;

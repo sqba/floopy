@@ -191,8 +191,16 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 				m_pSelectedObj = NULL;
 			}
 		}
-	} else 
+	}
+	else
+	{
 		SetCursor( *wxSTANDARD_CURSOR );
+		if(event.LeftDown())
+		{
+			m_pTracks->DeselectAllRegions();
+			m_pTracks->DeselectAllTracks();
+		}
+	}
 
 	m_ptPrev.x = event.GetX();
 	m_ptPrev.y = event.GetY();
