@@ -58,7 +58,8 @@ void *CPlayThread::Entry()
 		memset(buff, 0, sizeof(buff));
 		percent = (int)((float)offset * 100.f / (float)max);
 		//del = fprintf(stderr, "%d - %d%%", output->GetWrittenSamples(), percent);
-//		int samples = output->GetWrittenSamples();
+		int samples = output->GetWrittenSamples();
+		m_pTracks->SetCursorPosition( samples );
 //		m_pTracks->SetCaretPos( samples );
 	}
 

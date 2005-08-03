@@ -214,6 +214,9 @@ public:
 	void Stop();
 	void OnExitThread();
 
+	int GetCursorPosition();
+	void SetCursorPosition(int pos);
+
 private:
 	IFloopySoundMixer *getMixer();
 
@@ -237,6 +240,8 @@ private:
 	BOOL m_bSnapTo;
 
 	CPlayThread			*m_pPlayThread;
+
+	int					m_iCursorPosition;
 };
 
 class CTrack : public IFloopyObj  

@@ -40,6 +40,8 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_pPlayThread = NULL;
 
 	m_pPlayThread = new CPlayThread(this);
+
+	m_iCursorPosition = 0;
 }
 
 CTracks::~CTracks()
@@ -843,4 +845,14 @@ IFloopySoundMixer *CTracks::getMixer()
 			tmp = NULL;*/
 	}
 	return NULL;
+}
+
+int CTracks::GetCursorPosition()
+{
+	return m_iCursorPosition;
+}
+
+void CTracks::SetCursorPosition(int pos)
+{
+	m_iCursorPosition = pos;
 }
