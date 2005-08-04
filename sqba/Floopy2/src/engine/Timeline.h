@@ -47,8 +47,8 @@ public:
 private:
 	tParam *getParam(int offset, int index);
 	tParam *getPrevParam(int offset);
-	void insertAfter(tParam *prev, tParam *param);
-	void removeParam(tParam *param);
+	void insertAfter(CTimeline::tParam *prev, CTimeline::tParam *param);
+	void removeParam(CTimeline::tParam *param);
 
 private:
 	tParam *m_pFirst, *m_pLast, *m_pTemp;

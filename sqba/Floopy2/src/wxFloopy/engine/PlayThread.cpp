@@ -14,6 +14,7 @@ CPlayThread::CPlayThread(CTracks *pTracks)
 	/*if(wxTHREAD_NO_ERROR != wxThread::Create())
 	{
 	}*/
+	m_iStartPos = 0;
 }
 
 CPlayThread::~CPlayThread()
@@ -59,7 +60,7 @@ void *CPlayThread::Entry()
 		percent = (int)((float)offset * 100.f / (float)max);
 		//del = fprintf(stderr, "%d - %d%%", output->GetWrittenSamples(), percent);
 		int samples = output->GetWrittenSamples();
-		m_pTracks->SetCursorPosition( samples );
+		m_pTracks->SetCursorPosition( m_iStartPos + samples );
 //		m_pTracks->SetCaretPos( samples );
 	}
 
@@ -74,6 +75,7 @@ void CPlayThread::Play(int sample)
 	{
 		//if(wxTHREAD_NO_ERROR != wxThread::Create())
 		//{
+			m_iStartPos = sample;
 			m_pTracks->GetEngine()->MoveTo(sample);
 			wxThread::Run();
 		//}

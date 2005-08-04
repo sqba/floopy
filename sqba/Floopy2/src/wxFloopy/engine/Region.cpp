@@ -363,7 +363,12 @@ void CRegion::Update()
 			return;
 		}*/
 		if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_ENABLE, m_iStartSample) )
-			track->EnableAt(m_iStartSample, TRUE);
+		{
+			//track->EnableAt(m_iStartSample, TRUE);
+		}
+
+		float paramVal=0.f;
+		track->GetParamAt(0, TIMELINE_PARAM_ENABLE, &paramVal);
 	}
 
 	if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))
@@ -382,8 +387,10 @@ void CRegion::Update()
 			getTrack()->Refresh();
 			return;
 		}*/
-		if( track->MoveParam(m_iPrevEnd, TIMELINE_PARAM_ENABLE, m_iEndSample) )
-			track->EnableAt(m_iEndSample, FALSE);
+		if( !track->MoveParam(m_iPrevEnd, TIMELINE_PARAM_ENABLE, m_iEndSample) )
+		{
+			//track->EnableAt(m_iEndSample, FALSE);
+		}
 	}
 
 	//if((m_iPrevEnd-m_iPrevStart) != (m_iEndSample-m_iStartSample))

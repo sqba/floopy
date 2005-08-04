@@ -597,6 +597,7 @@ public:
 
 private:
 	CTracks *m_pTracks;
+	int m_iStartPos;
 };
 
 /*
