@@ -37,9 +37,11 @@ CTracks::CTracks() : IFloopyObj(NULL)
 
 	m_bSnapTo = TRUE;
 
-	m_pPlayThread = NULL;
+//	m_pPlayThread = NULL;
 
 	m_pPlayThread = new CPlayThread(this);
+
+	m_pFrame = NULL;
 
 	m_iCursorPosition = 0;
 }
@@ -348,7 +350,10 @@ void CTracks::RemoveSelectedObjects()
 		node = node->GetNext();
 		track->RemoveSelectedObjects();
 		if( track->IsSelected() )
+		{
 			RemoveTrack( track );
+			GetStatusBar()->SetStatusText("Track removed", 0);
+		}
 	}
 }
 
@@ -667,11 +672,11 @@ void CTracks::loadTracks(IFloopySoundInput *input, int level)
 
 void CTracks::Clear()
 {
-	if(m_pPlayThread)
+	/*if(m_pPlayThread)
 	{
 		delete m_pPlayThread;
 		m_pPlayThread = NULL;
-	}
+	}*/
 	WX_CLEAR_LIST(TracksList, m_tracks);
 	Refresh();
 }
@@ -773,31 +778,46 @@ int CTracks::CalcStep(int mindist)
 void CTracks::Play()
 {
 	if(NULL == m_pPlayThread)
+	{
+		GetStatusBar()->SetStatusText("NULL == m_pPlayThread", 0);
 		return;
+	}
 
 	if(wxTHREAD_NO_ERROR == m_pPlayThread->Create())
+	{
+		GetStatusBar()->SetStatusText("Playing", 1);
 		m_pPlayThread->Play( GetCaretPos() );
+	}
 }
 
 void CTracks::OnExitThread()
 {
+	GetStatusBar()->SetStatusText("Finished playing", 0);
 	m_pPlayThread = new CPlayThread(this);
 }
 
 void CTracks::Pause()
 {
 	if(NULL == m_pPlayThread)
+	{
+		GetStatusBar()->SetStatusText("NULL == m_pPlayThread", 0);
 		return;
+	}
 
+	GetStatusBar()->SetStatusText("Paused", 1);
 	m_pPlayThread->Pause();
 }
 
 void CTracks::Stop()
 {
 	if(NULL == m_pPlayThread)
+	{
+		GetStatusBar()->SetStatusText("NULL == m_pPlayThread", 0);
 		return;
+	}
 
 	m_pPlayThread->Stop();
+	GetStatusBar()->SetStatusText("stoped", 1);
 }
 
 void CTracks::SetCaretPos(int samples)
@@ -852,7 +872,15 @@ int CTracks::GetCursorPosition()
 	return m_iCursorPosition;
 }
 
-void CTracks::SetCursorPosition(int pos)
+void CTracks::SetCursorPosition(int samples)
 {
-	m_iCursorPosition = pos;
+	int size = m_pEngine->GetSize();
+	int percent = (int)((float)samples * 100.f / (float)size);
+
+	m_iCursorPosition = samples;
+	wxString str;
+	str.Printf("Cursor position: %d (%d%%)", samples, percent);
+	GetStatusBar()->SetStatusText(str, 1);
+
+//	SetCaretPos( pos );
 }

@@ -217,6 +217,10 @@ public:
 	int GetCursorPosition();
 	void SetCursorPosition(int pos);
 
+//	void SetStatusBar(wxStatusBar *sb)	{ m_pStatusBar = sb; }
+	wxStatusBar *GetStatusBar()		{ return m_pFrame->GetStatusBar(); }
+	void SetFrame(wxFrame *pFrame)	{ m_pFrame = pFrame; }
+
 private:
 	IFloopySoundMixer *getMixer();
 
@@ -242,6 +246,8 @@ private:
 	CPlayThread			*m_pPlayThread;
 
 	int					m_iCursorPosition;
+	wxStatusBar			*m_pStatusBar;
+	wxFrame				*m_pFrame;
 };
 
 class CTrack : public IFloopyObj  

@@ -126,6 +126,7 @@ void CFloopyFrame::Open(char *filename)
 		str.Printf("Floopy! - %s", filename);
 		SetTitle( str );
 //		m_pTracksView->RefreshRulers();
+		m_pTracksView->SetFocus();
 	}
 }
 
@@ -203,6 +204,8 @@ void CFloopyFrame::initViews()
 
 	m_pTracks->SetTracksView( m_pTracksView );
 	m_pTracks->SetLabelsView( m_pLabelsView );
+
+	m_pTracks->SetFrame( this );
 }
 
 void CFloopyFrame::OnPlay( wxCommandEvent &WXUNUSED(event) )
