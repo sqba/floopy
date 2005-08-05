@@ -43,13 +43,13 @@ void *CPlayThread::Entry()
 		return NULL;
 
 	int offset = 0;
-//	BYTE buff[BUFFER_LENGTH];
-	int x = m_pTracks->GetSamplesPerPixel() * fmt->channels;
-	BYTE *buff = new BYTE[x];
-//	int len, size=sizeof(buff);
-//	memset(buff, 0, sizeof(buff));
-	int len, size=x;
-	memset(buff, 0, x);
+	BYTE buff[BUFFER_LENGTH];
+//	int x = m_pTracks->GetSamplesPerPixel() * fmt->channels;
+//	BYTE *buff = new BYTE[x];
+	int len, size=sizeof(buff);
+	memset(buff, 0, sizeof(buff));
+//	int len, size=x;
+//	memset(buff, 0, x);
 
 	int max = samples * stb;
 	int percent = 0;
@@ -61,8 +61,8 @@ void *CPlayThread::Entry()
 
 		offset += len;
 		output->Write(buff, len);
-//		memset(buff, 0, sizeof(buff));
-		memset(buff, 0, x);
+		memset(buff, 0, sizeof(buff));
+//		memset(buff, 0, x);
 		percent = (int)((float)offset * 100.f / (float)max);
 		//del = fprintf(stderr, "%d - %d%%", output->GetWrittenSamples(), percent);
 		int samples = output->GetWrittenSamples();
@@ -70,7 +70,7 @@ void *CPlayThread::Entry()
 //		m_pTracks->SetCaretPos( samples );
 	}
 
-	delete buff;
+//	delete buff;
 
 	m_bPlaying = FALSE;
 
