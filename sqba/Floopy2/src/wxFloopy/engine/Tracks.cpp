@@ -51,7 +51,11 @@ CTracks::~CTracks()
 	WX_CLEAR_LIST(TracksList, m_tracks);
 	delete m_pBorder;
 	if(m_pPlayThread)
+	{
+		if(m_pPlayThread->IsPlaying())
+			m_pPlayThread->Stop();
 		delete m_pPlayThread;
+	}
 
 	if(NULL != m_pEngine)
 	{
