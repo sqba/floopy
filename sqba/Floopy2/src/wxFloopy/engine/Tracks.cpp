@@ -830,6 +830,7 @@ void CTracks::SetCaretPos(int samples)
 
 	x += samples/GetSamplesPerPixel();
 	m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+//	m_pTracksView->SetFocus();
 	caret->Move(xc1, yc1);
 }
 
@@ -882,5 +883,22 @@ void CTracks::SetCursorPosition(int samples)
 	str.Printf("Cursor position: %d (%d%%)", samples, percent);
 	GetStatusBar()->SetStatusText(str, 1);
 
-//	SetCaretPos( pos );
+
+	//m_pTracksView->SetFocus();
+//	SetCaretPos( samples );
+
+/*
+	wxCaret *caret = m_pTracksView->GetCaret();
+	if(NULL != caret)
+	{
+		int x=0, y=0;
+		//int xc1=0, yc1=0;
+		caret->GetPosition(&x, &y);
+		//m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+
+		x = samples / GetSamplesPerPixel();
+		//m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+		caret->Move(x, y);
+	}
+*/
 }

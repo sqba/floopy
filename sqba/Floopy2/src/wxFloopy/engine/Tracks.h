@@ -133,8 +133,8 @@ public:
 	wxScrolledWindow *GetTracksView() { return m_pTracksView; };
 	wxScrolledWindow *GetLabelsView() { return m_pLabelsView; };
 
-	void SetCaret(wxCaret *caret)		{ m_pCaret = caret; }
-	wxCaret *GetCaret()					{ return m_pCaret; }
+//	void SetCaret(wxCaret *caret)		{ m_pCaret = caret; }
+//	wxCaret *GetCaret()					{ return m_pCaret; }
 
 	void SetCaretPos(int samples);
 	int  GetCaretPos();
@@ -230,7 +230,7 @@ private:
 //	int					m_hres;		//! Samples per pixel
 	bool				m_bInit;
 	float				m_length;	// In seconds
-	wxCaret				*m_pCaret;
+//	wxCaret				*m_pCaret;
 	TracksList			m_tracks;
 	wxScrolledWindow	*m_pTracksView, *m_pLabelsView;
 	CBorder				*m_pBorder;
