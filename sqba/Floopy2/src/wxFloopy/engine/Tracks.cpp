@@ -783,7 +783,10 @@ void CTracks::Play()
 		return;
 	}
 
-	if(wxTHREAD_NO_ERROR == m_pPlayThread->Create())
+	if(m_pPlayThread->IsPlaying())
+		m_pPlayThread->Stop();
+
+	if(m_pPlayThread->IsPaused() || (wxTHREAD_NO_ERROR == m_pPlayThread->Create()))
 	{
 		GetStatusBar()->SetStatusText("Playing", 1);
 		m_pPlayThread->Play( GetCaretPos() );

@@ -15,6 +15,7 @@ CPlayThread::CPlayThread(CTracks *pTracks)
 	{
 	}*/
 	m_iStartPos = 0;
+	m_bPlaying = m_bPaused = FALSE;
 }
 
 CPlayThread::~CPlayThread()
@@ -71,11 +72,16 @@ void *CPlayThread::Entry()
 
 	delete buff;
 
+	m_bPlaying = FALSE;
+
 	return NULL;
 }
 
 void CPlayThread::Play(int sample)
 {
+	m_bPlaying = TRUE;
+	m_bPaused  = FALSE;
+
 	if( wxThread::IsPaused() )
 		wxThread::Resume();
 	else
@@ -94,7 +100,10 @@ void CPlayThread::Pause()
 	if( wxThread::IsPaused() )
 		wxThread::Resume();
 	else if( wxThread::IsRunning() )
+	{
+		m_bPaused = TRUE;
 		wxThread::Pause();
+	}
 }
 
 void CPlayThread::Stop()
