@@ -72,6 +72,8 @@ void *CPlayThread::Entry()
 //		m_pTracks->SetCaretPos( samples );
 	}
 
+	// Wait for output to finish!!!
+
 //	delete buff;
 
 	m_bPlaying = FALSE;

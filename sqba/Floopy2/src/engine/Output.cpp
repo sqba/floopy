@@ -112,4 +112,5 @@ int COutput::GetWrittenSamples()
 void COutput::Reset()
 {
 	m_offset = 0;
+	m_plugin->Reset();
 }

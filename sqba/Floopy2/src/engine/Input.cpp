@@ -422,9 +422,12 @@ void CInput::Enable(BOOL bEnable)
 BOOL CInput::IsEnabled()
 {
 	float value = PARAM_VALUE_ENABLED;
-	m_timeline.GetParamVal(m_offset, TIMELINE_PARAM_ENABLE, &value);
-	BOOL bEnabled = (PARAM_VALUE_DISABLED != value);
-	return bEnabled;
+	if(m_timeline.GetParamVal(m_offset, TIMELINE_PARAM_ENABLE, &value))
+	{
+		BOOL bEnabled = (PARAM_VALUE_DISABLED != value);
+		return bEnabled;
+	}
+	return FALSE;
 }
 
 BOOL CInput::GetParamVal(int index, float *value)
@@ -653,6 +656,16 @@ void CInput::_applyParamsAt(int offset)
 	if( m_timeline.GetParamVal(offset, TIMELINE_PARAM_ENABLE, &value) )
 	{
 		BOOL bEnable = ( PARAM_VALUE_DISABLED != value );
+		IFloopy::Enable( bEnable );
+		if(m_plugin)
+			m_plugin->Enable(bEnable);
+
+		if(m_callback && sample >= 0)
+			m_callback(this, sample, TIMELINE_PARAM_ENABLE);
+	}
+	else if(offset == 0)
+	{
+		BOOL bEnable = FALSE;
 		IFloopy::Enable( bEnable );
 		if(m_plugin)
 			m_plugin->Enable(bEnable);
