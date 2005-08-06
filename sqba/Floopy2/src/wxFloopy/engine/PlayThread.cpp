@@ -54,6 +54,8 @@ void *CPlayThread::Entry()
 	int max = samples * stb;
 	int percent = 0;
 
+	m_pTracks->GetEngine()->MoveTo( m_iStartPos );
+
 	while((len=input->Read(buff, size)) != EOF)
 	{
 		if ( TestDestroy() )
@@ -89,7 +91,7 @@ void CPlayThread::Play(int sample)
 		//if(wxTHREAD_NO_ERROR != wxThread::Create())
 		//{
 			m_iStartPos = sample;
-			m_pTracks->GetEngine()->MoveTo(sample);
+			//m_pTracks->GetEngine()->MoveTo(sample);
 			wxThread::Run();
 		//}
 	}
