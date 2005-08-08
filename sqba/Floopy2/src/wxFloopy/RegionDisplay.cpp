@@ -289,7 +289,7 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	int step = channels;//count > width ? count / width : 1;
 	int i=start;
 	int y=mid;
-	for(int x=0; x<=width&&i<=count; x++)
+	for(int x=0; x<width&&i<count; x++)
 	{
 		y = (int)((float)mid + m_peaks.Item(i)/yscale);
 		dc.DrawLine(left+ptPrev.x, ptPrev.y, left+x, y);

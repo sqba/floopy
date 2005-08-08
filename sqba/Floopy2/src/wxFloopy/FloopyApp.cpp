@@ -20,7 +20,10 @@ bool CFloopyApp::OnInit()
 	frame->SetStatusText("Floopy");
 
 	if(argc > 1)
-		frame->Open(argv[1]);
+	{
+		for(int i=1; i<argc; i++)
+			frame->Open(argv[i]);
+	}
 
 	frame->Show(TRUE);
 
