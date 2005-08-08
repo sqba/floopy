@@ -718,9 +718,17 @@ void CInput::_applyPreviousParams(int offset)
 	float value = 0.f;
 
 	int prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_ENABLE);
-	if( m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_ENABLE, &value) )
+	/*if( m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_ENABLE, &value) )
 	{
 		BOOL bEnable = ( PARAM_VALUE_DISABLED != value );
+		IFloopy::Enable( bEnable );
+		if(m_plugin)
+			m_plugin->Enable(bEnable);
+	}*/
+	BOOL bResult = m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_ENABLE, &value);
+	if(bResult || prevOffset == 0)
+	{
+		BOOL bEnable = bResult ? ( PARAM_VALUE_DISABLED != value ) : FALSE;
 		IFloopy::Enable( bEnable );
 		if(m_plugin)
 			m_plugin->Enable(bEnable);
