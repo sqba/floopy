@@ -54,7 +54,7 @@ void *CPlayThread::Entry()
 	int max = samples * stb;
 	int percent = 0;
 
-	int pos = m_iStartPos;
+	//int pos = m_iStartPos;
 
 	m_pTracks->GetEngine()->MoveTo( m_iStartPos );
 
@@ -75,8 +75,8 @@ void *CPlayThread::Entry()
 
 		// If the view has been resized horizontally
 		// the position was lost.
-		pos += len / stb;
-		m_pTracks->GetEngine()->MoveTo( pos );
+		//pos += len / stb;
+		//m_pTracks->GetEngine()->MoveTo( pos );
 	}
 
 	// Wait for output to finish!!!
