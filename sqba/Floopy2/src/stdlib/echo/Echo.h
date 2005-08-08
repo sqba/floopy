@@ -26,6 +26,9 @@ public:
 	void Reset();
 
 private:
+	int read(BYTE *data, int size);
+
+private:
 	short echo_buf[65536], echo_buf2[65536];
 };
 

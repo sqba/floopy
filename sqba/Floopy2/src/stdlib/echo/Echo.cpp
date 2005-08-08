@@ -5,6 +5,7 @@
 #include "echo.h"
 #include <math.h>
 #include <assert.h>
+#include <stdio.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -21,6 +22,47 @@ CEcho::~CEcho()
 }
 
 int CEcho::Read(BYTE *data, int size)
+{
+	SOUNDFORMAT *fmt = m_source->GetFormat();
+
+	int bufflen = sizeof(echo_buf) / sizeof(short);
+
+	int result = 0;
+
+	if(size < bufflen)
+		return read(data, size);
+	else
+	{
+		int n = size / bufflen;
+		BYTE *pdata = data;
+		int stb = (fmt->bitsPerSample / 8) * fmt->channels;
+		for(int i=0; i<n; i++)
+		{
+			int len = read(pdata, bufflen);
+			if(len == EOF)
+				return result;
+			pdata += len;
+			result += len;
+		}
+		i = size - bufflen * n;
+		if(i>0)
+		{
+			int len = read(pdata, i);
+			if(len == EOF)
+				result += len;
+		}
+		return result;
+	}
+}
+
+void CEcho::Reset()
+{
+	memset(echo_buf, 0, sizeof(echo_buf));
+	memset(echo_buf2, 0, sizeof(echo_buf));
+	IFloopySoundFilter::Reset();
+}
+
+int CEcho::read(BYTE *data, int size)
 {
 	int len = IFloopySoundFilter::Read(data, size);
 	if(len <= 0)
@@ -54,12 +96,6 @@ int CEcho::Read(BYTE *data, int size)
 	return len;
 }
 
-void CEcho::Reset()
-{
-	memset(echo_buf, 0, sizeof(echo_buf));
-	memset(echo_buf2, 0, sizeof(echo_buf));
-	IFloopySoundFilter::Reset();
-}
 /*
 BOOL CEcho::SetSource(IFloopySoundInput *src)
 {
