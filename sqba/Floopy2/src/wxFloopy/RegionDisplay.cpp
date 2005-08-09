@@ -299,6 +299,9 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 		
 		i+=step;
 	}
+
+	// Check if the input is looped. In that case put
+	// some marker at the end of each loop.
 }
 
 IFloopySoundInput *CRegionDisplay::getInput(CTrack *track)
