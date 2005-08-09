@@ -82,7 +82,7 @@ void *CPlayThread::Entry()
 	// Wait for output to finish!!!
 	written /= stb; // convert bytes to samples
 	do {
-		Sleep(1000);
+		wxThread::Sleep(1000);
 	} while(written < output->GetWrittenSamples()/fmt->channels);
 
 //	delete buff;
