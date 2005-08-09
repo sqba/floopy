@@ -32,7 +32,7 @@ void CGridView::OnDraw(wxDC &dc)
 	wxScrolledWindow::OnDraw(dc);
 
 	if(m_bDrawVGrid) {
-		int pps    = m_pTracks->GetPixelsPerSecond();
+		//int pps    = m_pTracks->GetPixelsPerSecond();
 		int length = m_pTracks->GetWidth();
 		int height = m_pTracks->GetHeight();
 		int iStep  = m_pTracks->CalcStep(MIN_DISTANCE);

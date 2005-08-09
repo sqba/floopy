@@ -550,7 +550,8 @@ void CTrack::loadRegions()
 
 void CTrack::OnKeyDown(wxKeyEvent& event)
 {
-	int value = IsSelected() ? GetHeight() : GetTracks()->GetPixelsPerSecond();
+//	int value = IsSelected() ? GetHeight() : GetTracks()->GetPixelsPerSecond();
+	int value = IsSelected() ? GetHeight() : GetTracks()->GetSamplesPerPixel();
 
 	switch (event.GetKeyCode() )
 	{
@@ -574,7 +575,8 @@ void CTrack::OnKeyDown(wxKeyEvent& event)
 	if( IsSelected() )
 		SetHeight( value );
 	else
-		GetTracks()->SetPixelsPerSecond( value );
+		GetTracks()->SetSamplesPerPixel( value );
+//		GetTracks()->SetPixelsPerSecond( value );
 }
 
 IFloopyObj *CTrack::GetSelectedObj()

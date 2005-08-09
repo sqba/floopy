@@ -139,21 +139,22 @@ public:
 	void SetCaretPos(int samples);
 	int  GetCaretPos();
 
-	void SetPixelsPerSecond(int pps);
-	int GetPixelsPerSecond();
+//	void SetPixelsPerSecond(int pps);
+//	int GetPixelsPerSecond();
 
-	int GetPixelsPerBeat();
+//	int GetPixelsPerBeat();
 	//void SetPixelsPerBeat(int ppb);
 
 //	void SetPixelsPerSample(int pps);
 //	int GetPixelsPerSample();
 
 	int GetSamplesPerPixel();
+	void SetSamplesPerPixel(int);
 
 	float GetLength()					{ return m_length; }
 	void SetLength(float len)			{ m_length = len; }
 
-	int GetWidth()						{ return m_length * (float)m_pps;}
+	int GetWidth();//						{ return m_length * (float)m_pps;}
 	void SetWidth(int width);
 	int GetHeight();
 
@@ -225,7 +226,8 @@ private:
 	IFloopySoundMixer *getMixer();
 
 private:
-	int					m_pps;
+//	int					m_pps;
+	int					m_iSamplesPerPixel;
 //	int					m_pps, m_bpm;
 //	int					m_hres;		//! Samples per pixel
 	bool				m_bInit;

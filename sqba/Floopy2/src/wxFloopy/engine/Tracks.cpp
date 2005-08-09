@@ -24,9 +24,10 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_pTracksView = NULL;
 	m_pLabelsView = NULL;
 //	m_hres   = 2756; // samples per pixel
-	m_pps    = 16;	// pixels per second
+//	m_pps    = 16;	// pixels per second
 //	m_bpm    = 120;	// beats per minute
 	m_length = 120;	// seconds
+	m_iSamplesPerPixel = 2205;
 
 	m_pBorder = new CBorder(this);
 
@@ -405,7 +406,7 @@ void CTracks::Invalidate()
 //! \param pps [in] offset in pixels
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CTracks::SetPixelsPerSecond(int pps)
+/*void CTracks::SetPixelsPerSecond(int pps)
 {
 	if( 1 <= pps )
 	{
@@ -448,16 +449,16 @@ void CTracks::SetPixelsPerSecond(int pps)
 		y = (int)(((float)height2 / (float)height1) * (float)ys1);
 		m_pTracksView->Scroll(x, y);
 	}
-}
-
+}*/
+/*
 int CTracks::GetPixelsPerBeat()
 {
 	return 0;//(int)(((float)m_bpm / 60.f) * (float)GetPixelsPerSecond());
 }
-
-int CTracks::GetPixelsPerSecond()
-{
-	return m_pps;
+*/
+//int CTracks::GetPixelsPerSecond()
+//{
+//	return m_pps;
 	/*if(m_pEngine)
 	{
 		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
@@ -465,7 +466,7 @@ int CTracks::GetPixelsPerSecond()
 		return freq / m_hres; // m_hres = samples per pixel
 	}
 	return 0;*/
-}
+//}
 /*
 void CTracks::SetPixelsPerSample(int pps)
 {
@@ -491,13 +492,59 @@ int CTracks::GetPixelsPerSample()
 int CTracks::GetSamplesPerPixel()
 {
 //	return m_hres;
-	if(m_pEngine)
+	/*if(m_pEngine)
 	{
 		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 		int freq = fmt->frequency;
 		return freq / m_pps;
 	}
-	return 0;
+	return 0;*/
+	return m_iSamplesPerPixel;
+}
+
+void CTracks::SetSamplesPerPixel(int spp)
+{
+	if( 1 <= spp )
+	{
+		int x=0, y=0;
+		
+		int width1=0, height1=0;
+		m_pTracksView->GetVirtualSize(&width1, &height1);
+
+		// Get previous caret position
+		int xc1=0, yc1=0;
+		wxCaret *caret = m_pTracksView->GetCaret();
+		caret->GetPosition(&x, &y);
+		m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+
+		// Get previous view position
+		int xs1 = m_pTracksView->GetScrollPos(wxHORIZONTAL);
+		int ys1 = m_pTracksView->GetScrollPos(wxVERTICAL);
+		int xScrollUnits, yScrollUnits;
+		m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+
+
+		m_iSamplesPerPixel = spp;
+
+		Invalidate();
+		Refresh();
+
+
+		int width2=0, height2=0;
+		m_pTracksView->GetVirtualSize(&width2, &height2);
+
+		// Move caret
+		x = (int)(((float)width2  / (float)width1)  * (float)xc1);
+		y = (int)(((float)height2 / (float)height1) * (float)yc1);
+		int xxc2=0, yyc2=0;
+		m_pTracksView->CalcScrolledPosition(x, y, &xxc2, &yyc2);
+		caret->Move(xxc2, yyc2);
+
+		// Move view
+		x = (int)(((float)width2  / (float)width1)  * (float)xs1);
+		y = (int)(((float)height2 / (float)height1) * (float)ys1);
+		m_pTracksView->Scroll(x, y);
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -512,9 +559,25 @@ void CTracks::SetTracksView(wxScrolledWindow *panel)
 	Refresh();
 }
 
+int CTracks::GetWidth()
+{
+	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+	int freq = fmt->frequency;
+	int pps = freq / m_iSamplesPerPixel;
+
+	return m_length * (float)pps;
+}
+
 void CTracks::SetWidth(int width)
 {
-	m_length = width / (float)m_pps;
+//	m_length = width / (float)m_pps;
+
+	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+	int freq = fmt->frequency;
+	int pps = freq / m_iSamplesPerPixel;
+
+	m_length = width / (float)pps;
+
 	Refresh();
 }
 
@@ -687,21 +750,20 @@ void CTracks::Clear()
 
 void CTracks::OnKeyDown(wxKeyEvent& event)
 {
-	int pps = GetPixelsPerSecond();
+//	int pps = GetPixelsPerSecond();
+	int spp = GetSamplesPerPixel();
 
 	switch (event.GetKeyCode() )
 	{
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
 	case '-':
-		pps /= 2;
-		SetPixelsPerSecond( pps );
+		SetSamplesPerPixel( spp*2 );
 		break;
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
 	case '+':
-		pps *= 2;
-		SetPixelsPerSecond( pps );
+		SetSamplesPerPixel( spp/2 );
 		break;
 	case WXK_UP:
 	case WXK_NUMPAD_UP:
@@ -745,7 +807,7 @@ int CTracks::GetClosestGridPos(int pos)
 {
 	if(m_bSnapTo)
 	{
-		int ppb = GetPixelsPerBeat();
+		//int ppb = GetPixelsPerBeat();
 		
 		int nStep    = CalcStep(MIN_DISTANCE);
 		int nLine = (int)ceil( pos / nStep );
@@ -759,14 +821,21 @@ int CTracks::GetClosestGridPos(int pos)
 
 int CTracks::CalcStep(int mindist)
 {
-	int res = (m_pps / mindist);
+//	int res = (m_pps / mindist);
+
+	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+	int freq = fmt->frequency;
+	int pps = m_iSamplesPerPixel / freq;
+	int res = (pps / mindist);
+
 	if((res % 2 == 0) || (res % 4 == 0))
 		res = res;
 	else
 		res = res - 1;
 	res = (res <= 0 ? 1 : res);
 
-	int iStep = m_pps / res;
+//	int iStep = m_pps / res;
+	int iStep = pps / res;
 
 	if(iStep == 0) // Ovde nastaje interesantan efekat: Kada je iStep = 0 i debager
 		iStep = 1; // se zaustavi, moze se debagovati samo masinski kod!
