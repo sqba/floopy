@@ -201,6 +201,16 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 		return NULL;
 	}
 
+	if(TRUE)
+	{
+		IFloopySoundFilter *loop = (IFloopySoundFilter*)CreateInput("stdlib.loop");
+		if(loop)
+		{
+			loop->SetSource(input);
+			input = loop;
+		}
+	}
+
 	return input;
 }
 
