@@ -27,7 +27,8 @@ CTracks::CTracks() : IFloopyObj(NULL)
 //	m_pps    = 16;	// pixels per second
 //	m_bpm    = 120;	// beats per minute
 	m_length = 120;	// seconds
-	m_iSamplesPerPixel = 2205;
+//	m_iSamplesPerPixel = 2205;
+	m_iPixelsPerSecond = 16;
 
 	m_pBorder = new CBorder(this);
 
@@ -492,14 +493,14 @@ int CTracks::GetPixelsPerSample()
 int CTracks::GetSamplesPerPixel()
 {
 //	return m_hres;
-	/*if(m_pEngine)
+	if(m_pEngine)
 	{
 		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 		int freq = fmt->frequency;
-		return freq / m_pps;
+		return freq / m_iPixelsPerSecond;
 	}
-	return 0;*/
-	return m_iSamplesPerPixel;
+	return 0;
+//	return m_iSamplesPerPixel;
 }
 
 void CTracks::SetSamplesPerPixel(int spp)
@@ -524,7 +525,10 @@ void CTracks::SetSamplesPerPixel(int spp)
 		m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 
 
-		m_iSamplesPerPixel = spp;
+//		m_iSamplesPerPixel = spp;
+		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+		int freq = fmt->frequency;
+		m_iPixelsPerSecond = freq / spp;
 
 		Invalidate();
 		Refresh();
@@ -561,22 +565,26 @@ void CTracks::SetTracksView(wxScrolledWindow *panel)
 
 int CTracks::GetWidth()
 {
-	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+	/*SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 	int freq = fmt->frequency;
 	int pps = freq / m_iSamplesPerPixel;
 
-	return m_length * (float)pps;
+	return m_length * (float)pps;*/
+
+	return m_length * (float)m_iPixelsPerSecond;
 }
 
 void CTracks::SetWidth(int width)
 {
 //	m_length = width / (float)m_pps;
 
-	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+	/*SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 	int freq = fmt->frequency;
 	int pps = freq / m_iSamplesPerPixel;
 
-	m_length = width / (float)pps;
+	m_length = width / (float)pps;*/
+
+	m_length = width / (float)m_iPixelsPerSecond;
 
 	Refresh();
 }
@@ -825,7 +833,8 @@ int CTracks::CalcStep(int mindist)
 
 	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 	int freq = fmt->frequency;
-	int pps = m_iSamplesPerPixel / freq;
+//	int pps = m_iSamplesPerPixel / freq;
+	int pps = m_iPixelsPerSecond;
 	int res = (pps / mindist);
 
 	if((res % 2 == 0) || (res % 4 == 0))

@@ -227,7 +227,8 @@ private:
 
 private:
 //	int					m_pps;
-	int					m_iSamplesPerPixel;
+//	int					m_iSamplesPerPixel;
+	int					m_iPixelsPerSecond;
 //	int					m_pps, m_bpm;
 //	int					m_hres;		//! Samples per pixel
 	bool				m_bInit;

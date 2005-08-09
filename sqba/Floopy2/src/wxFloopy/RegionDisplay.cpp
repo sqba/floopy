@@ -116,7 +116,7 @@ void CRegionDisplay::loadPeaks()
 	samples = bytesRead / (fmt->bitsPerSample / 8);
 
 //	int interval = samples / samplesPerPixel;
-	int interval = samplesPerPixel / channels;
+	int interval = samplesPerPixel;// / channels;
 	int counter=0;
 	int ch=0;
 
@@ -280,7 +280,7 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	int yscale = maxSample / height;
 	int channels = fmt->channels;
 
-	int count = m_peaks.GetCount() / channels;
+	int count = m_peaks.GetCount();// / channels;
 
 	wxPoint ptPrev(start, mid);
 
