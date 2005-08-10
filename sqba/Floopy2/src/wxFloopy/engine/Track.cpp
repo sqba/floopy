@@ -769,6 +769,10 @@ void CTrack::SetLooped(BOOL bLooped)
 	{
 		if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
 		{
+			IFloopySoundInput *src = ((IFloopySoundFilter*)m_pInput)->GetSource();
+			if(src->GetSize() == SIZE_INFINITE)
+				return; // No need
+
 			IFloopySoundEngine *engine = GetTracks()->GetEngine();
 			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateInput("stdlib.loop");
 			if(loop)
@@ -776,7 +780,6 @@ void CTrack::SetLooped(BOOL bLooped)
 				loop->EnableAt(0, TRUE);
 				loop->SetBypass(FALSE);
 
-				IFloopySoundInput *src = ((IFloopySoundFilter*)m_pInput)->GetSource();
 				loop->SetSource( src );
 				((IFloopySoundFilter*)m_pInput)->SetSource( loop );
 

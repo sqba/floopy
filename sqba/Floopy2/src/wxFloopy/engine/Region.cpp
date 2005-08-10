@@ -400,6 +400,13 @@ void CRegion::Update()
 	}
 
 	//if((m_iPrevEnd-m_iPrevStart) != (m_iEndSample-m_iStartSample))
+
+	if( !getTrack()->GetReset() )
+	{
+		getTrack()->Invalidate();
+		getTrack()->Refresh();
+	}
+	else
 	{
 		// Resize
 		Invalidate();
