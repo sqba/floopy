@@ -241,6 +241,7 @@ IFloopySoundOutput *CEngine::CreateOutput(char *filename, SOUNDFORMAT fmt)
 			delete obj;
 			return NULL;
 		}
+		// And what if the component doesn's have the output interface?
 	}
 
 	add(obj, TYPE_OUTPUT);

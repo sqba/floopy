@@ -112,6 +112,8 @@ public:
 	int GetInputCount();
 	///////////////////////////////////////////
 
+	void ClearAllParams();
+
 
 private:
 	inline BOOL _isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : FALSE); }

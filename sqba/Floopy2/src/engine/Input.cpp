@@ -820,6 +820,11 @@ IFloopySoundInput *CInput::_getSource()
 		return NULL;
 }
 
+void CInput::ClearAllParams()
+{
+	m_timeline.Clear();
+}
+
 /*
 void CInput::_applyParamsUntil(int endoffset)
 {

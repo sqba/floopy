@@ -4,7 +4,7 @@
 
 //#include "Track.h"
 #include "tracks.h"
-
+#include <stdio.h>
 #include <wx/caret.h>
 
 #define MIN_HEIGHT	15
@@ -742,7 +742,68 @@ void CTrack::drawCacheSign(wxDC& dc, wxRect& rc)
 	m_pButtonCache->DrawFore(dc, rc);
 }
 
-BOOL CTrack::isLooped()
+BOOL CTrack::IsLooped()
 {
-	return FALSE;
+	return (NULL != getComponent("loop"));
+}
+
+void CTrack::SetLooped(BOOL bLooped)
+{
+	IFloopySoundInput *loop = getComponent("loop");
+	if(loop)
+	{
+		loop->ClearAllParams();
+		loop->EnableAt(0, bLooped);
+		Invalidate();
+		Refresh();
+	}
+	else if(bLooped)
+	{
+		if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+		{
+			IFloopySoundEngine *engine = GetTracks()->GetEngine();
+			SOUNDFORMAT *fmt = engine->GetFormat();
+			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateOutput("stdlib.loop", *fmt);
+			if(loop)
+			{
+				loop->EnableAt(0, TRUE);
+
+				IFloopySoundInput *src = ((IFloopySoundFilter*)m_pInput)->GetSource();
+				loop->SetSource( src );
+				((IFloopySoundFilter*)m_pInput)->SetSource( loop );
+
+				Invalidate();
+				Refresh();
+			}
+		}
+	}
+}
+
+IFloopySoundInput *CTrack::getComponent(char *name)
+{
+	IFloopySoundInput *src = m_pInput;
+	while(src)
+	{
+		int type = src->GetType();
+		switch(type)
+		{
+		case TYPE_FLOOPY_SOUND_FILTER:
+		case TYPE_FLOOPY_SOUND_MIXER:
+		case TYPE_FLOOPY_SOUND_TRACK:
+		{
+			char *tmp = strrchr(src->GetName(), '.');
+			if(NULL == tmp)
+				tmp = src->GetName();
+			else
+				tmp++;
+			if(0==strcmpi(tmp, name))
+				return src;
+			src = ((IFloopySoundFilter*)src)->GetSource();
+			break;
+		}
+		default:
+			src = NULL;
+		}
+	}
+	return NULL;
 }

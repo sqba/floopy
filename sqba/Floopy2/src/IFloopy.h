@@ -198,6 +198,8 @@ public:
 	 */
 	virtual void EnableAt(int offset, BOOL bEnable) {}
 
+	virtual void ClearAllParams() {}
+
 	virtual BOOL MoveParam(int offset, int index, int newoffset) { return FALSE; }
 };
 

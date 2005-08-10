@@ -408,12 +408,15 @@ public:
 	bool IsHidden() { return m_bHide; } // ->Collapse/expand
 	void Hide(bool bHide) { m_bHide = bHide; }
 
+	BOOL IsLooped();
+	void SetLooped(BOOL bLooped);
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();
 	void drawLoopSign(wxDC& dc, wxRect& rc);
 	void drawCacheSign(wxDC& dc, wxRect& rc);
-	BOOL isLooped();
+	IFloopySoundInput *getComponent(char *name);
 
 private:
 	int			m_nLevel;
