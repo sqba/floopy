@@ -584,6 +584,10 @@ void CTrack::OnKeyDown(wxKeyEvent& event)
 	case 'L':
 		SetLooped( !IsLooped() );
 		break;
+	case 'r':
+	case 'R':
+		SetReset( !GetReset() );
+		break;
 	default:
 		return;
 	}
@@ -787,6 +791,28 @@ void CTrack::SetLooped(BOOL bLooped)
 				Refresh();
 			}
 		}
+	}
+}
+
+BOOL CTrack::GetReset()
+{
+	if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+	{
+		float value =0.f;
+		if(m_pInput->GetParamAt(0, 0, &value))
+			return value != 0.f;
+	}
+	return FALSE;
+}
+
+void CTrack::SetReset(BOOL bReset)
+{
+	if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+	{
+		m_pInput->SetParamAt(0, 0, bReset);
+
+		Invalidate();
+		Refresh();
 	}
 }
 

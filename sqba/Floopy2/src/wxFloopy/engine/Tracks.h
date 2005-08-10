@@ -411,6 +411,9 @@ public:
 	BOOL IsLooped();
 	void SetLooped(BOOL bLooped);
 
+	BOOL GetReset();
+	void SetReset(BOOL bReset);
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();
