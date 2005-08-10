@@ -159,13 +159,15 @@ void CTrack::DrawBG(wxDC& dc, wxRect& rc)
 //	wxPen oldpen = dc.GetPen();
 */
 	m_top = rc.GetTop();
-/*
-	//if( IsSelected() ) {
-	//	wxBrush brush(*wxWHITE, wxCROSSDIAG_HATCH);
-	//	dc.SetBrush(brush);
-	//	dc.DrawRectangle(0, m_top+1, rc.GetWidth(), GetHeight()-1);
-	//}
 
+	if( IsSelected() )
+	{
+		wxBrush brush(wxColor(240, 240, 240), wxSOLID);
+		dc.SetBrush(brush);
+		dc.DrawRectangle(0, m_top, rc.GetWidth(), GetHeight()+1);
+	}
+
+/*
 	wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
 	dc.SetBrush(brush);
 //	dc.SetPen( *wxTRANSPARENT_PEN );

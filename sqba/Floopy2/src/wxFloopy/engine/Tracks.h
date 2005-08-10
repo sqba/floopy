@@ -125,8 +125,6 @@ public:
 	CTracks();
 	virtual ~CTracks();
 
-	void init();
-
 	void SetTracksView(wxScrolledWindow *panel);// { m_pTracksView = panel; }
 	void SetLabelsView(wxScrolledWindow *panel) { m_pLabelsView = panel; }
 	
@@ -186,8 +184,6 @@ public:
 
 //	TracksList &GetTracks() { return m_tracks; }
 
-	BOOL createEngine(char *plugin);
-	void loadTracks(IFloopySoundInput *input, int level);
 	BOOL Open(char *filename);
 	BOOL Save(char *filename);
 	void Clear();
@@ -197,7 +193,6 @@ public:
 	void OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	IFloopyObj *GetSelectedObj();
-	void changeHeight(int dy);
 
 //	void SetPanel(wxScrolledWindow *panel) { m_pPanel = panel; }
 //	wxScrolledWindow *GetPanel() { return m_pPanel; }
@@ -207,7 +202,6 @@ public:
 	IFloopySoundEngine *GetEngine() { return m_pEngine; }
 
 	int GetClosestGridPos(int pos);
-
 	int CalcStep(int mindist);
 
 	void Play();
@@ -222,8 +216,15 @@ public:
 	wxStatusBar *GetStatusBar()		{ return m_pFrame->GetStatusBar(); }
 	void SetFrame(wxFrame *pFrame)	{ m_pFrame = pFrame; }
 
+	void SetChanged(BOOL bChanged)	{ m_bChanged = bChanged; }
+	BOOL IsChanged()				{ return m_bChanged; }
+
 private:
 	IFloopySoundMixer *getMixer();
+	BOOL createEngine(char *plugin);
+	void loadTracks(IFloopySoundInput *input, int level);
+	void changeHeight(int dy);
+	void init();
 
 private:
 //	int					m_pps;
@@ -251,6 +252,7 @@ private:
 	int					m_iCursorPosition;
 	wxStatusBar			*m_pStatusBar;
 	wxFrame				*m_pFrame;
+	BOOL				m_bChanged;
 };
 
 class CTrack : public IFloopyObj  

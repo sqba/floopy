@@ -420,6 +420,8 @@ void CRegion::Update()
 	m_iPrevStart = m_iPrevEnd = -1;
 
 	m_bEdit = FALSE;
+
+	getTracks()->SetChanged( TRUE );
 }
 /*
 void CRegion::ddump()

@@ -46,26 +46,43 @@ void CTracksView::OnDraw(wxDC &dc)
 	m_pTracks->DrawBG(dc);		// Draw track backgrounds
 	CCaretView::OnDraw(dc);		// Draw grid
 	m_pTracks->DrawFore(dc);	// Draw track foregrounds
-
-	/*int width, height;
+	// Draw the rest of the window
+/*
+	int width, height;
 	GetClientSize(&width, &height);
-	int x=0, y=0, x1=0, y1=0;
+	int x=0, y=0, x1=0, y1=0, xScrollUnits, yScrollUnits;
 	GetViewStart(&x, &y);
 	//CalcScrolledPosition(x, y, &x1, &y1);
-	dc.DrawRectangle(x, y, width, 20);*/
+	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	dc.DrawRectangle(x*xScrollUnits, y*yScrollUnits, width, 20);
+*/
+/*
+	int x=0, y=0, xScrollUnits, yScrollUnits;
+	GetViewStart(&x, &y);
+	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	dc.DrawRectangle(0, y*yScrollUnits, m_pTracks->GetWidth(), 20);
+*/
 }
 
 void CTracksView::ScrollWindow( int dx, int dy, const wxRect *rect )
 {
 	CCaretView::ScrollWindow( dx, dy, rect );
-
-	/*int width, height;
+/*
+	int width, height;
 	GetClientSize(&width, &height);
-	int x=0, y=0, x1=0, y1=0;
+	int x=0, y=0, x1=0, y1=0, xScrollUnits, yScrollUnits;
 	GetViewStart(&x, &y);
 	//CalcScrolledPosition(x, y, &x1, &y1);
-	RefreshRect(wxRect(x, y, width, 20));*/
-
+//	RefreshRect(wxRect(x, y, width, 20));
+	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	RefreshRect(wxRect(x*xScrollUnits, y*yScrollUnits, width, 20));
+*/
+/*
+	int x=0, y=0, xScrollUnits, yScrollUnits;
+	GetViewStart(&x, &y);
+	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	RefreshRect(wxRect(0, y*yScrollUnits, m_pTracks->GetWidth(), 20));
+*/
 	if(0 != dy)
 		m_pLabelsView->ScrollWindow( 0, dy, NULL );
 }

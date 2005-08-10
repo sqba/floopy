@@ -21,31 +21,25 @@ CTracks::CTracks() : IFloopyObj(NULL)
 {
 	wxLog::AddTraceMask(_T("CTracks"));
 
-	m_pTracksView = NULL;
-	m_pLabelsView = NULL;
-//	m_hres   = 2756; // samples per pixel
-//	m_pps    = 16;	// pixels per second
-//	m_bpm    = 120;	// beats per minute
-	m_length = 120;	// seconds
-//	m_iSamplesPerPixel = 2205;
-	m_iPixelsPerSecond = 16;
-
-	m_pBorder = new CBorder(this);
-
-	m_pEngine = NULL;
-	m_pMixer = NULL;
+	m_pTracksView		= NULL;
+	m_pLabelsView		= NULL;
+//	m_hres				= 2756; // samples per pixel
+//	m_pps				= 16;	// pixels per second
+//	m_bpm				= 120;	// beats per minute
+	m_length			= 120;	// seconds
+//	m_iSamplesPerPixel	= 2205;
+	m_iPixelsPerSecond	= 16;
+	m_pBorder			= new CBorder(this);
+	m_pEngine			= NULL;
+	m_pMixer			= NULL;
+	m_bSnapTo			= TRUE;
+	m_pPlayThread		= new CPlayThread(this);
+	m_pFrame			= NULL;
+	m_iCursorPosition	= 0;
+	m_bChanged			= FALSE;
+//	m_pPlayThread		= NULL;
 
 	createEngine("engine");
-
-	m_bSnapTo = TRUE;
-
-//	m_pPlayThread = NULL;
-
-	m_pPlayThread = new CPlayThread(this);
-
-	m_pFrame = NULL;
-
-	m_iCursorPosition = 0;
 }
 
 CTracks::~CTracks()
