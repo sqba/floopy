@@ -553,19 +553,29 @@ void CTrack::loadRegions()
 void CTrack::OnKeyDown(wxKeyEvent& event)
 {
 //	int value = IsSelected() ? GetHeight() : GetTracks()->GetPixelsPerSecond();
-	int value = IsSelected() ? GetHeight() : GetTracks()->GetSamplesPerPixel();
+//	int value = IsSelected() ? GetHeight() : GetTracks()->GetSamplesPerPixel();
 
 	switch (event.GetKeyCode() )
 	{
 	case WXK_UP:
 	case WXK_NUMPAD_UP:
-	case '+':
-		value += IsSelected() ? 1 : value;
+//		value += IsSelected() ? 1 : value;
+		SetHeight( GetHeight() + 1 );
 		break;
 	case WXK_DOWN:
 	case WXK_NUMPAD_DOWN:
+//		value -= IsSelected() ? 1 : value;
+		SetHeight( GetHeight() - 1 );
+		break;
+	case WXK_LEFT:
+	case WXK_NUMPAD_LEFT:
 	case '-':
-		value -= IsSelected() ? 1 : value;
+		GetTracks()->SetSamplesPerPixel( GetTracks()->GetSamplesPerPixel()*2 );
+		break;
+	case WXK_RIGHT:
+	case WXK_NUMPAD_RIGHT:
+	case '+':
+		GetTracks()->SetSamplesPerPixel( GetTracks()->GetSamplesPerPixel()/2 );
 		break;
 	case WXK_DELETE:
 		GetTracks()->RemoveTrack( this );
@@ -574,10 +584,10 @@ void CTrack::OnKeyDown(wxKeyEvent& event)
 		return;
 	}
 
-	if( IsSelected() )
+	/*if( IsSelected() )
 		SetHeight( value );
 	else
-		GetTracks()->SetSamplesPerPixel( value );
+		GetTracks()->SetSamplesPerPixel( value );*/
 //		GetTracks()->SetPixelsPerSecond( value );
 }
 
