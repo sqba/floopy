@@ -580,6 +580,10 @@ void CTrack::OnKeyDown(wxKeyEvent& event)
 	case WXK_DELETE:
 		GetTracks()->RemoveTrack( this );
 		return;
+	case 'l':
+	case 'L':
+		SetLooped( !IsLooped() );
+		break;
 	default:
 		return;
 	}
@@ -744,16 +748,20 @@ void CTrack::drawCacheSign(wxDC& dc, wxRect& rc)
 
 BOOL CTrack::IsLooped()
 {
-	return (NULL != getComponent("loop"));
+	IFloopySoundFilter *loop = (IFloopySoundFilter*)getComponent("loop");
+	if(loop)
+		return !loop->GetBypass();
+	return FALSE;
 }
 
 void CTrack::SetLooped(BOOL bLooped)
 {
-	IFloopySoundInput *loop = getComponent("loop");
+	IFloopySoundFilter *loop = (IFloopySoundFilter*)getComponent("loop");
 	if(loop)
 	{
-		loop->ClearAllParams();
-		loop->EnableAt(0, bLooped);
+		//loop->ClearAllParams();
+		//loop->EnableAt(0, bLooped);
+		loop->SetBypass( !bLooped );
 		Invalidate();
 		Refresh();
 	}
@@ -762,11 +770,11 @@ void CTrack::SetLooped(BOOL bLooped)
 		if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
 		{
 			IFloopySoundEngine *engine = GetTracks()->GetEngine();
-			SOUNDFORMAT *fmt = engine->GetFormat();
-			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateOutput("stdlib.loop", *fmt);
+			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateInput("stdlib.loop");
 			if(loop)
 			{
 				loop->EnableAt(0, TRUE);
+				loop->SetBypass(FALSE);
 
 				IFloopySoundInput *src = ((IFloopySoundFilter*)m_pInput)->GetSource();
 				loop->SetSource( src );

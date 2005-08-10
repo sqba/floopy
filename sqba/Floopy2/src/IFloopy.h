@@ -378,7 +378,7 @@ protected:
 class IFloopySoundFilter : public IFloopySoundInput
 {
 public:
-	IFloopySoundFilter() : IFloopySoundInput()	{ m_source = NULL; }
+	IFloopySoundFilter() : IFloopySoundInput()	{ m_source = NULL; m_bBypass = FALSE; }
 
 	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_FILTER; }
 
@@ -442,8 +442,15 @@ public:
 		return (NULL != m_source ? m_source->GetFormat() : &m_format);
 	}
 
+	/**
+	 * Bypas the component without affecting the timeline.
+	 */
+	virtual BOOL GetBypass() { return m_bBypass; }
+	virtual void SetBypass(BOOL bBypass) { m_bBypass = bBypass; }
+
 protected:
 	IFloopySoundInput *m_source;
+	BOOL m_bBypass;
 };
 
 

@@ -114,6 +114,8 @@ public:
 
 	void ClearAllParams();
 
+	BOOL GetBypass();
+	void SetBypass(BOOL bBypass);
 
 private:
 	inline BOOL _isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : FALSE); }

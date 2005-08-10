@@ -812,7 +812,9 @@ int CInput::_getEndOffset()
 
 IFloopySoundInput *CInput::_getSource()
 {
-	if( IFloopy::IsEnabled() )// || _isSource() )
+	if( m_plugin->IsFilter() && ((IFloopySoundFilter*)m_plugin)->GetBypass() )
+		return ((IFloopySoundFilter*)m_plugin)->GetSource();
+	else if( IFloopy::IsEnabled() )// || _isSource() )
 		return m_plugin;
 	else if( m_plugin->IsFilter() && m_plugin->ReadSourceIfDisabled() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
@@ -823,6 +825,19 @@ IFloopySoundInput *CInput::_getSource()
 void CInput::ClearAllParams()
 {
 	m_timeline.Clear();
+}
+
+BOOL CInput::GetBypass()
+{
+	if( m_plugin->IsFilter() )
+		return ((IFloopySoundFilter*)m_plugin)->GetBypass();
+	return FALSE;
+}
+
+void CInput::SetBypass(BOOL bBypass)
+{
+	if( m_plugin->IsFilter() )
+		((IFloopySoundFilter*)m_plugin)->SetBypass(bBypass);
 }
 
 /*
