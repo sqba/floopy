@@ -21,7 +21,7 @@ class CFloopyFrame : public wxFrame
 
 		bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
 		{
-			for(int i=0; i<filenames.Count(); i++)
+			for(int i=0; i<(int)filenames.Count(); i++)
 			{
 				m_pFrame->Open( (char*)filenames.Item(i).GetData() );
 			}

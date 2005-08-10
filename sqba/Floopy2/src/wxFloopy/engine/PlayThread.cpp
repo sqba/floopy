@@ -28,19 +28,27 @@ CPlayThread::~CPlayThread()
 
 void *CPlayThread::Entry()
 {
-	IFloopySoundEngine *input = m_pTracks->GetEngine();
+	IFloopySoundEngine *engine = m_pTracks->GetEngine();
+	
+	IFloopySoundInput *input = engine;
+
+	IFloopyObj *obj = m_pTracks->GetSelectedObj();
+	if(obj && obj->IsKindOf(CLASSINFO(CTrack)))
+		input = ((CTrack*)obj)->GetInput();
+
 	if(!input)
+		return NULL;
+
+	SOUNDFORMAT *fmt = input->GetFormat();
+
+	IFloopySoundOutput *output = engine->CreateOutput("stdlib.waveout", *fmt);
+	if(!output)
 		return NULL;
 
 	int samples = input->GetSize();
 
-	SOUNDFORMAT *fmt = input->GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	int stb = (fmt->bitsPerSample / 8) * fmt->channels;
-
-	IFloopySoundOutput *output = input->CreateOutput("stdlib.waveout", *fmt);
-	if(!output)
-		return NULL;
 
 	int written = 0;
 	BYTE buff[BUFFER_LENGTH];

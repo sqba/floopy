@@ -91,7 +91,11 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	dc.SetPen(wxPen(*wxBLACK, border));
 
 	wxBrush brush(GetColour(), wxSOLID);
-	dc.SetBrush(brush);
+#ifndef TRANSPARENT_BACKGROUND
+		dc.SetBrush(brush);
+#else
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+#endif
 
 	int top    = rc.GetTop() + border + 1;
 	int height = GetHeight() - border - 2;
@@ -131,7 +135,9 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	///////////////////////////////////////////////////////
 	wxPen oldpen = dc.GetPen();
 	wxColor color = GetColour();
+#ifndef TRANSPARENT_BACKGROUND
 	color.Set(color.Red()/2, color.Green()/2, color.Blue()/2);
+#endif
 	dc.SetPen(wxPen(color, 1));
 	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
 	CRegionDisplay *disp = m_pDisplay;
