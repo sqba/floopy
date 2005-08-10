@@ -32,7 +32,7 @@ BOOL CTrack::GetParamVal(int index, float *value)
 
 void CTrack::Enable(BOOL bEnabled)
 {
-	if(m_bReset)
+	if(bEnabled && m_bReset)
 		IFloopySoundFilter::Reset();
 
 	IFloopySoundFilter::Enable(bEnabled);
