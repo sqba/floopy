@@ -31,6 +31,8 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 
 	loadParameters( getTrack()->GetInput() );
 
+//	m_bReset = FALSE;
+
 	m_pDisplay = new CRegionDisplay(this);
 //	m_pDisplay->Run();
 }
@@ -88,7 +90,8 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 
 	int border = (IsSelected() ? 2 : 1);
 
-	dc.SetPen(wxPen(*wxBLACK, border));
+	//dc.SetPen(wxPen(*wxBLACK, border));
+	dc.SetPen(wxPen((GetReset()?*wxBLACK:*wxLIGHT_GREY), border));
 
 	wxBrush brush(GetColour(), wxSOLID);
 #ifndef TRANSPARENT_BACKGROUND
@@ -375,6 +378,16 @@ void CRegion::Update()
 
 		//float paramVal=0.f;
 		//track->GetParamAt(0, TIMELINE_PARAM_ENABLE, &paramVal);
+
+		/////////////////////////////////////////////////////////////////////////////////////////
+		//track->MoveAllParamsBetween(m_iStartSample, m_iEndSample, m_iStartSample-m_iPrevStart);
+		/////////////////////////////////////////////////////////////////////////////////////////
+
+		if( GetReset() )
+		{
+			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, m_iStartSample) )
+				getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, 0.f);
+		}
 	}
 
 	if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))
@@ -401,10 +414,10 @@ void CRegion::Update()
 
 	//if((m_iPrevEnd-m_iPrevStart) != (m_iEndSample-m_iStartSample))
 
-	if( !getTrack()->GetReset() )
+	if( !GetReset() )
 	{
-		getTrack()->Invalidate();
-		getTrack()->Refresh();
+		Invalidate();
+		Refresh();
 	}
 	else
 	{
@@ -427,6 +440,8 @@ void CRegion::Update()
 	m_iPrevStart = m_iPrevEnd = -1;
 
 	m_bEdit = FALSE;
+
+	getTrack()->InvalidateRegions( this );
 
 	getTracks()->SetChanged( TRUE );
 }
@@ -485,6 +500,10 @@ void CRegion::OnKeyDown(wxKeyEvent& event)
 	case WXK_DELETE:
 		getTrack()->RemoveRegion( this );
 		return;
+	case 'r':
+	case 'R':
+		SetReset( !GetReset() );
+		break;
 	}
 }
 
@@ -580,4 +599,28 @@ void CRegion::drawParametersFore(wxDC& dc, wxRect& rc)
 		param->DrawFore(dc, rc);
 		node = node->GetNext();
 	}
+}
+
+BOOL CRegion::GetReset()
+{
+//	return m_bReset;
+
+	float value = 0.f;
+	if(getTrack()->GetInput()->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
+		return value==0.f;
+	else
+		return FALSE;
+}
+
+void CRegion::SetReset(BOOL bReset)
+{
+//	m_bReset = bReset;
+
+	if(bReset)
+		getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, 0.f);
+	else
+		getTrack()->GetInput()->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO);
+
+	Invalidate();
+	Refresh();
 }

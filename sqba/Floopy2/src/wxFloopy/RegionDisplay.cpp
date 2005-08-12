@@ -113,6 +113,11 @@ void CRegionDisplay::loadPeaks()
 
 	m_pInput->MoveTo(start);
 	int bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
+	if(EOF == bytesRead)
+	{
+		delete buffer;
+		return;
+	}
 	samples = bytesRead / (fmt->bitsPerSample / 8);
 
 //	int interval = samples / samplesPerPixel;
@@ -121,7 +126,10 @@ void CRegionDisplay::loadPeaks()
 	int ch=0;
 
 	if(interval < 0)
+	{
+		delete buffer;
 		return;
+	}
 
 /*
 	short int peak[2] = {0};

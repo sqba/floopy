@@ -42,13 +42,19 @@ public:
 	int GetPrevOffset(int offset, int index);
 	int GetStartOffset();
 
+	void MoveAllParamsBetween(int start, int end, int offset);
+
 //	void dump(FILE *fp);
 
 private:
 	tParam *getParam(int offset, int index);
 	tParam *getPrevParam(int offset);
-	void insertAfter(CTimeline::tParam *prev, CTimeline::tParam *param);
-	void removeParam(CTimeline::tParam *param);
+	tParam *insertAfter(CTimeline::tParam *prev, CTimeline::tParam *param);
+	BOOL removeParam(CTimeline::tParam *param);
+	tParam *newParam(int offset, int index, float value);
+	BOOL moveParam(tParam *param, int newoffset);
+
+	BOOL _checkSortOrder();
 
 private:
 	tParam *m_pFirst, *m_pLast, *m_pTemp;

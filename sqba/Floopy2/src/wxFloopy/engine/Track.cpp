@@ -57,6 +57,8 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour co
 	m_pButtonLoop = new CLoopButton(this);
 	m_pButtonCache = new CCacheButton(this);
 
+	m_bReset = FALSE;
+
 //	m_pDisplay = new CWaveDisplay(this);
 
 #ifdef _DEBUG	// test only ///////////////////////
@@ -259,14 +261,21 @@ CRegion *CTrack::AddNewRegionAt(int left)
 	m_pInput->EnableAt(start, TRUE);
 	m_pInput->EnableAt(end, FALSE);
 
-	CRegion *event = new CRegion( this, start, end );
+	CRegion *region = new CRegion( this, start, end );
 	try {
-		m_regions.Append( event );
+		region->SetReset( GetReset() );
+		m_regions.Append( region );
+
+		if( !GetReset() )
+		{
+			Invalidate();
+			Refresh();
+		}
 	} catch(...) {
 		wxLogTrace(_T("CTrack"), _T("AddNewRegionAt exception"));
 		return NULL;
 	}
-	return event;
+	return region;
 }
 
 CRegion *CTrack::AddRegion(int start, int end)
@@ -274,7 +283,15 @@ CRegion *CTrack::AddRegion(int start, int end)
 	wxLogTrace(_T("CTrack"), _T("Adding new region"));
 	CRegion *region = new CRegion( this, start, end );
 	try {
+		//region->SetReset( GetReset() );
+
 		m_regions.Append( region );
+
+		if( !GetReset() )
+		{
+			Invalidate();
+			Refresh();
+		}
 	} catch(...) {
 		wxLogTrace(_T("CTrack"), _T("AddRegion exception"));
 		return NULL;
@@ -796,23 +813,27 @@ void CTrack::SetLooped(BOOL bLooped)
 
 BOOL CTrack::GetReset()
 {
-	if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+	return m_bReset;
+
+	/*if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
 	{
 		float value =0.f;
 		if(m_pInput->GetParamAt(0, 0, &value))
 			return value != 0.f;
 	}
-	return FALSE;
+	return FALSE;*/
 }
 
 void CTrack::SetReset(BOOL bReset)
 {
-	if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
-	{
-		m_pInput->SetParamAt(0, 0, bReset);
+	m_bReset = bReset;
 
-		Invalidate();
-		Refresh();
+	RegionList::Node *node = m_regions.GetFirst();
+	while (node)
+	{
+		CRegion *region = (CRegion*)node->GetData();
+		region->SetReset(bReset);
+		node = node->GetNext();
 	}
 }
 
@@ -843,4 +864,19 @@ IFloopySoundInput *CTrack::getComponent(char *name)
 		}
 	}
 	return NULL;
+}
+
+void CTrack::InvalidateRegions(CRegion *start)
+{
+	BOOL bStart = FALSE;
+	RegionList::Node *node = m_regions.GetFirst();
+	while (node)
+	{
+		CRegion *region = (CRegion*)node->GetData();
+		if(start == region)
+			bStart = TRUE;
+		else if( bStart && region->GetReset() )
+			region->Invalidate();
+		node = node->GetNext();
+	}
 }

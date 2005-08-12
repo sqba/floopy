@@ -101,7 +101,7 @@ public:
 
 	BOOL MoveParam(int offset, int index, int newoffset);
 
-
+	void MoveAllParamsBetween(int start, int end, int offset);
 
 	///////////////////////////////////////////
 	// IFloopySoundMixer functions
@@ -121,7 +121,7 @@ private:
 	inline BOOL _isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : FALSE); }
 //	inline BOOL _isTrack() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_TRACK : FALSE); }
 	void _applyParamsAt(int offset);
-	void _applyPreviousParams(int offset);
+	BOOL _applyPreviousParams(int offset);
 	int _getSamplesToBytes();
 	int _getStartOffset();
 	int _getEndOffset();

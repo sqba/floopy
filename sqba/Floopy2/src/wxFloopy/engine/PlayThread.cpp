@@ -4,18 +4,17 @@
 
 #include "tracks.h"
 
+#define BUFFER_LENGTH	5120 //512
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
 CPlayThread::CPlayThread(CTracks *pTracks)
 {
-	m_pTracks = pTracks;
-	/*if(wxTHREAD_NO_ERROR != wxThread::Create())
-	{
-	}*/
-	m_iStartPos = 0;
-	m_bPlaying = m_bPaused = FALSE;
+	m_pTracks	= pTracks;
+	m_iStartPos	= 0;
+	m_bPlaying	= m_bPaused = FALSE;
 }
 
 CPlayThread::~CPlayThread()
@@ -24,76 +23,60 @@ CPlayThread::~CPlayThread()
 		Stop();
 }
 
-#define BUFFER_LENGTH	5120 //512
-
 void *CPlayThread::Entry()
 {
-	IFloopySoundEngine *engine = m_pTracks->GetEngine();
-	
-	IFloopySoundInput *input = engine;
+	if(!m_pTracks || m_iStartPos<0)
+		return NULL;
 
-	IFloopyObj *obj = m_pTracks->GetSelectedObj();
-	if(obj && obj->IsKindOf(CLASSINFO(CTrack)))
-		input = ((CTrack*)obj)->GetInput();
+	IFloopySoundEngine	*engine = m_pTracks->GetEngine();
+	IFloopySoundInput	*input = engine;
+
+	if(!engine)
+		return NULL;
+
+	// Check if a track is selected
+	IFloopyObj *tmpobj = m_pTracks->GetSelectedObj();
+	if(tmpobj && tmpobj->IsKindOf(CLASSINFO(CTrack)))
+		input = ((CTrack*)tmpobj)->GetInput();
 
 	if(!input)
 		return NULL;
 
 	SOUNDFORMAT *fmt = input->GetFormat();
 
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+
 	IFloopySoundOutput *output = engine->CreateOutput("stdlib.waveout", *fmt);
 	if(!output)
 		return NULL;
 
-	int samples = input->GetSize();
+	BYTE buff[BUFFER_LENGTH] = {0};
+	int stb	= (fmt->bitsPerSample/8) * fmt->channels; // samples to bytes
+	int pos	= m_iStartPos;	// samples
+	int len	= 0;			// bytes
 
-	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	int stb = (fmt->bitsPerSample / 8) * fmt->channels;
+	engine->EmptyBuffer( buff, BUFFER_LENGTH );
+	engine->MoveTo( m_iStartPos ); // Move to cursor position
 
-	int written = 0;
-	BYTE buff[BUFFER_LENGTH];
-//	int x = m_pTracks->GetSamplesPerPixel() * fmt->channels;
-//	BYTE *buff = new BYTE[x];
-	int len, size=sizeof(buff);
-	memset(buff, 0, sizeof(buff));
-//	int len, size=x;
-//	memset(buff, 0, x);
-
-	int max = samples * stb;
-	int percent = 0;
-
-	//int pos = m_iStartPos;
-
-	m_pTracks->GetEngine()->MoveTo( m_iStartPos );
-
-	while((len=input->Read(buff, size)) != EOF)
+	while((len=input->Read(buff, BUFFER_LENGTH)) != EOF)
 	{
-		if ( TestDestroy() )
-			break;
-
-		written += len;
-		output->Write(buff, len);
-		memset(buff, 0, sizeof(buff));
-//		memset(buff, 0, x);
-		percent = (int)((float)written * 100.f / (float)max);
-		//del = fprintf(stderr, "%d - %d%%", output->GetWrittenSamples(), percent);
+		pos += len / stb;
+		output->Write( buff, len );
+		engine->EmptyBuffer( buff, BUFFER_LENGTH );
 		int samples = output->GetWrittenSamples();
 		m_pTracks->SetCursorPosition( m_iStartPos + samples );
-//		m_pTracks->SetCaretPos( samples );
 
-		// If the view has been resized horizontally
-		// the position was lost.
-		//pos += len / stb;
-		//m_pTracks->GetEngine()->MoveTo( pos );
+		// If the view has been resized horizontally the position is lost.
+		engine->MoveTo( pos );
+
+		if ( TestDestroy() )
+			break;
 	}
 
 	// Wait for output to finish!!!
-	written /= stb; // convert bytes to samples
 	do {
 		wxThread::Sleep(1000);
-	} while(written < output->GetWrittenSamples()/fmt->channels);
-
-//	delete buff;
+	} while(pos < output->GetWrittenSamples()/fmt->channels);
 
 	m_bPlaying = FALSE;
 
@@ -109,12 +92,8 @@ void CPlayThread::Play(int sample)
 		wxThread::Resume();
 	else
 	{
-		//if(wxTHREAD_NO_ERROR != wxThread::Create())
-		//{
-			m_iStartPos = sample;
-			//m_pTracks->GetEngine()->MoveTo(sample);
-			wxThread::Run();
-		//}
+		m_iStartPos = sample;
+		wxThread::Run();
 	}
 }
 

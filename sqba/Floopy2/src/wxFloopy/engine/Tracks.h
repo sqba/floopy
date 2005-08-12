@@ -414,6 +414,8 @@ public:
 	BOOL GetReset();
 	void SetReset(BOOL bReset);
 
+	void InvalidateRegions(CRegion *start);
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();
@@ -438,6 +440,8 @@ private:
 
 	CLoopButton		*m_pButtonLoop;
 	CCacheButton	*m_pButtonCache;
+
+	BOOL		m_bReset;
 };
 
 class CRegion : public IFloopyObj
@@ -521,6 +525,9 @@ public:
 	int GetHeight()	{ return getTrack()->GetHeight(); }
 	int GetTop()	{ return getTrack()->GetTop(); }
 
+	BOOL GetReset();
+	void SetReset(BOOL bReset);
+
 private:
 	static void remove(IFloopyObj *event);
 	void createMenu();
@@ -541,6 +548,7 @@ private:
 	CBorder			*m_pLeftBorder, *m_pRightBorder;
 	ParameterList	m_Parameters;
 	CRegionDisplay	*m_pDisplay;
+//	BOOL			m_bReset;
 };
 
 

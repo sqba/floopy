@@ -200,6 +200,14 @@ public:
 
 	virtual void ClearAllParams() {}
 
+	/**
+	 * Moves all parameters between start and end sample.
+	 * @param start start offset, in samples.
+	 * @param end end offset, in samples.
+	 * @param offset number of samples. If -1 then the parameters are removed.
+	 */
+	virtual void MoveAllParamsBetween(int start, int end, int offset) {}
+
 	virtual BOOL MoveParam(int offset, int index, int newoffset) { return FALSE; }
 };
 

@@ -23,19 +23,24 @@ public:
 	char *GetDescription()		{ return "Audio track"; }
 	char *GetVersion()			{ return "0.1"; }
 	char *GetAuthor()			{ return "sqba"; }
-
+/*
 	int   GetParamCount()			{ return 1; }
 	void  SetParamVal(int index, float value) { m_bReset = (value!=0); }
 	BOOL  GetParamVal(int index, float *value);
 	char *GetParamName(int index)	{ return (index == 0 ? "reset" : NULL); }
 	char *GetParamDesc(int index)	{ return (index == 0 ? "Reset" : NULL); }
-
+*/
 	BOOL ReadSourceIfDisabled()	{ return FALSE; }
 
-	void  Enable(BOOL bEnabled);
+//	void  Enable(BOOL bEnabled);
+
+//	void MoveTo(int samples);
+//	void Reset();
+//	int Read(BYTE *data, int size);
 
 private:
-	BOOL m_bReset;
+//	BOOL m_bReset;
+//	int m_iOffset;
 };
 
 #endif // !defined(AFX_TRACK_H__966CC29E_48E0_487B_B8B3_A7DDDF36967B__INCLUDED_)

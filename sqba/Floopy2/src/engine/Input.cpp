@@ -331,9 +331,9 @@ void CInput::MoveTo(int samples)
 
 		//_applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 		//_applyParamsUntil( m_offset );
-		_applyPreviousParams( m_offset );
+		BOOL bMoved = _applyPreviousParams( m_offset );
 
-		if( m_nStartOffset > 0)
+		if( _isEngine() && m_nStartOffset > 0)
 		{
 			if( m_offset >= m_nStartOffset )
 				samples -= (m_nStartOffset / m_nSamplesToBytes);
@@ -341,7 +341,7 @@ void CInput::MoveTo(int samples)
 				samples = 0;
 		}
 
-		if(NULL != m_source)
+		if(!bMoved && NULL != m_source)
 			m_source->MoveTo(samples);
 	}
 }
@@ -585,7 +585,12 @@ int CInput::GetInputCount()
 		return(m_plugin ? 1 : 0);
 }
 
-
+void CInput::MoveAllParamsBetween(int start, int end, int offset)
+{
+	m_timeline.MoveAllParamsBetween(start*m_nSamplesToBytes,
+									end*m_nSamplesToBytes,
+									offset*m_nSamplesToBytes);
+}
 
 
 
@@ -660,6 +665,10 @@ void CInput::_applyParamsAt(int offset)
 		IFloopy::Enable( bEnable );
 		if(m_plugin)
 			m_plugin->Enable(bEnable);
+		/*if( bEnable != IFloopy::IsEnabled() )
+			IFloopy::Enable( bEnable );
+		if(m_plugin && bEnable != m_plugin->IsEnabled())
+			m_plugin->Enable(bEnable);*/
 
 		if(m_callback && sample >= 0)
 			m_callback(this, sample, TIMELINE_PARAM_ENABLE);
@@ -713,9 +722,14 @@ void CInput::_applyParamsAt(int offset)
 	}
 }
 
-void CInput::_applyPreviousParams(int offset)
+/**
+ * 
+ * @return TRUE if MoveTo has been called.
+ */
+BOOL CInput::_applyPreviousParams(int offset)
 {
 	float value = 0.f;
+	BOOL bMoved = FALSE;
 
 	int prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_ENABLE);
 	/*if( m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_ENABLE, &value) )
@@ -732,15 +746,21 @@ void CInput::_applyPreviousParams(int offset)
 		IFloopy::Enable( bEnable );
 		if(m_plugin)
 			m_plugin->Enable(bEnable);
+		/*if( bEnable != IFloopy::IsEnabled() )
+			IFloopy::Enable( bEnable );
+		if(m_plugin && bEnable != m_plugin->IsEnabled())
+			m_plugin->Enable(bEnable);*/
 	}
 
 	prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_MOVETO);
 	if( m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_MOVETO, &value) )
 	{
-		if(0.f == value)
-			m_source->Reset();
-		else
-			m_source->MoveTo((int)value);
+		/*if(0.f == value)
+			m_plugin->Reset();
+		else*/
+			m_plugin->MoveTo((int)value);
+			m_source->MoveTo( (offset - prevOffset) / m_nSamplesToBytes );
+			bMoved = TRUE;
 	}
 
 	int count = GetParamCount();
@@ -753,6 +773,8 @@ void CInput::_applyPreviousParams(int offset)
 				m_plugin->SetParamVal(index, value);
 		}
 	}
+
+	return bMoved;
 }
 
 /**
