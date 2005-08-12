@@ -540,6 +540,7 @@ private:
 	//void drawParametersBG(wxDC& dc, wxRect& rc);
 	void drawParametersFore(wxDC& dc, wxRect& rc);
 	//void ddump();
+	BOOL getReset(int sample);
 
 private:
 	BOOL			m_bEdit;

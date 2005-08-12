@@ -383,7 +383,7 @@ void CRegion::Update()
 		//track->MoveAllParamsBetween(m_iStartSample, m_iEndSample, m_iStartSample-m_iPrevStart);
 		/////////////////////////////////////////////////////////////////////////////////////////
 
-		if( GetReset() )
+		if( getReset( m_iPrevStart ) )
 		{
 			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, m_iStartSample) )
 				getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, 0.f);
@@ -605,8 +605,19 @@ BOOL CRegion::GetReset()
 {
 //	return m_bReset;
 
-	float value = 0.f;
+	return getReset( m_iStartSample );
+
+	/*float value = 0.f;
 	if(getTrack()->GetInput()->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
+		return value==0.f;
+	else
+		return FALSE;*/
+}
+
+BOOL CRegion::getReset(int sample)
+{
+	float value = 0.f;
+	if(getTrack()->GetInput()->GetParamAt(sample, TIMELINE_PARAM_MOVETO, &value))
 		return value==0.f;
 	else
 		return FALSE;
