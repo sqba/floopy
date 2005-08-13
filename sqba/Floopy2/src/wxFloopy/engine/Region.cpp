@@ -634,4 +634,6 @@ void CRegion::SetReset(BOOL bReset)
 
 	Invalidate();
 	Refresh();
+
+	getTrack()->InvalidateRegions( this );
 }
