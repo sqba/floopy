@@ -414,22 +414,22 @@ void CRegion::Update()
 
 	//if((m_iPrevEnd-m_iPrevStart) != (m_iEndSample-m_iStartSample))
 
-	if( !GetReset() )
-	{
+//	if( !GetReset() )
+//	{
 		Invalidate();
 		Refresh();
-	}
-	else
-	{
+//	}
+//	else
+//	{
 		// Resize
-		Invalidate();
+//		Invalidate();
 		///////////////////////////////////////////////////////
 		/*CRegionDisplay *disp = m_pDisplay;
 		if(disp)
 			disp->LoadPeaks();*/
 		///////////////////////////////////////////////////////
-		Refresh();
-	}
+//		Refresh();
+//	}
 	// Move params!!!
 
 	/*wxLogTrace(_T("CRegion"), _T("m_iPrevStart=%d m_iStartSample=%d"),
