@@ -261,7 +261,7 @@ void CRegion::GetRect(wxRect& rc)
 		panel->GetViewStart(&x, &y);
 		panel->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 		rc.Offset(-x*xScrollUnits, -y*yScrollUnits);
-		rc.Inflate(1, 0);
+		rc.Inflate(2, 0);
 	}
 }
 
@@ -480,11 +480,13 @@ void CRegion::OnKeyDown(wxKeyEvent& event)
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
 		Move(+1, 0);
+		Update();
 		Refresh();
 		break;
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
 		Move(-1, 0);
+		Update();
 		Refresh();
 		break;
 	case WXK_UP:

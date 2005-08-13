@@ -725,6 +725,7 @@ void CInput::_applyParamsAt(int offset)
 /**
  * 
  * @return TRUE if MoveTo has been called.
+ * Not the nicest way to tell MoveTo() not to move the source.
  */
 BOOL CInput::_applyPreviousParams(int offset)
 {
