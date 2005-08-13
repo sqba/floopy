@@ -879,6 +879,7 @@ void CTrack::InvalidateRegions(CRegion *start)
 //		else if( bStart && !region->GetReset() )
 		if( (region->GetStartOffset() > startOffset) && (!region->GetReset()) )
 		{
+			// Skip if there was a reset in between
 			region->Invalidate();
 			region->Refresh();
 		}
