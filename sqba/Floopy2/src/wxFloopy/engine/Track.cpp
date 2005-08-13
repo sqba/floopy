@@ -57,7 +57,7 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour co
 	m_pButtonLoop = new CLoopButton(this);
 	m_pButtonCache = new CCacheButton(this);
 
-	m_bReset = FALSE;
+	m_bReset = TRUE;
 
 //	m_pDisplay = new CWaveDisplay(this);
 
@@ -266,11 +266,11 @@ CRegion *CTrack::AddNewRegionAt(int left)
 		region->SetReset( GetReset() );
 		m_regions.Append( region );
 
-		if( !GetReset() )
+		/*if( !GetReset() )
 		{
 			Invalidate();
 			Refresh();
-		}
+		}*/
 	} catch(...) {
 		wxLogTrace(_T("CTrack"), _T("AddNewRegionAt exception"));
 		return NULL;
@@ -286,12 +286,11 @@ CRegion *CTrack::AddRegion(int start, int end)
 		//region->SetReset( GetReset() );
 
 		m_regions.Append( region );
-
-		if( !GetReset() )
+		/*if( !GetReset() )
 		{
 			Invalidate();
 			Refresh();
-		}
+		}*/
 	} catch(...) {
 		wxLogTrace(_T("CTrack"), _T("AddRegion exception"));
 		return NULL;
