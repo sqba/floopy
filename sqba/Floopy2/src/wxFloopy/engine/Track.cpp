@@ -376,7 +376,7 @@ void CTrack::Refresh()
 
 	if(panel) {
 		int width = panel->GetVirtualSize().GetWidth();
-		wxRect rc(0, m_top, width, m_height);
+		wxRect rc(0, m_top, width, m_height+2);
 		panel->RefreshRect(rc);
 	}
 

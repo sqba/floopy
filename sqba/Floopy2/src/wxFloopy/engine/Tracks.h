@@ -541,6 +541,8 @@ private:
 	void drawParametersFore(wxDC& dc, wxRect& rc);
 	//void ddump();
 	BOOL getReset(int sample);
+	wxColour getBGColour();
+	wxColour getForeColour();
 
 private:
 	BOOL			m_bEdit;
