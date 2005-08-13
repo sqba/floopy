@@ -212,8 +212,8 @@ void CRegion::Move(int dx, int WXUNUSED(dy))
 		m_iStartSample += samples;
 		m_iEndSample   += samples;
 
-		if(m_iStartSample < 0)
-			m_iStartSample = 0;
+//		if(m_iStartSample < 0)
+//			m_iStartSample = 0;
 	}
 }
 

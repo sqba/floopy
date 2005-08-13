@@ -315,6 +315,7 @@ int CInput::Read(BYTE *data, int size)
 
 	if(readBytes == 0)
 		readBytes = bEOF ? EOF : size;
+	// Check if this is really the end (no more parameters)
 
 	return readBytes;
 }
