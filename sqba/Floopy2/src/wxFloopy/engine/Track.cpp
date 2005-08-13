@@ -869,6 +869,7 @@ IFloopySoundInput *CTrack::getComponent(char *name)
 void CTrack::InvalidateRegions(CRegion *start)
 {
 //	BOOL bStart = FALSE;
+	int startOffset = start->GetStartOffset();
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
 	{
@@ -876,7 +877,7 @@ void CTrack::InvalidateRegions(CRegion *start)
 //		if(start == region)
 //			bStart = TRUE;
 //		else if( bStart && !region->GetReset() )
-		if( region != start && !region->GetReset() )
+		if( (region->GetStartOffset() > startOffset) && (!region->GetReset()) )
 		{
 			region->Invalidate();
 			region->Refresh();
