@@ -248,6 +248,15 @@ int CInput::Read(BYTE *data, int size)
 {
 	assert(size >= 0);
 
+	if( GetBypass() )
+	{
+		m_offset += size;
+		IFloopySoundInput *src = GetSource();
+		if( src )
+			src->Read( data, size );
+		return size;
+	}
+
 	// Passed the end
 	if((m_nEndOffset > 0) && (m_offset >= m_nEndOffset))
 		return EOF;
@@ -343,7 +352,16 @@ void CInput::MoveTo(int samples)
 		}
 
 		if(!bMoved && NULL != m_source)
-			m_source->MoveTo(samples);
+		{
+			if( GetBypass() )
+			{
+				IFloopySoundInput *src = GetSource();
+				if( src )
+					src->MoveTo( samples );
+			}
+			else
+				m_source->MoveTo( samples );
+		}
 	}
 }
 
@@ -357,7 +375,12 @@ int CInput::GetSize()
 
 	int size = 0;
 
-	if(m_plugin)
+	if( GetBypass() && m_plugin->IsFilter() )
+	{
+		IFloopySoundInput *src = this->GetSource();
+		size = src->GetSize();
+	}
+	else if(m_plugin)
 	{
 		size = m_plugin->GetSize();
 
@@ -757,12 +780,12 @@ BOOL CInput::_applyPreviousParams(int offset)
 	prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_MOVETO);
 	if( m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_MOVETO, &value) )
 	{
-		/*if(0.f == value)
+		if(0.f == value)
 			m_plugin->Reset();
-		else*/
+		else
 			m_plugin->MoveTo((int)value);
-			m_source->MoveTo( (offset - prevOffset) / m_nSamplesToBytes );
-			bMoved = TRUE;
+		m_plugin->MoveTo( (offset - prevOffset) / m_nSamplesToBytes );
+		bMoved = TRUE;
 	}
 
 	int count = GetParamCount();
