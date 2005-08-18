@@ -416,6 +416,9 @@ public:
 
 	void InvalidateRegions(CRegion *start);
 
+	wxColour GetBGColour();
+	wxColour GetForeColour();
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();
@@ -541,8 +544,8 @@ private:
 	void drawParametersFore(wxDC& dc, wxRect& rc);
 	//void ddump();
 	BOOL getReset(int sample);
-	wxColour getBGColour();
-	wxColour getForeColour();
+	wxColour getBGColour();// { return getTrack()->GetBGColour(); }
+	wxColour getForeColour();// { return getTrack()->GetForeColour(); }
 
 private:
 	BOOL			m_bEdit;

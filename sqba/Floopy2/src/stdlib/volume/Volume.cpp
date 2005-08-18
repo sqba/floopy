@@ -46,7 +46,7 @@ int CVolume::Read(BYTE *data, int size)
 
 		while(numsamples--)
 		{
-			*sample = ((float)*sample * percent);
+			*sample = (short int)((float)*sample * percent);
 			sample++;
 		}
 		return len;

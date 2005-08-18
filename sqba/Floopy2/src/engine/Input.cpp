@@ -116,7 +116,7 @@ BOOL CInput::Create(char *name)
 //				SOUNDFORMAT *fmt = m_plugin->GetFormat();
 //				if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
 //				{
-					//Enable( !_isTrack() );
+					//Enable( !isTrack() );
 					Enable( m_plugin->IsEnabled() ); // Default
 					/*if( _isSource() )
 					{
@@ -189,7 +189,7 @@ BOOL CInput::Open(char *filename)
 			tmp = filename;
 		SetDisplayName(tmp, strlen(tmp));
 
-		_recalcVariables();
+		recalcVariables();
 
 		return TRUE;
 	}
@@ -201,7 +201,7 @@ void CInput::Close()
 	m_plugin->Close();
 
 #ifdef _DEBUG_TIMER_
-	_debugPrint();
+	debugPrint();
 #endif // _DEBUG_TIMER_
 }
 
@@ -218,24 +218,14 @@ BOOL CInput::SetSource(IFloopySoundInput *src)
 		result = ((IFloopySoundFilter*)m_plugin)->SetSource(src);
 	
 		if(result)
-			_recalcVariables();
+			recalcVariables();
 	}
 
-	//if(m_callback && result) m_callback(this, m_offset/_getSamplesToBytes(), -333);
+	//if(m_callback && result) m_callback(this, m_offset/getSamplesToBytes(), -333);
 
 	return result;
 }
-/*
-SOUNDFORMAT *CInput::GetFormat()
-{
-	if(m_plugin && m_plugin->IsFilter())
-		return ((IFloopySoundFilter*)m_plugin)->GetFormat();
-	else if(m_plugin)
-		return ((IFloopySoundInput*)m_plugin)->GetFormat();
-	else
-		return IFloopySoundInput::GetFormat();
-}
-*/
+
 IFloopySoundInput *CInput::GetSource()
 {
 	if(m_plugin && m_plugin->IsFilter())
@@ -261,7 +251,7 @@ int CInput::Read(BYTE *data, int size)
 	if((m_nEndOffset > 0) && (m_offset >= m_nEndOffset))
 		return EOF;
 
-	if(_isEngine())
+	if(isEngine())
 	{
 		// Avoid wasting processor time
 		if((m_offset + size) <= m_nStartOffset)
@@ -279,16 +269,16 @@ int CInput::Read(BYTE *data, int size)
 	BOOL bEOF = FALSE;
 
 #ifdef _DEBUG_TIMER_
-	clock_t start = _debugStartMeasuring();
+	clock_t start = debugStartMeasuring();
 #endif // _DEBUG_TIMER_
 
 	// Apply all due parameters
-	_applyParamsAt( m_offset );
+	applyParamsAt( m_offset );
 
 	while(((offset=m_timeline.GetNextOffset(offset)) < endpos) && (offset>0) && !bEOF)
 	{
 		// Fill small chunks between parameter changes
-		src = _getSource();
+		src = getSource();
 		len = src ? src->Read(data, offset - m_offset) : offset-m_offset;
 
 		if(EOF != len)
@@ -300,13 +290,13 @@ int CInput::Read(BYTE *data, int size)
 		else
 			bEOF = TRUE;
 	
-		_applyParamsAt( offset );
+		applyParamsAt( offset );
 	}
 
 	if( !bEOF )
 	{
 		// Fill the rest of the data
-		src = _getSource();
+		src = getSource();
 		if(src && (size>readBytes))
 		{
 			len = src->Read(data, size - readBytes);
@@ -316,7 +306,7 @@ int CInput::Read(BYTE *data, int size)
 	}
 
 #ifdef _DEBUG_TIMER_
-	_debugStopMeasuring(start, size);
+	debugStopMeasuring(start, size);
 #endif // _DEBUG_TIMER_
 
 
@@ -339,11 +329,11 @@ void CInput::MoveTo(int samples)
 	{
 		m_offset = samples * m_nSamplesToBytes;
 
-		//_applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
+		//applyParamsAt( m_timeline.GetPrevOffset(m_offset) );
 		//_applyParamsUntil( m_offset );
-		BOOL bMoved = _applyPreviousParams( m_offset );
+		BOOL bMoved = applyPreviousParams( m_offset );
 
-		if( _isEngine() && m_nStartOffset > 0)
+		if( isEngine() && m_nStartOffset > 0)
 		{
 			if( m_offset >= m_nStartOffset )
 				samples -= (m_nStartOffset / m_nSamplesToBytes);
@@ -360,7 +350,7 @@ void CInput::MoveTo(int samples)
 					src->MoveTo( samples );
 			}
 			else
-				m_source->MoveTo( samples );
+				m_plugin->MoveTo( samples );
 		}
 	}
 }
@@ -371,7 +361,7 @@ void CInput::MoveTo(int samples)
  */
 int CInput::GetSize()
 {
-	_recalcVariables();
+	recalcVariables();
 
 	int size = 0;
 
@@ -437,7 +427,7 @@ void CInput::Enable(BOOL bEnable)
 
 	IFloopy::Enable(bEnable);
 
-	_recalcVariables();
+	recalcVariables();
 }
 
 /**
@@ -469,7 +459,7 @@ void CInput::SetParamVal(int index, float value)
 
 	m_plugin->SetParamVal(index, value);
 
-	_recalcVariables();
+	recalcVariables();
 }
 
 BOOL CInput::GetParamIndex(char *name, int *index)
@@ -515,14 +505,14 @@ void CInput::SetParamAt(int offset, int index, float value)
 	m_timeline.SetParamVal(offset * m_nSamplesToBytes, index, value);
 	if(offset == 0)
 		m_plugin->SetParamVal(index, value);
-	_recalcVariables();
+	recalcVariables();
 }
 
 BOOL CInput::ResetParamAt(int offset, int index)
 {
 	if(m_timeline.RemoveParam(offset * m_nSamplesToBytes, index))
 	{
-		_recalcVariables();
+		recalcVariables();
 		return TRUE;
 	}
 	return FALSE;
@@ -532,7 +522,7 @@ BOOL CInput::MoveParam(int offset, int index, int newoffset)
 {
 	if(m_timeline.MoveParam(offset * m_nSamplesToBytes, index, newoffset * m_nSamplesToBytes))
 	{
-		_recalcVariables();
+		recalcVariables();
 		return TRUE;
 	}
 	return FALSE;
@@ -547,7 +537,7 @@ void CInput::EnableAt(int offset, BOOL bEnable)
 {
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
 	m_timeline.SetParamVal(offset * m_nSamplesToBytes, TIMELINE_PARAM_ENABLE, value);
-	_recalcVariables();
+	recalcVariables();
 }
 
 
@@ -628,19 +618,19 @@ void CInput::MoveAllParamsBetween(int start, int end, int offset)
 /**
  * Calculates optimization variables.
  */
-void CInput::_recalcVariables()
+void CInput::recalcVariables()
 {
-	_recalcSourceVariables();
+	recalcSourceVariables();
 
-	m_nSamplesToBytes	= _getSamplesToBytes();	// 1
-	m_nStartOffset		= _getStartOffset();	// 2
-	m_nEndOffset		= _getEndOffset();		// 3
+	m_nSamplesToBytes	= getSamplesToBytes();	// 1
+	m_nStartOffset		= getStartOffset();	// 2
+	m_nEndOffset		= getEndOffset();		// 3
 }
 
 /**
  * A little trick to update all source variables.
  */
-void CInput::_recalcSourceVariables()
+void CInput::recalcSourceVariables()
 {
 	IFloopySoundInput *src = this->GetSource();
 	if(src)
@@ -661,7 +651,7 @@ void CInput::_recalcSourceVariables()
 /**
  * Used to convert number of samples to number of bytes and vice versa.
  */
-int CInput::_getSamplesToBytes()
+int CInput::getSamplesToBytes()
 {
 	SOUNDFORMAT *fmt = GetFormat();
 	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
@@ -674,7 +664,7 @@ int CInput::_getSamplesToBytes()
  * Applies all parameters at the given offset.
  * @param offset number of bytes.
  */
-void CInput::_applyParamsAt(int offset)
+void CInput::applyParamsAt(int offset)
 {
 	int sample = -1;
 	if(m_nSamplesToBytes)
@@ -751,7 +741,7 @@ void CInput::_applyParamsAt(int offset)
  * @return TRUE if MoveTo has been called.
  * Not the nicest way to tell MoveTo() not to move the source.
  */
-BOOL CInput::_applyPreviousParams(int offset)
+BOOL CInput::applyPreviousParams(int offset)
 {
 	float value = 0.f;
 	BOOL bMoved = FALSE;
@@ -806,7 +796,7 @@ BOOL CInput::_applyPreviousParams(int offset)
  * Calculates the distance in bytes at which the track starts playing.
  * @return number of bytes.
  */
-int CInput::_getStartOffset()
+int CInput::getStartOffset()
 {
 	return m_timeline.GetStartOffset();
 	/*int offset = 0;
@@ -831,7 +821,7 @@ int CInput::_getStartOffset()
  * Calculates the distance in bytes at which the track ends playing.
  * @return number of bytes.
  */
-int CInput::_getEndOffset()
+int CInput::getEndOffset()
 {
 	int offset = 0;
 	int tmp = 0;
@@ -857,7 +847,7 @@ int CInput::_getEndOffset()
 	return offset;
 }
 
-IFloopySoundInput *CInput::_getSource()
+IFloopySoundInput *CInput::getSource()
 {
 	if( m_plugin->IsFilter() && ((IFloopySoundFilter*)m_plugin)->GetBypass() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
@@ -892,7 +882,7 @@ void CInput::_applyParamsUntil(int endoffset)
 {
 	int offset = 0;
 	do {
-		_applyParamsAt( offset );
+		applyParamsAt( offset );
 		offset = m_timeline.GetNextOffset(offset);
 	} while((offset > 0) && (offset < endoffset));
 }
@@ -911,7 +901,7 @@ void CInput::_applyParamsUntil(int endoffset)
 
 #ifdef _DEBUG_TIMER_
 
-clock_t CInput::_debugStartMeasuring()
+clock_t CInput::debugStartMeasuring()
 {
 	clock_t start = 0;
 	if(m_bDebugTimer)
@@ -919,7 +909,7 @@ clock_t CInput::_debugStartMeasuring()
 	return start;
 }
 
-void CInput::_debugStopMeasuring(clock_t start, int size)
+void CInput::debugStopMeasuring(clock_t start, int size)
 {
 	if(m_bDebugTimer)
 	{
@@ -929,7 +919,7 @@ void CInput::_debugStopMeasuring(clock_t start, int size)
 	}
 }
 
-void CInput::_debugFormatBytes(int bytes, char *str)
+void CInput::debugFormatBytes(int bytes, char *str)
 {
 	if(bytes < 1024)
 		sprintf(str, "%d b", bytes);
@@ -939,7 +929,7 @@ void CInput::_debugFormatBytes(int bytes, char *str)
 		sprintf(str, "%.2f Kb", (float)bytes / 1024.f);
 }
 
-void CInput::_debugPrint()
+void CInput::debugPrint()
 {
 	if(m_bDebugTimer)
 	{
@@ -956,7 +946,7 @@ void CInput::_debugPrint()
 				avgFrameTimeMs, avgFrameTimeSec);
 
 			char tmp[100] = {0};
-			_debugFormatBytes((int)avgFrameBytes, tmp);
+			debugFormatBytes((int)avgFrameBytes, tmp);
 
 			printf(" Average frame size: %d samples (%s)\n",
 				(int)avgFrameSamples, tmp);
@@ -964,7 +954,7 @@ void CInput::_debugPrint()
 			float readTimeBytes   = avgFrameBytes / avgFrameTimeSec;
 			float readTimeSamples = avgFrameSamples / avgFrameTimeSec;
 			memset(tmp, 0, sizeof(tmp));
-			_debugFormatBytes((int)readTimeBytes, tmp);
+			debugFormatBytes((int)readTimeBytes, tmp);
 			printf(" Average read time:  %.2f samples/sec (%s/sec)\n",
 				readTimeSamples, tmp);
 		}
@@ -976,3 +966,16 @@ void CInput::_debugPrint()
 
 
 
+
+
+/*
+SOUNDFORMAT *CInput::GetFormat()
+{
+	if(m_plugin && m_plugin->IsFilter())
+		return ((IFloopySoundFilter*)m_plugin)->GetFormat();
+	else if(m_plugin)
+		return ((IFloopySoundInput*)m_plugin)->GetFormat();
+	else
+		return IFloopySoundInput::GetFormat();
+}
+*/

@@ -72,7 +72,7 @@ int CWavFileIn::Read(BYTE *data, int size)
 	if(NULL != m_pFile)
 	{
 		long pos = ftell(m_pFile);
-		if(pos+size > m_data.dataSIZE+m_nHeaderLength)
+		if(pos+(long)size > (long)(m_data.dataSIZE+m_nHeaderLength))
 		{
 			size = m_data.dataSIZE + m_nHeaderLength - pos;
 		}

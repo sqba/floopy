@@ -98,7 +98,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	dc.SetPen( pen );
 
 	//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
-	wxBrush brush(m_colour, wxSOLID);
+	wxBrush brush(GetBGColour(), wxSOLID);
 	dc.SetBrush(brush);
 
 	// Draw background
@@ -109,6 +109,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	dc.DrawRoundedRectangle(left, top, width, height, 4);
 
 
+	dc.SetTextForeground( GetForeColour() );
 	wxFont font = dc.GetFont();
 	font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
 	font.SetPointSize(m_height / 4);
@@ -896,4 +897,28 @@ void CTrack::InvalidateRegions(CRegion *start)
 		}
 		node = node->GetNext();
 	}*/
+}
+
+wxColour CTrack::GetBGColour()
+{
+	/*wxColor color = GetColour();
+	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	return ( IsSelected() ? color : GetColour() );*/
+
+	wxColor color = GetColour();
+	if( IsSelected() )
+		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	return color;
+}
+
+wxColour CTrack::GetForeColour()
+{
+	/*wxColor color = GetColour();
+	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	return ( IsSelected() ? GetColour() : color );*/
+
+	wxColor color = GetColour();
+	if( !IsSelected() )
+		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	return color;
 }

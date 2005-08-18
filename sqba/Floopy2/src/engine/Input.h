@@ -95,7 +95,7 @@ public:
 		memcpy(m_szDisplayName, name, (len<50?len:50));
 	}
 
-	char *GetPath() { return _isEngine() ? m_source->GetPath() : m_szObjPath; }
+	char *GetPath() { return isEngine() ? m_source->GetPath() : m_szObjPath; }
 
 	enumClassType GetType() { return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
 
@@ -118,16 +118,16 @@ public:
 	void SetBypass(BOOL bBypass);
 
 private:
-	inline BOOL _isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : FALSE); }
-//	inline BOOL _isTrack() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_TRACK : FALSE); }
-	void _applyParamsAt(int offset);
-	BOOL _applyPreviousParams(int offset);
-	int _getSamplesToBytes();
-	int _getStartOffset();
-	int _getEndOffset();
-	void _recalcVariables();
-	void _recalcSourceVariables();
-	inline IFloopySoundInput *_getSource();
+	inline BOOL isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : FALSE); }
+//	inline BOOL isTrack() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_TRACK : FALSE); }
+	void applyParamsAt(int offset);
+	BOOL applyPreviousParams(int offset);
+	int getSamplesToBytes();
+	int getStartOffset();
+	int getEndOffset();
+	void recalcVariables();
+	void recalcSourceVariables();
+	inline IFloopySoundInput *getSource();
 
 	//void _applyParamsUntil(int endoffset);
 //	SOUNDFORMAT *GetFormat();
@@ -155,10 +155,10 @@ private:
 	int m_nStartOffset, m_nEndOffset, m_nSamplesToBytes;
 
 #ifdef _DEBUG_TIMER_
-	clock_t	_debugStartMeasuring();
-	void	_debugStopMeasuring(clock_t start, int size);
-	void	_debugFormatBytes(int bytes, char *str);
-	void	_debugPrint();
+	clock_t	debugStartMeasuring();
+	void	debugStopMeasuring(clock_t start, int size);
+	void	debugFormatBytes(int bytes, char *str);
+	void	debugPrint();
 	BOOL	m_bDebugTimer;
 	clock_t	m_time;
 	int		m_nFrameCount;

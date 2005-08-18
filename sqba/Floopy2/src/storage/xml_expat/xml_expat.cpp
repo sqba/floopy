@@ -441,7 +441,7 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 				fprintf(fp, ", "); // Separator
 			else
 				bStart = false;
-			fprintf(fp, "%.3f:%s", seconds, enabled);
+			fprintf(fp, "%.4f:%s", seconds, enabled);
 		}
 
 		if(input->GetParamVal(TIMELINE_PARAM_MOVETO, &paramVal))
@@ -451,9 +451,9 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 			else
 				bStart = false;
 			if(paramVal==0.f)
-				fprintf(fp, "%.3f:RESET", seconds);
+				fprintf(fp, "%.4f:RESET", seconds);
 			else
-				fprintf(fp, "%.3f:%s", seconds, paramVal);
+				fprintf(fp, "%.4f:%s", seconds, paramVal);
 		}
 
 		if(input->GetParamCount() > 0)
@@ -468,7 +468,7 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 						fprintf(fp, ", "); // Separator
 					else
 						bStart = false;
-					fprintf(fp, "%.3f:%d:%.3f", seconds, i, paramVal);
+					fprintf(fp, "%.4f:%d:%.4f", seconds, i, paramVal);
 				}
 			}
 		}

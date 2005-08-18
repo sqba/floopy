@@ -157,19 +157,43 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 
 	drawParametersFore(dc, rce);
 }
-
+/*
 wxColour CRegion::getBGColour()
 {
 	wxColor color = GetColour();
-	color.Set(color.Red()/2, color.Green()/2, color.Blue()/2);
+	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
 	return ( IsSelected() ? color : GetColour() );
 }
 
 wxColour CRegion::getForeColour()
 {
 	wxColor color = GetColour();
-	color.Set(color.Red()/2, color.Green()/2, color.Blue()/2);
+	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
 	return ( IsSelected() ? GetColour() : color );
+}
+*/
+wxColour CRegion::getBGColour()
+{
+	/*wxColor color = GetColour();
+	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	return ( IsSelected() ? color : GetColour() );*/
+
+	wxColor color = getTrack()->GetColour();
+	if( IsSelected() )
+		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	return color;
+}
+
+wxColour CRegion::getForeColour()
+{
+	/*wxColor color = GetColour();
+	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	return ( IsSelected() ? GetColour() : color );*/
+
+	wxColor color = getTrack()->GetColour();
+	if( !IsSelected() )
+		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	return color;
 }
 
 /////////////////////////////////////////////////////////////////////////////
