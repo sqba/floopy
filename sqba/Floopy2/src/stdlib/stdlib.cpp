@@ -81,7 +81,7 @@ __declspec( dllexport ) int GetPluginCount()
 	return 13;
 }
 
-__declspec( dllexport ) void GetPluginInfo(int index, char *name, enumClassType *type)
+__declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
 {
 	switch(index)
 	{

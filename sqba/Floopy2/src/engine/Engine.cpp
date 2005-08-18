@@ -166,6 +166,8 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 	SOUNDFORMAT *fmt1 = GetFormat();
 
 	IFloopySoundInput *input = CreateInput(name);
+	if(NULL == input)
+		return NULL;
 	SOUNDFORMAT *pfmt2 = input->GetFormat();
 
 	//if(fmt1.format != pfmt2->format)
