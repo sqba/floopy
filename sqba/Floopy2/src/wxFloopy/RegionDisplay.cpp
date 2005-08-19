@@ -167,6 +167,13 @@ void CRegionDisplay::loadPeaks()
 	}
 */
 
+
+	
+	int srcLen = getSourceLength(); // If looped
+
+
+
+
 	short int min[2]={0}, max[2]={0};
 	int peakcount=0;
 	counter = interval;
@@ -183,7 +190,7 @@ void CRegionDisplay::loadPeaks()
 				min[ch] = sample;
 		}
 
-		if(counter >= interval)
+		if(counter >= interval || (srcLen && pos%srcLen==0))
 		{
 			for(ch=0; ch<channels; ch++)
 			{
@@ -292,6 +299,18 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 
 	wxPoint ptPrev(start, mid);
 
+
+	CTrack *pTrack = (CTrack*)m_pRegion->GetParent();
+	CTracks *pTracks = (CTracks*)pTrack->GetParent();
+	int samplesPerPixel = pTracks->GetSamplesPerPixel();
+	int origLen = getSourceLength() / samplesPerPixel; // Not looped
+	int top = rc.GetTop();
+	int bottom = rc.GetBottom();
+	wxPen oldpen = dc.GetPen();
+	wxPen pen( *wxCYAN, 2, wxSOLID );
+	//wxBrush brush(pTrack->GetBGColour(), wxSOLID);
+
+
 //	assert(count == width/channels);
 
 	int step = channels;//count > width ? count / width : 1;
@@ -302,6 +321,13 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 		y = (int)((float)mid - m_peaks.Item(i)/yscale);
 		dc.DrawLine(left+ptPrev.x, ptPrev.y, left+x, y);
 
+		if(origLen && x%origLen==0 && left+x>1)
+		{
+			dc.SetPen(pen);
+			dc.DrawLine(left+x, top, left+x, bottom);
+			dc.SetPen(oldpen);
+		}
+
 		ptPrev.x = x;
 		ptPrev.y = y,
 		
@@ -310,6 +336,23 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 
 	// Check if the input is looped. In that case put
 	// some marker at the end of each loop.
+}
+
+int CRegionDisplay::getSourceLength()
+{
+	int len = 0;
+	CTrack *pTrack = (CTrack*)m_pRegion->GetParent();
+	if( pTrack->IsLooped() )
+	{
+		IFloopySoundFilter *loop = (IFloopySoundFilter*)pTrack->GetComponent("loop");
+		if(loop)
+		{
+			IFloopySoundInput *src = loop->GetSource();
+			if(src)
+				len = src->GetSize();
+		}
+	}
+	return len;
 }
 
 IFloopySoundInput *CRegionDisplay::getInput(CTrack *track)

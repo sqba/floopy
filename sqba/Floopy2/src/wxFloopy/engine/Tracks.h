@@ -687,6 +687,7 @@ private:
 	void drawWaveform(wxDC& dc, wxRect& rc, int start);
 	IFloopySoundInput *getInput(CTrack *track);
 	void loadPeaks();
+	int getSourceLength();
 
 private:
 	float m_fdB;
