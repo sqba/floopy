@@ -74,9 +74,12 @@ void *CPlayThread::Entry()
 	}
 
 	// Wait for output to finish!!!
-	do {
-		wxThread::Sleep(1000);
-	} while(pos < output->GetWrittenSamples()/fmt->channels);
+	if( !TestDestroy() )
+	{
+		do {
+			wxThread::Sleep(1000);
+		} while(pos < output->GetWrittenSamples()/fmt->channels);
+	}
 
 	m_bPlaying = FALSE;
 
