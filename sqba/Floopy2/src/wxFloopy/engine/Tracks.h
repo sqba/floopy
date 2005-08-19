@@ -45,13 +45,29 @@ class CPlayThread;
 //class CDragObjects;
 class CRegionDisplay;
 
+/*class CPeak
+{
+	public:
+		CPeak(short int peak, int pos) { this->peak = peak; this->pos = pos; }
+	short int peak;
+	int pos;
+};*/
+
+struct Peak
+{
+	short int value;
+	int pos;
+};
+
 WX_DECLARE_LIST(CTrack, TracksList);
 WX_DECLARE_LIST(CRegion, RegionList);
 WX_DECLARE_LIST(CParameter, ParameterList);
 //WX_DECLARE_LIST(IFloopyObj, GraphicObjList);
 //WX_DEFINE_ARRAY(int, OffsetArrays);
 //WX_DECLARE_LIST(wxPoint, PointList);
-WX_DEFINE_ARRAY_PTR(short int, PeaksArray);
+//WX_DEFINE_ARRAY_PTR(short int, PeaksArray);
+//WX_DEFINE_ARRAY_PTR(CPeak*, PeaksArray2);
+WX_DECLARE_OBJARRAY(Peak, PeaksArray);
 
 
 
@@ -693,12 +709,13 @@ private:
 private:
 	float m_fdB;
 //	PointList m_points;
-	PeaksArray m_peaks;
+//	PeaksArray m_peaks;
 	IFloopySoundInput *m_pInput;
 	CRegion *m_pRegion;
 //	wxMutex *m_pMutex;
 	BOOL m_bLoaded;
 //	CLoadThread *m_pLoadThread;
+	PeaksArray m_peaks;
 };
 
 

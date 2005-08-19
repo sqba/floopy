@@ -9,6 +9,9 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+#include <wx/arrimpl.cpp>
+WX_DEFINE_OBJARRAY(PeaksArray);
+
 CRegionDisplay::CRegionDisplay(CRegion *region)
 {
 	m_pRegion = region;
@@ -199,8 +202,20 @@ void CRegionDisplay::loadPeaks()
 				else if(min[ch] == 0 && max[ch] != 0)
 					min[ch] = max[ch];
 
-				short int peak = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
+				short int value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
+				
+//				m_peaks.Add( value );
+
+				Peak peak;
+				peak.value = value;
+				peak.pos = pos/channels;
 				m_peaks.Add( peak );
+
+				/*CPeak *p = new CPeak(peak, pos/channels);
+				//p->peak = peak;
+				//p->pos = pos/channels;
+				m_peaks2.Add( p );*/
+
 				max[ch] = min[ch] = 0;
 			}
 			counter = 0;
@@ -300,16 +315,25 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	wxPoint ptPrev(start, mid);
 
 
-	CTrack *pTrack = (CTrack*)m_pRegion->GetParent();
-	CTracks *pTracks = (CTracks*)pTrack->GetParent();
-	int samplesPerPixel = pTracks->GetSamplesPerPixel();
-	int origLen = getSourceLength() / samplesPerPixel; // Not looped
+	//CTrack *pTrack = (CTrack*)m_pRegion->GetParent();
+	//CTracks *pTracks = (CTracks*)pTrack->GetParent();
+	//int samplesPerPixel = pTracks->GetSamplesPerPixel();
+	int origLen = getSourceLength();// / samplesPerPixel; // Not looped
 	int top = rc.GetTop();
 	int bottom = rc.GetBottom();
 	wxPen oldpen = dc.GetPen();
 	//wxPen pen( *wxCYAN, 2, wxSOLID );
 	wxPen pen( m_pRegion->GetForeColour(), 2, wxSOLID );
 	//wxBrush brush(pTrack->GetBGColour(), wxSOLID);
+
+//	if(getSourceLength() % samplesPerPixel != 0)
+//		origLen = 0; // Don't draw
+
+
+
+	// Napraviti strukturu Peak koja ima vrednosti peak i pos.
+	// Proveravati pos%origLen
+
 
 
 //	assert(count == width/channels);
@@ -319,10 +343,11 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	int y=mid;
 	for(int x=0; x<width&&i<count; x++)
 	{
-		y = (int)((float)mid - m_peaks.Item(i)/yscale);
+		Peak peak = m_peaks.Item(i);
+		y = (int)((float)mid - peak.value/yscale);
 		dc.DrawLine(left+ptPrev.x, ptPrev.y, left+x, y);
 
-		if(origLen && x%origLen==0 && x>1)
+		if((origLen>0) && (x>1) && ((peak.pos%origLen)==0))
 		{
 			dc.SetPen(pen);
 			dc.DrawLine(left+x, top, left+x, bottom);
