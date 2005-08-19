@@ -307,7 +307,8 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	int top = rc.GetTop();
 	int bottom = rc.GetBottom();
 	wxPen oldpen = dc.GetPen();
-	wxPen pen( *wxCYAN, 2, wxSOLID );
+	//wxPen pen( *wxCYAN, 2, wxSOLID );
+	wxPen pen( m_pRegion->GetForeColour(), 2, wxSOLID );
 	//wxBrush brush(pTrack->GetBGColour(), wxSOLID);
 
 
@@ -321,7 +322,7 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 		y = (int)((float)mid - m_peaks.Item(i)/yscale);
 		dc.DrawLine(left+ptPrev.x, ptPrev.y, left+x, y);
 
-		if(origLen && x%origLen==0 && left+x>1)
+		if(origLen && x%origLen==0 && x>1)
 		{
 			dc.SetPen(pen);
 			dc.DrawLine(left+x, top, left+x, bottom);

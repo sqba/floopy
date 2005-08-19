@@ -532,6 +532,9 @@ public:
 	BOOL GetReset();
 	void SetReset(BOOL bReset);
 
+	wxColour GetBGColour();// { return getTrack()->GetBGColour(); }
+	wxColour GetForeColour();// { return getTrack()->GetForeColour(); }
+
 private:
 	static void remove(IFloopyObj *event);
 	void createMenu();
@@ -545,8 +548,6 @@ private:
 	void drawParametersFore(wxDC& dc, wxRect& rc);
 	//void ddump();
 	BOOL getReset(int sample);
-	wxColour getBGColour();// { return getTrack()->GetBGColour(); }
-	wxColour getForeColour();// { return getTrack()->GetForeColour(); }
 
 private:
 	BOOL			m_bEdit;
