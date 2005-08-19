@@ -290,7 +290,7 @@ class CTrack : public IFloopyObj
 			wxBrush oldBrush = dc.GetBrush();
 			wxPen oldpen = dc.GetPen();
 
-			wxPen pen( *wxLIGHT_GREY );
+			wxPen pen( getTrack()->IsLooped() ? *wxBLACK : *wxLIGHT_GREY );
 			pen.SetWidth(2);
 			dc.SetPen( pen );
 
