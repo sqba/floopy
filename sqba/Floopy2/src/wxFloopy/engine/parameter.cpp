@@ -10,12 +10,14 @@ IMPLEMENT_DYNAMIC_CLASS(CParameter, IFloopyObj)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CParameter::CParameter(CRegion *region, int index)
+CParameter::CParameter(CRegion *region, IFloopySoundInput *obj, int index)
  : IFloopyObj(region)
 {
 	m_index  = index;
 	m_colour = *wxCYAN;
 	m_pPoint = new CPoint(this);
+
+	m_pObj = obj;
 
 	
 	
@@ -60,7 +62,7 @@ void CParameter::DrawBG(wxDC& dc, wxRect& rc)
 */
 void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 {
-	IFloopySoundInput *input = getTrack()->GetInput();
+	IFloopySoundInput *input = m_pObj;
 	int max = input->GetParamMax(m_index);
 
 	if(max > 0)
@@ -82,14 +84,25 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 		//dc.SetBrush( wxBrush(m_colour) );
 		dc.SetPen( wxPen(m_colour) );
 
+		BOOL bDrawCircle = TRUE;
+
+		if(!input->GetParamAt(offset, m_index, &value))
+		{
+			offset = input->GetPrevOffset(offset);
+			bDrawCircle = FALSE;
+		}
+
 		do {
 			if(input->GetParamAt(offset, m_index, &value))
 			{
-				int x = offset / hres;
+				int x = bDrawCircle ? offset / hres : getRegion()->GetStartOffset() / hres;
 				int y = (int)((float)bottom - (value * scale));
 				
-				//dc.DrawRectangle(prevX-2, y-2, 5, 5);
-				dc.DrawCircle(prevX+1, y, 3);
+				if( bDrawCircle )
+					dc.DrawCircle(prevX+1, y, 3);
+					//dc.DrawRectangle(prevX-2, y-2, 5, 5);
+
+				bDrawCircle = TRUE;
 				
 				if(prevX > left)
 					dc.DrawLine(prevX, prevY, prevX, y);

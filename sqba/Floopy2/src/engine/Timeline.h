@@ -50,9 +50,9 @@ private:
 	tParam *getParam(int offset, int index);
 	tParam *getPrevParam(int offset);
 	tParam *insertAfter(CTimeline::tParam *prev, CTimeline::tParam *param);
-	BOOL removeParam(CTimeline::tParam *param);
+	CTimeline::tParam *removeParam(CTimeline::tParam *param);
 	tParam *newParam(int offset, int index, float value);
-	BOOL moveParam(tParam *param, int newoffset);
+	BOOL moveParam(CTimeline::tParam *param, int newoffset);
 
 	BOOL _checkSortOrder();
 

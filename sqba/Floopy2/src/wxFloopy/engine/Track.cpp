@@ -112,7 +112,8 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	dc.SetTextForeground( GetForeColour() );
 	wxFont font = dc.GetFont();
 	font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
-	font.SetPointSize(m_height / 4);
+	//font.SetPointSize(m_height / 4);
+	font.SetPointSize( 10 );
 	dc.SetFont(font);
 	//wxFont font(12, wxDEFAULT, wxITALIC, (IsSelected() ? wxBOLD : wxNORMAL));
 	//dc.SetFont(font);
@@ -769,7 +770,7 @@ void CTrack::drawCacheSign(wxDC& dc, wxRect& rc)
 
 BOOL CTrack::IsLooped()
 {
-	IFloopySoundFilter *loop = (IFloopySoundFilter*)getComponent("loop");
+	IFloopySoundFilter *loop = (IFloopySoundFilter*)GetComponent("loop");
 	if(loop)
 		return !loop->GetBypass();
 	return FALSE;
@@ -777,7 +778,7 @@ BOOL CTrack::IsLooped()
 
 void CTrack::SetLooped(BOOL bLooped)
 {
-	IFloopySoundFilter *loop = (IFloopySoundFilter*)getComponent("loop");
+	IFloopySoundFilter *loop = (IFloopySoundFilter*)GetComponent("loop");
 	if(loop)
 	{
 		//loop->ClearAllParams();
@@ -837,11 +838,19 @@ void CTrack::SetReset(BOOL bReset)
 	}
 }
 
-IFloopySoundInput *CTrack::getComponent(char *name)
+IFloopySoundInput *CTrack::GetComponent(char *name)
 {
 	IFloopySoundInput *src = m_pInput;
 	while(src)
 	{
+		char *tmp = strrchr(src->GetName(), '.');
+		if(NULL == tmp)
+			tmp = src->GetName();
+		else
+			tmp++;
+		if(0==strcmpi(tmp, name))
+			return src;
+
 		int type = src->GetType();
 		switch(type)
 		{
@@ -849,13 +858,6 @@ IFloopySoundInput *CTrack::getComponent(char *name)
 		case TYPE_FLOOPY_SOUND_MIXER:
 		case TYPE_FLOOPY_SOUND_TRACK:
 		{
-			char *tmp = strrchr(src->GetName(), '.');
-			if(NULL == tmp)
-				tmp = src->GetName();
-			else
-				tmp++;
-			if(0==strcmpi(tmp, name))
-				return src;
 			src = ((IFloopySoundFilter*)src)->GetSource();
 			break;
 		}

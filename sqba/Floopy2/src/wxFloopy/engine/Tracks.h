@@ -419,12 +419,13 @@ public:
 	wxColour GetBGColour();
 	wxColour GetForeColour();
 
+	IFloopySoundInput *GetComponent(char *name);
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();
 	void drawLoopSign(wxDC& dc, wxRect& rc);
 	void drawCacheSign(wxDC& dc, wxRect& rc);
-	IFloopySoundInput *getComponent(char *name);
 
 private:
 	int			m_nLevel;
@@ -578,7 +579,7 @@ public:
 
 public:
 	CParameter() {}
-	CParameter(CRegion *region, int index);
+	CParameter(CRegion *region, IFloopySoundInput *obj, int index);
 	virtual ~CParameter();
 
 //	IFloopyObj *GetSelectedObj();
@@ -602,6 +603,7 @@ private:
 	BOOL	m_bEdit;
 	int		m_iSamplePos, m_iPrevSamplePos;
 	CPoint	*m_pPoint;
+	IFloopySoundInput *m_pObj;
 //	OffsetArrays m_Offsets;
 };
 

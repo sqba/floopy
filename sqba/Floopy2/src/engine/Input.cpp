@@ -350,7 +350,12 @@ void CInput::MoveTo(int samples)
 					src->MoveTo( samples );
 			}
 			else
+			{
+				/*IFloopySoundInput *src = GetSource();
+				if( src )
+					src->MoveTo( samples );*/
 				m_plugin->MoveTo( samples );
+			}
 		}
 	}
 }
@@ -396,8 +401,12 @@ void CInput::Reset()
 {
 	m_offset = 0;
 
-	if(NULL != m_source)
-		m_source->Reset();
+	if(NULL != m_plugin)
+		m_plugin->Reset();
+
+	/*IFloopySoundInput *src = this->GetSource();
+	if(NULL != src)
+		src->Reset();*/
 }
 
 int CInput::GetNextOffset(int offset)
@@ -711,9 +720,9 @@ void CInput::applyParamsAt(int offset)
 */
 	if( m_timeline.GetParamVal(offset, TIMELINE_PARAM_MOVETO, &value) )
 	{
-		if(0.f == value)
+		/*if(0.f == value)
 			m_plugin->Reset();
-		else
+		else*/
 			m_plugin->MoveTo((int)value);
 
 		if(m_callback && sample >= 0)
@@ -770,10 +779,25 @@ BOOL CInput::applyPreviousParams(int offset)
 	prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_MOVETO);
 	if( m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_MOVETO, &value) )
 	{
-		if(0.f == value)
-			m_plugin->Reset();
-		else
-			m_plugin->MoveTo((int)value);
+		//if(0.f == value)
+		//{
+			/*IFloopySoundInput *src = GetSource();
+			if(src)
+				src->Reset();*/
+		//	if(m_plugin)
+		//		m_plugin->Reset();
+		//}
+		//else
+		//{
+			/*IFloopySoundInput *src = GetSource();
+			if(src)
+				src->MoveTo((int)value);*/
+			if(m_plugin)
+				m_plugin->MoveTo((int)value);
+		//}
+		/*IFloopySoundInput *src = GetSource();
+		if(src)
+			src->MoveTo( (offset - prevOffset) / m_nSamplesToBytes );*/
 		m_plugin->MoveTo( (offset - prevOffset) / m_nSamplesToBytes );
 		bMoved = TRUE;
 	}

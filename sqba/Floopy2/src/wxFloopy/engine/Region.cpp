@@ -29,7 +29,8 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 
 	wxLog::AddTraceMask(_T("CRegion"));
 
-	loadParameters( getTrack()->GetInput() );
+	//loadParameters( getTrack()->GetInput() );
+//	loadParameters( getTrack()->GetComponent("volume") );
 
 //	m_bReset = FALSE;
 
@@ -155,7 +156,7 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	dc.SetPen(oldpen);
 	///////////////////////////////////////////////////////
 
-	drawParametersFore(dc, rce);
+//	drawParametersFore(dc, rce);
 }
 /*
 wxColour CRegion::getBGColour()
@@ -433,6 +434,12 @@ void CRegion::Update()
 		{
 			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, m_iStartSample) )
 				getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, 0.f);
+
+			assert( getReset( m_iStartSample ) );
+		}
+		else
+		{
+			BOOL b=TRUE;
 		}
 	}
 
@@ -630,11 +637,14 @@ int CRegion::GetWidth()
 
 void CRegion::loadParameters(IFloopySoundInput *obj)
 {
+	if(NULL == obj)
+		return;
+
 	WX_CLEAR_LIST(ParameterList, m_Parameters);
 
 	for(int index=0; index<obj->GetParamCount(); index++)
 	{
-		m_Parameters.Append( new CParameter(this, index) );
+		m_Parameters.Append( new CParameter(this, obj, index) );
 	}
 }
 

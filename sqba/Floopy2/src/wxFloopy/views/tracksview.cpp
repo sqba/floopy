@@ -228,4 +228,7 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	CCaretView::OnMouseEvent(event);
+
+	if(event.LeftDown())
+		m_pTracks->SetCursorPosition(m_pTracks->GetCaretPos());
 }
