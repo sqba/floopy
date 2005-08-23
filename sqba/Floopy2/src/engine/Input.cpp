@@ -792,13 +792,16 @@ BOOL CInput::applyPreviousParams(int offset)
 			/*IFloopySoundInput *src = GetSource();
 			if(src)
 				src->MoveTo((int)value);*/
-			if(m_plugin)
-				m_plugin->MoveTo((int)value);
+			int newOffset =  (int)value;
+			//m_plugin->MoveTo( newOffset );
+			//if(newOffset==30000)
+			//{ int d=1; }
 		//}
 		/*IFloopySoundInput *src = GetSource();
 		if(src)
 			src->MoveTo( (offset - prevOffset) / m_nSamplesToBytes );*/
-		m_plugin->MoveTo( (offset - prevOffset) / m_nSamplesToBytes );
+			int diff = (offset - prevOffset) / m_nSamplesToBytes;
+		m_plugin->MoveTo( newOffset + diff );
 		bMoved = TRUE;
 	}
 

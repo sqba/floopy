@@ -539,10 +539,20 @@ void loadTimeline(tSessionInfo *si, IFloopySoundInput *input, char *data)
 			if(isalpha(*token))
 			{
 				if(token[0]=='o' || token[0]=='O')
+				{
 					input->EnableAt(offset, (0==strncmp(token, "ON", 2)));
+					i=0;
+				}
 				else if(0==strncmp(token, "RESET", 5))
+				{
 					input->SetParamAt(offset, -2, 0.f);
-				i=0;
+					i=0;
+				}
+				else if(0==strncmp(token, "MOVETO", 6))
+				{
+					param = TIMELINE_PARAM_MOVETO;
+					i++;
+				}
 			}
 			else
 			{
