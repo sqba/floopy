@@ -26,12 +26,12 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
-	int   GetParamCount()			{ return 1; }
-	void  SetParamVal(int index, float value) { m_volume = (int)value; }
+	int   GetParamCount()			{ return 3; }
+	void  SetParamVal(int index, float value);// { m_volume = (int)value; }
 	BOOL  GetParamVal(int index, float *value);
-	char *GetParamName(int index)	{ return (index == 0 ? "volume" : NULL); }
-	char *GetParamDesc(int index)	{ return (index == 0 ? "Volume" : NULL); }
-	char *GetParamUnit(int index)	{ return (index == 0 ? "%" : NULL); }
+	char *GetParamName(int index);//	{ return (index == 0 ? "volume" : NULL); }
+	char *GetParamDesc(int index);//	{ return (index == 0 ? "Volume" : NULL); }
+	char *GetParamUnit(int index);//	{ return (index == 0 ? "%" : NULL); }
 	float GetParamMin(int index)	{ return 0.f; }
 	float GetParamMax(int index)	{ return 1000.f; }
 	float GetParamStep(int index)	{ return 0.01f; }
@@ -39,7 +39,7 @@ public:
 	BOOL ReadSourceIfDisabled()	{ return FALSE; }
 
 private:
-	int m_volume; // In percents
+	int m_left, m_right; // In percents
 };
 
 #endif // !defined(AFX_VOLUME_H__05C04C12_471D_4FD8_BCD1_350030686D0F__INCLUDED_)
