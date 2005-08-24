@@ -44,19 +44,15 @@ int CVolume::Read(BYTE *data, int size)
 
 		short int *sample = (short int*)data;
 
-		// Save some time by not processing channels
-		// where volume is 100%
-		int start = (m_left  != 100 ? 0 : 1);
-		int end   = (m_right != 100 ? fmt->channels : start+1);
-
 		while(numsamples -= fmt->channels)
 		{
-			for(int ch=start; ch<end; ch++)
+			for(int ch=0; ch<fmt->channels; ch++)
 			{
 				float percent = (ch == 0 ? lpercent : rpercent);
-				*sample = (short int)((float)*sample * percent);
+				if(percent != 1.f)
+					*sample = (short int)((float)*sample * percent);
+				sample++;
 			}
-			sample += fmt->channels;
 		}
 		return len;
 	}
