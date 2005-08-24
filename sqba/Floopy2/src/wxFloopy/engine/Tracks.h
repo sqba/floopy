@@ -548,6 +548,8 @@ public:
 	BOOL GetReset();
 	void SetReset(BOOL bReset);
 
+	void SetStartOffset(int sample);
+
 	wxColour GetBGColour();// { return getTrack()->GetBGColour(); }
 	wxColour GetForeColour();// { return getTrack()->GetForeColour(); }
 

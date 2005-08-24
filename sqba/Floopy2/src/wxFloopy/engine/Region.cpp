@@ -561,6 +561,18 @@ void CRegion::OnKeyDown(wxKeyEvent& event)
 	case 'R':
 		SetReset( !GetReset() );
 		break;
+	case'o':
+	case'O':
+		{
+			int offset = getTrack()->GetTracks()->GetCaretPos() - m_iStartSample;
+			if(offset > 0)
+			{
+				SetStartOffset( offset );
+				Update();
+				Refresh();
+			}
+		break;
+		}
 	}
 }
 
@@ -696,4 +708,9 @@ void CRegion::SetReset(BOOL bReset)
 	Refresh();
 
 	getTrack()->InvalidateRegions( this );
+}
+
+void CRegion::SetStartOffset(int sample)
+{
+	getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, sample);
 }
