@@ -158,10 +158,11 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 /////////////////////////////////////////////////////////////////////////////
 void CTrack::DrawBG(wxDC& dc, wxRect& rc)
 {
-/*
 	wxBrush oldBrush = dc.GetBrush();
-//	wxPen oldpen = dc.GetPen();
-*/
+	wxPen oldpen = dc.GetPen();
+
+	dc.SetPen( *wxMEDIUM_GREY_PEN );
+
 	m_top = rc.GetTop();
 
 	if( IsSelected() )
@@ -171,18 +172,11 @@ void CTrack::DrawBG(wxDC& dc, wxRect& rc)
 		dc.DrawRectangle(0, m_top, rc.GetWidth(), GetHeight()+1);
 	}
 
-/*
-	wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
-	dc.SetBrush(brush);
-//	dc.SetPen( *wxTRANSPARENT_PEN );
-	dc.DrawRectangle(0, m_top-1, rc.GetWidth(), GetHeight()+2);
-*/
 	int y = m_top + m_height;
 	dc.DrawLine(0, y, rc.GetWidth(), y);
-/*
+
 	dc.SetBrush( oldBrush );
-//	dc.SetPen(oldpen);
-*/
+	dc.SetPen( oldpen );
 }
 
 /////////////////////////////////////////////////////////////////////////////

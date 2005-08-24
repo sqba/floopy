@@ -200,6 +200,7 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 	if(fmt1->bitsPerSample != pfmt2->bitsPerSample)
 	{
 		// Find adequate conversion component instead
+		//"An error occurred loading the file. The specified file contains an unsupported bits per sample size."
 		return NULL;
 	}
 

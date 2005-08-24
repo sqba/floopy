@@ -3,9 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "volume.h"
-#include <math.h>
+//#include <math.h>
 #include <stdio.h>
-#include <assert.h>
+//#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -31,11 +31,10 @@ int CVolume::Read(BYTE *data, int size)
 		return len;
 
 	SOUNDFORMAT *fmt = GetFormat();
-	if((NULL == fmt) || (fmt->bitsPerSample == 0) || (fmt->channels == 0))
+	if(!fmt || !fmt->bitsPerSample || !fmt->channels)
 		return 0;
 
-
-	// Only 16bit samples supported right now
+	// Only 16 bit samples supported right now
 	if(fmt->bitsPerSample == 16)
 	{
 		int numsamples = len / (fmt->bitsPerSample/8);
@@ -45,16 +44,19 @@ int CVolume::Read(BYTE *data, int size)
 
 		short int *sample = (short int*)data;
 
+		// Save some time by not processing channels
+		// where volume is 100%
+		int start = (m_left  != 100 ? 0 : 1);
+		int end   = (m_right != 100 ? fmt->channels : start+1);
+
 		while(numsamples -= fmt->channels)
 		{
-			//*sample = (short int)((float)*sample * percent);
-			//sample++;
-			for(int ch=0; ch<fmt->channels; ch++)
+			for(int ch=start; ch<end; ch++)
 			{
 				float percent = (ch == 0 ? lpercent : rpercent);
 				*sample = (short int)((float)*sample * percent);
-				sample++;
 			}
+			sample += fmt->channels;
 		}
 		return len;
 	}
@@ -64,8 +66,6 @@ int CVolume::Read(BYTE *data, int size)
 
 BOOL CVolume::GetParamVal(int index, float *value)
 {
-	SOUNDFORMAT *fmt = GetFormat();
-
 	switch(index)
 	{
 	case 0:
@@ -75,7 +75,7 @@ BOOL CVolume::GetParamVal(int index, float *value)
 		*value = (float)m_left;
 		return TRUE;
 	case 2:
-		*value = (float)(fmt->channels == 2 ? m_right : m_left);
+		*value = (float)(getChannels() == 2 ? m_right : m_left);
 		return TRUE;
 	}
 	return FALSE;
@@ -83,8 +83,6 @@ BOOL CVolume::GetParamVal(int index, float *value)
 
 void CVolume::SetParamVal(int index, float value)
 {
-	SOUNDFORMAT *fmt = GetFormat();
-
 	switch(index)
 	{
 	case 0:
@@ -94,44 +92,47 @@ void CVolume::SetParamVal(int index, float value)
 		m_left = (int)value;
 		break;
 	case 2:
-		(fmt->channels == 2 ? m_right : m_left) = (int)value;
+		(getChannels() == 2 ? m_right : m_left) = (int)value;
+		break;
+	default:
+		m_left = m_right = (int)value;
 		break;
 	}
 }
 
 char *CVolume::GetParamName(int index)
 {
-	SOUNDFORMAT *fmt = GetFormat();
-
 	switch(index)
 	{
 	case 0:
-		return (fmt->channels == 2 ? "both" : "volume");
+		return (getChannels() == 2 ? "both" : "volume");
 	case 1:
-		return (fmt->channels == 2 ? "left" : "volume");
+		return (getChannels() == 2 ? "left" : "volume");
 	case 2:
-		return (fmt->channels == 2 ? "right" : "volume");
+		return (getChannels() == 2 ? "right" : "volume");
 	}
 	return NULL;
 }
 
 char *CVolume::GetParamDesc(int index)
 {
-	SOUNDFORMAT *fmt = GetFormat();
-
 	switch(index)
 	{
 	case 0:
 		return "Volume";
 	case 1:
-		return (fmt->channels == 2 ? "Left volume" : "Volume");
+		return (getChannels() == 2 ? "Left volume" : "Volume");
 	case 2:
-		return (fmt->channels == 2 ? "Right volume" : "Volume");
+		return (getChannels() == 2 ? "Right volume" : "Volume");
 	}
 	return NULL;
 }
 
-char *CVolume::GetParamUnit(int index)
+int CVolume::getChannels()
 {
-	return "%";
+	SOUNDFORMAT *fmt = GetFormat();
+	if(fmt)
+		return fmt->channels;
+	else
+		return 0;
 }

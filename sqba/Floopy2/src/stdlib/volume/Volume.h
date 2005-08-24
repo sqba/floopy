@@ -11,7 +11,8 @@
 
 #include "../../ifloopy.h"
 
-#include <string.h>
+//#include <string.h>
+
 
 class CVolume : public IFloopySoundFilter
 {
@@ -19,24 +20,27 @@ public:
 	CVolume();
 	virtual ~CVolume();
 
-	int Read(BYTE *data, int size);
+	int Read(BYTE*, int);
 
-	char *GetName()			{ return "stdlib.volume"; }
-	char *GetDescription()	{ return "Volume control"; }
-	char *GetVersion()		{ return "0.1"; }
-	char *GetAuthor()		{ return "sqba"; }
+	char *GetName()					{ return "stdlib.volume"; }
+	char *GetDescription()			{ return "Volume control"; }
+	char *GetVersion()				{ return "0.1"; }
+	char *GetAuthor()				{ return "sqba"; }
 
 	int   GetParamCount()			{ return 3; }
-	void  SetParamVal(int index, float value);// { m_volume = (int)value; }
-	BOOL  GetParamVal(int index, float *value);
-	char *GetParamName(int index);//	{ return (index == 0 ? "volume" : NULL); }
-	char *GetParamDesc(int index);//	{ return (index == 0 ? "Volume" : NULL); }
-	char *GetParamUnit(int index);//	{ return (index == 0 ? "%" : NULL); }
-	float GetParamMin(int index)	{ return 0.f; }
-	float GetParamMax(int index)	{ return 1000.f; }
-	float GetParamStep(int index)	{ return 0.01f; }
+	float GetParamMin(int)			{ return 0.f; }
+	float GetParamMax(int)			{ return 1000.f; }
+	char *GetParamUnit(int)			{ return "%"; }
+	char *GetParamName(int);
+	char *GetParamDesc(int);
+	float GetParamStep(int)			{ return 0.01f; }
+	void  SetParamVal(int, float);
+	BOOL  GetParamVal(int, float*);
 
-	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+	BOOL ReadSourceIfDisabled()		{ return FALSE; }
+
+private:
+	int getChannels();
 
 private:
 	int m_left, m_right; // In percents
