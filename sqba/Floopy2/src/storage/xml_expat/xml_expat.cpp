@@ -453,7 +453,7 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 			if(paramVal==0.f)
 				fprintf(fp, "%.4f:RESET", seconds);
 			else
-				fprintf(fp, "%.4f:%s", seconds, paramVal);
+				fprintf(fp, "%.4f:MOVETO:%d", seconds, (int)paramVal);
 		}
 
 		if(input->GetParamCount() > 0)
