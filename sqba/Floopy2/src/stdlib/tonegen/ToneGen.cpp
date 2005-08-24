@@ -9,6 +9,8 @@
 
 CToneGen::CToneGen() : IFloopySoundInput()
 {
+	m_format.format = WAVE_FORMAT_PCM;
+
 	int ch  = m_format.channels			= 2;
 	int fr  = m_format.frequency		= 44100;
 	int bps = m_format.bitsPerSample	= 16;

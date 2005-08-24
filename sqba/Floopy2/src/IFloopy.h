@@ -17,6 +17,9 @@
 #define SIZE_INFINITE				-1
 
 
+#define WAVE_FORMAT_PCM     1
+
+
 
 //////////////////////////////////////////////////////////////////////
 // Defines from windows.h

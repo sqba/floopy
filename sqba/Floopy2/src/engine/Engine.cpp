@@ -175,6 +175,11 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 	//	return NULL;
 	//}
 
+	if(pfmt2->format != WAVE_FORMAT_PCM)
+	{
+		return NULL;
+	}
+
 	if((fmt1->channels == 2) && (pfmt2->channels == 1))
 	{
 		IFloopySoundFilter *filter = (IFloopySoundFilter*)CreateInput("stdlib.mono2stereo");

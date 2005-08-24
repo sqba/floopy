@@ -10,7 +10,6 @@
 #endif // _MSC_VER > 1000
 
 /* flags for wFormatTag field of WAVEFORMAT */
-#define WAVE_FORMAT_PCM     1
 #define MAX_PATH          260
 
 #include <stdio.h>

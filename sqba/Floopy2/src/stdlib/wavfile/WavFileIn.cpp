@@ -32,6 +32,7 @@ BOOL CWavFileIn::Open(char *filename)
 		fread( &m_fmt,  1, sizeof(FMT),  m_pFile );
 		fread( &m_data, 1, sizeof(DATA), m_pFile );
 
+		m_format.format = m_fmt.fmtFORMAT.wFormatTag;
 		m_format.channels = (int)m_fmt.fmtFORMAT.nChannels;
 		m_format.frequency = m_fmt.fmtFORMAT.nSamplesPerSec;
 		m_format.bitsPerSample = m_fmt.fmtFORMAT.wBitsPerSample;
