@@ -61,7 +61,6 @@ void *CPlayThread::Entry()
 	output->Reset();
 
 	int delaySamples = 40000; // Odprilike!!!
-	int delayCounter = 0;
 
 	while((len=input->Read(buff, BUFFER_LENGTH)) != EOF)
 	{
@@ -72,11 +71,10 @@ void *CPlayThread::Entry()
 		// Kako znati kada je stvarno pocheo da svira?
 		// GetWrittenSamples == pos
 		int samples = output->GetWrittenSamples();
-		if(delayCounter > delaySamples)
+		if(samples > delaySamples)
 		{
 			m_pTracks->SetCursorPosition( m_iStartPos + samples - delaySamples );
 		}
-		delayCounter += samples;
 
 		// If the view has been resized horizontally the position is lost.
 		engine->MoveTo( pos );

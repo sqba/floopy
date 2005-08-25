@@ -881,11 +881,12 @@ void CTracks::Play()
 	}
 
 	if(m_pPlayThread->IsPlaying())
-		m_pPlayThread->Stop();
+		Stop();
 
 	if(m_pPlayThread->IsPaused() || (wxTHREAD_NO_ERROR == m_pPlayThread->Create()))
 	{
 		GetStatusBar()->SetStatusText("Playing", 1);
+		m_iStartSample = GetCaretPos();
 		m_pPlayThread->Play( GetCaretPos() );
 	}
 
@@ -932,6 +933,9 @@ void CTracks::Stop()
 	GetStatusBar()->SetStatusText("stoped", 1);
 
 	m_Timer.Stop();
+
+	SetCaretPos( m_iStartSample );
+	SetCursorPosition( m_iStartSample );
 }
 
 void CTracks::SetCaretPos(int samples)

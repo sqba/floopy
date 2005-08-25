@@ -287,6 +287,7 @@ private:
 	BOOL				m_bChanged;
 
 	CTimer				m_Timer;
+	int					m_iStartSample;
 };
 
 class CTrack : public IFloopyObj  
