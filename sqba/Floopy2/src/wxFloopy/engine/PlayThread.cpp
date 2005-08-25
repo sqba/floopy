@@ -4,8 +4,6 @@
 
 #include "tracks.h"
 
-#define BUFFER_LENGTH	5120 //512
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -49,24 +47,27 @@ void *CPlayThread::Entry()
 	IFloopySoundOutput *output = engine->CreateOutput("stdlib.waveout", *fmt);
 	if(!output)
 		return NULL;
-
-	BYTE buff[BUFFER_LENGTH] = {0};
 	int stb	= (fmt->bitsPerSample/8) * fmt->channels; // samples to bytes
 	int pos	= m_iStartPos;	// samples
 	int len	= 0;			// bytes
 
-	engine->EmptyBuffer( buff, BUFFER_LENGTH );
+	//int bufflen = 5120; // Zujanje (shto je bafer manji veca je frekvenca)
+	//int bufflen = fmt->frequency * stb; // Problemi na pochetku regiona
+	int bufflen = fmt->frequency * stb / 10;
+	BYTE *buff = new BYTE[bufflen];
+
+	engine->EmptyBuffer( buff, bufflen );
 	engine->MoveTo( m_iStartPos ); // Move to cursor position
 
 	output->Reset();
 
 	int delaySamples = 40000; // Odprilike!!! (44100?)
 
-	while((len=input->Read(buff, BUFFER_LENGTH)) != EOF)
+	while((len=input->Read(buff, bufflen)) != EOF)
 	{
 		pos += len / stb;
 		output->Write( buff, len );
-		engine->EmptyBuffer( buff, BUFFER_LENGTH );
+		engine->EmptyBuffer( buff, bufflen );
 		
 		// Kako znati kada je stvarno pocheo da svira?
 		// GetWrittenSamples == pos
@@ -92,6 +93,8 @@ void *CPlayThread::Entry()
 	}
 
 	m_bPlaying = FALSE;
+
+	delete buff;
 
 	return NULL;
 }

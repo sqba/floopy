@@ -104,8 +104,8 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 #endif
 
-	int top    = rc.GetTop() + border + 1;
-	int height = GetHeight() - border - 2;
+	int top    = GetTop();
+	int height = GetHeight();
 
 	dc.DrawRoundedRectangle(left, top, width, height, 3);
 
@@ -135,8 +135,8 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	calcPos(&left, &right);
 	int width = right - left;
 	int border = (IsSelected() ? 2 : 1);
-	int top    = rc.GetTop() + border + 1;
-	int height = GetHeight() - border - 2;
+	int top    = GetTop();
+	int height = GetHeight();
 	wxRect rce(left, top, width, height);
 
 	///////////////////////////////////////////////////////
@@ -299,7 +299,7 @@ void CRegion::GetRect(wxRect& rc)
 	calcPos(&left, &right);
 
 	int width = right - left;
-	rc = wxRect(left, getTrack()->GetTop(), width, GetHeight());
+	rc = wxRect(left, GetTop(), width, GetHeight());
 
 	wxScrolledWindow *panel = getTracks()->GetTracksView();
 	if(panel)
@@ -713,4 +713,37 @@ void CRegion::SetReset(BOOL bReset)
 void CRegion::SetStartOffset(int sample)
 {
 	getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, sample);
+}
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+// CBorder functions
+/////////////////////////////////////////////////////////////////////
+void CRegion::CBorder::Move(int dx, int WXUNUSED(dy))
+{
+	if(m_bLeft) {
+		getRegion()->Resize(dx, 0);
+	} else {
+		getRegion()->Resize(0, dx);
+	}
+	// Too slow
+	//getRegion()->Invalidate();
+	//getRegion()->Refresh();
+}
+
+void CRegion::CBorder::DrawBG(wxDC& dc, wxRect& rc)
+{
+
+}
+
+void CRegion::CBorder::DrawFore(wxDC& dc, wxRect& rc)
+{
+
 }

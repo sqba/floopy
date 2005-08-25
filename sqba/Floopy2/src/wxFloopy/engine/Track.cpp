@@ -108,6 +108,15 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	int height = m_height-2;
 	dc.DrawRoundedRectangle(left, top, width, height, 4);
 
+/*
+	// Draw aqua background
+	int left   = 0;
+	int top    = rc.GetTop();
+	int width  = rc.GetWidth()-left;
+	int height = m_height;
+	dc.DrawRectangle(left, top, width, height);
+	DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2));
+*/
 
 	dc.SetTextForeground( GetForeColour() );
 	wxFont font = dc.GetFont();
@@ -161,19 +170,26 @@ void CTrack::DrawBG(wxDC& dc, wxRect& rc)
 	wxBrush oldBrush = dc.GetBrush();
 	wxPen oldpen = dc.GetPen();
 
-	dc.SetPen( *wxMEDIUM_GREY_PEN );
-
 	m_top = rc.GetTop();
 
 	if( IsSelected() )
 	{
+		dc.SetPen( *wxTRANSPARENT_PEN );
 		wxBrush brush(wxColor(240, 240, 240), wxSOLID);
 		dc.SetBrush(brush);
-		dc.DrawRectangle(0, m_top, rc.GetWidth(), GetHeight()+1);
+		dc.DrawRectangle(0, m_top, rc.GetWidth(), GetHeight());
+
+		//wxRect rcBG(0, m_top, rc.GetWidth(), GetHeight());
+		//DrawAquaRect(dc, rcBG);
 	}
 
+	dc.SetPen( *wxMEDIUM_GREY_PEN );
+
 	int y = m_top + m_height;
-	dc.DrawLine(0, y, rc.GetWidth(), y);
+	//dc.DrawLine(0, y, rc.GetWidth(), y);
+
+	wxRect rcBorder(0, y, rc.GetWidth(), m_pBorder->GetHeight());
+	m_pBorder->DrawFore(dc, rcBorder);
 
 	dc.SetBrush( oldBrush );
 	dc.SetPen( oldpen );
@@ -452,7 +468,7 @@ void CTrack::RemoveSelectedObjects()
 void CTrack::SetHeight(int height)
 {
 	if( MIN_HEIGHT <= height ) {
-		m_height = height;
+		m_height = height - m_pBorder->GetHeight();
 
 		Refresh();
 		GetTracks()->RefreshTracks(this);
@@ -917,4 +933,105 @@ wxColour CTrack::GetForeColour()
 	if( !IsSelected() )
 		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
 	return color;
+}
+
+void CTrack::Select(bool selected)
+{
+	IFloopyObj::Select(selected);
+
+	GetTracks()->SetCaretPos( GetTracks()->GetCaretPos() );
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// CBorder functions
+/////////////////////////////////////////////////////////////////////
+void CTrack::CBorder::Move(int WXUNUSED(dx), int dy)
+{
+	int height = getTrack()->GetHeight();
+	getTrack()->SetHeight(height + dy);
+}
+
+void CTrack::CBorder::DrawBG(wxDC& dc, wxRect& rc)
+{
+
+}
+
+int CTrack::CBorder::GetHeight()
+{
+	return 1;
+}
+
+void CTrack::CBorder::DrawFore(wxDC& dc, wxRect& rc)
+{
+	wxPen oldpen = dc.GetPen();
+
+	dc.SetPen( *wxMEDIUM_GREY_PEN );
+
+	int top = rc.GetTop();
+	int height = rc.GetHeight();
+
+	int y = top + height;
+	dc.DrawLine(0, y, rc.GetWidth(), y);
+
+	dc.SetPen( oldpen );
+}
+
+
+
+/////////////////////////////////////////////////////////////////////
+// CLoopButton functions
+/////////////////////////////////////////////////////////////////////
+void CTrack::CLoopButton::DrawFore(wxDC& dc, wxRect& rc)
+{
+	wxBrush oldBrush = dc.GetBrush();
+	wxPen oldpen = dc.GetPen();
+
+	wxPen pen( getTrack()->IsLooped() ? *wxBLACK : *wxLIGHT_GREY );
+	pen.SetWidth(2);
+	dc.SetPen( pen );
+
+	wxBrush brush(getTrack()->GetColour(), wxSOLID);
+	dc.SetBrush(brush);
+
+	int left   = rc.GetX();
+	int top    = rc.GetTop();
+	int width  = rc.GetWidth();
+	int height = rc.GetHeight();
+
+	dc.DrawCircle(left+width/2, top+height/2, height/3);
+
+	dc.SetPen(oldpen);
+	dc.SetBrush( oldBrush );
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+// CCacheButton functions
+/////////////////////////////////////////////////////////////////////
+void CTrack::CCacheButton::DrawFore(wxDC& dc, wxRect& rc)
+{
+	wxBrush oldBrush = dc.GetBrush();
+	wxPen oldpen = dc.GetPen();
+
+	wxPen pen( *wxLIGHT_GREY );
+	pen.SetWidth(2);
+	dc.SetPen( pen );
+
+	//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
+	wxBrush brush(getTrack()->GetColour(), wxSOLID);
+	dc.SetBrush(brush);
+
+	// Draw background
+	int left   = rc.GetX();
+	int top    = rc.GetTop();
+	int width  = rc.GetWidth();
+	int height = rc.GetHeight();
+
+	//dc.DrawCircle(left+width/2, top+height/2, height/3);
+
+	dc.SetPen(oldpen);
+	dc.SetBrush( oldBrush );
 }

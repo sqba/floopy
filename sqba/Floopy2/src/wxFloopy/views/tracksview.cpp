@@ -158,8 +158,8 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 		//RefreshRulers();
 		return;
 	}
-
-	if(obj) {
+	else if(obj)
+	{
 		SetCursor( obj->GetCursor() );
 
 		wxMenu *mnu = obj->GetMenu();
@@ -245,6 +245,10 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 		{
 			m_pTracks->DeselectAllRegions();
 			m_pTracks->DeselectAllTracks();
+
+			wxCaret *caret = GetCaret();
+			caret->SetSize(1, GetSize().GetHeight());
+			caret->Move( event.GetX(), 0 );
 		}
 	}
 

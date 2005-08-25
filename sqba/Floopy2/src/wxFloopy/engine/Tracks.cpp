@@ -28,7 +28,7 @@ CTracks::CTracks() : IFloopyObj(NULL)
 //	m_bpm				= 120;	// beats per minute
 	m_length			= 120;	// seconds
 //	m_iSamplesPerPixel	= 2205;
-	m_iPixelsPerSecond	= 16;
+	m_iPixelsPerSecond	= 32;
 	m_pBorder			= new CBorder(this);
 	m_pEngine			= NULL;
 	m_pMixer			= NULL;
@@ -81,7 +81,7 @@ void CTracks::DrawBG(wxDC& dc)
 		if( !track->IsHidden() )
 		{
 			track->DrawBG(dc, rc);
-			rc.Offset(0, track->GetHeight());
+			rc.Offset(0, track->GetHeight()+1);
 		}
 		node = node->GetNext();
 	}
@@ -104,7 +104,7 @@ void CTracks::DrawFore(wxDC& dc)
 		if( !track->IsHidden() )
 		{
 			track->DrawFore(dc, rc);
-			rc.Offset(0, track->GetHeight());
+			rc.Offset(0, track->GetHeight()+1);
 		}
 		node = node->GetNext();
 	}
@@ -133,7 +133,7 @@ void CTracks::DrawLabels(wxDC& dc, wxSize size)
 		if( !track->IsHidden() )
 		{
 			track->DrawLabel(dc, rc);
-			rc.Offset(0, track->GetHeight());
+			rc.Offset(0, track->GetHeight()+1);
 		}
 		node = node->GetNext();
 	}
@@ -239,7 +239,7 @@ int CTracks::GetHeight()
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
-		height += track->GetHeight();
+		height += track->GetHeight()+1;
 		node = node->GetNext();
 	}
 	return height;
@@ -551,18 +551,7 @@ void CTracks::SetSamplesPerPixel(int spp)
 	if( m_Timer.IsRunning() )
 	{
 		m_Timer.Stop();
-
-		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-		if(fmt)
-		{
-			int freq = fmt->frequency;
-			if(freq > 0)
-			{
-				float seconds = (float)GetSamplesPerPixel() / (float)freq;
-				int milliseconds = (int)(seconds * 1000.f);
-				m_Timer.Start(milliseconds, wxTIMER_CONTINUOUS);
-			}
-		}
+		m_Timer.Start();
 	}
 }
 
@@ -890,17 +879,7 @@ void CTracks::Play()
 		m_pPlayThread->Play( m_iStartSample );
 	}
 
-	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-	if(fmt)
-	{
-		int freq = fmt->frequency;
-		if(freq > 0)
-		{
-			float seconds = (float)GetSamplesPerPixel() / (float)freq;
-			int milliseconds = (int)(seconds * 1000.f);
-			m_Timer.Start(milliseconds, wxTIMER_CONTINUOUS);
-		}
-	}
+	m_Timer.Start();
 }
 
 void CTracks::OnExitThread()
@@ -945,18 +924,81 @@ void CTracks::Stop()
 
 void CTracks::SetCaretPos(int samples)
 {
-	int x=0, y=0;
+/*
+	int y=0;
 	int xc1=0, yc1=0;
 	wxCaret *caret = m_pTracksView->GetCaret();
 	caret->GetPosition(NULL, &y);
 	//m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+*/
+	int x = samples / GetSamplesPerPixel();
+/*
+	IFloopyObj *obj = GetSelectedObj();
+	if(obj && obj->IsKindOf(CLASSINFO(CTrack)))
+	{
+		CTrack *pTrack = (CTrack*)obj;
+		y = pTrack->GetTop();
+		wxSize size(1, pTrack->GetHeight());
+		caret->SetSize( size );
 
-	x += samples/GetSamplesPerPixel();
-	m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+		//int xScrollUnits=0, yScrollUnits=0;
+		//m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+		//int xOrig=0, yOrig=0;
+		//m_pTracksView->GetViewStart(&xOrig, &yOrig);
+		//xOrig *= xScrollUnits;
+		//yOrig *= yScrollUnits;
+		//caret->Move( x-xOrig, pTrack->GetTop()-yOrig );
+	}
+	//else
+	//{
+		m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+		caret->Move(xc1, yc1);
+	//}
+*/
 //	m_pTracksView->SetFocus();
-	caret->Move(xc1, yc1);
 //	x = samples / GetSamplesPerPixel();
 //	caret->Move(x, y);
+
+/*
+	int xScrollUnits=0, yScrollUnits=0;
+	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	int xOrig=0, yOrig=0;
+	m_pTracksView->GetViewStart(&xOrig, &yOrig);
+	xOrig *= xScrollUnits;
+	yOrig *= yScrollUnits;
+	caret->Move(x-xOrig, y-yOrig);
+*/
+
+
+
+
+
+
+
+	wxCaret *caret = m_pTracksView->GetCaret();
+	caret->Show(FALSE);
+
+	//int x=0;
+	//caret->GetPosition(&x, NULL);
+
+	int xScrollUnits=0, yScrollUnits=0;
+	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	int xOrig=0, yOrig=0;
+	m_pTracksView->GetViewStart(&xOrig, &yOrig);
+	xOrig *= xScrollUnits;
+	yOrig *= yScrollUnits;
+
+	IFloopyObj *obj = GetSelectedObj();
+	if(obj && obj->IsKindOf(CLASSINFO(CTrack)))
+	{
+		CTrack *pTrack = (CTrack*)obj;
+		caret->SetSize(1, pTrack->GetHeight());
+		caret->Move( x-xOrig, pTrack->GetTop()-yOrig );
+	} else {
+		caret->SetSize(1, m_pTracksView->GetSize().GetHeight());
+		caret->Move( x-xOrig, 0 );
+	}
+	caret->Show(TRUE);
 }
 
 int CTracks::GetCaretPos()
@@ -1027,4 +1069,79 @@ void CTracks::SetCursorPosition(int samples)
 		caret->Move(x, y);
 	}
 */
+}
+
+
+
+/////////////////////////////////////////////////////////////////////
+// CTimer functions
+/////////////////////////////////////////////////////////////////////
+void CTracks::CTimer::Start()
+{
+	IFloopySoundEngine *pEngine = m_pTracks->GetEngine();
+	if(NULL == pEngine)
+		return;
+
+	SOUNDFORMAT *fmt = pEngine->GetFormat();
+	if(NULL == fmt)
+		return;
+
+	float freq = (float)fmt->frequency;
+	if(freq > 0.f)
+	{
+		float spp = (float)m_pTracks->GetSamplesPerPixel();
+		float seconds = spp / freq;
+		int milliseconds = (int)(seconds * 1000.f);
+		wxTimer::Start(milliseconds, wxTIMER_CONTINUOUS);
+	}
+}
+
+void CTracks::CTimer::Notify()
+{
+	m_pTracks->SetCaretPos( m_pTracks->GetCursorPosition() );
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+// CBorder functions
+/////////////////////////////////////////////////////////////////////
+void CTracks::CBorder::Move(int dx, int WXUNUSED(dy))
+{
+	getTracks()->SetWidth(getTracks()->GetWidth() + dx);
+}
+
+void CTracks::CBorder::OnMouseEvent(wxMouseEvent& event)
+{
+	if(event.Dragging() && (0 != m_ptPrev.x)) {
+		int dx = event.GetX() - m_ptPrev.x;
+		int dy = event.GetY() - m_ptPrev.y;
+		Move(dx, dy);
+	}
+
+	IFloopyObj::OnMouseEvent(event);
+}
+
+void CTracks::CBorder::DrawBG(wxDC& dc, wxRect& rc)
+{
+
+}
+
+void CTracks::CBorder::DrawFore(wxDC& dc, wxRect& rc)
+{
+
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+// CSelectedEvents functions
+/////////////////////////////////////////////////////////////////////
+void CTracks::CSelectedEvents::Move(int dx, int WXUNUSED(dy))
+{
+	getTracks()->MoveSelectedRegions(dx);
 }

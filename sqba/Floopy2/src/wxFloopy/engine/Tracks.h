@@ -1,25 +1,21 @@
 #ifndef Tracks_H
 #define Tracks_H
-/*
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-*/
-// For compilers that support precompilation, includes "wx/wx.h".
+
+
+#include <strstrea.h>
 #include <wx/log.h>
 #include <wx/wxprec.h>
 #include <wx/list.h>
 #include <wx/listimpl.cpp>
 #include <wx/docview.h>
 #include <wx/dynlib.h>
-#include <strstrea.h>
-//#include <SDL.h>
-//#include <wx/generic/dragimgg.h>
-//#include <wx/dynarray.h>
 #include <wx/thread.h>
 #include <wx/timer.h>
 
+#include "../../../ifloopy.h"
 #include "../FloopyControl.h"
+#include "floopyobj.h"
+
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -30,11 +26,6 @@
 #endif
 
 
-#include "../../../ifloopy.h"
-
-#include "floopyobj.h"
-
-
 #define MIN_DISTANCE	96
 
 
@@ -43,16 +34,8 @@ class CRegion;
 class CRegionBorder;
 class CParameter;
 class CPlayThread;
-//class CDragObjects;
 class CRegionDisplay;
 
-/*class CPeak
-{
-	public:
-		CPeak(short int peak, int pos) { this->peak = peak; this->pos = pos; }
-	short int peak;
-	int pos;
-};*/
 
 struct Peak
 {
@@ -60,15 +43,46 @@ struct Peak
 	int pos;
 };
 
+
 WX_DECLARE_LIST(CTrack, TracksList);
 WX_DECLARE_LIST(CRegion, RegionList);
 WX_DECLARE_LIST(CParameter, ParameterList);
-//WX_DECLARE_LIST(IFloopyObj, GraphicObjList);
-//WX_DEFINE_ARRAY(int, OffsetArrays);
-//WX_DECLARE_LIST(wxPoint, PointList);
-//WX_DEFINE_ARRAY_PTR(short int, PeaksArray);
-//WX_DEFINE_ARRAY_PTR(CPeak*, PeaksArray2);
 WX_DECLARE_OBJARRAY(Peak, PeaksArray);
+
+
+
+
+// Utility function
+void DrawAquaRect(wxDC& dc, wxRect& rc)
+{
+	int top		= rc.GetTop();
+	int height	= rc.GetHeight();
+	int width	= rc.GetWidth();
+
+	int border	= 2;//(IsSelected() ? 2 : 1);
+
+	float rstep = 60.f / ((float)height / 3.f);
+	float gstep = 20.f / ((float)height / 3.f);
+	float r=180.f, g=190.f, b=225.f;
+	for(int y=top; y<top+height/3; y++)
+	{
+		r -= rstep;
+		g -= gstep;
+		dc.SetPen( wxPen(wxColour(r, g, b), border) );
+		dc.DrawLine(0, y, width, y);
+	}
+
+	rstep = 75.f / (((float)height / 3.f) * 2.f);
+	gstep = 51.f / (((float)height / 3.f) * 2.f);
+	r=111.f, g=161.f, b=225.f;
+	for(y=top+height/3; y<top+height; y++)
+	{
+		r += rstep;
+		g += gstep;
+		dc.SetPen( wxPen(wxColour(r, g, b), border) );
+		dc.DrawLine(0, y, width, y);
+	}
+}
 
 
 
@@ -87,16 +101,22 @@ class CTracks : public IFloopyObj
 {
     DECLARE_DYNAMIC_CLASS(CTracks)
 
+	/*! \class CTimer
+	 *  \brief timer
+	 *  \author sqba
+	 *  \version 0.0
+	 *  \date 25/05/2005
+	 *
+	 *  Used for updating caret position.
+	 */
 	class CTimer : public wxTimer
 	{
 	public:
-		CTimer() {}
-		//CTimer(CTracks *pTracks) { m_pTracks = pTracks; }
-		//virtual ~CTimer();
+		CTimer() : wxTimer() {}
 
 		void SetParent(CTracks *pTracks) { m_pTracks = pTracks; }
-
-		void Notify() { m_pTracks->SetCaretPos( m_pTracks->GetCursorPosition() ); }
+		void Start();
+		void Notify();
 
 	private:
 		CTracks *m_pTracks;
@@ -117,37 +137,30 @@ class CTracks : public IFloopyObj
 		virtual ~CBorder() {}
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZEWE); }
-
-		void Move(int dx, int WXUNUSED(dy))
-		{
-			getTracks()->SetWidth(getTracks()->GetWidth() + dx);
-		}
-
-		void OnMouseEvent(wxMouseEvent& event)
-		{
-			if(event.Dragging() && (0 != m_ptPrev.x)) {
-				int dx = event.GetX() - m_ptPrev.x;
-				int dy = event.GetY() - m_ptPrev.y;
-				Move(dx, dy);
-			}
-
-			IFloopyObj::OnMouseEvent(event);
-		}
+		void Move(int dx, int WXUNUSED(dy));
+		void OnMouseEvent(wxMouseEvent& event);
+		void DrawBG(wxDC&, wxRect&);
+		void DrawFore(wxDC&, wxRect&);
 
 	private:
 		inline CTracks *getTracks()	{ return (CTracks*)GetParent(); }
 	};
 
+	/*! \class CSelectedEvents
+	 *  \brief 
+	 *  \author sqba
+	 *  \version 0.0
+	 *  \date 2005
+	 *
+	 *  
+	 */
 	class CSelectedEvents : public IFloopyObj
 	{
 	public:
 		CSelectedEvents(CTracks *tracks) : IFloopyObj(tracks) {}
 		virtual ~CSelectedEvents() {}
 
-		void Move(int dx, int WXUNUSED(dy))
-		{
-			getTracks()->MoveSelectedRegions(dx);
-		}
+		void Move(int dx, int WXUNUSED(dy));
 
 	private:
 		inline CTracks *getTracks()	{ return (CTracks*)GetParent(); }
@@ -157,34 +170,22 @@ public:
 	CTracks();
 	virtual ~CTracks();
 
-	void SetTracksView(wxScrolledWindow *panel);// { m_pTracksView = panel; }
+	void SetTracksView(wxScrolledWindow *panel);
 	void SetLabelsView(wxScrolledWindow *panel) { m_pLabelsView = panel; }
 	
-	wxScrolledWindow *GetTracksView() { return m_pTracksView; };
-	wxScrolledWindow *GetLabelsView() { return m_pLabelsView; };
-
-//	void SetCaret(wxCaret *caret)		{ m_pCaret = caret; }
-//	wxCaret *GetCaret()					{ return m_pCaret; }
+	wxScrolledWindow *GetTracksView()			{ return m_pTracksView; };
+	wxScrolledWindow *GetLabelsView()			{ return m_pLabelsView; };
 
 	void SetCaretPos(int samples);
 	int  GetCaretPos();
 
-//	void SetPixelsPerSecond(int pps);
-//	int GetPixelsPerSecond();
-
-//	int GetPixelsPerBeat();
-	//void SetPixelsPerBeat(int ppb);
-
-//	void SetPixelsPerSample(int pps);
-//	int GetPixelsPerSample();
-
 	int GetSamplesPerPixel();
 	void SetSamplesPerPixel(int);
 
-	float GetLength()					{ return m_length; }
-	void SetLength(float len)			{ m_length = len; }
+	float GetLength()							{ return m_length; }
+	void SetLength(float len)					{ m_length = len; }
 
-	int GetWidth();//						{ return m_length * (float)m_pps;}
+	int GetWidth();
 	void SetWidth(int width);
 	int GetHeight();
 
@@ -193,7 +194,6 @@ public:
 	void DrawLabels(wxDC& dc, wxSize size);
 	void DrawPreview(wxDC& dc, wxSize size);
 
-	//CTrack *AddTrack(wxString name, wxColour colour = wxColour(100, 100, 100));
 	CTrack *AddTrack(IFloopySoundInput *input, int level);
 	bool RemoveTrack(CTrack *track);
 
@@ -212,26 +212,19 @@ public:
 
 	void Dump(ostream& stream);
 
-//	void Play();
-
-//	TracksList &GetTracks() { return m_tracks; }
-
 	BOOL Open(char *filename);
 	BOOL Save(char *filename);
 	void Clear();
 
-	IFloopySoundEngine *GetInput() { return m_pEngine; }
+	IFloopySoundEngine *GetInput()				{ return m_pEngine; }
 
 	void OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	IFloopyObj *GetSelectedObj();
 
-//	void SetPanel(wxScrolledWindow *panel) { m_pPanel = panel; }
-//	wxScrolledWindow *GetPanel() { return m_pPanel; }
-
 	void RefreshTracks(CTrack *track);
 
-	IFloopySoundEngine *GetEngine() { return m_pEngine; }
+	IFloopySoundEngine *GetEngine()				{ return m_pEngine; }
 
 	int GetClosestGridPos(int pos);
 	int CalcStep(int mindist);
@@ -244,12 +237,11 @@ public:
 	int GetCursorPosition();
 	void SetCursorPosition(int pos);
 
-//	void SetStatusBar(wxStatusBar *sb)	{ m_pStatusBar = sb; }
-	wxStatusBar *GetStatusBar()		{ return m_pFrame->GetStatusBar(); }
-	void SetFrame(wxFrame *pFrame)	{ m_pFrame = pFrame; }
+	wxStatusBar *GetStatusBar()					{ return m_pFrame->GetStatusBar(); }
+	void SetFrame(wxFrame *pFrame)				{ m_pFrame = pFrame; }
 
-	void SetChanged(BOOL bChanged)	{ m_bChanged = bChanged; }
-	BOOL IsChanged()				{ return m_bChanged; }
+	void SetChanged(BOOL bChanged)				{ m_bChanged = bChanged; }
+	BOOL IsChanged()							{ return m_bChanged; }
 
 private:
 	IFloopySoundMixer *getMixer();
@@ -259,14 +251,9 @@ private:
 	void init();
 
 private:
-//	int					m_pps;
-//	int					m_iSamplesPerPixel;
 	int					m_iPixelsPerSecond;
-//	int					m_pps, m_bpm;
-//	int					m_hres;		//! Samples per pixel
 	bool				m_bInit;
 	float				m_length;	// In seconds
-//	wxCaret				*m_pCaret;
 	TracksList			m_tracks;
 	wxScrolledWindow	*m_pTracksView, *m_pLabelsView;
 	CBorder				*m_pBorder;
@@ -274,8 +261,6 @@ private:
 	IFloopySoundEngine	*m_pEngine;
 	IFloopySoundMixer	*m_pMixer;
 	wxDynamicLibrary	m_libEngine;
-
-//	wxScrolledWindow	*m_pPanel;
 
 	BOOL m_bSnapTo;
 
@@ -294,7 +279,14 @@ class CTrack : public IFloopyObj
 {
     DECLARE_DYNAMIC_CLASS(CTrack)
 
-	////////////////////////////////////////////////////////////
+	/*! \class CBorder
+	 *  \brief 
+	 *  \author sqba
+	 *  \version 0.0
+	 *  \date 2005
+	 *
+	 *  
+	 */
 	class CBorder : public IFloopyObj
 	{
 	public:
@@ -302,82 +294,50 @@ class CTrack : public IFloopyObj
 		virtual ~CBorder() {}
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZENS); }
-
-		void Move(int WXUNUSED(dx), int dy)
-		{
-			int height = getTrack()->GetHeight();
-			getTrack()->SetHeight(height + dy);
-		}
+		void Move(int WXUNUSED(dx), int dy);
+		void DrawBG(wxDC&, wxRect&);
+		void DrawFore(wxDC&, wxRect&);
+		int GetHeight();
 
 	private:
 		CTrack *getTrack() { return (CTrack*)GetParent(); }
 	};
 
-	////////////////////////////////////////////////////////////
+	/*! \class CLoopButton
+	 *  \brief 
+	 *  \author sqba
+	 *  \version 0.0
+	 *  \date 2005
+	 *
+	 *  
+	 */
 	class CLoopButton : public CFloopyControl
 	{
 	public:
 		CLoopButton(CTrack *track) : CFloopyControl(track) {}
 		virtual ~CLoopButton() {}
 
-		void DrawFore(wxDC& dc, wxRect& rc)
-		{
-			wxBrush oldBrush = dc.GetBrush();
-			wxPen oldpen = dc.GetPen();
-
-			wxPen pen( getTrack()->IsLooped() ? *wxBLACK : *wxLIGHT_GREY );
-			pen.SetWidth(2);
-			dc.SetPen( pen );
-
-			wxBrush brush(getTrack()->GetColour(), wxSOLID);
-			dc.SetBrush(brush);
-
-			int left   = rc.GetX();
-			int top    = rc.GetTop();
-			int width  = rc.GetWidth();
-			int height = rc.GetHeight();
-
-			dc.DrawCircle(left+width/2, top+height/2, height/3);
-
-			dc.SetPen(oldpen);
-			dc.SetBrush( oldBrush );
-		}
+		void DrawFore(wxDC& dc, wxRect& rc);
 
 	private:
 		CTrack *getTrack() { return (CTrack*)GetParent(); }
 	};
 
-	////////////////////////////////////////////////////////////
+	/*! \class CCacheButton
+	 *  \brief 
+	 *  \author sqba
+	 *  \version 0.0
+	 *  \date 2005
+	 *
+	 *  
+	 */
 	class CCacheButton : public CFloopyControl
 	{
 	public:
 		CCacheButton(CTrack *track) : CFloopyControl(track) {}
 		virtual ~CCacheButton() {}
 
-		void DrawFore(wxDC& dc, wxRect& rc)
-		{
-			wxBrush oldBrush = dc.GetBrush();
-			wxPen oldpen = dc.GetPen();
-
-			wxPen pen( *wxLIGHT_GREY );
-			pen.SetWidth(2);
-			dc.SetPen( pen );
-
-			//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
-			wxBrush brush(getTrack()->GetColour(), wxSOLID);
-			dc.SetBrush(brush);
-
-			// Draw background
-			int left   = rc.GetX();
-			int top    = rc.GetTop();
-			int width  = rc.GetWidth();
-			int height = rc.GetHeight();
-
-			//dc.DrawCircle(left+width/2, top+height/2, height/3);
-
-			dc.SetPen(oldpen);
-			dc.SetBrush( oldBrush );
-		}
+		void DrawFore(wxDC& dc, wxRect& rc);
 
 	private:
 		CTrack *getTrack() { return (CTrack*)GetParent(); }
@@ -388,34 +348,30 @@ public:
 	CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour colour);
 	virtual ~CTrack();
 
-	//void Draw(wxDC& dc, wxRect& rc);
 	void DrawLabel(wxDC& dc, wxRect& rc);
 	void DrawBG   (wxDC& dc, wxRect& rc);
 	void DrawFore (wxDC& dc, wxRect& rc);
 	void DrawPreview(wxDC& dc, wxRect& rc);
 
-	bool GetName(wxString& name) { name = _T("Track"); return TRUE; }
-	int GetWidth()				{ return GetTracks()->GetWidth(); }
-	int GetHeight()				{ return m_height; }
-	int GetTop()				{ return m_top; }
+	bool GetName(wxString& name)	{ name = _T("Track"); return TRUE; }
+	int GetWidth()					{ return GetTracks()->GetWidth(); }
+	int GetHeight()					{ return m_height + m_pBorder->GetHeight(); }
+	int GetTop()					{ return m_top; }
 	void SetHeight(int height);
-//	wxColour GetColour()		{ return m_colour; }
-	wxString GetName()			{ return m_name; }
-	wxBitmap *GetBitmap()		{ return m_pBitmap; }
-	wxCursor GetCursor() { return wxCursor(wxCURSOR_PENCIL); }
+	wxString GetName()				{ return m_name; }
+	wxBitmap *GetBitmap()			{ return m_pBitmap; }
+	wxCursor GetCursor()			{ return wxCursor(wxCURSOR_PENCIL); }
 
-	//CRegion *AddRegion(float start, float end);
 	CRegion *AddRegion(int start, int end);
 	CRegion *AddNewRegionAt(int left);
 	bool RemoveRegion(CRegion *event);
 
-	CTracks *GetTracks()	{ return (CTracks*)GetParent(); }
+	CTracks *GetTracks()			{ return (CTracks*)GetParent(); }
 
 	bool HitTest(int y);
 
 	IFloopyObj *GetChildAt(int x, int y);
 	IFloopyObj *GetSelectedObj();
-//	IFloopyObj *GetDisplay() { return m_pDisplay; }
 
 	void DeselectAllRegions();
 
@@ -430,18 +386,17 @@ public:
 
 	void Dump(ostream& stream);
 
-	IFloopySoundInput *GetInput() { return m_pInput; }
+	IFloopySoundInput *GetInput()	{ return m_pInput; }
 
-//	EventList &GetEvents() { return m_events; }
 	void OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 
-	int GetRegionCount() { return m_regions.GetCount(); }
+	int GetRegionCount()			{ return m_regions.GetCount(); }
 
 	void CheckIntersections(CRegion *pRegion1, int &left, int &right, bool bResize);
 
-	bool IsHidden() { return m_bHide; } // ->Collapse/expand
-	void Hide(bool bHide) { m_bHide = bHide; }
+	bool IsHidden()					{ return m_bHide; } // ->Collapse/expand
+	void Hide(bool bHide)			{ m_bHide = bHide; }
 
 	BOOL IsLooped();
 	void SetLooped(BOOL bLooped);
@@ -456,6 +411,8 @@ public:
 
 	IFloopySoundInput *GetComponent(char *name);
 
+	void Select(bool selected=TRUE);
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();
@@ -467,14 +424,11 @@ private:
 	bool		m_bHide;
 	RegionList	m_regions;
 	wxRect		m_rcLabel;
-//	wxColour	m_colour;
 	int			m_top;
 	int			m_height;
 	wxString	m_name;
 	wxBitmap	*m_pBitmap;
 	CBorder		*m_pBorder;
-//	IFloopyObj	*m_pDisplay;
-//	wxDynamicLibrary	m_libDisplay;
 	IFloopySoundInput *m_pInput;
 
 	CLoopButton		*m_pButtonLoop;
@@ -488,7 +442,7 @@ class CRegion : public IFloopyObj
     DECLARE_DYNAMIC_CLASS(CRegion)
 
 public:
-	/*! \class CRegionBorder
+	/*! \class CBorder
 	 *  \brief Region's left or right border
 	 *  \author sqba
 	 *  \version 0.0
@@ -506,17 +460,9 @@ public:
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZEWE); }
 
-		void Move(int dx, int WXUNUSED(dy))
-		{
-			if(m_bLeft) {
-				getRegion()->Resize(dx, 0);
-			} else {
-				getRegion()->Resize(0, dx);
-			}
-			// Too slow
-			//getRegion()->Invalidate();
-			//getRegion()->Refresh();
-		}
+		void Move(int dx, int WXUNUSED(dy));
+		void DrawBG(wxDC&, wxRect&);
+		void DrawFore(wxDC&, wxRect&);
 
 	private:
 		inline CRegion  *getRegion()	{ return (CRegion*)GetParent(); }
@@ -561,16 +507,16 @@ public:
 	int GetStartOffset()	{ return m_iStartSample; }
 	int GetEndOffset()		{ return m_iEndSample; }
 
-	int GetHeight()	{ return getTrack()->GetHeight(); }
-	int GetTop()	{ return getTrack()->GetTop(); }
+	int GetHeight()	{ return getTrack()->GetHeight() - 2; }
+	int GetTop()	{ return getTrack()->GetTop() + 1; }
 
 	BOOL GetReset();
 	void SetReset(BOOL bReset);
 
 	void SetStartOffset(int sample);
 
-	wxColour GetBGColour();// { return getTrack()->GetBGColour(); }
-	wxColour GetForeColour();// { return getTrack()->GetForeColour(); }
+	wxColour GetBGColour();
+	wxColour GetForeColour();
 
 private:
 	static void remove(IFloopyObj *event);
@@ -578,12 +524,9 @@ private:
 	void startEdit();
 	void calcPos(int *left, int *right);
 	inline CTrack  *getTrack()	{ return (CTrack*)GetParent(); }
-	//inline CTracks *getTracks()	{ return getTrack()->GetTracks(); }
 	inline CTracks *getTracks()	{ return (CTracks*)getTrack()->GetParent(); }
 	void loadParameters(IFloopySoundInput *obj);
-	//void drawParametersBG(wxDC& dc, wxRect& rc);
 	void drawParametersFore(wxDC& dc, wxRect& rc);
-	//void ddump();
 	BOOL getReset(int sample);
 
 private:
@@ -593,7 +536,6 @@ private:
 	CBorder			*m_pLeftBorder, *m_pRightBorder;
 	ParameterList	m_Parameters;
 	CRegionDisplay	*m_pDisplay;
-//	BOOL			m_bReset;
 };
 
 

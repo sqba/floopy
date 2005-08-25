@@ -57,6 +57,7 @@ void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 			track->Select();
 			track->Refresh();
 			m_pTracksView->SetFocus();
+			//m_tracks->SetCaretPos( m_tracks->GetCaretPos() );
 		}
 	}
 
