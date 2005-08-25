@@ -60,7 +60,7 @@ void *CPlayThread::Entry()
 
 	output->Reset();
 
-	int delaySamples = 40000; // Odprilike!!!
+	int delaySamples = 40000; // Odprilike!!! (44100?)
 
 	while((len=input->Read(buff, BUFFER_LENGTH)) != EOF)
 	{

@@ -887,7 +887,7 @@ void CTracks::Play()
 	{
 		GetStatusBar()->SetStatusText("Playing", 1);
 		m_iStartSample = GetCaretPos();
-		m_pPlayThread->Play( GetCaretPos() );
+		m_pPlayThread->Play( m_iStartSample );
 	}
 
 	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
