@@ -567,6 +567,9 @@ void CRegion::OnKeyDown(wxKeyEvent& event)
 			int offset = getTrack()->GetTracks()->GetCaretPos() - m_iStartSample;
 			if(offset > 0)
 			{
+				float value = 0.f;
+				if(getTrack()->GetInput()->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
+					offset += (int)value;
 				SetStartOffset( offset );
 				Update();
 				Refresh();
