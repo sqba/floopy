@@ -48,7 +48,7 @@ public:
 
 	int waveFreeBlockCount;
 	int samplesToBytes;
-	int bytesRead;
+//	int bytesRead;
 
 private:
 	// function prototypes

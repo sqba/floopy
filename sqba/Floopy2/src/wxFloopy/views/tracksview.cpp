@@ -92,6 +92,35 @@ void CTracksView::OnKeyDown(wxKeyEvent& event)
 	IFloopyObj *tmp = m_pTracks->GetSelectedObj();
 	if(tmp)
 		tmp->OnKeyDown(event);
+	else
+	{
+		switch (event.GetKeyCode() )
+		{
+		case WXK_RIGHT:
+		case WXK_NUMPAD_RIGHT:
+			/*{
+				wxCaret *caret = GetCaret();
+				int x=0, y=0;
+				caret->GetPosition(&x, &y);
+				caret->Move( x+1, y );
+
+			}*/
+			m_pTracks->SetCaretPos( m_pTracks->GetCaretPos() + m_pTracks->GetSamplesPerPixel() );
+			break;
+		case WXK_LEFT:
+		case WXK_NUMPAD_LEFT:
+			/*{
+				wxCaret *caret = GetCaret();
+				int x=0, y=0;
+				caret->GetPosition(&x, &y);
+				caret->Move( x-1, y );
+			}*/
+			m_pTracks->SetCaretPos( m_pTracks->GetCaretPos() - m_pTracks->GetSamplesPerPixel() );
+			break;
+		default:
+			m_pTracks->OnKeyDown(event);
+		}
+	}
 }
 
 void CTracksView::OnMouseEvent(wxMouseEvent& event)

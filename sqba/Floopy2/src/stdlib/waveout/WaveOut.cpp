@@ -27,7 +27,7 @@ CWaveOut::CWaveOut(SOUNDFORMAT fmt)
 	wfx.nBlockAlign     = (wfx.wBitsPerSample * wfx.nChannels) >> 3;
 	wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
 
-	bytesRead = 0;
+//	bytesRead = 0;
 	samplesToBytes = (wfx.wBitsPerSample / 8) * wfx.nChannels;
 	
 	// try to open the default wave device. WAVE_MAPPER is
@@ -97,7 +97,7 @@ void CALLBACK CWaveOut::waveOutProc(
 	(*freeBlockCounter)++;
 	LeaveCriticalSection(&waveCriticalSection);
 
-	pWaveOut->bytesRead += BLOCK_SIZE * sizeof(char);
+//	pWaveOut->bytesRead += BLOCK_SIZE * sizeof(char);
 }
 
 WAVEHDR* CWaveOut::allocateBlocks(int size, int count)
@@ -178,10 +178,21 @@ void CWaveOut::writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size)
 
 int CWaveOut::GetWrittenSamples()
 {
-	return bytesRead / samplesToBytes;
+//	return bytesRead / samplesToBytes;
+
+
+	int samples = 0;
+	MMTIME mmt;
+	//mmt.wType = TIME_BYTES;
+	mmt.wType = TIME_SAMPLES;
+	if(MMSYSERR_NOERROR == waveOutGetPosition(hWaveOut, &mmt, sizeof(mmt)) )
+		samples = mmt.u.sample;
+
+	return samples;
 }
 
 void CWaveOut::Reset()
 {
-	bytesRead = 0;
+//	bytesRead = 0;
+	waveOutReset( hWaveOut );
 }

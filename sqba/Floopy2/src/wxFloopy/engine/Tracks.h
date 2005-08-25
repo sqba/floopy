@@ -17,6 +17,7 @@
 //#include <wx/generic/dragimgg.h>
 //#include <wx/dynarray.h>
 #include <wx/thread.h>
+#include <wx/timer.h>
 
 #include "../FloopyControl.h"
 
@@ -85,6 +86,21 @@ WX_DECLARE_OBJARRAY(Peak, PeaksArray);
 class CTracks : public IFloopyObj
 {
     DECLARE_DYNAMIC_CLASS(CTracks)
+
+	class CTimer : public wxTimer
+	{
+	public:
+		CTimer() {}
+		//CTimer(CTracks *pTracks) { m_pTracks = pTracks; }
+		//virtual ~CTimer();
+
+		void SetParent(CTracks *pTracks) { m_pTracks = pTracks; }
+
+		void Notify() { m_pTracks->SetCaretPos( m_pTracks->GetCursorPosition() ); }
+
+	private:
+		CTracks *m_pTracks;
+	};
 
 	/*! \class CTracksBorder
 	 *  \brief Tracks border
@@ -269,6 +285,8 @@ private:
 	wxStatusBar			*m_pStatusBar;
 	wxFrame				*m_pFrame;
 	BOOL				m_bChanged;
+
+	CTimer				m_Timer;
 };
 
 class CTrack : public IFloopyObj  

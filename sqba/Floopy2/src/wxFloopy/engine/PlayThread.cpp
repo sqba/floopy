@@ -58,13 +58,25 @@ void *CPlayThread::Entry()
 	engine->EmptyBuffer( buff, BUFFER_LENGTH );
 	engine->MoveTo( m_iStartPos ); // Move to cursor position
 
+	output->Reset();
+
+	int delaySamples = 40000; // Odprilike!!!
+	int delayCounter = 0;
+
 	while((len=input->Read(buff, BUFFER_LENGTH)) != EOF)
 	{
 		pos += len / stb;
 		output->Write( buff, len );
 		engine->EmptyBuffer( buff, BUFFER_LENGTH );
+		
+		// Kako znati kada je stvarno pocheo da svira?
+		// GetWrittenSamples == pos
 		int samples = output->GetWrittenSamples();
-		m_pTracks->SetCursorPosition( m_iStartPos + samples );
+		if(delayCounter > delaySamples)
+		{
+			m_pTracks->SetCursorPosition( m_iStartPos + samples - delaySamples );
+		}
+		delayCounter += samples;
 
 		// If the view has been resized horizontally the position is lost.
 		engine->MoveTo( pos );
@@ -78,7 +90,7 @@ void *CPlayThread::Entry()
 	{
 		do {
 			wxThread::Sleep(1000);
-		} while(pos < output->GetWrittenSamples()/fmt->channels);
+		} while(pos < output->GetWrittenSamples());
 	}
 
 	m_bPlaying = FALSE;

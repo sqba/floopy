@@ -39,6 +39,8 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_bChanged			= FALSE;
 //	m_pPlayThread		= NULL;
 
+	m_Timer.SetParent( this );
+
 	createEngine("engine");
 }
 
@@ -499,49 +501,68 @@ int CTracks::GetSamplesPerPixel()
 
 void CTracks::SetSamplesPerPixel(int spp)
 {
-	if( 1 <= spp )
+	if( spp < 1 )
+		return;
+
+	int x=0, y=0;
+	
+	int width1=0, height1=0;
+	m_pTracksView->GetVirtualSize(&width1, &height1);
+
+	// Get previous caret position
+	int xc1=0, yc1=0;
+	wxCaret *caret = m_pTracksView->GetCaret();
+	caret->GetPosition(&x, &y);
+	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+
+	// Get previous view position
+	int xs1 = m_pTracksView->GetScrollPos(wxHORIZONTAL);
+	int ys1 = m_pTracksView->GetScrollPos(wxVERTICAL);
+	int xScrollUnits, yScrollUnits;
+	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+
+
+	//m_iSamplesPerPixel = spp;
+	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+	int freq = fmt->frequency;
+	m_iPixelsPerSecond = freq / spp;
+
+	Invalidate();
+	Refresh();
+
+
+	int width2=0, height2=0;
+	m_pTracksView->GetVirtualSize(&width2, &height2);
+
+	// Move caret
+	x = (int)(((float)width2  / (float)width1)  * (float)xc1);
+	y = (int)(((float)height2 / (float)height1) * (float)yc1);
+	int xxc2=0, yyc2=0;
+	m_pTracksView->CalcScrolledPosition(x, y, &xxc2, &yyc2);
+	caret->Move(xxc2, yyc2);
+
+	// Move view
+	x = (int)(((float)width2  / (float)width1)  * (float)xs1);
+	y = (int)(((float)height2 / (float)height1) * (float)ys1);
+	m_pTracksView->Scroll(x, y);
+
+
+
+	if( m_Timer.IsRunning() )
 	{
-		int x=0, y=0;
-		
-		int width1=0, height1=0;
-		m_pTracksView->GetVirtualSize(&width1, &height1);
+		m_Timer.Stop();
 
-		// Get previous caret position
-		int xc1=0, yc1=0;
-		wxCaret *caret = m_pTracksView->GetCaret();
-		caret->GetPosition(&x, &y);
-		m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
-
-		// Get previous view position
-		int xs1 = m_pTracksView->GetScrollPos(wxHORIZONTAL);
-		int ys1 = m_pTracksView->GetScrollPos(wxVERTICAL);
-		int xScrollUnits, yScrollUnits;
-		m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-
-
-//		m_iSamplesPerPixel = spp;
 		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-		int freq = fmt->frequency;
-		m_iPixelsPerSecond = freq / spp;
-
-		Invalidate();
-		Refresh();
-
-
-		int width2=0, height2=0;
-		m_pTracksView->GetVirtualSize(&width2, &height2);
-
-		// Move caret
-		x = (int)(((float)width2  / (float)width1)  * (float)xc1);
-		y = (int)(((float)height2 / (float)height1) * (float)yc1);
-		int xxc2=0, yyc2=0;
-		m_pTracksView->CalcScrolledPosition(x, y, &xxc2, &yyc2);
-		caret->Move(xxc2, yyc2);
-
-		// Move view
-		x = (int)(((float)width2  / (float)width1)  * (float)xs1);
-		y = (int)(((float)height2 / (float)height1) * (float)ys1);
-		m_pTracksView->Scroll(x, y);
+		if(fmt)
+		{
+			int freq = fmt->frequency;
+			if(freq > 0)
+			{
+				float seconds = (float)GetSamplesPerPixel() / (float)freq;
+				int milliseconds = (int)(seconds * 1000.f);
+				m_Timer.Start(milliseconds, wxTIMER_CONTINUOUS);
+			}
+		}
 	}
 }
 
@@ -802,7 +823,7 @@ IFloopyObj *CTracks::GetSelectedObj()
 			return tmp;
 		node = node->GetNext();
 	}
-	return this;
+	return NULL;
 }
 
 int CTracks::GetClosestGridPos(int pos)
@@ -867,6 +888,18 @@ void CTracks::Play()
 		GetStatusBar()->SetStatusText("Playing", 1);
 		m_pPlayThread->Play( GetCaretPos() );
 	}
+
+	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+	if(fmt)
+	{
+		int freq = fmt->frequency;
+		if(freq > 0)
+		{
+			float seconds = (float)GetSamplesPerPixel() / (float)freq;
+			int milliseconds = (int)(seconds * 1000.f);
+			m_Timer.Start(milliseconds, wxTIMER_CONTINUOUS);
+		}
+	}
 }
 
 void CTracks::OnExitThread()
@@ -897,6 +930,8 @@ void CTracks::Stop()
 
 	m_pPlayThread->Stop();
 	GetStatusBar()->SetStatusText("stoped", 1);
+
+	m_Timer.Stop();
 }
 
 void CTracks::SetCaretPos(int samples)
@@ -904,13 +939,15 @@ void CTracks::SetCaretPos(int samples)
 	int x=0, y=0;
 	int xc1=0, yc1=0;
 	wxCaret *caret = m_pTracksView->GetCaret();
-	caret->GetPosition(&x, &y);
-	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+	caret->GetPosition(NULL, &y);
+	//m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 
 	x += samples/GetSamplesPerPixel();
 	m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
 //	m_pTracksView->SetFocus();
 	caret->Move(xc1, yc1);
+//	x = samples / GetSamplesPerPixel();
+//	caret->Move(x, y);
 }
 
 int CTracks::GetCaretPos()
@@ -921,6 +958,7 @@ int CTracks::GetCaretPos()
 	caret->GetPosition(&x, &y);
 	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 	return xc1 * GetSamplesPerPixel();
+	//return x * GetSamplesPerPixel();
 }
 
 IFloopySoundMixer *CTracks::getMixer()
