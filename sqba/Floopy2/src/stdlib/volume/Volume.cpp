@@ -54,6 +54,8 @@ int CVolume::Read(BYTE *data, int size)
 				if(percent != 1.f && *sample != 0)
 				{
 					int tmp = (int)((float)*sample * percent);
+					//int tmp = (int)floor((float)*sample * percent);
+					//int tmp = (int)ceil((float)*sample * percent);
 					
 					if(tmp > maxSample || tmp < -maxSample)
 						tmp = (short int)(*sample > 0 ? +1 : -1) * maxSample;

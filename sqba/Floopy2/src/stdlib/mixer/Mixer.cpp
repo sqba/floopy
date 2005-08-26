@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "mixer.h"
-//#include <math.h>
+#include <math.h>
 #include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
@@ -145,6 +145,8 @@ void CMixer::mixBuffers(BYTE *pBuffers, int buffCount, BYTE *output, int size)
 	int step = fmt->bitsPerSample / 8;
 	int numsamples = size/step;
 
+	int maxSample = (int)pow(2, fmt->bitsPerSample) / 2 - 1;
+
 	// For 16 bit samples only!!!
 	short int *in  = (short int*)pBuffers;
 	short int *out = (short int*)output;
@@ -155,11 +157,21 @@ void CMixer::mixBuffers(BYTE *pBuffers, int buffCount, BYTE *output, int size)
 		// For each source
 		for(int n=0; n<buffCount*numsamples; n+=numsamples)
 		{
-			//short int sample = *(in+n+i);
+			short int sample = *(in+n+i);
+			
 			//if(abs(sample) > buffCount)
-			//	*out += sample / buffCount;
+			if(sample != 0)
+			{
+				//int tmp = (int)*out + (int)((float)sample / (float)buffCount);
+				int tmp = (int)*out + (int)sample;
 
-			*out += *(in+n+i) / buffCount;
+				if(tmp > maxSample || tmp < -maxSample)
+					tmp = (short int)(sample > 0 ? +1 : -1) * maxSample;
+
+				*out = (short int)tmp;
+			}
+
+			//*out += *(in+n+i) / buffCount;
 		}
 		out++; // Move to next sample
 	}

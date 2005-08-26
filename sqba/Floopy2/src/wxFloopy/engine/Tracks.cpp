@@ -884,10 +884,10 @@ void CTracks::Play()
 
 void CTracks::OnExitThread()
 {
-//	SetCursorPosition( m_iStartSample );
-//	m_Timer.Stop();
+	m_Timer.Stop();
 	// Postaviti nekako kursor na prvobitnu poziciju.
 	// A to ne moze iz drugog thread-a!
+	//SetCursorPosition( m_iStartSample );
 
 	GetStatusBar()->SetStatusText("Finished playing", 0);
 	m_pPlayThread = new CPlayThread(this);
