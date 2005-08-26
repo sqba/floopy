@@ -1038,7 +1038,8 @@ IFloopySoundMixer *CTracks::getMixer()
 
 int CTracks::GetCursorPosition()
 {
-	return m_iCursorPosition;
+	//return m_iCursorPosition;
+	return m_pPlayThread->GetWrittenSamples();
 }
 
 void CTracks::SetCursorPosition(int samples)

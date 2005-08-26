@@ -3,8 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "volume.h"
-//#include <math.h>
 #include <stdio.h>
+//#include <math.h>
 //#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
@@ -34,6 +34,8 @@ int CVolume::Read(BYTE *data, int size)
 	if(!fmt || !fmt->bitsPerSample || !fmt->channels)
 		return 0;
 
+	//int maxSample = (int)pow(2, fmt->bitsPerSample) / 2;
+
 	// Only 16 bit samples supported right now
 	if(fmt->bitsPerSample == 16)
 	{
@@ -49,7 +51,8 @@ int CVolume::Read(BYTE *data, int size)
 			for(int ch=0; ch<fmt->channels; ch++)
 			{
 				float percent = (ch == 0 ? lpercent : rpercent);
-				if(percent != 1.f)
+				//if(percent != 1.f && *sample != 0 && (*sample < maxSample || *sample > -maxSample) )
+				if(percent != 1.f && *sample != 0)
 					*sample = (short int)((float)*sample * percent);
 				sample++;
 			}

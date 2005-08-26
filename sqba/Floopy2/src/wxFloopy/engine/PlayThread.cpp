@@ -13,6 +13,7 @@ CPlayThread::CPlayThread(CTracks *pTracks)
 	m_pTracks	= pTracks;
 	m_iStartPos	= 0;
 	m_bPlaying	= m_bPaused = FALSE;
+	m_pOutput	= NULL;
 }
 
 CPlayThread::~CPlayThread()
@@ -44,8 +45,8 @@ void *CPlayThread::Entry()
 
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 
-	IFloopySoundOutput *output = engine->CreateOutput("stdlib.waveout", *fmt);
-	if(!output)
+	m_pOutput = engine->CreateOutput("stdlib.waveout", *fmt);
+	if(!m_pOutput)
 		return NULL;
 	int stb	= (fmt->bitsPerSample/8) * fmt->channels; // samples to bytes
 	int pos	= m_iStartPos;	// samples
@@ -59,23 +60,23 @@ void *CPlayThread::Entry()
 	engine->EmptyBuffer( buff, bufflen );
 	engine->MoveTo( m_iStartPos ); // Move to cursor position
 
-	output->Reset();
+	m_pOutput->Reset();
 
-	int delaySamples = 40000; // Odprilike!!! (44100?)
+//	int delaySamples = 40000; // Odprilike!!! (44100?)
 
 	while((len=input->Read(buff, bufflen)) != EOF)
 	{
 		pos += len / stb;
-		output->Write( buff, len );
+		m_pOutput->Write( buff, len );
 		engine->EmptyBuffer( buff, bufflen );
 		
 		// Kako znati kada je stvarno pocheo da svira?
 		// GetWrittenSamples == pos
-		int samples = output->GetWrittenSamples();
-		if(samples > delaySamples)
-		{
-			m_pTracks->SetCursorPosition( m_iStartPos + samples - delaySamples );
-		}
+//		int samples = m_pOutput->GetWrittenSamples();
+//		if(samples > delaySamples)
+//		{
+//			m_pTracks->SetCursorPosition( m_iStartPos + samples - delaySamples );
+//		}
 
 		// If the view has been resized horizontally the position is lost.
 		engine->MoveTo( pos );
@@ -89,7 +90,7 @@ void *CPlayThread::Entry()
 	{
 		do {
 			wxThread::Sleep(1000);
-		} while(pos < output->GetWrittenSamples());
+		} while(pos < m_pOutput->GetWrittenSamples());
 	}
 
 	m_bPlaying = FALSE;
@@ -134,4 +135,17 @@ void CPlayThread::Stop()
 void CPlayThread::OnExit()
 {
 	m_pTracks->OnExitThread();
+}
+
+int CPlayThread::GetWrittenSamples()
+{
+	int delaySamples = 40000; // Odprilike!!! (44100?)
+	if(!m_pOutput)
+		return m_iStartPos;
+
+	int samples = m_pOutput->GetWrittenSamples();
+	if(samples > delaySamples)
+		return m_iStartPos + samples - delaySamples;
+	else
+		return m_iStartPos;
 }

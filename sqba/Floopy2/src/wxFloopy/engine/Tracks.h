@@ -605,10 +605,13 @@ public:
 	BOOL IsPlaying()	{ return m_bPlaying; }
 	BOOL IsPaused()		{ return m_bPaused; }
 
+	int GetWrittenSamples();
+
 private:
 	CTracks *m_pTracks;
 	int m_iStartPos;
 	BOOL m_bPlaying, m_bPaused;
+	IFloopySoundOutput *m_pOutput;
 };
 
 /*
