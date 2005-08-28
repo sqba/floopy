@@ -1100,6 +1100,8 @@ void CTracks::CTimer::Start()
 		float spp = (float)m_pTracks->GetSamplesPerPixel();
 		float seconds = spp / freq;
 		int milliseconds = (int)(seconds * 1000.f);
+		if(milliseconds < 1)
+			milliseconds = 1;
 		wxTimer::Start(milliseconds, wxTIMER_CONTINUOUS);
 	}
 }
