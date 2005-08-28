@@ -18,6 +18,7 @@
 #include "volume/volume.h"
 #include "wavfile/wavfilein.h"
 #include "track/track.h"
+#include "reverse/reverse.h"
 
 // Output classes
 #include "wavfile/wavfileout.h"
@@ -55,6 +56,8 @@ __declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 		return new CWavFileIn();
 	if( 0 == stricmp(name, "track") )
 		return new CTrack();
+	if( 0 == stricmp(name, "reverse") )
+		return new CReverse();
 	//if( 0 == stricmp(name, "wavein") )
 	//	return NULL;
 
@@ -78,7 +81,7 @@ __declspec( dllexport ) IFloopySoundOutput *CreateOutput(char *name, SOUNDFORMAT
 
 __declspec( dllexport ) int GetPluginCount()
 {
-	return 13;
+	return 14;
 }
 
 __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
@@ -136,6 +139,10 @@ __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
 	case 12:
 		name = "wavfile";
 		*type = TYPE_FLOOPY_SOUND_OUTPUT;
+		break;
+	case 13:
+		name = "reverse";
+		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
 	};
 	return;

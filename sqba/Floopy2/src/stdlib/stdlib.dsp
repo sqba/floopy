@@ -122,6 +122,10 @@ SOURCE=.\playrgn\PlayRegion.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\reverse\Reverse.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\stdlib.cpp
 # End Source File
 # Begin Source File
@@ -183,6 +187,10 @@ SOURCE=.\mp3file\Mp3File.h
 # Begin Source File
 
 SOURCE=.\playrgn\PlayRegion.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\reverse\Reverse.h
 # End Source File
 # Begin Source File
 
