@@ -30,6 +30,9 @@ CTracksView::CTracksView(wxWindow* parent, wxScrolledWindow *labels, CTracks *tr
 	
 	SetCursor( wxCURSOR_PENCIL );
 
+	//SetBackgroundColour(*wxLIGHT_GREY);
+	//SetWindowStyle(wxSIMPLE_BORDER);
+
 	wxLog::AddTraceMask(_T("CTracksView"));
 }
 

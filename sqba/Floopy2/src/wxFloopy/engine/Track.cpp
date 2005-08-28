@@ -182,6 +182,13 @@ void CTrack::DrawBG(wxDC& dc, wxRect& rc)
 		//wxRect rcBG(0, m_top, rc.GetWidth(), GetHeight());
 		//DrawAquaRect(dc, rcBG);
 	}
+	/*else
+	{
+		dc.SetPen( *wxTRANSPARENT_PEN );
+		wxBrush brush(wxColor(255, 255, 255), wxSOLID);
+		dc.SetBrush(brush);
+		dc.DrawRectangle(0, m_top, rc.GetWidth(), GetHeight());
+	}*/
 
 	dc.SetPen( *wxMEDIUM_GREY_PEN );
 

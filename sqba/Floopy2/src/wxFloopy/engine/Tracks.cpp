@@ -9,6 +9,8 @@
 #include "Tracks.h"
 #include "../../../IFloopy.h"
 
+#define DISTANCE_BETWEEN_TRACKS	1
+
 IMPLEMENT_DYNAMIC_CLASS(CTracks, IFloopyObj)
 
 WX_DEFINE_LIST(TracksList);
@@ -81,7 +83,7 @@ void CTracks::DrawBG(wxDC& dc)
 		if( !track->IsHidden() )
 		{
 			track->DrawBG(dc, rc);
-			rc.Offset(0, track->GetHeight()+1);
+			rc.Offset(0, track->GetHeight() + DISTANCE_BETWEEN_TRACKS);
 		}
 		node = node->GetNext();
 	}
@@ -104,7 +106,7 @@ void CTracks::DrawFore(wxDC& dc)
 		if( !track->IsHidden() )
 		{
 			track->DrawFore(dc, rc);
-			rc.Offset(0, track->GetHeight()+1);
+			rc.Offset(0, track->GetHeight() + DISTANCE_BETWEEN_TRACKS);
 		}
 		node = node->GetNext();
 	}
@@ -133,7 +135,7 @@ void CTracks::DrawLabels(wxDC& dc, wxSize size)
 		if( !track->IsHidden() )
 		{
 			track->DrawLabel(dc, rc);
-			rc.Offset(0, track->GetHeight()+1);
+			rc.Offset(0, track->GetHeight() + DISTANCE_BETWEEN_TRACKS);
 		}
 		node = node->GetNext();
 	}
@@ -239,7 +241,7 @@ int CTracks::GetHeight()
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
-		height += track->GetHeight()+1;
+		height += track->GetHeight() + DISTANCE_BETWEEN_TRACKS;
 		node = node->GetNext();
 	}
 	return height;

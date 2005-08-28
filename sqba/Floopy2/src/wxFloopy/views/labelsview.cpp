@@ -25,6 +25,7 @@ CLabelsView::CLabelsView(wxWindow* parent, CTracks *tracks)
 	SetWindowStyle( wxSIMPLE_BORDER );
 	//SetWindowStyle( wxSUNKEN_BORDER );
 
+	//SetBackgroundColour(*wxLIGHT_GREY);
 	SetBackgroundColour( *wxWHITE );
 	//SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_MENU ) );
 

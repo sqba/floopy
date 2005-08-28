@@ -313,8 +313,16 @@ int CInput::Read(BYTE *data, int size)
 	m_offset = endpos;
 
 	if(readBytes == 0)
-		readBytes = bEOF ? EOF : size;
-	// Check if this is really the end (no more parameters)
+	{
+		if(bEOF)
+		{
+			// Check if this is really the end (no more parameters)
+			int nextOffset = GetNextOffset(m_offset);
+			readBytes = nextOffset ? size : EOF;
+		}
+		else
+			readBytes = size;
+	}
 
 	return readBytes;
 }
