@@ -233,6 +233,7 @@ public:
 	void Pause();
 	void Stop();
 	void OnExitThread();
+	BOOL IsPlaying();
 
 	int GetCursorPosition();
 	void SetCursorPosition(int pos);

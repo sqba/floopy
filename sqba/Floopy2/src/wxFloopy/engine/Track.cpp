@@ -946,7 +946,22 @@ void CTrack::Select(bool selected)
 {
 	IFloopyObj::Select(selected);
 
-	GetTracks()->SetCaretPos( GetTracks()->GetCaretPos() );
+	CTracks *pTracks = GetTracks();
+
+	int caretpos = pTracks->GetCaretPos();
+
+	BOOL bPlaying = FALSE;
+
+	if(pTracks->IsPlaying())
+	{
+		bPlaying = TRUE;
+		pTracks->Stop();
+	}
+
+	pTracks->SetCaretPos( caretpos );
+
+	if(bPlaying)
+		pTracks->Play();
 }
 
 

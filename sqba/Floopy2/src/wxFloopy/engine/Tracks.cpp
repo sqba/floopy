@@ -1074,6 +1074,11 @@ void CTracks::SetCursorPosition(int samples)
 */
 }
 
+BOOL CTracks::IsPlaying()
+{
+	return m_pPlayThread ? m_pPlayThread->IsPlaying() : FALSE;
+}
+
 
 
 /////////////////////////////////////////////////////////////////////
