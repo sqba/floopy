@@ -92,6 +92,10 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\aqua.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\views\caretview.cpp
 # End Source File
 # Begin Source File
@@ -212,7 +216,19 @@ SOURCE=.\wx\msw\cdrom.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\wx\msw\colours.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\wx\msw\computer.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\wx\msw\csquery.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\wx\msw\disable.bmp
 # End Source File
 # Begin Source File
 
@@ -248,11 +264,19 @@ SOURCE=.\wx\msw\noentry.cur
 # End Source File
 # Begin Source File
 
+SOURCE=.\wx\msw\pause.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\wx\msw\pbrush.cur
 # End Source File
 # Begin Source File
 
 SOURCE=.\wx\msw\pencil.cur
+# End Source File
+# Begin Source File
+
+SOURCE=.\wx\msw\play.bmp
 # End Source File
 # Begin Source File
 
@@ -277,6 +301,10 @@ SOURCE=.\wx\msw\rightarr.cur
 # Begin Source File
 
 SOURCE=.\wx\msw\roller.cur
+# End Source File
+# Begin Source File
+
+SOURCE=.\wx\msw\stop.bmp
 # End Source File
 # Begin Source File
 

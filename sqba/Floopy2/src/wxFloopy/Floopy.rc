@@ -15,6 +15,25 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Croatian (unknown sub-lang: 0x3) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_SRB)
+#ifdef _WIN32
+LANGUAGE LANG_CROATIAN, 0x3
+#pragma code_page(1251)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+STOP                    BITMAP  DISCARDABLE     "wx\\msw\\stop.bmp"
+#endif    // Croatian (unknown sub-lang: 0x3) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
@@ -86,6 +105,8 @@ FLOOPY                  ICON    DISCARDABLE     "res/Floopy.ico"
 WXDISABLE_BUTTON_BITMAP BITMAP  MOVEABLE PURE   "wx/msw/disable.bmp"
 CSQUERY                 BITMAP  MOVEABLE PURE   "wx/msw/csquery.bmp"
 WXBITMAP_STD_COLOURS    BITMAP  MOVEABLE PURE   "wx/msw/colours.bmp"
+PLAY                    BITMAP  MOVEABLE PURE   "wx/msw/play.bmp"
+PAUSE                   BITMAP  MOVEABLE PURE   "wx/msw/pause.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

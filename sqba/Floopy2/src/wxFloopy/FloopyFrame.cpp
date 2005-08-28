@@ -66,10 +66,13 @@ CFloopyFrame::CFloopyFrame(const wxChar *title, int xpos, int ypos, int width, i
 	wxToolBar *toolbar = CreateToolBar();
 	//wxBitmap aboutImage("res/help.bmp", wxBITMAP_TYPE_BMP);
 	wxBitmap aboutImage("CSQUERY", wxBITMAP_TYPE_RESOURCE);
+	wxBitmap playImage("PLAY", wxBITMAP_TYPE_RESOURCE);
+	wxBitmap pauseImage("PAUSE", wxBITMAP_TYPE_RESOURCE);
+	wxBitmap stopImage("STOP", wxBITMAP_TYPE_RESOURCE);
 	toolbar->AddTool(ID_ABOUT, _("About"), aboutImage, _("About Floopy"));
-	toolbar->AddTool(ID_PLAY, _("Play"), aboutImage, _("Play"));
-	toolbar->AddTool(ID_PAUSE, _("Pause"), aboutImage, _("Pause"));
-	toolbar->AddTool(ID_STOP, _("Stop"), aboutImage, _("Stop"));
+	toolbar->AddTool(ID_PLAY, _("Play"), playImage, _("Play"));
+	toolbar->AddTool(ID_PAUSE, _("Pause"), pauseImage, _("Pause"));
+	toolbar->AddTool(ID_STOP, _("Stop"), stopImage, _("Stop"));
 	toolbar->Realize();
 }
 
