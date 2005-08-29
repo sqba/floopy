@@ -857,9 +857,15 @@ void CTrack::SetReverse(BOOL bReverse)
 		if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
 		{
 			IFloopySoundInput *src = ((IFloopySoundFilter*)m_pInput)->GetSource();
-			if(src->GetSize() == SIZE_INFINITE)
-				// check also if src is filter!!!!
-				src = ((IFloopySoundFilter*)src)->GetSource();
+			while(src && src->GetSize() == SIZE_INFINITE)
+			{
+				int t = src->GetType();
+				if(t == TYPE_FLOOPY_SOUND_FILTER || t == TYPE_FLOOPY_SOUND_MIXER || t == TYPE_FLOOPY_SOUND_TRACK)
+					src = ((IFloopySoundFilter*)src)->GetSource();
+				else
+					src = NULL;
+			}
+
 			if(!src)
 				return; // No need
 

@@ -32,8 +32,13 @@ CReverse::~CReverse()
 
 int CReverse::Read(BYTE *data, int size)
 {
-	if(SIZE_INFINITE == size)
+	int srcSize = IFloopySoundFilter::GetSize();
+
+	if(SIZE_INFINITE == srcSize)
 		return IFloopySoundFilter::Read(data, size);
+
+	if(m_nPosition <= 0)
+		return EOF;
 
 
 	if(size != m_nBuffSize)
@@ -49,8 +54,6 @@ int CReverse::Read(BYTE *data, int size)
 
 
 	int stb = samplesToBytes();
-
-	int srcSize = IFloopySoundFilter::GetSize();
 
 	int buffsize = size;
 
