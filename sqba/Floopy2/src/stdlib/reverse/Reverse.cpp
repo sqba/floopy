@@ -97,20 +97,20 @@ void CReverse::reverse(BYTE *data, int size)
 
 		int pos = numsamples;
 
-		int pos1 = numsamples;
+		//int pos1 = numsamples;
 
 		
 		do {
 			tmp -= fmt->channels;
 			for(int ch=0; ch<fmt->channels; ch++)
-			{
+			//{
 				*(out++) = *(tmp++);
-				pos1--;
-			}
+			//	pos1--;
+			//}
 			tmp -= fmt->channels;
 		} while(pos -= fmt->channels);
 
-		assert(pos == pos1);
+		//assert(pos == pos1);
 
 		//while(numsamples--)
 		//	*(out++) = *(tmp--);

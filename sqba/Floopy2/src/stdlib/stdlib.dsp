@@ -102,6 +102,10 @@ SOURCE=.\echo\Echo.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\invert\Invert.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\loop\Loop.cpp
 # End Source File
 # Begin Source File
@@ -167,6 +171,10 @@ SOURCE=.\echo\Echo.h
 # Begin Source File
 
 SOURCE=.\wavfile\headers.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\invert\Invert.h
 # End Source File
 # Begin Source File
 

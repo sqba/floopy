@@ -623,6 +623,10 @@ void CTrack::OnKeyDown(wxKeyEvent& event)
 	case 'R':
 		SetReset( !GetReset() );
 		break;
+	case 'v':
+	case 'V':
+		SetReverse( !IsReverse() );
+		break;
 	default:
 		return;
 	}
@@ -821,6 +825,53 @@ void CTrack::SetLooped(BOOL bLooped)
 
 				loop->SetSource( src );
 				((IFloopySoundFilter*)m_pInput)->SetSource( loop );
+
+				Invalidate();
+				Refresh();
+			}
+		}
+	}
+}
+
+BOOL CTrack::IsReverse()
+{
+	IFloopySoundFilter *reverse = (IFloopySoundFilter*)GetComponent("reverse");
+	if(reverse)
+		return !reverse->GetBypass();
+	return FALSE;
+}
+
+void CTrack::SetReverse(BOOL bReverse)
+{
+	IFloopySoundFilter *reverse = (IFloopySoundFilter*)GetComponent("reverse");
+	if(reverse)
+	{
+		//loop->ClearAllParams();
+		//loop->EnableAt(0, bLooped);
+		reverse->SetBypass( !bReverse );
+		Invalidate();
+		Refresh();
+	}
+	else if(bReverse)
+	{
+		if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+		{
+			IFloopySoundInput *src = ((IFloopySoundFilter*)m_pInput)->GetSource();
+			if(src->GetSize() == SIZE_INFINITE)
+				// check also if src is filter!!!!
+				src = ((IFloopySoundFilter*)src)->GetSource();
+			if(!src)
+				return; // No need
+
+			IFloopySoundEngine *engine = GetTracks()->GetEngine();
+			IFloopySoundFilter *reverse = (IFloopySoundFilter*)engine->CreateInput("stdlib.reverse");
+			if(reverse)
+			{
+				reverse->EnableAt(0, TRUE);
+				reverse->SetBypass(FALSE);
+
+				reverse->SetSource( src );
+				((IFloopySoundFilter*)m_pInput)->SetSource( reverse );
 
 				Invalidate();
 				Refresh();

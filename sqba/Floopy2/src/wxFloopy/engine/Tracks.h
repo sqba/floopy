@@ -373,6 +373,9 @@ public:
 	BOOL IsLooped();
 	void SetLooped(BOOL bLooped);
 
+	BOOL IsReverse();
+	void SetReverse(BOOL bReverse);
+
 	BOOL GetReset();
 	void SetReset(BOOL bReset);
 
