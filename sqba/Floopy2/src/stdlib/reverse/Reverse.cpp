@@ -93,30 +93,33 @@ void CReverse::reverse(BYTE *data, int size)
 	SOUNDFORMAT *fmt = GetFormat();
 	if(size>0 && fmt && fmt->bitsPerSample && fmt->channels)
 	{
-		short int *tmp = (short int*)(m_pBuffer+size);
-		short int *out = (short int*)data;
+		if(fmt->bitsPerSample==16)
+		{
+			short int *tmp = (short int*)(m_pBuffer+size);
+			short int *out = (short int*)data;
 
-		int numsamples = size / (fmt->bitsPerSample/8);
+			int numsamples = size / (fmt->bitsPerSample/8);
 
-		int pos = numsamples;
+			int pos = numsamples;
 
-		//int pos1 = numsamples;
+			//int pos1 = numsamples;
 
-		
-		do {
-			tmp -= fmt->channels;
-			for(int ch=0; ch<fmt->channels; ch++)
-			//{
-				*(out++) = *(tmp++);
-			//	pos1--;
-			//}
-			tmp -= fmt->channels;
-		} while(pos -= fmt->channels);
+			
+			do {
+				tmp -= fmt->channels;
+				for(int ch=0; ch<fmt->channels; ch++)
+				//{
+					*(out++) = *(tmp++);
+				//	pos1--;
+				//}
+				tmp -= fmt->channels;
+			} while(pos -= fmt->channels);
 
-		//assert(pos == pos1);
+			//assert(pos == pos1);
 
-		//while(numsamples--)
-		//	*(out++) = *(tmp--);
+			//while(numsamples--)
+			//	*(out++) = *(tmp--);
+		}
 	}
 }
 
