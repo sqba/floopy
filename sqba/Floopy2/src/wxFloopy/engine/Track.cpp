@@ -93,36 +93,41 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	wxBrush oldBrush = dc.GetBrush();
 	wxPen oldpen = dc.GetPen();
 
-	wxPen pen( *wxLIGHT_GREY );
-	pen.SetWidth(2);
+	wxPen pen( *wxMEDIUM_GREY_PEN );
+	pen.SetWidth(1);
 	dc.SetPen( pen );
 
 	//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
 	wxBrush brush(GetBGColour(), wxSOLID);
 	dc.SetBrush(brush);
 
-	// Draw background
-	int left   = m_nLevel*4+1;
-	int top    = rc.GetTop()+1;
-	int width  = rc.GetWidth()-left-2;
-	int height = m_height-2;
-	dc.DrawRoundedRectangle(left, top, width, height, 4);
+	int left, top, width, height;
 
-/*
-	// Draw aqua background
-	int left   = 0;
-	int top    = rc.GetTop();
-	int width  = rc.GetWidth()-left;
-	int height = m_height;
-	dc.DrawRectangle(left, top, width, height);
-	DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2));
-*/
+	if(TRUE)
+	{
+		// Draw background
+		left   = m_nLevel*4+2;
+		top    = rc.GetTop()+2;
+		width  = rc.GetWidth()-left-3;
+		height = m_height-3;
+		dc.DrawRoundedRectangle(left, top, width, height, 4);
+	}
+	else
+	{
+		// Draw aqua background
+		left   = 0;
+		top    = rc.GetTop();
+		width  = rc.GetWidth()-left;
+		height = m_height;
+		dc.DrawRectangle(left, top, width, height);
+		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2));
+	}
 
 	dc.SetTextForeground( GetForeColour() );
 	wxFont font = dc.GetFont();
 	font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
 	//font.SetPointSize(m_height / 4);
-	font.SetPointSize( 10 );
+	font.SetPointSize( 9 );
 	dc.SetFont(font);
 	//wxFont font(12, wxDEFAULT, wxITALIC, (IsSelected() ? wxBOLD : wxNORMAL));
 	//dc.SetFont(font);
@@ -1067,7 +1072,7 @@ void CTrack::CLoopButton::DrawFore(wxDC& dc, wxRect& rc)
 	wxPen oldpen = dc.GetPen();
 
 	wxPen pen( getTrack()->IsLooped() ? *wxBLACK : *wxLIGHT_GREY );
-	pen.SetWidth(2);
+	pen.SetWidth(1);
 	dc.SetPen( pen );
 
 	wxBrush brush(getTrack()->GetColour(), wxSOLID);
@@ -1096,7 +1101,7 @@ void CTrack::CCacheButton::DrawFore(wxDC& dc, wxRect& rc)
 	wxPen oldpen = dc.GetPen();
 
 	wxPen pen( *wxLIGHT_GREY );
-	pen.SetWidth(2);
+	pen.SetWidth(1);
 	dc.SetPen( pen );
 
 	//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));

@@ -24,7 +24,7 @@ void CFloopyControl::DrawBG(wxDC& dc, wxRect& rc)
 	wxPen oldpen = dc.GetPen();
 
 	wxPen pen( *wxLIGHT_GREY );
-	pen.SetWidth(2);
+	pen.SetWidth(1);
 	dc.SetPen( pen );
 
 	wxBrush brush(GetParent()->GetColour(), wxSOLID);
