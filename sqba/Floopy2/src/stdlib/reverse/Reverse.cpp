@@ -6,6 +6,13 @@
 
 #include "Reverse.h"
 
+
+
+
+
+// Zasto se periodicno pojavljuju nule koje izazivaju pucketanje?
+
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -36,33 +43,78 @@ int CReverse::Read(BYTE *data, int size)
 		m_nBuffSize = size;
 		m_pBuffer = new BYTE[m_nBuffSize];
 	}
-	memset(m_pBuffer, 0, m_nBuffSize);
+
+	//memset(m_pBuffer, 0, m_nBuffSize);
+	memcpy(m_pBuffer, data, size);
 
 
 	int stb = samplesToBytes();
 
 	int srcSize = IFloopySoundFilter::GetSize();
 
-	int s = srcSize*stb;
-	if(size > s)
-		size = s;
+	int buffsize = size;
 
-	int start = m_nPosition - size/stb;
+	int tmp = srcSize*stb;
+	if(buffsize > tmp)
+		buffsize = tmp;
+
+//	if(buffsize/stb > srcSize-m_nPosition)
+//		buffsize = (srcSize-m_nPosition)*stb;
+
+	if(m_nPosition < buffsize/stb)
+		buffsize = m_nPosition*stb;
+
+	int start = m_nPosition - buffsize/stb;
+	//assert(start >= 0);
 	IFloopySoundFilter::MoveTo(start);
-	int len = IFloopySoundFilter::Read(m_pBuffer, size);
+
+	int len = IFloopySoundFilter::Read(m_pBuffer, buffsize);
 
 	if(EOF != len)
 	{
-		m_nPosition -= len/stb;
+		//assert(m_nPosition >= len/stb);
 		reverse(data, len);
+		m_nPosition -= len/stb;
+		//IFloopySoundFilter::MoveTo(m_nPosition);
 	}
 //	else
 //		m_nPosition -= srcSize;
 
-
 //	assert(len == size);
 
 	return len;
+}
+
+void CReverse::reverse(BYTE *data, int size)
+{
+	SOUNDFORMAT *fmt = GetFormat();
+	if(size>0 && fmt && fmt->bitsPerSample && fmt->channels)
+	{
+		short int *tmp = (short int*)(m_pBuffer+size);
+		short int *out = (short int*)data;
+
+		int numsamples = size / (fmt->bitsPerSample/8);
+
+		int pos = numsamples;
+
+		int pos1 = numsamples;
+
+		
+		do {
+			tmp -= fmt->channels;
+			for(int ch=0; ch<fmt->channels; ch++)
+			{
+				*(out++) = *(tmp++);
+				pos1--;
+			}
+			tmp -= fmt->channels;
+		} while(pos -= fmt->channels);
+
+		assert(pos == pos1);
+
+		//while(numsamples--)
+		//	*(out++) = *(tmp--);
+	}
 }
 
 void CReverse::MoveTo(int samples)
@@ -71,51 +123,17 @@ void CReverse::MoveTo(int samples)
 
 	if(SIZE_INFINITE != size)
 	{
-		if(size > samples)
-		{
+		if(size >= samples)
 			samples = size - samples;
-			m_nPosition = samples;
-		}
-		else
-		{
-			samples = size;
-			m_nPosition = size;
-		}
+		//else
+		//	samples = size;
 	}
-	else
-		m_nPosition = samples;
+
+	m_nPosition = samples;
+
+	assert(m_nPosition >= 0);
 
 	IFloopySoundFilter::MoveTo(samples);
-}
-
-int CReverse::samplesToBytes()
-{
-	SOUNDFORMAT *fmt = GetFormat();
-	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	return (fmt->bitsPerSample / 8) * fmt->channels;
-}
-
-void CReverse::reverse(BYTE *data, int size)
-{
-	SOUNDFORMAT *fmt = GetFormat();
-	if(fmt && fmt->bitsPerSample && fmt->channels)
-	{
-		int numsamples = size / (fmt->bitsPerSample/8);
-
-		short int *tmp = (short int*)(m_pBuffer+size);
-		short int *out = (short int*)data;
-
-		while(numsamples--)
-			*(out++) = *(tmp--);
-
-		/*while(numsamples -= fmt->channels)
-		{
-			tmp -= fmt->channels;
-			for(int ch=0; ch<fmt->channels; ch++)
-				*(out++) = *(tmp++);
-			tmp -= fmt->channels;
-		}*/
-	}
 }
 
 void CReverse::Reset()
@@ -125,4 +143,9 @@ void CReverse::Reset()
 	IFloopySoundFilter::MoveTo(size);
 }
 
-// Zasto se periodicno pojavljuju nule koje izazivaju pucketanje?
+int CReverse::samplesToBytes()
+{
+	SOUNDFORMAT *fmt = GetFormat();
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	return (fmt->bitsPerSample / 8) * fmt->channels;
+}

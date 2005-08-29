@@ -138,20 +138,21 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	clock_t start = clock();
 
 	int offset = 0;
-	BYTE buff[BUFFER_LENGTH];
-	int len, size=sizeof(buff);
-	memset(buff, 0, sizeof(buff));
+	int bufflen = fmt->frequency * stb / 10;
+	BYTE *buff = new BYTE[bufflen];
+	int len;
+	memset(buff, 0, bufflen);
 
 	int max = samples * stb;
 	int percent = 0;
 
 	int del = 0;
 	fprintf(stderr, "Reading: ");//  0%%");
-	while((len=input->Read(buff, size)) != EOF)
+	while((len=input->Read(buff, bufflen)) != EOF)
 	{
 		offset += len;
 		output->Write(buff, len);
-		memset(buff, 0, sizeof(buff));
+		memset(buff, 0, bufflen);
 		//assert(offset < max);
 		percent = (int)((float)offset * 100.f / (float)max);
 		for(int i=0; i<del; i++)
@@ -168,6 +169,8 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 
 	fprintf(stderr, "Samples: %d\n", (offset / stb));
 	fprintf(stderr, "Seconds: %.3f\n", (float)offset / (float)stb / (float)fmt->frequency);
+
+	delete buff;
 }
 
 void main(int argc, char* argv[])

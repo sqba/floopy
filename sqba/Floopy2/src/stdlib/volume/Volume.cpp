@@ -46,8 +46,7 @@ int CVolume::Read(BYTE *data, int size)
 
 		short int *sample = (short int*)data;
 
-		while(numsamples -= fmt->channels)
-		{
+		do {
 			for(int ch=0; ch<fmt->channels; ch++)
 			{
 				float percent = (ch == 0 ? lpercent : rpercent);
@@ -69,7 +68,7 @@ int CVolume::Read(BYTE *data, int size)
 				}
 				sample++;
 			}
-		}
+		} while(numsamples -= fmt->channels);
 		return len;
 	}
 	else
