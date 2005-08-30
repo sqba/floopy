@@ -78,7 +78,12 @@ __declspec( dllexport ) BOOL Save(IFloopySoundEngine *engine, char *filename)
 {
 	return saveXML(engine, filename);
 }
-
+/*
+__declspec( dllexport ) char *GetExtension()
+{
+	return "XML";
+}
+*/
 #ifdef __cplusplus
 }
 #endif

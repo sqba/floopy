@@ -15,6 +15,7 @@ enum
 //	Minimal_About,
 	ID_FULL  = 109,
 	ID_OPEN,
+	ID_SAVE,
 	ID_SAVEAS,
 	ID_CLOSE,
 	ID_EXIT,
@@ -33,7 +34,8 @@ BEGIN_EVENT_TABLE(CFloopyFrame, wxFrame)
 //	EVT_MENU(Minimal_About, CFloopyFrame::OnAbout)
 	EVT_MENU(ID_FULL,		CFloopyFrame::OnFullScreen)
 	EVT_MENU(ID_OPEN,		CFloopyFrame::OnFileOpen)
-	EVT_MENU(ID_SAVEAS,		CFloopyFrame::OnFileSave)
+	EVT_MENU(ID_SAVE,		CFloopyFrame::OnFileSave)
+	EVT_MENU(ID_SAVEAS,		CFloopyFrame::OnFileSaveAs)
 	EVT_MENU(ID_CLOSE,		CFloopyFrame::OnFileClose)
 	EVT_MENU(ID_EXIT,		CFloopyFrame::OnQuit)
 	EVT_MENU(ID_ABOUT,		CFloopyFrame::OnAbout)
@@ -135,8 +137,13 @@ void CFloopyFrame::Open(char *filename)
 
 void CFloopyFrame::OnFileSave(wxCommandEvent& WXUNUSED(event))
 {
+
+}
+
+void CFloopyFrame::OnFileSaveAs(wxCommandEvent& WXUNUSED(event))
+{
 	wxFileDialog *dlg = new wxFileDialog(this, "Save",
-		"", "", "XML Files(*.xml)|*.xml|All files(*.*)|*.*",
+		"", "", "XML Files(*.xml)|*.xml|Wav files(*.wav)|*.wav|All files(*.*)|*.*",
 		wxSAVE, wxDefaultPosition);
 	if ( dlg->ShowModal() == wxID_OK )
 	{

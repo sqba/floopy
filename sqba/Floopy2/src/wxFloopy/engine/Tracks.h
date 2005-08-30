@@ -215,6 +215,8 @@ public:
 	void SetChanged(BOOL bChanged)				{ m_bChanged = bChanged; }
 	BOOL IsChanged()							{ return m_bChanged; }
 
+	char *GetFilename()							{ return m_filename; }
+
 private:
 	IFloopySoundMixer *getMixer();
 	BOOL createEngine(char *plugin);
@@ -245,6 +247,8 @@ private:
 
 	CTimer				m_Timer;
 	int					m_iStartSample;
+
+	char				m_filename[MAX_PATH];
 };
 
 class CTrack : public IFloopyObj  

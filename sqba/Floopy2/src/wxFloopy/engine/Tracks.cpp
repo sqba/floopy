@@ -41,6 +41,8 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_bChanged			= FALSE;
 //	m_pPlayThread		= NULL;
 
+	memset(m_filename, 0, sizeof(m_filename));
+
 	m_Timer.SetParent( this );
 
 	createEngine("engine");
@@ -665,6 +667,8 @@ BOOL CTracks::Open(char *filename)
 	{
 		if(m_pEngine->Open(filename))
 		{
+			memset(m_filename, 0, sizeof(m_filename));
+			strcpy(m_filename, filename);
 			Clear();
 			loadTracks(m_pEngine, 0);
 			//loadTracks(m_pEngine->GetSource(), 0);

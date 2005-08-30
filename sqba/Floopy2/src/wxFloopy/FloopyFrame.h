@@ -51,6 +51,7 @@ public:
     void OnAbout(wxCommandEvent &WXUNUSED(event));
     void OnFileOpen(wxCommandEvent &WXUNUSED(event));
     void OnFileSave(wxCommandEvent &WXUNUSED(event));
+    void OnFileSaveAs(wxCommandEvent &WXUNUSED(event));
     void OnFileClose(wxCommandEvent &WXUNUSED(event));
 	void OnPlay( wxCommandEvent &WXUNUSED(event) );
 	void OnPause( wxCommandEvent &WXUNUSED(event) );
