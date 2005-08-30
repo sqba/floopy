@@ -26,6 +26,9 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour co
 
 	m_pInput = input;
 
+	m_pInput = GetComponent("track");
+	assert(NULL != m_pInput);
+
 	m_bHide = false;
 
 

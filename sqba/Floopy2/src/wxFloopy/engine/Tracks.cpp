@@ -684,7 +684,7 @@ BOOL CTracks::Open(char *filename)
 		}
 		else
 		{
-			IFloopySoundInput *input = m_pEngine->CreateTrack(filename);
+			/*IFloopySoundInput *input = m_pEngine->CreateTrack(filename);
 			if(input)
 			{
 				if(!m_pMixer)
@@ -695,6 +695,21 @@ BOOL CTracks::Open(char *filename)
 				}
 				IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateInput("stdlib.track");
 				track->SetSource(input);
+				track->SetDisplayName(filename, strlen(filename));
+				m_pMixer->AddSource(track);
+				AddTrack(track, 0);
+				Refresh();
+				return TRUE;
+			}*/
+			IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateTrack(filename);
+			if(track)
+			{
+				if(!m_pMixer)
+				{
+					m_pMixer = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
+					m_pMixer->Enable(TRUE);
+					m_pEngine->SetSource(m_pMixer);
+				}
 				track->SetDisplayName(filename, strlen(filename));
 				m_pMixer->AddSource(track);
 				AddTrack(track, 0);

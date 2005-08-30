@@ -107,6 +107,8 @@ void CRegionDisplay::loadPeaks()
 
 	int start	= region->GetStartOffset();
 	int end		= region->GetEndOffset();
+	if(end<=0 || start<0)
+		return;
 	int samples	= (end - start) * channels;
 
 	short int *buffer = new short int[samples];

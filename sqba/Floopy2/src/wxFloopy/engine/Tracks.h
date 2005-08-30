@@ -591,6 +591,7 @@ private:
 	int m_iStartPos;
 	BOOL m_bPlaying, m_bPaused;
 	IFloopySoundOutput *m_pOutput;
+	IFloopySoundInput *m_pInput;
 };
 
 /*

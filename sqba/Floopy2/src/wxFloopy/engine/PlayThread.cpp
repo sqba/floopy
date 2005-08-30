@@ -14,6 +14,7 @@ CPlayThread::CPlayThread(CTracks *pTracks)
 	m_iStartPos	= 0;
 	m_bPlaying	= m_bPaused = FALSE;
 	m_pOutput	= NULL;
+	m_pInput	= NULL;
 }
 
 CPlayThread::~CPlayThread()
@@ -28,7 +29,7 @@ void *CPlayThread::Entry()
 		return NULL;
 
 	IFloopySoundEngine	*engine = m_pTracks->GetEngine();
-	IFloopySoundInput	*input = engine;
+	m_pInput = engine;
 
 	if(!engine)
 		return NULL;
@@ -36,12 +37,12 @@ void *CPlayThread::Entry()
 	// Check if a track is selected
 	IFloopyObj *tmpobj = m_pTracks->GetSelectedObj();
 	if(tmpobj && tmpobj->IsKindOf(CLASSINFO(CTrack)))
-		input = ((CTrack*)tmpobj)->GetInput();
+		m_pInput = ((CTrack*)tmpobj)->GetInput();
 
-	if(!input)
+	if(!m_pInput)
 		return NULL;
 
-	SOUNDFORMAT *fmt = input->GetFormat();
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 
@@ -64,7 +65,7 @@ void *CPlayThread::Entry()
 
 //	int delaySamples = 40000; // Odprilike!!! (44100?)
 
-	while((len=input->Read(buff, bufflen)) != EOF)
+	while((len=m_pInput->Read(buff, bufflen)) != EOF)
 	{
 		pos += len / stb;
 		m_pOutput->Write( buff, len );
@@ -139,7 +140,13 @@ void CPlayThread::OnExit()
 
 int CPlayThread::GetWrittenSamples()
 {
-	int delaySamples = 40000; // Odprilike!!! (44100?)
+	if(!m_pInput)
+		return NULL;
+
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
+
+	int delaySamples = fmt->channels == 2 ? 40000 : 80000; // Odprilike!!! (44100?)
+
 	if(!m_pOutput)
 		return m_iStartPos;
 

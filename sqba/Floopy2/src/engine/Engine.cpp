@@ -180,16 +180,6 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 		return NULL;
 	}
 
-	if((fmt1->channels == 2) && (pfmt2->channels == 1))
-	{
-		IFloopySoundFilter *filter = (IFloopySoundFilter*)CreateInput("stdlib.mono2stereo");
-		if(filter)
-		{
-			filter->SetSource(input);
-			input = filter;
-		}
-	}
-
 	if((fmt1->channels == 1) && (pfmt2->channels == 2))
 	{
 		// Stereo2mono
@@ -216,6 +206,23 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 		{
 			loop->SetSource(input);
 			input = loop;
+		}
+	}
+
+	IFloopySoundFilter *track = (IFloopySoundFilter*)CreateInput("stdlib.track");
+	if(track)
+	{
+		track->SetSource(input);
+		input = track;
+	}
+
+	if((fmt1->channels == 2) && (pfmt2->channels == 1))
+	{
+		IFloopySoundFilter *filter = (IFloopySoundFilter*)CreateInput("stdlib.mono2stereo");
+		if(filter)
+		{
+			filter->SetSource(input);
+			input = filter;
 		}
 	}
 
