@@ -55,7 +55,8 @@ void *CPlayThread::Entry()
 
 	//int bufflen = 5120; // Zujanje (shto je bafer manji veca je frekvenca)
 	//int bufflen = fmt->frequency * stb; // Problemi na pochetku regiona
-	int bufflen = fmt->frequency * stb / 10;
+	//int bufflen = fmt->frequency * stb / 10;
+	int bufflen = 64 * stb;
 	BYTE *buff = new BYTE[bufflen];
 
 	engine->EmptyBuffer( buff, bufflen );
