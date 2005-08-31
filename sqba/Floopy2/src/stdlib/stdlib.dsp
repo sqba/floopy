@@ -98,6 +98,10 @@ SOURCE=.\cache\Cache.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\8to16bit\Convert8to16bit.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\echo\Echo.cpp
 # End Source File
 # Begin Source File
@@ -163,6 +167,10 @@ SOURCE=.\wavfile\WavFileOut.cpp
 # Begin Source File
 
 SOURCE=.\cache\Cache.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\8to16bit\Convert8to16bit.h
 # End Source File
 # Begin Source File
 

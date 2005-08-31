@@ -192,12 +192,22 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 		return NULL;
 	}
 
-	if(fmt1->bitsPerSample != pfmt2->bitsPerSample)
+	if(fmt1->bitsPerSample == 16 && pfmt2->bitsPerSample == 8)
+	{
+		IFloopySoundFilter *conv = (IFloopySoundFilter*)CreateInput("stdlib.8to16bit");
+		if(conv)
+		{
+			conv->SetSource(input);
+			input = conv;
+		}
+	}
+
+	/*if(fmt1->bitsPerSample != pfmt2->bitsPerSample)
 	{
 		// Find adequate conversion component instead
 		//"An error occurred loading the file. The specified file contains an unsupported bits per sample size."
 		return NULL;
-	}
+	}*/
 
 	if(TRUE)
 	{

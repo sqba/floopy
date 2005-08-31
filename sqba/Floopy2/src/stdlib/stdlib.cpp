@@ -24,6 +24,7 @@
 // Output classes
 #include "wavfile/wavfileout.h"
 #include "waveout/waveout.h"
+#include "8to16bit/Convert8to16bit.h"
 
 
 #ifdef __cplusplus
@@ -61,6 +62,8 @@ __declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 		return new CReverse();
 	if( 0 == stricmp(name, "invert") )
 		return new CInvert();
+	if( 0 == stricmp(name, "8to16bit") )
+		return new CConvert8to16bit();
 	//if( 0 == stricmp(name, "wavein") )
 	//	return NULL;
 
@@ -149,6 +152,10 @@ __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
 		break;
 	case 14:
 		name = "invert";
+		*type = TYPE_FLOOPY_SOUND_FILTER;
+		break;
+	case 15:
+		name = "8to16bit";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
 	};
