@@ -17,7 +17,7 @@ WX_DEFINE_LIST(RegionList);
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour colour)
+CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
  : IFloopyObj(tracks)
 {
 	wxLog::AddTraceMask(_T("CTrack"));
@@ -43,7 +43,6 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour co
 	m_name    = name;
 	m_height  = MIN_HEIGHT*3;
 	m_top     = 0;
-	m_colour  = colour;
 	m_pBitmap = new wxBitmap();
 	m_pBitmap->LoadFile("res/help.bmp", wxBITMAP_TYPE_BMP);
 	m_pBorder = new CBorder(this);
@@ -101,7 +100,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	dc.SetPen( pen );
 
 	//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
-	wxBrush brush(GetBGColour(), wxSOLID);
+	wxBrush brush(GetBGColor(), wxSOLID);
 	dc.SetBrush(brush);
 
 	int left, top, width, height;
@@ -126,7 +125,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2));
 	}
 
-	dc.SetTextForeground( GetForeColour() );
+	dc.SetTextForeground( GetForeColor() );
 	wxFont font = dc.GetFont();
 	font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
 	//font.SetPointSize(m_height / 4);
@@ -223,7 +222,7 @@ void CTrack::DrawFore(wxDC& dc, wxRect& rc)
 
 	m_top = rc.GetTop();
 
-	dc.SetBrush( wxBrush(m_colour) );
+	dc.SetBrush( wxBrush(m_color) );
 
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
@@ -248,8 +247,8 @@ void CTrack::DrawPreview(wxDC& dc, wxRect& rc)
 {
 	wxBrush oldBrush = dc.GetBrush();
 	wxPen oldpen = dc.GetPen();
-	dc.SetBrush( wxBrush(m_colour) );
-	dc.SetPen( wxPen(m_colour) );
+	dc.SetBrush( wxBrush(m_color) );
+	dc.SetPen( wxPen(m_color) );
 
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
@@ -983,17 +982,33 @@ void CTrack::InvalidateRegions(CRegion *start)
 	}*/
 }
 
-wxColour CTrack::GetBGColour()
+wxColour CTrack::GetColor()
 {
-	wxColor color = GetColour();
+	/*UINT r, g, b;
+	if( m_pInput->GetColor(&r, &g, &b) )
+		return wxColor(r, g, b);
+	else*/
+		return m_color;
+}
+
+void CTrack::SetColor(wxColour color)
+{
+	m_color = color;
+	if(m_pInput)
+		m_pInput->SetColor(color.Red(), color.Green(), color.Blue());
+}
+
+wxColour CTrack::GetBGColor()
+{
+	wxColor color = GetColor();
 	if( IsSelected() )
 		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
 	return color;
 }
 
-wxColour CTrack::GetForeColour()
+wxColour CTrack::GetForeColor()
 {
-	wxColor color = GetColour();
+	wxColor color = GetColor();
 	if( !IsSelected() )
 		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
 	return color;
@@ -1070,7 +1085,7 @@ void CTrack::CLoopButton::DrawFore(wxDC& dc, wxRect& rc)
 	pen.SetWidth(1);
 	dc.SetPen( pen );
 
-	wxBrush brush(getTrack()->GetColour(), wxSOLID);
+	wxBrush brush(getTrack()->GetColor(), wxSOLID);
 	dc.SetBrush(brush);
 
 	int left   = rc.GetX();
@@ -1100,7 +1115,7 @@ void CTrack::CCacheButton::DrawFore(wxDC& dc, wxRect& rc)
 	dc.SetPen( pen );
 
 	//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
-	wxBrush brush(getTrack()->GetColour(), wxSOLID);
+	wxBrush brush(getTrack()->GetColor(), wxSOLID);
 	dc.SetBrush(brush);
 
 	// Draw background

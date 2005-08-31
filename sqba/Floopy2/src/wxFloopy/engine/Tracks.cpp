@@ -40,6 +40,7 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_iCursorPosition	= 0;
 	m_bChanged			= FALSE;
 //	m_pPlayThread		= NULL;
+	m_bViewUpdatedWhilePlaying = FALSE;
 
 	memset(m_filename, 0, sizeof(m_filename));
 
@@ -196,9 +197,28 @@ void CTracks::DrawPreview(wxDC& dc, wxSize size)
 CTrack *CTracks::AddTrack(IFloopySoundInput *input, int level)
 {
 	wxLogTrace(_T("CTracks"), _T("Adding new track"));
-	UINT r=0, g=0, b=0;
-	input->GetColor(&r, &g, &b);
-	CTrack *track = new CTrack( this, input, level, wxColor(r, g, b) );
+
+	CTrack *track = new CTrack( this, input, level );
+
+	UINT r=255, g=255, b=255;
+	input = track->GetInput();
+	if( !input->GetColor(&r, &g, &b) )
+	{
+		int n = m_tracks.GetCount();
+		if(n > 0)
+		{
+			CTrack *pTrack = GetTrack(n-1);
+			IFloopySoundInput *pInput = pTrack->GetInput();
+			if( pInput && pTrack->GetInput()->GetColor(&r, &g, &b) )
+			{
+				r -= 5;
+				g -= 5;
+				b -= 5;
+			}
+		}
+	}
+	track->SetColor(wxColor(r, g, b));
+
 	try {
 		m_tracks.Append( track );
 	} catch(...) {
@@ -258,6 +278,21 @@ CTrack *CTracks::GetTrackAt(int y)
 		if(track->HitTest(y))
 			return track;
 		node = node->GetNext();
+	}
+	return NULL;
+}
+
+CTrack *CTracks::GetTrack(int index)
+{
+	int count = 0;
+	TracksList::Node *node = m_tracks.GetFirst();
+	while (node)
+	{
+		CTrack *track = (CTrack*)node->GetData();
+		if(count == index)
+			return track;
+		node = node->GetNext();
+		count++;
 	}
 	return NULL;
 }
@@ -676,6 +711,7 @@ BOOL CTracks::Open(char *filename)
 			float freq = fmt->frequency;
 			m_pEngine->Reset();
 			m_length = (float)m_pEngine->GetSize() / freq;
+			m_length += 2; // seconds
 			//RefreshRulers();
 //			m_pPlayThread = new CPlayThread(this);
 			Refresh();
@@ -711,10 +747,19 @@ BOOL CTracks::Open(char *filename)
 					m_pEngine->SetSource(m_pMixer);
 				}
 				track->SetDisplayName(filename, strlen(filename));
-				m_pMixer->AddSource(track);
-				AddTrack(track, 0);
-				Refresh();
-				return TRUE;
+				if( m_pMixer->AddSource(track) > -1 )
+				{
+					AddTrack(track, 0);
+					Refresh();
+					return TRUE;
+				}
+				else
+				{
+					wxString err;
+					err.Printf("Mixer supports maximum %d tracks!", m_tracks.GetCount());
+					(void)wxMessageBox(err, _T("Mixer error"), wxICON_EXCLAMATION);
+					return FALSE;
+				}
 			}
 		}
 	}
@@ -777,6 +822,8 @@ void CTracks::Clear()
 		delete m_pPlayThread;
 		m_pPlayThread = NULL;
 	}*/
+	if(m_pMixer)
+		m_pMixer->Close();
 	WX_CLEAR_LIST(TracksList, m_tracks);
 	Refresh();
 }
@@ -784,19 +831,19 @@ void CTracks::Clear()
 void CTracks::OnKeyDown(wxKeyEvent& event)
 {
 //	int pps = GetPixelsPerSecond();
-	int spp = GetSamplesPerPixel();
+//	int spp = GetSamplesPerPixel();
 
 	switch (event.GetKeyCode() )
 	{
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
 	case '-':
-		SetSamplesPerPixel( spp*2 );
+		SetSamplesPerPixel( GetSamplesPerPixel()*2 );
 		break;
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
 	case '+':
-		SetSamplesPerPixel( spp/2 );
+		SetSamplesPerPixel( GetSamplesPerPixel()/2 );
 		break;
 	case WXK_UP:
 	case WXK_NUMPAD_UP:
@@ -908,7 +955,6 @@ void CTracks::OnExitThread()
 	m_Timer.Stop();
 	// Postaviti nekako kursor na prvobitnu poziciju.
 	// A to ne moze iz drugog thread-a!
-	//SetCursorPosition( m_iStartSample );
 
 	GetStatusBar()->SetStatusText("Finished playing", 0);
 	m_pPlayThread = new CPlayThread(this);
@@ -1073,6 +1119,13 @@ void CTracks::SetCursorPosition(int samples)
 	str.Printf("Cursor position: %d (%d%%)", samples, percent);
 	GetStatusBar()->SetStatusText(str, 1);
 
+	if(IsPlaying())
+	{
+		//m_pPlayThread->Pause();
+		m_pPlayThread->SetStartPos(samples);
+		SetViewUpdatedWhilePlaying(TRUE);
+	}
+
 
 	//m_pTracksView->SetFocus();
 //	SetCaretPos( samples );
@@ -1096,6 +1149,18 @@ void CTracks::SetCursorPosition(int samples)
 BOOL CTracks::IsPlaying()
 {
 	return m_pPlayThread ? m_pPlayThread->IsPlaying() : FALSE;
+}
+
+BOOL CTracks::GetViewUpdatedWhilePlaying()
+{
+	return m_bViewUpdatedWhilePlaying;
+	//return IsPlaying() ? m_bViewUpdatedWhilePlaying : FALSE;
+}
+
+void CTracks::SetViewUpdatedWhilePlaying(BOOL bUpdate)
+{
+	if( IsPlaying() )
+		m_bViewUpdatedWhilePlaying = bUpdate;
 }
 
 

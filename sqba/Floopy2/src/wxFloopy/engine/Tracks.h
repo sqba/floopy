@@ -176,6 +176,7 @@ public:
 	void UpdateSelectedRegions();
 
 	CTrack *GetTrackAt(int y);
+	CTrack *GetTrack(int index);
 	IFloopyObj *GetChildAt(int x, int y);
 
 	void Refresh();
@@ -217,6 +218,9 @@ public:
 
 	char *GetFilename()							{ return m_filename; }
 
+	BOOL GetViewUpdatedWhilePlaying();
+	void SetViewUpdatedWhilePlaying(BOOL bUpdate);
+
 private:
 	IFloopySoundMixer *getMixer();
 	BOOL createEngine(char *plugin);
@@ -249,6 +253,8 @@ private:
 	int					m_iStartSample;
 
 	char				m_filename[MAX_PATH];
+
+	BOOL				m_bViewUpdatedWhilePlaying;
 };
 
 class CTrack : public IFloopyObj  
@@ -321,7 +327,7 @@ class CTrack : public IFloopyObj
 
 public:
 	CTrack() {}
-	CTrack(CTracks *tracks, IFloopySoundInput *input, int level, wxColour colour);
+	CTrack(CTracks *tracks, IFloopySoundInput *input, int level);
 	virtual ~CTrack();
 
 	void DrawLabel(wxDC& dc, wxRect& rc);
@@ -385,12 +391,15 @@ public:
 
 	void InvalidateRegions(CRegion *start);
 
-	wxColour GetBGColour();
-	wxColour GetForeColour();
+	wxColour GetBGColor();
+	wxColour GetForeColor();
 
 	IFloopySoundInput *GetComponent(char *name);
 
 	void Select(bool selected=TRUE);
+
+	wxColour GetColor();
+	void SetColor(wxColour color);
 
 private:
 	bool LoadDisplay(wxString strType);
@@ -465,7 +474,7 @@ public:
 	void GetRect(wxRect& rc);
 
 	wxCursor GetCursor() { return wxCursor(wxCURSOR_HAND); }
-	wxColour GetColour() { return getTrack()->GetColour(); }
+	wxColour GetColor()	 { return getTrack()->GetColor(); }
 
 	IFloopyObj *GetBorder(bool left) { return(left ? m_pLeftBorder : m_pRightBorder); }
 	IFloopyObj *GetSelectedObj();// { return IsSelected() ? this : NULL; }
@@ -494,8 +503,8 @@ public:
 
 	void SetStartOffset(int sample);
 
-	wxColour GetBGColour();
-	wxColour GetForeColour();
+	wxColour GetBGColor();
+	wxColour GetForeColor();
 
 private:
 	static void remove(IFloopyObj *event);
@@ -586,6 +595,8 @@ public:
 
 	int GetWrittenSamples();
 
+	void SetStartPos(int pos);
+
 private:
 	CTracks *m_pTracks;
 	int m_iStartPos;
@@ -593,6 +604,7 @@ private:
 	IFloopySoundOutput *m_pOutput;
 	IFloopySoundInput *m_pInput;
 	int m_iBufferLength; // In samples
+	int m_iPosition; // In samples
 };
 
 /*

@@ -98,8 +98,8 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	//dc.SetPen(wxPen((GetReset()?*wxBLACK:*wxLIGHT_GREY), border));
 	dc.SetPen( *wxGREY_PEN );
 
-	//wxBrush brush(GetColour(), wxSOLID);
-	wxBrush brush(GetBGColour(), wxSOLID);
+	//wxBrush brush(GetColor(), wxSOLID);
+	wxBrush brush(GetBGColor(), wxSOLID);
 
 #ifndef TRANSPARENT_BACKGROUND
 		dc.SetBrush(brush);
@@ -144,8 +144,8 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 
 	///////////////////////////////////////////////////////
 	wxPen oldpen = dc.GetPen();
-	//wxColor color = GetColour();
-	wxColor color = GetForeColour();
+	//wxColor color = GetColor();
+	wxColor color = GetForeColor();
 
 #ifndef TRANSPARENT_BACKGROUND
 	//color.Set(color.Red()/2, color.Green()/2, color.Blue()/2);
@@ -162,17 +162,17 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 //	drawParametersFore(dc, rce);
 }
 
-wxColour CRegion::GetBGColour()
+wxColour CRegion::GetBGColor()
 {
-	wxColor color = getTrack()->GetColour();
+	wxColor color = getTrack()->GetColor();
 	if( IsSelected() )
 		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
 	return color;
 }
 
-wxColour CRegion::GetForeColour()
+wxColour CRegion::GetForeColor()
 {
-	wxColor color = getTrack()->GetColour();
+	wxColor color = getTrack()->GetColor();
 	if( !IsSelected() )
 		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
 	return color;

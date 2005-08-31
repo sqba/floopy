@@ -89,7 +89,8 @@ public:
 	virtual wxCursor GetCursor()	{ return *wxSTANDARD_CURSOR; }
 	virtual wxMenu *GetMenu()		{ return m_pMenu; }
 
-	wxColour GetColour()			{ return m_colour; }
+	wxColour GetColor()				{ return m_color; }
+	void SetColor(wxColour color)	{ m_color = color; }
 
 	virtual void Move(int WXUNUSED(dx), int WXUNUSED(dy)) {}
 
@@ -106,7 +107,7 @@ protected:
 	IFloopyObj	*m_pParent;
 	CMenu		*m_pMenu;
 	bool		m_bSelected;
-	wxColour	m_colour;
+	wxColour	m_color;
 	wxPoint		m_ptPrev;
 };
 

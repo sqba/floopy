@@ -25,7 +25,7 @@ CInput::CInput(UpdateCallback func)
 	m_offset	= 0;
 	m_iCheck	= 23526; // some random number
 	m_callback	= func;
-	m_red = m_green = m_blue = 255;
+	m_red = m_green = m_blue = 256;
 
 	memset(m_szDisplayName, 0, 50);
 	memset(m_szLastError, 0, sizeof(m_szLastError));
@@ -560,13 +560,17 @@ void CInput::EnableAt(int offset, BOOL bEnable)
 
 BOOL CInput::GetColor(UINT *r, UINT *g, UINT *b)
 {
-	*r = m_red;
-	*g = m_green;
-	*b = m_blue;
-	return TRUE;
+	if(m_red<256 && m_green<256 && m_blue<256)
+	{
+		*r = m_red;
+		*g = m_green;
+		*b = m_blue;
+		return TRUE;
+	}
+	return FALSE;
 }
 
-void  CInput::SetColor(UINT r, UINT g, UINT b)
+void CInput::SetColor(UINT r, UINT g, UINT b)
 {
 	m_red	= r;
 	m_green	= g;

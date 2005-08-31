@@ -27,7 +27,7 @@ void CFloopyControl::DrawBG(wxDC& dc, wxRect& rc)
 	pen.SetWidth(1);
 	dc.SetPen( pen );
 
-	wxBrush brush(GetParent()->GetColour(), wxSOLID);
+	wxBrush brush(GetParent()->GetColor(), wxSOLID);
 	dc.SetBrush(brush);
 
 	dc.DrawRoundedRectangle(rc.GetX(), rc.GetTop(),

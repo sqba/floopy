@@ -120,6 +120,9 @@ void CRegionDisplay::loadPeaks()
 
 	m_pInput->MoveTo(start);
 	int bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
+	
+	tracks->SetViewUpdatedWhilePlaying(TRUE);
+	
 	if(EOF == bytesRead)
 	{
 		delete buffer;
@@ -327,9 +330,9 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	int bottom = rc.GetBottom();
 	wxPen oldpen = dc.GetPen();
 	//wxPen pen( *wxCYAN, 2, wxSOLID );
-	//wxBrush brush(pTrack->GetBGColour(), wxSOLID);
-	//wxPen pen( m_pRegion->GetForeColour(), 2, wxSOLID );
-	//wxPen pen( m_pRegion->GetBGColour(), 2, wxSOLID );
+	//wxBrush brush(pTrack->GetBGColor(), wxSOLID);
+	//wxPen pen( m_pRegion->GetForeColor(), 2, wxSOLID );
+	//wxPen pen( m_pRegion->GetBGColor(), 2, wxSOLID );
 	wxPen pen( wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), 2, wxSOLID );
 
 //	if(getSourceLength() % samplesPerPixel != 0)

@@ -16,6 +16,7 @@ CPlayThread::CPlayThread(CTracks *pTracks)
 	m_pOutput		= NULL;
 	m_pInput		= NULL;
 	m_iBufferLength	= 128; // In samples
+	m_iPosition		= 0;
 }
 
 CPlayThread::~CPlayThread()
@@ -51,8 +52,9 @@ void *CPlayThread::Entry()
 		return NULL;
 
 	int stb	= (fmt->bitsPerSample/8) * fmt->channels; // samples to bytes
-	int pos	= m_iStartPos;	// samples
+	//int pos	= m_iStartPos;	// samples
 	int len	= 0;			// bytes
+	m_iPosition = m_iStartPos;
 
 	//int bufflen = fmt->frequency * stb; // !!Problemi na pochetku regiona
 	//int bufflen = fmt->frequency * stb / 10;
@@ -60,18 +62,46 @@ void *CPlayThread::Entry()
 	BYTE *buff = new BYTE[bufflen];
 
 	engine->EmptyBuffer( buff, bufflen );
-	engine->MoveTo( m_iStartPos ); // Move to cursor position
+	m_pInput->MoveTo( m_iStartPos ); // Move to cursor position
 
 	m_pOutput->Reset();
 
-	while((len=m_pInput->Read(buff, bufflen)) != EOF)
+	int totalLength = m_pTracks->GetLength() * fmt->frequency;
+
+	/*while((len=m_pInput->Read(buff, bufflen)) != EOF)
 	{
+		// If the view has been resized horizontally the position is lost.
+		if(m_pTracks->GetViewUpdatedWhilePlaying())
+		{
+			m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
+			engine->MoveTo( pos );
+		}
+
 		pos += len / stb;
 		m_pOutput->Write( buff, len );
 		engine->EmptyBuffer( buff, bufflen );
 
+		if ( TestDestroy() )
+			break;
+	}*/
+
+	while(m_iPosition<totalLength)
+	{
+		len = m_pInput->Read(buff, bufflen);
+
 		// If the view has been resized horizontally the position is lost.
-		engine->MoveTo( pos );
+		if(m_pTracks->GetViewUpdatedWhilePlaying())
+		{
+			m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
+			m_pInput->MoveTo( m_iPosition );
+		}
+
+		if(len == EOF)
+			len = bufflen;
+
+		m_iPosition += len / stb;
+		m_pOutput->Write( buff, len );
+		engine->EmptyBuffer( buff, bufflen );
 
 		if ( TestDestroy() )
 			break;
@@ -82,7 +112,7 @@ void *CPlayThread::Entry()
 	{
 		do {
 			wxThread::Sleep(1000);
-		} while(pos < m_pOutput->GetWrittenSamples());
+		} while(m_iPosition < m_pOutput->GetWrittenSamples());
 	}
 
 	m_bPlaying = FALSE;
@@ -148,4 +178,12 @@ int CPlayThread::GetWrittenSamples()
 		return m_iStartPos + samples - delaySamples;
 	else
 		return m_iStartPos;
+}
+
+void CPlayThread::SetStartPos(int pos)
+{
+	m_iStartPos = pos;
+	m_iPosition = m_iStartPos;
+//	if(m_pInput)
+//		m_pInput->MoveTo( m_iPosition );
 }

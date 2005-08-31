@@ -396,22 +396,25 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 
 	BOOL bEngine = (input->GetType() == TYPE_FLOOPY_SOUND_ENGINE);
 
-	UINT r=0, g=0, b=0;
-	input->GetColor(&r, &g, &b);
-
 	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
 	if(bEngine && si->bInitialized)
 	{
 		char *path = input->GetPath();
 		/*if(0 == strnicmp(path, si->filename, strlen(si->gPath)))
 			path += strlen(si->gPath);*/
-		fprintf(fp, "%s<input source='%s' name='%s' color='%d,%d,%d'>\n", 
-			space, path, input->GetDisplayName(), r, g, b);
+		fprintf(fp, "%s<input source='%s' name='%s'", 
+			space, path, input->GetDisplayName());
 		recursive = FALSE;
 	}
 	else
-		fprintf(fp, "%s<input source='%s' name='%s' color='%d,%d,%d'>\n", 
-		space, input->GetName(), input->GetDisplayName(), r, g, b);
+		fprintf(fp, "%s<input source='%s' name='%s'", 
+		space, input->GetName(), input->GetDisplayName());
+
+	UINT r=0, g=0, b=0;
+	if( input->GetColor(&r, &g, &b) )
+		fprintf(fp, " color='%d,%d,%d'", r, g, b);
+
+	fprintf(fp, ">\n");
 
 	si->bInitialized = TRUE;
 

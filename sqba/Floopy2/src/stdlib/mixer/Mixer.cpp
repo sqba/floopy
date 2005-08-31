@@ -216,9 +216,8 @@ void CMixer::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, i
 void CMixer::Close()
 {
 	for(int i=0; i<m_nInputCount; i++)
-	{
 		m_pInputs[i]->Close();
-	}
+	m_nInputCount = 0;
 
 #ifdef _DEBUG_TIMER_
 	if(m_bDebugTimer)

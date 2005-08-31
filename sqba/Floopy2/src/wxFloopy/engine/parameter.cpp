@@ -14,7 +14,7 @@ CParameter::CParameter(CRegion *region, IFloopySoundInput *obj, int index)
  : IFloopyObj(region)
 {
 	m_index  = index;
-	m_colour = *wxCYAN;
+	m_color  = *wxCYAN;
 	m_pPoint = new CPoint(this);
 
 	m_pObj = obj;
@@ -82,7 +82,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 		//wxBrush oldBrush = dc.GetBrush();
 		wxPen oldpen = dc.GetPen();
 		//dc.SetBrush( wxBrush(m_colour) );
-		dc.SetPen( wxPen(m_colour) );
+		dc.SetPen( wxPen(m_color) );
 
 		BOOL bDrawCircle = TRUE;
 
