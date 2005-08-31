@@ -18,6 +18,7 @@ CRegionDisplay::CRegionDisplay(CRegion *region)
 //	m_pMutex = new wxMutex();
 	m_pInput = NULL;
 	m_fdB = -6.0;
+	m_bDrawDBLines = TRUE;
 //	Create();
 	m_bLoaded = FALSE;
 //	m_pLoadThread = NULL;
@@ -44,7 +45,8 @@ void CRegionDisplay::DrawBG(wxDC& dc, wxRect& rc)
 	{
 		rcTmp.SetY(rc.GetY() + height*i);
 		rcTmp.SetHeight(height);
-		drawDBLines(dc, rcTmp);
+		if(m_bDrawDBLines)
+			drawDBLines(dc, rcTmp);
 	}
 }
 

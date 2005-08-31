@@ -662,6 +662,7 @@ private:
 	BOOL m_bLoaded;
 //	CLoadThread *m_pLoadThread;
 	PeaksArray m_peaks;
+	BOOL m_bDrawDBLines;
 };
 
 
