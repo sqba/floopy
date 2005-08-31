@@ -31,9 +31,10 @@
 #include <wx/docview.h>
 #include <wx/log.h>
 
+#include "MainView.h"
 #include "../engine/tracks.h"
 
-class CLabelsView : public wxScrolledWindow
+class CLabelsView : public CMainView
 {
 public:
 	CLabelsView(wxWindow* parent, CTracks *tracks);

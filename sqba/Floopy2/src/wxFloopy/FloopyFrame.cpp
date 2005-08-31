@@ -132,6 +132,16 @@ void CFloopyFrame::Open(char *filename)
 		SetTitle( str );
 //		m_pTracksView->RefreshRulers();
 		m_pTracksView->SetFocus();
+
+		UINT r=0, g=0, b=0;
+		IFloopySoundEngine *engine = m_pTracks->GetInput();
+		if( engine->GetColor(&r, &g, &b) )
+		{
+			wxColor color = wxColor(r, g, b);
+
+			m_pLabelsView->SetBackgroundColour( color );
+			m_pTracksView->SetBackgroundColour( color );
+		}
 	}
 }
 
@@ -201,8 +211,10 @@ void CFloopyFrame::initMenus()
 
 void CFloopyFrame::initViews()
 {
-	m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400), wxSP_NOBORDER | wxSP_LIVE_UPDATE, _T("TrackView"));
+	m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400));
+	//m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400), wxSP_NOBORDER | wxSP_LIVE_UPDATE, _T("TrackView"));
 	//m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400), wxSP_3DSASH | wxSP_LIVE_UPDATE, _T("TrackView"));
+
 	//m_pSplitter->SetBackgroundColour( *wxWHITE );
 	//m_pSplitter->SetForegroundColour( *wxWHITE );
 

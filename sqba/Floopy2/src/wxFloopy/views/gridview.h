@@ -1,9 +1,10 @@
 #ifndef GridView_H
 #define GridView_H
 
+#include "MainView.h"
 #include "../engine/tracks.h"
 
-class CGridView : public wxScrolledWindow
+class CGridView : public CMainView
 {
 public:
 	CGridView(wxWindow* parent, CTracks *tracks);

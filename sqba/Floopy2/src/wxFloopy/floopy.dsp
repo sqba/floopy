@@ -124,6 +124,10 @@ SOURCE=.\views\labelsview.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\views\MainView.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\engine\Menu.cpp
 # End Source File
 # Begin Source File
@@ -185,6 +189,10 @@ SOURCE=.\views\gridview.h
 # Begin Source File
 
 SOURCE=.\views\labelsview.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\views\MainView.h
 # End Source File
 # Begin Source File
 

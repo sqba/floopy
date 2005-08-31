@@ -5,7 +5,7 @@
 #include "LabelsView.h"
 
 
-BEGIN_EVENT_TABLE( CLabelsView, wxScrolledWindow )
+BEGIN_EVENT_TABLE( CLabelsView, CMainView )
 	EVT_SIZE( CLabelsView::OnSize )
 	EVT_MOUSE_EVENTS( CLabelsView::OnMouseEvent )
 	EVT_KEY_DOWN( CLabelsView::OnKeyDown )
@@ -16,18 +16,11 @@ END_EVENT_TABLE()
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 CLabelsView::CLabelsView(wxWindow* parent, CTracks *tracks)
- : wxScrolledWindow(parent)
+ : CMainView(parent)
 {
 	m_tracks = tracks;
 
 	m_tracks->SetLabelsView(this);
-
-	SetWindowStyle( wxSIMPLE_BORDER );
-	//SetWindowStyle( wxSUNKEN_BORDER );
-
-	//SetBackgroundColour(*wxLIGHT_GREY);
-	SetBackgroundColour( *wxWHITE );
-	//SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_MENU ) );
 
 	//wxLog::AddTraceMask(_T("CLabelsView"));
 }

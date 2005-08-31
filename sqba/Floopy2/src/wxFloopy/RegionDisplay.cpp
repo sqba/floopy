@@ -327,8 +327,10 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	int bottom = rc.GetBottom();
 	wxPen oldpen = dc.GetPen();
 	//wxPen pen( *wxCYAN, 2, wxSOLID );
-	wxPen pen( m_pRegion->GetForeColour(), 2, wxSOLID );
 	//wxBrush brush(pTrack->GetBGColour(), wxSOLID);
+	//wxPen pen( m_pRegion->GetForeColour(), 2, wxSOLID );
+	//wxPen pen( m_pRegion->GetBGColour(), 2, wxSOLID );
+	wxPen pen( wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), 2, wxSOLID );
 
 //	if(getSourceLength() % samplesPerPixel != 0)
 //		origLen = 0; // Don't draw
@@ -342,6 +344,9 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 
 //	assert(count == width/channels);
 
+	// Length of those little lines at the end of the loop
+	int t = height / 8;
+
 	int step = channels;//count > width ? count / width : 1;
 	int i=start;
 	int y=mid;
@@ -354,7 +359,8 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 		if((origLen>0) && (x>1) && ((peak.pos%origLen)==0))
 		{
 			dc.SetPen(pen);
-			dc.DrawLine(left+x, top, left+x, bottom);
+			dc.DrawLine(left+x, top, left+x, top+t);
+			dc.DrawLine(left+x, bottom-t, left+x, bottom);
 			dc.SetPen(oldpen);
 		}
 

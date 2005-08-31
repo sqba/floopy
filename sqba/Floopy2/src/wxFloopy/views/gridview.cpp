@@ -10,16 +10,10 @@
 //////////////////////////////////////////////////////////////////////
 
 CGridView::CGridView(wxWindow* parent, CTracks *tracks)
- : wxScrolledWindow(parent)
+ : CMainView(parent)
 {
 	m_bDrawVGrid = TRUE;
 	m_pTracks    = tracks;
-
-	//SetWindowStyle(wxNO_BORDER);
-	SetWindowStyle(wxSIMPLE_BORDER);
-	//SetWindowStyle(wxSUNKEN_BORDER);
-	SetBackgroundColour(*wxWHITE);
-	//SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
 }
 
 CGridView::~CGridView()
@@ -29,7 +23,7 @@ CGridView::~CGridView()
 
 void CGridView::OnDraw(wxDC &dc)
 {
-	wxScrolledWindow::OnDraw(dc);
+	CMainView::OnDraw(dc);
 
 	if(m_bDrawVGrid) {
 		//int pps    = m_pTracks->GetPixelsPerSecond();

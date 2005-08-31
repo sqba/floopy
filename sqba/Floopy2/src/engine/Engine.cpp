@@ -38,6 +38,8 @@ CEngine::CEngine(HMODULE hModule)
 	//m_format.format = 
 	m_format.channels = 2;
 	m_format.bitsPerSample = 16;
+
+	m_red = m_green = m_blue = 256;
 }
 
 CEngine::~CEngine()
@@ -387,6 +389,8 @@ void CEngine::Close()
 		}
 		tmp = tmp->next;
 	}
+
+	m_red = m_green = m_blue = 256;
 }
 
 char *CEngine::GetLastErrorDesc()
@@ -428,6 +432,26 @@ int CEngine::EmptyBuffer(BYTE *data, int size)
 	}
 
 	return 0;
+}
+
+
+BOOL CEngine::GetColor(UINT *r, UINT *g, UINT *b)
+{
+	if(m_red<256 && m_green<256 && m_blue<256)
+	{
+		*r = m_red;
+		*g = m_green;
+		*b = m_blue;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void CEngine::SetColor(UINT r, UINT g, UINT b)
+{
+	m_red	= r;
+	m_green	= g;
+	m_blue	= b;
 }
 
 /*

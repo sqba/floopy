@@ -8,6 +8,8 @@ IMPLEMENT_DYNAMIC_CLASS(CRegion, IFloopyObj)
 
 WX_DEFINE_LIST(ParameterList);
 
+//#define TRANSPARENT_BACKGROUND
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -92,8 +94,9 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	//int border = (IsSelected() ? 2 : 1);
 	int border = 1;
 
-	dc.SetPen(wxPen(*wxBLACK, border));
+	//dc.SetPen(wxPen(*wxGREY, border));
 	//dc.SetPen(wxPen((GetReset()?*wxBLACK:*wxLIGHT_GREY), border));
+	dc.SetPen( *wxGREY_PEN );
 
 	//wxBrush brush(GetColour(), wxSOLID);
 	wxBrush brush(GetBGColour(), wxSOLID);
@@ -158,27 +161,9 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 
 //	drawParametersFore(dc, rce);
 }
-/*
-wxColour CRegion::getBGColour()
-{
-	wxColor color = GetColour();
-	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
-	return ( IsSelected() ? color : GetColour() );
-}
 
-wxColour CRegion::getForeColour()
-{
-	wxColor color = GetColour();
-	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
-	return ( IsSelected() ? GetColour() : color );
-}
-*/
 wxColour CRegion::GetBGColour()
 {
-	/*wxColor color = GetColour();
-	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
-	return ( IsSelected() ? color : GetColour() );*/
-
 	wxColor color = getTrack()->GetColour();
 	if( IsSelected() )
 		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
@@ -187,10 +172,6 @@ wxColour CRegion::GetBGColour()
 
 wxColour CRegion::GetForeColour()
 {
-	/*wxColor color = GetColour();
-	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
-	return ( IsSelected() ? GetColour() : color );*/
-
 	wxColor color = getTrack()->GetColour();
 	if( !IsSelected() )
 		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());

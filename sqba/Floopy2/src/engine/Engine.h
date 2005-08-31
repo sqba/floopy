@@ -72,6 +72,9 @@ public:
 
 //	int GetSize();
 
+	BOOL GetColor(UINT *r, UINT *g, UINT *b);
+	void SetColor(UINT r, UINT g, UINT b);
+
 private:
 //	int samplesToBytes();
 	char *getPluginName(char *filename);
@@ -89,6 +92,7 @@ private:
 	CTimeline m_timeline;			/** Parameter changes */
 	UpdateCallback m_callback;		/** Callback function called on parameter changes while playing */
 	tComponent *m_pFirst, *m_pLast;	/** Linked list of all objects created by the engine */
+	UINT m_red, m_green, m_blue;
 };
 
 #endif // !defined(AFX_ENGINE_H__621A6F07_09D1_41D0_A981_DB32D29DA57A__INCLUDED_)

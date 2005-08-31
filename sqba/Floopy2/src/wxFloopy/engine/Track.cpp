@@ -110,9 +110,9 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	{
 		// Draw background
 		left   = m_nLevel*4+2;
-		top    = rc.GetTop()+2;
+		top    = rc.GetTop()+1;
 		width  = rc.GetWidth()-left-3;
-		height = m_height-3;
+		height = m_height-2;
 		dc.DrawRoundedRectangle(left, top, width, height, 4);
 	}
 	else
@@ -985,10 +985,6 @@ void CTrack::InvalidateRegions(CRegion *start)
 
 wxColour CTrack::GetBGColour()
 {
-	/*wxColor color = GetColour();
-	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
-	return ( IsSelected() ? color : GetColour() );*/
-
 	wxColor color = GetColour();
 	if( IsSelected() )
 		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
@@ -997,10 +993,6 @@ wxColour CTrack::GetBGColour()
 
 wxColour CTrack::GetForeColour()
 {
-	/*wxColor color = GetColour();
-	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
-	return ( IsSelected() ? GetColour() : color );*/
-
 	wxColor color = GetColour();
 	if( !IsSelected() )
 		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());

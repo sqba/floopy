@@ -125,7 +125,7 @@ void startElement(void *userData, const char *name, const char **atts)
 	tSessionInfo *si = (tSessionInfo*)userData;
 	XML_Parser parser = si->parser;
 	si->gElement = name;
-	UINT r=255, g=255, b=255;
+	UINT r=256, g=256, b=256;
 	if(0 == strcmp(name, "input"))
 	{
 		int n = XML_GetSpecifiedAttributeCount(parser);
@@ -176,7 +176,9 @@ void startElement(void *userData, const char *name, const char **atts)
 						si->gInput = input;
 						if(desc)
 							input->SetDisplayName(desc, strlen(desc));
-						input->SetColor(r, g, b);
+						if(r<256 && g<256 && b<256)
+							input->SetColor(r, g, b);
+						r=g=b=256;
 						si->gObjects[si->gIndex].obj = input;
 						si->buff[++si->level] = si->gInput;
 					}
@@ -188,6 +190,9 @@ void startElement(void *userData, const char *name, const char **atts)
 			{
 				if(desc)
 					si->gEngine->SetDisplayName(desc, strlen(desc));
+				if(r<256 && g<256 && b<256)
+					si->gEngine->SetColor(r, g, b);
+				r=g=b=256;
 			}
 		}
 	}
