@@ -592,6 +592,7 @@ private:
 	BOOL m_bPlaying, m_bPaused;
 	IFloopySoundOutput *m_pOutput;
 	IFloopySoundInput *m_pInput;
+	int m_iBufferLength; // In samples
 };
 
 /*

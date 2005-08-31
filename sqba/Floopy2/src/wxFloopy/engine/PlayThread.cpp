@@ -10,11 +10,12 @@
 
 CPlayThread::CPlayThread(CTracks *pTracks)
 {
-	m_pTracks	= pTracks;
-	m_iStartPos	= 0;
-	m_bPlaying	= m_bPaused = FALSE;
-	m_pOutput	= NULL;
-	m_pInput	= NULL;
+	m_pTracks		= pTracks;
+	m_iStartPos		= 0;
+	m_bPlaying		= m_bPaused = FALSE;
+	m_pOutput		= NULL;
+	m_pInput		= NULL;
+	m_iBufferLength	= 128; // In samples
 }
 
 CPlayThread::~CPlayThread()
@@ -43,20 +44,19 @@ void *CPlayThread::Entry()
 		return NULL;
 
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
-
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 
 	m_pOutput = engine->CreateOutput("stdlib.waveout", *fmt);
 	if(!m_pOutput)
 		return NULL;
+
 	int stb	= (fmt->bitsPerSample/8) * fmt->channels; // samples to bytes
 	int pos	= m_iStartPos;	// samples
 	int len	= 0;			// bytes
 
-	//int bufflen = 5120; // Zujanje (shto je bafer manji veca je frekvenca)
-	//int bufflen = fmt->frequency * stb; // Problemi na pochetku regiona
+	//int bufflen = fmt->frequency * stb; // !!Problemi na pochetku regiona
 	//int bufflen = fmt->frequency * stb / 10;
-	int bufflen = 64 * stb;
+	int bufflen = m_iBufferLength * stb;
 	BYTE *buff = new BYTE[bufflen];
 
 	engine->EmptyBuffer( buff, bufflen );
@@ -64,21 +64,11 @@ void *CPlayThread::Entry()
 
 	m_pOutput->Reset();
 
-//	int delaySamples = 40000; // Odprilike!!! (44100?)
-
 	while((len=m_pInput->Read(buff, bufflen)) != EOF)
 	{
 		pos += len / stb;
 		m_pOutput->Write( buff, len );
 		engine->EmptyBuffer( buff, bufflen );
-		
-		// Kako znati kada je stvarno pocheo da svira?
-		// GetWrittenSamples == pos
-//		int samples = m_pOutput->GetWrittenSamples();
-//		if(samples > delaySamples)
-//		{
-//			m_pTracks->SetCursorPosition( m_iStartPos + samples - delaySamples );
-//		}
 
 		// If the view has been resized horizontally the position is lost.
 		engine->MoveTo( pos );
@@ -142,14 +132,16 @@ void CPlayThread::OnExit()
 int CPlayThread::GetWrittenSamples()
 {
 	if(!m_pInput)
-		return NULL;
-
-	SOUNDFORMAT *fmt = m_pInput->GetFormat();
-
-	int delaySamples = fmt->channels == 2 ? 40000 : 80000; // Odprilike!!! (44100?)
+		return 0;
 
 	if(!m_pOutput)
 		return m_iStartPos;
+
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
+
+	// E, sad, ovo je vrednost dobijena iskljuchivo putem
+	// eksperimentisanja. O chemu se tu zapravo radi?
+	int delaySamples = fmt->channels == 2 ? 40000 : 80000;
 
 	int samples = m_pOutput->GetWrittenSamples();
 	if(samples > delaySamples)

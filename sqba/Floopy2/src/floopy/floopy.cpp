@@ -139,6 +139,8 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 
 	int offset = 0;
 	int bufflen = fmt->frequency * stb / 10;
+	//int buffsize = fmt->frequency/10; // In samples
+	//int bufflen = buffsize * stb;
 	BYTE *buff = new BYTE[bufflen];
 	int len;
 	memset(buff, 0, bufflen);
