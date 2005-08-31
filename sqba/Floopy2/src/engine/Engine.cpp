@@ -216,6 +216,13 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 		input = track;
 	}
 
+	IFloopySoundFilter *volume = (IFloopySoundFilter*)CreateInput("stdlib.volume");
+	if(volume)
+	{
+		volume->SetSource(input);
+		input = volume;
+	}
+
 	if((fmt1->channels == 2) && (pfmt2->channels == 1))
 	{
 		IFloopySoundFilter *filter = (IFloopySoundFilter*)CreateInput("stdlib.mono2stereo");
