@@ -584,3 +584,13 @@ void loadTimeline(tSessionInfo *si, IFloopySoundInput *input, char *data)
 		token = strtok( NULL, seps );
 	}
 }
+
+
+/////////////////////////
+// Replace these:
+//	& &amp;
+//	< &lt;
+//	> &gt;
+//	" &quot;
+//	' &apos;
+/////////////////////////

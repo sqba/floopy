@@ -209,7 +209,6 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 				if(region->GetWidth() <= 2)
 				{
 					CTrack *track = (CTrack*)region->GetParent();
-					region->CancelUpdate();
 					track->RemoveRegion( region );
 				}
 				else
