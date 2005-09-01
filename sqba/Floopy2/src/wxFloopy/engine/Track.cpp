@@ -407,7 +407,8 @@ void CTrack::Refresh()
 	}
 
 	panel = GetTracks()->GetLabelsView();
-	if(panel) {
+	if(panel)
+	{
 		wxSize size = panel->GetSize();
 		wxRect rc(0, m_top, size.GetWidth(), m_height);
 		panel->RefreshRect(rc);
@@ -437,9 +438,8 @@ void CTrack::MoveSelectedRegions(int dx)
 	while (node)
 	{
 		CRegion *region = (CRegion*)node->GetData();
-		if( region->IsSelected() ) {
-			//wxRect rc;
-			//region->GetRect(rc);
+		if( region->IsSelected() )
+		{
 			region->Refresh();
 			region->Move(dx, 0);
 			region->Refresh();
@@ -454,9 +454,8 @@ void CTrack::UpdateSelectedRegions()
 	while (node)
 	{
 		CRegion *region = (CRegion*)node->GetData();
-		if( region->IsSelected() ) {
+		if( region->IsSelected() )
 			region->Update();
-		}
 		node = node->GetNext();
 	}
 }
@@ -481,17 +480,21 @@ void CTrack::RemoveSelectedObjects()
 /////////////////////////////////////////////////////////////////////////////
 void CTrack::SetHeight(int height)
 {
-	if( MIN_HEIGHT <= height ) {
+	if( MIN_HEIGHT <= height )
+	{
 		m_height = height - m_pBorder->GetHeight();
 
 		Refresh();
 		GetTracks()->RefreshTracks(this);
+
+		GetTracks()->SetCaretPos(GetTracks()->GetCaretPos());
 	}
 }
 
 void CTrack::Move(int dx, int dy)
 {
-	if( 0 != dx) {
+	if( 0 != dx)
+	{
 	}
 }
 

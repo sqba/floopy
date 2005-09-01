@@ -15,12 +15,9 @@ END_EVENT_TABLE()
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-CLabelsView::CLabelsView(wxWindow* parent, CTracks *tracks)
- : CMainView(parent)
+CLabelsView::CLabelsView(wxWindow* parent, CTracks *tracks) : CMainView(parent, tracks)
 {
-	m_tracks = tracks;
-
-	m_tracks->SetLabelsView(this);
+	m_pTracks->SetLabelsView(this);
 
 	//wxLog::AddTraceMask(_T("CLabelsView"));
 }
@@ -29,43 +26,46 @@ void CLabelsView::OnDraw(wxDC& dc)
 {
 	int xScrollUnits=0, yScrollUnits=0;
 	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	
 	int y = m_pTracksView->GetScrollPos(wxVERTICAL) * yScrollUnits;
 	dc.SetDeviceOrigin( 0, -y );
 
-	m_tracks->DrawLabels(dc, GetVirtualSize());
+	m_pTracks->DrawLabels(dc, GetVirtualSize());
 }
 
 void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 {
 	int xScrollUnits=0, yScrollUnits=0;
 	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-	int y = m_pTracksView->GetScrollPos(wxVERTICAL);
-	y *= yScrollUnits;
 
-	CTrack *track = m_tracks->GetTrackAt(event.GetY() + y);
+	int y = m_pTracksView->GetScrollPos(wxVERTICAL) * yScrollUnits;
+	CTrack *track = m_pTracks->GetTrackAt(event.GetY() + y);
 
-	if( event.ButtonDown(wxMOUSE_BTN_LEFT) ) {
-		CTrack *track = m_tracks->GetTrackAt(event.GetY() + y);
-		if(track) {
-			m_tracks->DeselectAllTracks();
+	if( event.ButtonDown(wxMOUSE_BTN_LEFT) )
+	{
+		m_pTracks->DeselectAllTracks();
+
+		if(track)
+		{
 			track->Select();
 			track->Refresh();
-			m_pTracksView->SetFocus();
-			//m_tracks->SetCaretPos( m_tracks->GetCaretPos() );
 		}
+
+		m_pTracksView->SetFocus();
 	}
 
-	if( event.LeftDClick() ) {
-		if(track) {
+	if( event.LeftDClick() )
+	{
+		if(track)
+		{
 			track->Hide( !track->IsHidden() );
-			m_tracks->Refresh();
+			m_pTracks->Refresh();
 		}
+
+		m_pTracksView->SetFocus();
 	}
 
-	if(track)
-		SetCursor( wxCURSOR_HAND );
-	else
-		SetCursor( *wxSTANDARD_CURSOR );
+	SetCursor( track ? wxCURSOR_HAND : *wxSTANDARD_CURSOR );
 }
 
 void CLabelsView::OnKeyDown(wxKeyEvent& event)
@@ -74,15 +74,18 @@ void CLabelsView::OnKeyDown(wxKeyEvent& event)
 	GetViewStart(&x, &y);
 	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 
-	IFloopyObj *obj = m_tracks->GetChildAt(event.GetX() + x*xScrollUnits,
+	IFloopyObj *obj = m_pTracks->GetChildAt(event.GetX() + x*xScrollUnits,
 											event.GetY() + y*yScrollUnits);
 
-	if(obj) {
-		if(obj->IsKindOf(CLASSINFO(CTrack))) {
+	if(obj)
+	{
+		if(obj->IsKindOf(CLASSINFO(CTrack)))
+		{
 			CTrack *track = (CTrack*)obj;
+			
 			int height = track->GetHeight();
 
-			wxASSERT(height > 0 && height < 65535);
+			//wxASSERT(height > 0 && height < 65535);
 
 			switch (event.GetKeyCode() )
 			{

@@ -12,14 +12,8 @@ public:
 
 	void OnDraw(wxDC& dc);
 
-//	int GetClosestGridPos(int pos);
-
 protected:
 	bool m_bDrawVGrid;
-	CTracks *m_pTracks;
-
-private:
-//	BOOL m_bSnapTo;
 };
 
 #endif // #ifndef GridView_H

@@ -641,6 +641,7 @@ void CTracks::changeHeight(int dy)
 		track->SetHeight(track->GetHeight() + dy);
 		node = node->GetNext();
 	}
+	SetCaretPos( GetCaretPos() );
 	//Refresh();
 }
 
@@ -1062,8 +1063,8 @@ void CTracks::SetCaretPos(int samples)
 		caret->SetSize(1, pTrack->GetHeight());
 		caret->Move( x-xOrig, pTrack->GetTop()-yOrig );
 	} else {
-		caret->SetSize(1, m_pTracksView->GetSize().GetHeight());
-		caret->Move( x-xOrig, 0 );
+		caret->SetSize(1, this->GetHeight());
+		caret->Move( x-xOrig, -yOrig );
 	}
 	caret->Show(TRUE);
 }

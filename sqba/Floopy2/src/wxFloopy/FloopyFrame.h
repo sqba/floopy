@@ -13,6 +13,7 @@ class CFloopyFrame : public wxFrame
 {
 //	DECLARE_DYNAMIC_CLASS(CFloopyFrame)
 
+private:
 	class CDropTarget : public wxFileDropTarget
 	{
 	public:
@@ -33,19 +34,15 @@ class CFloopyFrame : public wxFrame
 	};
 
 public:
-	/**
-	 * Constructor. Creates a new TextFrame
-	 */
-	CFloopyFrame(const wxChar *title, int xpos, int ypos, int width, int height);
-
-	/**
-	 * Destructor
-	 */
+	CFloopyFrame();
 	~CFloopyFrame();
 
-//	bool OnCreate(wxDocument *doc, long WXUNUSED(flags));
-//	bool OnClose(bool deleteWindow = true);
-	void OnMouseEvent(wxMouseEvent& event);
+	void Open(char *filename);
+	bool Save();
+	void SaveAs();
+	bool Close();
+
+private:
 	void OnFullScreen( wxCommandEvent &WXUNUSED(event) );
     void OnQuit(wxCommandEvent &WXUNUSED(event));
     void OnAbout(wxCommandEvent &WXUNUSED(event));
@@ -57,11 +54,9 @@ public:
 	void OnPause( wxCommandEvent &WXUNUSED(event) );
 	void OnStop( wxCommandEvent &WXUNUSED(event) );
 
-	void Open(char *filename);
-
-private:
 	void initMenus();
 	void initViews();
+	void initToolbar();
 
 private:
 	CDropTarget			*m_pDropTarget;

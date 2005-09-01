@@ -199,8 +199,10 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 					m_pTracks->DeselectAllTracks();
 					m_pTracks->DeselectAllRegions();
 
-					caret->SetSize(1, GetSize().GetHeight());
-					caret->Move( x-xOrig, 0 );
+					/*caret->SetSize(1, GetSize().GetHeight());
+					caret->Move( x-xOrig, 0 );*/
+					caret->SetSize(1, m_pTracks->GetHeight());
+					caret->Move( x-xOrig, -yOrig );
 				}
 				caret->Show(TRUE);
 
@@ -250,8 +252,17 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 			m_pTracks->DeselectAllTracks();
 
 			wxCaret *caret = GetCaret();
-			caret->SetSize(1, GetSize().GetHeight());
-			caret->Move( event.GetX(), 0 );
+			/*caret->SetSize(1, GetSize().GetHeight());
+			caret->Move( event.GetX(), 0 );*/
+
+			int xScrollUnits=0, yScrollUnits=0;
+			GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+			int xOrig=0, yOrig=0;
+			GetViewStart(&xOrig, &yOrig);
+			xOrig *= xScrollUnits;
+			yOrig *= yScrollUnits;
+			caret->SetSize(1, m_pTracks->GetHeight());
+			caret->Move( event.GetX(), -yOrig );
 		}
 	}
 

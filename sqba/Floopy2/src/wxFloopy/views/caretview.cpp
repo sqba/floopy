@@ -40,16 +40,19 @@ void CCaretView::ScrollWindow( int dx, int dy, const wxRect *rect )
 	CGridView::ScrollWindow( dx, dy, rect );
 
 	wxCaret *caret = GetCaret();
-	if(NULL != caret) {
+	if(NULL != caret)
+	{
 		int x=0, y=0;
 		caret->GetPosition(&x, &y);
 
-		if(caret->GetSize().GetHeight() != GetSize().GetHeight())
+		/*if(caret->GetSize().GetHeight() != GetSize().GetHeight())
 			y += dy;
 		else
 			y = 0;
 
-		caret->Move( x+dx, y );
+		caret->Move( x+dx, y );*/
+
+		caret->Move( x+dx, y+dy );
 	}
 
 	m_iSelStart += dx;
@@ -69,7 +72,8 @@ void CCaretView::OnMouseEvent(wxMouseEvent& event)
 		}
 	}*/
 
-	if( event.LeftDown() ) {
+	if( event.LeftDown() )
+	{
 		//wxLogTrace(_T("CCaretView"), _T("ButtonDown x=%d y=%d"), event.GetX(), event.GetY());
 		m_ptSelStart = event.GetPosition();
 			
@@ -77,7 +81,8 @@ void CCaretView::OnMouseEvent(wxMouseEvent& event)
 		//m_iSelEnd = -1;
 
 		wxCaret *caret = GetCaret();
-		if(NULL != caret) {
+		if(NULL != caret)
+		{
 			int y=0;
 
 			/*int xOrig=0, yOrig=0;
@@ -95,20 +100,27 @@ void CCaretView::OnMouseEvent(wxMouseEvent& event)
 			//GetParent()->Refresh();
 //			RefreshRulers();
 		}
-	} else if( event.Dragging() ) {
+	}
+	else if( event.Dragging() )
+	{
 		//wxLogTrace(_T("CCaretView"), _T("Dragging() x=%d y=%d"), event.GetX(), event.GetY());
 		//m_ptSelStart, m_ptSelEnd
 		m_ptSelEnd = event.GetPosition();
 		m_bSelection = TRUE;
 		Refresh();
-	} else if( event.LeftUp() ) {
+	}
+	else if( event.LeftUp() )
+	{
 		//wxLogTrace(_T("CCaretView"), _T("ButtonUp x=%d y=%d"), event.GetX(), event.GetY());
 		m_ptSelEnd = event.GetPosition();
-		if(m_bSelection) {
+		if(m_bSelection)
+		{
 			m_bSelection = FALSE;
 			m_iSelStart = m_ptSelStart.x;
 			m_iSelEnd = m_ptSelEnd.x;
-		} else {
+		}
+		else
+		{
 			m_iSelStart = m_iSelEnd = -1;
 //			Refresh();
 		}
@@ -120,9 +132,11 @@ void CCaretView::OnSize(wxSizeEvent& event)
 	CGridView::OnSize( event );
 
 	wxCaret *caret = GetCaret();
-	if(NULL != caret) {
-		wxSize size = GetClientSize();
-		caret->SetSize(1, size.GetHeight());
+	if(NULL != caret)
+	{
+		/*wxSize size = GetClientSize();
+		caret->SetSize(1, size.GetHeight());*/
+		caret->SetSize(1, m_pTracks->GetHeight());
 	}
 }
 /*

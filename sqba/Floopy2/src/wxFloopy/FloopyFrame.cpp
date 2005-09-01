@@ -8,11 +8,8 @@
 
 
 
-enum
+enum // menu items
 {
-	// menu items
-//	Minimal_Quit = 1,
-//	Minimal_About,
 	ID_FULL  = 109,
 	ID_OPEN,
 	ID_SAVE,
@@ -28,10 +25,6 @@ enum
 //IMPLEMENT_DYNAMIC_CLASS(CFloopyFrame, wxFrame)
 
 BEGIN_EVENT_TABLE(CFloopyFrame, wxFrame)
-	EVT_MOUSE_EVENTS(CFloopyFrame::OnMouseEvent)
-
-//	EVT_MENU(Minimal_Quit,  CFloopyFrame::OnQuit)
-//	EVT_MENU(Minimal_About, CFloopyFrame::OnAbout)
 	EVT_MENU(ID_FULL,		CFloopyFrame::OnFullScreen)
 	EVT_MENU(ID_OPEN,		CFloopyFrame::OnFileOpen)
 	EVT_MENU(ID_SAVE,		CFloopyFrame::OnFileSave)
@@ -45,11 +38,13 @@ BEGIN_EVENT_TABLE(CFloopyFrame, wxFrame)
 END_EVENT_TABLE()
 
 
-CFloopyFrame::CFloopyFrame(const wxChar *title, int xpos, int ypos, int width, int height)
-	: wxFrame((wxFrame *) NULL, -1, title, wxPoint(xpos, ypos), wxSize(width, height))
+CFloopyFrame::CFloopyFrame() : wxFrame((wxFrame*)NULL,
+									   -1,
+									   _T("Floopy"),
+									   wxPoint(-1, -1),
+									   wxSize(640, 480))
 {
 #ifdef __WXMSW__
-	//this->SetIcon(wxString(isCanvas ? _T("chart") : _T("notepad")));
 	this->SetIcon(wxICON(Floopy));
 #endif
 #ifdef __X__
@@ -63,19 +58,9 @@ CFloopyFrame::CFloopyFrame(const wxChar *title, int xpos, int ypos, int width, i
 
 	initMenus();
 	initViews();
+	initToolbar();
 
-	// create the toolbar and add our 1 tool to it
-	wxToolBar *toolbar = CreateToolBar();
-	//wxBitmap aboutImage("res/help.bmp", wxBITMAP_TYPE_BMP);
-	wxBitmap aboutImage("CSQUERY", wxBITMAP_TYPE_RESOURCE);
-	wxBitmap playImage("PLAY", wxBITMAP_TYPE_RESOURCE);
-	wxBitmap pauseImage("PAUSE", wxBITMAP_TYPE_RESOURCE);
-	wxBitmap stopImage("STOP", wxBITMAP_TYPE_RESOURCE);
-	toolbar->AddTool(ID_ABOUT, _("About"), aboutImage, _("About Floopy"));
-	toolbar->AddTool(ID_PLAY, _("Play"), playImage, _("Play"));
-	toolbar->AddTool(ID_PAUSE, _("Pause"), pauseImage, _("Pause"));
-	toolbar->AddTool(ID_STOP, _("Stop"), stopImage, _("Stop"));
-	toolbar->Realize();
+	wxFrame::Centre();
 }
 
 CFloopyFrame::~CFloopyFrame()
@@ -84,86 +69,46 @@ CFloopyFrame::~CFloopyFrame()
 	delete m_pTracks;
 }
 
-void CFloopyFrame::OnMouseEvent(wxMouseEvent& event)
-{
-	if( event.ButtonDown(wxMOUSE_BTN_LEFT) ) {
-	}
-}
-
 void CFloopyFrame::OnFullScreen( wxCommandEvent &WXUNUSED(event) )
 {
-   ShowFullScreen( !IsFullScreen(), wxFULLSCREEN_NOBORDER|wxFULLSCREEN_NOCAPTION );
+   //wxFrame::ShowFullScreen( !IsFullScreen(), wxFULLSCREEN_ALL );
+   wxFrame::ShowFullScreen( !IsFullScreen(), wxFULLSCREEN_NOBORDER|wxFULLSCREEN_NOCAPTION );
 }
 
 void CFloopyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
     // TRUE is to force the frame to close
-    Close(TRUE);
+	if( Close() )
+		wxFrame::Close( TRUE );
 }
 
 void CFloopyFrame::OnFileOpen(wxCommandEvent& WXUNUSED(event))
 {
-	wxFileDialog *dlg = new wxFileDialog(this, "Open",
-		"", "", "XML Files(*.xml)|*.xml|All files(*.*)|*.*",
+	wxFileDialog *dlg = new wxFileDialog(this, "Open", "", "",
+		"XML Files(*.xml)|*.xml|Wav files(*.wav)|*.wav|All files(*.*)|*.*",
 		wxOPEN, wxDefaultPosition);
 	if ( dlg->ShowModal() == wxID_OK )
 	{
-		//m_pTextCtrl->LoadFile(dlg->GetFilename());
 		SetStatusText(dlg->GetFilename(), 0);
 		char *filename = (char*)dlg->GetPath().c_str();
-		//m_pTracks->Open(filename);
 		Open(filename);
 	}
 	dlg->Destroy();
-	//delete dlg;
 }
 
 void CFloopyFrame::OnFileClose(wxCommandEvent& WXUNUSED(event))
 {
-	m_pTracks->Clear();
-}
-
-void CFloopyFrame::Open(char *filename)
-{
-	if( m_pTracks->Open(filename) )
-	{
-		wxString str;
-		str.Printf("Floopy! - %s", filename);
-		SetTitle( str );
-//		m_pTracksView->RefreshRulers();
-		m_pTracksView->SetFocus();
-
-		UINT r=0, g=0, b=0;
-		IFloopySoundEngine *engine = m_pTracks->GetInput();
-		if( engine->GetColor(&r, &g, &b) )
-		{
-			wxColor color = wxColor(r, g, b);
-
-			m_pLabelsView->SetBackgroundColour( color );
-			m_pTracksView->SetBackgroundColour( color );
-		}
-	}
+	Close();
 }
 
 void CFloopyFrame::OnFileSave(wxCommandEvent& WXUNUSED(event))
 {
-
+	Save();
 }
 
 void CFloopyFrame::OnFileSaveAs(wxCommandEvent& WXUNUSED(event))
 {
-	wxFileDialog *dlg = new wxFileDialog(this, "Save",
-		"", "", "XML Files(*.xml)|*.xml|Wav files(*.wav)|*.wav|All files(*.*)|*.*",
-		wxSAVE, wxDefaultPosition);
-	if ( dlg->ShowModal() == wxID_OK )
-	{
-		//m_pTextCtrl->LoadFile(dlg->GetFilename());
-		SetStatusText(dlg->GetFilename(), 0);
-		char *filename = (char*)dlg->GetPath().c_str();
-		m_pTracks->Save(filename);
-	}
-	dlg->Destroy();
-	//delete dlg;
+	SaveAs();
 }
 
 void CFloopyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
@@ -175,15 +120,30 @@ void CFloopyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     (void)wxMessageBox(_T("Floopy\nAuthor: Filip Pavlovic"), _T("About Floopy"));
 }
 
+void CFloopyFrame::OnPlay( wxCommandEvent &WXUNUSED(event) )
+{
+	m_pTracks->Play();
+}
+
+void CFloopyFrame::OnPause( wxCommandEvent &WXUNUSED(event) )
+{
+	m_pTracks->Pause();
+}
+
+void CFloopyFrame::OnStop( wxCommandEvent &WXUNUSED(event) )
+{
+	m_pTracks->Stop();
+}
+
 void CFloopyFrame::initMenus()
 {
 	//// Make a menubar
 	wxMenu *file_menu = new wxMenu;
 
-	file_menu->Append(wxID_NEW,		_T("&New..."),			_T("New project"));
+	file_menu->Append(ID_CLOSE,		_T("&New..."),			_T("New project"));
 	file_menu->Append(ID_OPEN,		_T("&Open..."),			_T("Open project file"));
 	file_menu->Append(ID_CLOSE,		_T("&Close"),			_T("Close current project"));
-	file_menu->Append(wxID_SAVE,	_T("&Save"),			_T("Save current project"));
+	file_menu->Append(ID_SAVE,		_T("&Save"),			_T("Save current project"));
 	file_menu->Append(ID_SAVEAS,	_T("Save &As..."),		_T("Save current project with a different name"));
 	file_menu->AppendSeparator();
 	file_menu->Append(ID_EXIT,		_T("E&xit"),			_T("Exit Floopy!"));
@@ -211,7 +171,8 @@ void CFloopyFrame::initMenus()
 
 void CFloopyFrame::initViews()
 {
-	m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400));
+	m_pSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxSize(600, 400), wxSP_LIVE_UPDATE);
+	//m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400));
 	//m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400), wxSP_NOBORDER | wxSP_LIVE_UPDATE, _T("TrackView"));
 	//m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400), wxSP_3DSASH | wxSP_LIVE_UPDATE, _T("TrackView"));
 
@@ -231,17 +192,91 @@ void CFloopyFrame::initViews()
 	m_pTracks->SetFrame( this );
 }
 
-void CFloopyFrame::OnPlay( wxCommandEvent &WXUNUSED(event) )
+void CFloopyFrame::initToolbar()
 {
-	m_pTracks->Play();
+	wxToolBar *toolbar = CreateToolBar();
+
+	//wxBitmap aboutImage("res/help.bmp", wxBITMAP_TYPE_BMP);
+
+	wxBitmap aboutImage("CSQUERY",	wxBITMAP_TYPE_RESOURCE);
+	wxBitmap playImage( "PLAY",		wxBITMAP_TYPE_RESOURCE);
+	wxBitmap pauseImage("PAUSE",	wxBITMAP_TYPE_RESOURCE);
+	wxBitmap stopImage( "STOP",		wxBITMAP_TYPE_RESOURCE);
+
+	toolbar->AddTool(ID_ABOUT,	_("About"),	aboutImage,	_("About Floopy"));
+	toolbar->AddTool(ID_PLAY,	_("Play"),	playImage,	_("Play"));
+	toolbar->AddTool(ID_PAUSE,	_("Pause"),	pauseImage,	_("Pause"));
+	toolbar->AddTool(ID_STOP,	_("Stop"),	stopImage,	_("Stop"));
+
+	toolbar->Realize();
 }
 
-void CFloopyFrame::OnPause( wxCommandEvent &WXUNUSED(event) )
+void CFloopyFrame::Open(char *filename)
 {
-	m_pTracks->Pause();
+	if( m_pTracks->Open(filename) )
+	{
+		wxString str;
+		str.Printf("Floopy! - %s", filename);
+		SetTitle( str );
+		//m_pTracksView->RefreshRulers();
+		m_pTracksView->SetFocus();
+
+		UINT r=0, g=0, b=0;
+		IFloopySoundEngine *engine = m_pTracks->GetInput();
+		if( engine->GetColor(&r, &g, &b) )
+		{
+			wxColor color = wxColor(r, g, b);
+
+			m_pLabelsView->SetBackgroundColour( color );
+			m_pTracksView->SetBackgroundColour( color );
+		}
+	}
 }
 
-void CFloopyFrame::OnStop( wxCommandEvent &WXUNUSED(event) )
+bool CFloopyFrame::Save()
 {
-	m_pTracks->Stop();
+	char *filename = m_pTracks->GetFilename();
+	if(strlen(filename) > 0)
+		return m_pTracks->Save(filename);
+	return FALSE;
+}
+
+void CFloopyFrame::SaveAs()
+{
+	wxFileDialog *dlg = new wxFileDialog(this, "Save", "", "",
+		"XML Files(*.xml)|*.xml|Wav files(*.wav)|*.wav|All files(*.*)|*.*",
+		wxSAVE, wxDefaultPosition);
+	if ( dlg->ShowModal() == wxID_OK )
+	{
+		//m_pTextCtrl->LoadFile(dlg->GetFilename());
+		SetStatusText(dlg->GetFilename(), 0);
+		char *filename = (char*)dlg->GetPath().c_str();
+		m_pTracks->Save(filename);
+	}
+	dlg->Destroy();
+	//delete dlg;
+}
+
+bool CFloopyFrame::Close()
+{
+	bool bResult = TRUE;
+	if(m_pTracks->IsChanged())
+	{
+		int answer = wxMessageBox(_T("File changed, save now?"), _T("Floopy!"),
+			wxICON_QUESTION|wxYES_NO|wxCANCEL);
+
+		switch(answer)
+		{
+		case wxYES:
+			if(!Save())
+				SaveAs();
+		case wxNO:
+			m_pTracks->Clear();
+			break;
+		case wxCANCEL:
+			bResult =  FALSE;
+			break;
+		}
+	}
+	return bResult;
 }

@@ -8,8 +8,10 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CMainView::CMainView(wxWindow* parent) : wxScrolledWindow(parent)
+CMainView::CMainView(wxWindow* parent, CTracks *tracks) : wxScrolledWindow(parent)
 {
+	m_pTracks = tracks;
+
 	//SetWindowStyle(wxSIMPLE_BORDER);
 	//SetWindowStyle(wxNO_BORDER);
 	//SetWindowStyle(wxSUNKEN_BORDER);

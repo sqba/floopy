@@ -28,14 +28,16 @@
 #include <wx/docview.h>
 #include <wx/log.h>
 
-
+#include "../engine/tracks.h"
 
 class CMainView : public wxScrolledWindow  
 {
 public:
-	CMainView(wxWindow* parent);
+	CMainView(wxWindow*, CTracks*);
 	virtual ~CMainView();
 
+protected:
+	CTracks *m_pTracks;
 };
 
 #endif // !defined(AFX_MAINVIEW_H__A7C38C86_CD71_4FA6_A5F5_6F21967302A3__INCLUDED_)

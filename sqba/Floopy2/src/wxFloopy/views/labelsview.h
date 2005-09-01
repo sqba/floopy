@@ -37,23 +37,16 @@
 class CLabelsView : public CMainView
 {
 public:
-	CLabelsView(wxWindow* parent, CTracks *tracks);
+	CLabelsView(wxWindow*, CTracks*);
 
 	void OnDraw(wxDC& dc);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnKeyDown(wxKeyEvent& event);
-	//void OnPaint( wxPaintEvent &event );
-//	void ScrollWindow( int dx, int dy, const wxRect *rect );
-
-	//void Scroll(int x, int y);
 	void OnSize(wxSizeEvent& event);
 
 	void SetTracksView(wxScrolledWindow *panel) { m_pTracksView = panel; }
 
 private:
-	//int m_yScrollUnits;
-//	int m_yOrigin;
-	CTracks *m_tracks;
 	wxScrolledWindow *m_pTracksView;
 
 private:
