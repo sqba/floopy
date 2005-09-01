@@ -144,7 +144,7 @@ SOURCE=.\engine\Region.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\RegionDisplay.cpp
+SOURCE=.\engine\RegionDisplay.cpp
 # End Source File
 # Begin Source File
 
