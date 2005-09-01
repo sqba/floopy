@@ -17,16 +17,23 @@ WX_DEFINE_LIST(RegionList);
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
+CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *parent, int level)
  : IFloopyObj(tracks)
 {
 	wxLog::AddTraceMask(_T("CTrack"));
 
 	m_nLevel = level;
 
-	m_pInput = input;
+	m_pInput = CTracks::GetComponent(input, "track");
+	//m_pInput = input;
+	m_pSource = parent;
 
-	m_pInput = GetComponent("track");
+	/*if( m_pSource->IsFilter() )
+	{
+		m_pSource = ((IFloopySoundFilter*)m_pSource)->GetSource();
+	}*/
+
+	//m_pInput = GetComponent("track");
 	assert(NULL != m_pInput);
 
 	m_bHide = false;
@@ -931,7 +938,9 @@ void CTrack::SetReset(BOOL bReset)
 
 IFloopySoundInput *CTrack::GetComponent(char *name)
 {
-	IFloopySoundInput *src = m_pInput;
+	return CTracks::GetComponent(m_pInput, name);
+
+	/*IFloopySoundInput *src = m_pInput;
 	while(src)
 	{
 		char *tmp = strrchr(src->GetName(), '.');
@@ -956,7 +965,7 @@ IFloopySoundInput *CTrack::GetComponent(char *name)
 			src = NULL;
 		}
 	}
-	return NULL;
+	return NULL;*/
 }
 
 void CTrack::InvalidateRegions(CRegion *start)

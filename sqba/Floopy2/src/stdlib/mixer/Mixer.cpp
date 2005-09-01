@@ -30,7 +30,8 @@ CMixer::~CMixer()
 {
 	for(int i=0; i<m_nInputCount; i++)
 	{
-		delete m_pInputs[i];
+		if(m_pInputs[i])
+			delete m_pInputs[i];
 	}
 
 	if(NULL != m_pBuffers)
@@ -52,29 +53,21 @@ int CMixer::AddSource(IFloopySoundInput *src)
 	return -1;
 }
 
-void CMixer::RemoveSource(IFloopySoundInput *src)
+bool CMixer::RemoveSource(IFloopySoundInput *src)
 {
-	/*for(int i=0; i<m_nInputCount; i++)
+	for(int i=0; i<m_nInputCount; i++)
 	{
 		if(src == m_pInputs[i])
 		{
+			m_pInputs[i] = NULL;
+			return true;
 		}
-	}*/
-	/*if(index < m_nInputCount)
-	{
-		IFloopySoundInput *tmp = m_pInputs[index];
-		tmp
-		return m_pInputs[index];
-	}*/
+	}
+	return false;
 }
 
 IFloopySoundInput *CMixer::GetSource(int index)
 {
-	/*for(int i=0; i<m_nInputCount; i++)
-	{
-		if(index == i)
-			return m_pInputs[i];
-	}*/
 	if(index < m_nInputCount)
 		return m_pInputs[index];
 	return NULL;
@@ -114,8 +107,11 @@ int CMixer::Read(BYTE *data, int size)
 		// Fill source m_pBuffers;
 		for(int i=0; i<m_nInputCount; i++)
 		{
-			m_nLengths[i] = m_pInputs[i]->Read(pBuffers, size);
-			pBuffers += size;
+			if(m_pInputs[i])
+			{
+				m_nLengths[i] = m_pInputs[i]->Read(pBuffers, size);
+				pBuffers += size;
+			}
 		}
 
 		mixBuffers(m_pBuffers, m_nInputCount, data, size);
@@ -216,7 +212,10 @@ void CMixer::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, i
 void CMixer::Close()
 {
 	for(int i=0; i<m_nInputCount; i++)
-		m_pInputs[i]->Close();
+	{
+		if(m_pInputs[i])
+			m_pInputs[i]->Close();
+	}
 	m_nInputCount = 0;
 
 #ifdef _DEBUG_TIMER_
@@ -245,7 +244,8 @@ void CMixer::MoveTo(int samples)
 {
 	for(int i=0; i<m_nInputCount; i++)
 	{
-		m_pInputs[i]->MoveTo(samples);
+		if(m_pInputs[i])
+			m_pInputs[i]->MoveTo(samples);
 	}
 }
 
@@ -253,7 +253,8 @@ void CMixer::Reset()
 {
 	for(int i=0; i<m_nInputCount; i++)
 	{
-		m_pInputs[i]->Reset();
+		if(m_pInputs[i])
+			m_pInputs[i]->Reset();
 	}
 	if(m_nBuffSize > 0)
 		memset(m_pBuffers, 0, m_nBuffSize);
@@ -264,9 +265,12 @@ int CMixer::GetSize()
 	int size = 0;
 	for(int i=0; i<m_nInputCount; i++)
 	{
-		int tmp = m_pInputs[i]->GetSize();
-		if(tmp > size)
-			size = tmp;
+		if(m_pInputs[i])
+		{
+			int tmp = m_pInputs[i]->GetSize();
+			if(tmp > size)
+				size = tmp;
+		}
 	}
 	return size;
 }

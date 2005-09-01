@@ -40,7 +40,7 @@ public:
 	BOOL SetSource(IFloopySoundInput *src) { return (AddSource(src) != -1); }
 	int AddSource(IFloopySoundInput *src);
 	IFloopySoundInput *GetSource(int index);
-	void RemoveSource(IFloopySoundInput *src);
+	bool RemoveSource(IFloopySoundInput *src);
 	int GetInputCount();
 
 	BOOL ReadSourceIfDisabled()	{ return FALSE; }

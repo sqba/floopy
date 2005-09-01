@@ -123,7 +123,9 @@ void CCaretView::OnSize(wxSizeEvent& event)
 {
 	CGridView::OnSize( event );
 
-	wxCaret *caret = GetCaret();
+	m_pTracks->SetCaretPos( m_pTracks->GetCaretPos() );
+
+	/*wxCaret *caret = GetCaret();
 	if(NULL != caret)
 	{
 
@@ -135,7 +137,7 @@ void CCaretView::OnSize(wxSizeEvent& event)
 			wxSize size = GetClientSize();
 			caret->SetSize(1, size.GetHeight());
 		}
-	}
+	}*/
 }
 /*
 void CCaretView::OnDraw(wxDC& dc)

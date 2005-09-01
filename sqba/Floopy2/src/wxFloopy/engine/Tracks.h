@@ -165,7 +165,7 @@ public:
 	void DrawLabels(wxDC& dc, wxSize size);
 	void DrawPreview(wxDC& dc, wxSize size);
 
-	CTrack *AddTrack(IFloopySoundInput *input, int level);
+	CTrack *AddTrack(IFloopySoundInput *input, IFloopySoundInput *parent, int level);
 	bool RemoveTrack(CTrack *track);
 
 	void DeselectAllTracks();
@@ -221,10 +221,12 @@ public:
 	BOOL GetViewUpdatedWhilePlaying();
 	void SetViewUpdatedWhilePlaying(BOOL bUpdate);
 
+	static IFloopySoundInput *GetComponent(IFloopySoundInput *src, char *name);
+
 private:
 	IFloopySoundMixer *getMixer();
 	BOOL createEngine(char *plugin);
-	void loadTracks(IFloopySoundInput *input, int level);
+	void loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, int level);
 	void changeHeight(int dy);
 	void init();
 
@@ -327,7 +329,7 @@ class CTrack : public IFloopyObj
 
 public:
 	CTrack() {}
-	CTrack(CTracks *tracks, IFloopySoundInput *input, int level);
+	CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *parent, int level);
 	virtual ~CTrack();
 
 	void DrawLabel(wxDC& dc, wxRect& rc);
@@ -369,6 +371,7 @@ public:
 	void Dump(ostream& stream);
 
 	IFloopySoundInput *GetInput()	{ return m_pInput; }
+	IFloopySoundInput *GetSource()	{ return m_pSource; }
 
 	void OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
@@ -423,6 +426,8 @@ private:
 	CCacheButton	*m_pButtonCache;
 
 	BOOL		m_bReset;
+
+	IFloopySoundInput *m_pSource;
 };
 
 class CRegion : public IFloopyObj

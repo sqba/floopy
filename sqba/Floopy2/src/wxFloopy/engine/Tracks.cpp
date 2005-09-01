@@ -194,11 +194,11 @@ void CTracks::DrawPreview(wxDC& dc, wxSize size)
 	}*/
 }
 
-CTrack *CTracks::AddTrack(IFloopySoundInput *input, int level)
+CTrack *CTracks::AddTrack(IFloopySoundInput *input, IFloopySoundInput *parent, int level)
 {
 	wxLogTrace(_T("CTracks"), _T("Adding new track"));
 
-	CTrack *track = new CTrack( this, input, level );
+	CTrack *track = new CTrack( this, input, parent, level );
 
 	UINT r=255, g=255, b=255;
 	input = track->GetInput();
@@ -219,9 +219,11 @@ CTrack *CTracks::AddTrack(IFloopySoundInput *input, int level)
 	}
 	track->SetColor(wxColor(r, g, b));
 
-	try {
+	try
+	{
 		m_tracks.Append( track );
-	} catch(...) {
+	}
+	catch(...) {
 		wxLogTrace(_T("CTracks"), _T("AddTrack exception"));
 		return NULL;
 	}
@@ -233,16 +235,23 @@ bool CTracks::RemoveTrack(CTrack *track)
 {
 	wxLogTrace(_T("CTracks"), _T("Removing track"));
 
-	try {
-		if(m_tracks.DeleteObject( track )) {
-			Refresh();
-			delete track;
+	try
+	{
+		if( getMixer()->RemoveSource(track->GetSource()) )
+		{
+			if(m_tracks.DeleteObject( track ))
+			{
+				Refresh();
+				delete track;
+				return TRUE;
+			}
 		}
-	} catch(...) {
-		wxLogTrace(_T("CTracks"), _T("RemoveTrack exception"));
-		return FALSE;
 	}
-	return TRUE;
+	catch(...)
+	{
+		wxLogTrace(_T("CTracks"), _T("RemoveTrack exception"));
+	}
+	return FALSE;
 }
 
 void CTracks::init()
@@ -392,8 +401,10 @@ void CTracks::RemoveSelectedObjects()
 		track->RemoveSelectedObjects();
 		if( track->IsSelected() )
 		{
-			RemoveTrack( track );
-			GetStatusBar()->SetStatusText("Track removed", 0);
+			if( RemoveTrack(track) )
+				GetStatusBar()->SetStatusText("Track removed", 0);
+			else
+				GetStatusBar()->SetStatusText("Failed to remove track", 0);
 		}
 	}
 }
@@ -423,6 +434,8 @@ void CTracks::Refresh()
 
 		m_pLabelsView->Refresh();
 	}
+
+	SetCaretPos( GetCursorPosition() );
 }
 
 void CTracks::Invalidate()
@@ -706,7 +719,7 @@ BOOL CTracks::Open(char *filename)
 			memset(m_filename, 0, sizeof(m_filename));
 			strcpy(m_filename, filename);
 			Clear();
-			loadTracks(m_pEngine, 0);
+			loadTracks(m_pEngine, m_pEngine, 0);
 			//loadTracks(m_pEngine->GetSource(), 0);
 			SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 			float freq = fmt->frequency;
@@ -750,7 +763,7 @@ BOOL CTracks::Open(char *filename)
 				track->SetDisplayName(filename, strlen(filename));
 				if( m_pMixer->AddSource(track) > -1 )
 				{
-					AddTrack(track, 0);
+					AddTrack(track, track, 0);
 					Refresh();
 					return TRUE;
 				}
@@ -789,15 +802,10 @@ void CTracks::RefreshTracks(CTrack *startTrack)
 	}
 }
 
-void CTracks::loadTracks(IFloopySoundInput *input, int level)
+void CTracks::loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, int level)
 {
 	if(!input)
 		return;
-
-
-	if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
-		AddTrack(input, 0);
-
 
 	if(input->GetType() == TYPE_FLOOPY_SOUND_MIXER)
 	{
@@ -807,13 +815,21 @@ void CTracks::loadTracks(IFloopySoundInput *input, int level)
 		
 		for(int i=0; i<count; i++)
 		{
-			loadTracks(mixer->GetSource(i), ++level);
+			loadTracks(mixer->GetSource(i), mixer->GetSource(i), ++level);
 		}
+
+		return;
 	}
 	else if( input->IsFilter() )
-	{
-		loadTracks(((IFloopySoundFilter*)input)->GetSource(), ++level);
-	}
+		loadTracks(((IFloopySoundFilter*)input)->GetSource(), parent, ++level);
+	
+	if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+		AddTrack(input, parent, 0);
+
+	//IFloopySoundInput *track = CTracks::GetComponent(input, "track");
+	//if(track)
+	//	loadTracks(input, 0);
+
 }
 
 void CTracks::Clear()
@@ -1007,7 +1023,7 @@ void CTracks::SetCaretPos(int samples)
 	yOrig *= yScrollUnits;
 
 	x -= xOrig;
-	int height = height = this->GetHeight();
+	int height = this->GetHeight();
 	int y = -yOrig;
 
 	IFloopyObj *obj = GetSelectedObj();
@@ -1122,6 +1138,36 @@ void CTracks::SetViewUpdatedWhilePlaying(BOOL bUpdate)
 {
 	if( IsPlaying() )
 		m_bViewUpdatedWhilePlaying = bUpdate;
+}
+
+
+IFloopySoundInput *CTracks::GetComponent(IFloopySoundInput *src, char *name)
+{
+	while(src)
+	{
+		char *tmp = strrchr(src->GetName(), '.');
+		if(NULL == tmp)
+			tmp = src->GetName();
+		else
+			tmp++;
+		if(0==strcmpi(tmp, name))
+			return src;
+
+		int type = src->GetType();
+		switch(type)
+		{
+		case TYPE_FLOOPY_SOUND_FILTER:
+		case TYPE_FLOOPY_SOUND_MIXER:
+		case TYPE_FLOOPY_SOUND_TRACK:
+		{
+			src = ((IFloopySoundFilter*)src)->GetSource();
+			break;
+		}
+		default:
+			src = NULL;
+		}
+	}
+	return NULL;
 }
 
 
