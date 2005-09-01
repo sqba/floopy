@@ -499,7 +499,7 @@ public:
 		return (index > 0 ? NULL : m_source);
 	}
 
-	virtual void RemoveSource(IFloopySoundInput *src)	{}
+	virtual bool RemoveSource(IFloopySoundInput *src)	{ return false; }
 
 	virtual int GetInputCount()
 	{

@@ -108,7 +108,7 @@ public:
 	///////////////////////////////////////////
 	IFloopySoundInput *GetSource(int index);
 	int AddSource(IFloopySoundInput *src);
-	void RemoveSource(IFloopySoundInput *src);
+	bool RemoveSource(IFloopySoundInput *src);
 	int GetInputCount();
 	///////////////////////////////////////////
 

@@ -992,62 +992,12 @@ void CTracks::Stop()
 
 void CTracks::SetCaretPos(int samples)
 {
-/*
-	int y=0;
-	int xc1=0, yc1=0;
-	wxCaret *caret = m_pTracksView->GetCaret();
-	caret->GetPosition(NULL, &y);
-	//m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
-*/
 	int x = samples / GetSamplesPerPixel();
-/*
-	IFloopyObj *obj = GetSelectedObj();
-	if(obj && obj->IsKindOf(CLASSINFO(CTrack)))
-	{
-		CTrack *pTrack = (CTrack*)obj;
-		y = pTrack->GetTop();
-		wxSize size(1, pTrack->GetHeight());
-		caret->SetSize( size );
-
-		//int xScrollUnits=0, yScrollUnits=0;
-		//m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-		//int xOrig=0, yOrig=0;
-		//m_pTracksView->GetViewStart(&xOrig, &yOrig);
-		//xOrig *= xScrollUnits;
-		//yOrig *= yScrollUnits;
-		//caret->Move( x-xOrig, pTrack->GetTop()-yOrig );
-	}
-	//else
-	//{
-		m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
-		caret->Move(xc1, yc1);
-	//}
-*/
-//	m_pTracksView->SetFocus();
-//	x = samples / GetSamplesPerPixel();
-//	caret->Move(x, y);
-
-/*
-	int xScrollUnits=0, yScrollUnits=0;
-	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-	int xOrig=0, yOrig=0;
-	m_pTracksView->GetViewStart(&xOrig, &yOrig);
-	xOrig *= xScrollUnits;
-	yOrig *= yScrollUnits;
-	caret->Move(x-xOrig, y-yOrig);
-*/
-
-
-
-
-
-
 
 	wxCaret *caret = m_pTracksView->GetCaret();
 	caret->Show(FALSE);
 
-	//int x=0;
-	//caret->GetPosition(&x, NULL);
+	//m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
 
 	int xScrollUnits=0, yScrollUnits=0;
 	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
@@ -1056,16 +1006,26 @@ void CTracks::SetCaretPos(int samples)
 	xOrig *= xScrollUnits;
 	yOrig *= yScrollUnits;
 
+	x -= xOrig;
+	int height = height = this->GetHeight();
+	int y = -yOrig;
+
 	IFloopyObj *obj = GetSelectedObj();
 	if(obj && obj->IsKindOf(CLASSINFO(CTrack)))
 	{
 		CTrack *pTrack = (CTrack*)obj;
-		caret->SetSize(1, pTrack->GetHeight());
-		caret->Move( x-xOrig, pTrack->GetTop()-yOrig );
-	} else {
-		caret->SetSize(1, this->GetHeight());
-		caret->Move( x-xOrig, -yOrig );
+		height = pTrack->GetHeight();
+		y = pTrack->GetTop()-yOrig;
 	}
+
+	if(height > 0)
+	{
+		caret->SetSize(1, height);
+		caret->Move( x, y );
+	//	caret->Show(TRUE);
+	}
+	//else
+	//	caret->Show(FALSE);
 	caret->Show(TRUE);
 }
 

@@ -57,6 +57,8 @@ BOOL CTimeline::RemoveParam(int offset, int index)
 	if(tmp)
 	{
 		tmp = removeParam( tmp );
+		if(m_pTemp == tmp)
+			m_pTemp = NULL;
 		if(tmp)
 		{
 			delete tmp;
@@ -122,8 +124,10 @@ int CTimeline::GetNextOffset(int offset)
 
 	int min = 0;
 	tParam *tmp = m_pFirst;
+
 	if(m_pTemp && (m_pTemp->offset <= offset))
 		tmp = m_pTemp;
+
 	while(tmp)
 	{
 		if((tmp->offset > offset) && ((tmp->offset < min) || (min == 0)))

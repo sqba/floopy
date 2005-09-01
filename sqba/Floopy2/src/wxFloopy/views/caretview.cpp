@@ -44,14 +44,6 @@ void CCaretView::ScrollWindow( int dx, int dy, const wxRect *rect )
 	{
 		int x=0, y=0;
 		caret->GetPosition(&x, &y);
-
-		/*if(caret->GetSize().GetHeight() != GetSize().GetHeight())
-			y += dy;
-		else
-			y = 0;
-
-		caret->Move( x+dx, y );*/
-
 		caret->Move( x+dx, y+dy );
 	}
 
@@ -134,9 +126,15 @@ void CCaretView::OnSize(wxSizeEvent& event)
 	wxCaret *caret = GetCaret();
 	if(NULL != caret)
 	{
-		/*wxSize size = GetClientSize();
-		caret->SetSize(1, size.GetHeight());*/
-		caret->SetSize(1, m_pTracks->GetHeight());
+
+		int height = m_pTracks->GetHeight();
+		if(height > 0)
+			caret->SetSize(1, height);
+		else
+		{
+			wxSize size = GetClientSize();
+			caret->SetSize(1, size.GetHeight());
+		}
 	}
 }
 /*

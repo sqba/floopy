@@ -278,5 +278,7 @@ bool CFloopyFrame::Close()
 			break;
 		}
 	}
+	else
+		m_pTracks->Clear();
 	return bResult;
 }

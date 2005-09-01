@@ -606,10 +606,12 @@ IFloopySoundInput *CInput::GetSource(int index)
 		return m_plugin;
 }
 
-void CInput::RemoveSource(IFloopySoundInput *src)
+bool CInput::RemoveSource(IFloopySoundInput *src)
 {
 	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
-		((IFloopySoundMixer*)m_plugin)->RemoveSource(src);
+		return ((IFloopySoundMixer*)m_plugin)->RemoveSource(src);
+	else
+		return false;
 }
 
 int CInput::GetInputCount()

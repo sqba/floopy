@@ -55,7 +55,6 @@ protected:
 	wxPoint				m_ptPrev;
 	IFloopyObj			*m_pSelectedObj;
 	wxScrolledWindow	*m_pLabelsView;
-	CTracks				*m_pTracks;
 	bool				m_bDrag;
 	wxMenu				*m_pObjMenu;
 };

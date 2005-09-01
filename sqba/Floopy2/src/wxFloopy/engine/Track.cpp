@@ -637,6 +637,13 @@ void CTrack::OnKeyDown(wxKeyEvent& event)
 	case 'V':
 		SetReverse( !IsReverse() );
 		break;
+	case WXK_F5:
+	case WXK_SPACE:
+		if(GetTracks()->IsPlaying())
+			GetTracks()->Pause();
+		else
+			GetTracks()->Play();
+		break;
 	default:
 		return;
 	}
