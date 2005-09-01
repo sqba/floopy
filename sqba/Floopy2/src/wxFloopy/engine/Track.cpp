@@ -606,28 +606,37 @@ void CTrack::loadRegions()
 
 bool CTrack::OnKeyDown(wxKeyEvent& event)
 {
-//	int value = IsSelected() ? GetHeight() : GetTracks()->GetPixelsPerSecond();
-//	int value = IsSelected() ? GetHeight() : GetTracks()->GetSamplesPerPixel();
-
 	switch (event.GetKeyCode() )
 	{
 	case WXK_UP:
 	case WXK_NUMPAD_UP:
-//		value += IsSelected() ? 1 : value;
 		SetHeight( GetHeight() + 1 );
 		return true;
 	case WXK_DOWN:
 	case WXK_NUMPAD_DOWN:
-//		value -= IsSelected() ? 1 : value;
 		SetHeight( GetHeight() - 1 );
 		return true;
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
+		{
+			int pos = GetTracks()->GetCaretPos();
+			pos -= GetTracks()->GetSamplesPerPixel();
+			GetTracks()->SetCaretPos( pos );
+			break;
+		}
+		return true;
 	case '-':
 		GetTracks()->SetSamplesPerPixel( GetTracks()->GetSamplesPerPixel()*2 );
 		return true;
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
+		{
+			int pos = GetTracks()->GetCaretPos();
+			pos += GetTracks()->GetSamplesPerPixel();
+			GetTracks()->SetCaretPos( pos );
+			break;
+		}
+		return true;
 	case '+':
 		GetTracks()->SetSamplesPerPixel( GetTracks()->GetSamplesPerPixel()/2 );
 		return true;
@@ -649,25 +658,22 @@ bool CTrack::OnKeyDown(wxKeyEvent& event)
 	case WXK_F5:
 	case WXK_SPACE:
 		if(GetTracks()->IsPlaying())
-			GetTracks()->Pause();
+			GetTracks()->Stop();
 		else
 			GetTracks()->Play();
+		return true;
+	case WXK_END:
+	case WXK_RETURN:
+		if(GetTracks()->IsPlaying())
+			GetTracks()->Stop();
 		return true;
 	}
 		
 	return false;
-
-	/*if( IsSelected() )
-		SetHeight( value );
-	else
-		GetTracks()->SetSamplesPerPixel( value );*/
-//		GetTracks()->SetPixelsPerSecond( value );
 }
 
 IFloopyObj *CTrack::GetSelectedObj()
 {
-	if(IsSelected())
-		return this;
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
 	{
@@ -677,6 +683,8 @@ IFloopyObj *CTrack::GetSelectedObj()
 			return tmp;
 		node = node->GetNext();
 	}
+	if(IsSelected())
+		return this;
 	return NULL;
 }
 

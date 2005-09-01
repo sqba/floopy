@@ -421,10 +421,6 @@ void CRegion::Update()
 
 			//assert( getReset( m_iStartSample ) );
 		}
-		else
-		{
-			BOOL b=TRUE;
-		}
 	}
 
 	if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))

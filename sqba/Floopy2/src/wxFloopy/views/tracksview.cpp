@@ -90,36 +90,7 @@ void CTracksView::OnKeyDown(wxKeyEvent& event)
 {
 	IFloopyObj *obj = m_pTracks->GetSelectedObj();
 	if(NULL==obj || !obj->OnKeyDown(event))
-	{
-		switch (event.GetKeyCode() )
-		{
-		case WXK_RIGHT:
-		case WXK_NUMPAD_RIGHT:
-			{
-				int pos = m_pTracks->GetCaretPos();
-				pos += m_pTracks->GetSamplesPerPixel();
-				m_pTracks->SetCaretPos( pos );
-				break;
-			}
-		case WXK_LEFT:
-		case WXK_NUMPAD_LEFT:
-			{
-				int pos = m_pTracks->GetCaretPos();
-				pos -= m_pTracks->GetSamplesPerPixel();
-				m_pTracks->SetCaretPos( pos );
-				break;
-			}
-		case WXK_F5:
-		case WXK_SPACE:
-			if(m_pTracks->IsPlaying())
-				m_pTracks->Pause();
-			else
-				m_pTracks->Play();
-			break;
-		default:
-			m_pTracks->OnKeyDown(event);
-		}
-	}
+		m_pTracks->OnKeyDown(event);
 }
 
 void CTracksView::OnMouseEvent(wxMouseEvent& event)
@@ -178,10 +149,8 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 				CTrack *track = (CTrack*)obj;
 			
 				if( !track->IsSelected() )
-				{
 					m_pTracks->DeselectAllTracks();
-					m_pTracks->DeselectAllRegions();
-				}
+				m_pTracks->DeselectAllRegions();
 
 				m_pTracks->SetCaretPos(m_pTracks->GetCaretPos());
 
@@ -202,6 +171,11 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 			}
 			else if(obj->IsKindOf(CLASSINFO(CRegion)))
 			{
+				CRegion *region = (CRegion*)obj;
+				CTrack *track = (CTrack*)region->GetParent();
+				if(!track->IsSelected())
+					m_pTracks->DeselectAllTracks();
+
 				if( !event.ShiftDown() && !m_bDrag )
 					m_pTracks->DeselectAllRegions();
 				else

@@ -854,11 +854,15 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 	{
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
+		SetCaretPos( GetCaretPos() - GetSamplesPerPixel() );
+		return true;
 	case '-':
 		SetSamplesPerPixel( GetSamplesPerPixel()*2 );
 		return true;
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
+		SetCaretPos( GetCaretPos() + GetSamplesPerPixel() );
+		return true;
 	case '+':
 		SetSamplesPerPixel( GetSamplesPerPixel()/2 );
 		return true;
@@ -873,6 +877,18 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 	case WXK_DELETE:
 		RemoveSelectedObjects();
 		//RefreshRulers();
+		return true;
+	case WXK_F5:
+	case WXK_SPACE:
+		if(IsPlaying())
+			Stop();
+		else
+			Play();
+		return true;
+	case WXK_END:
+	case WXK_RETURN:
+		if(IsPlaying())
+			Stop();
 		return true;
 	default:
 		return false;

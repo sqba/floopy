@@ -149,6 +149,64 @@ void CCaretView::OnSize(wxSizeEvent& event)
 		}
 	}*/
 }
+
+/*
+// In samples!
+int CCaretView::GetCaretPos()
+{
+	wxCaret *caret = GetCaret();
+	if(NULL == caret)
+		return 0;
+
+	int x=0, y=0;
+	int xc1=0, yc1=0;
+	caret->GetPosition(&x, &y);
+	CalcUnscrolledPosition(x, y, &xc1, &yc1);
+	return xc1 * m_pTracks->GetSamplesPerPixel();
+}
+
+void CCaretView::SetCaretPos(int samples)
+{
+	wxCaret *caret = GetCaret();
+	if(NULL == caret)
+		return;
+
+	int x = samples / m_pTracks->GetSamplesPerPixel();
+
+	caret->Show(FALSE);
+
+	//m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+
+	int xScrollUnits=0, yScrollUnits=0;
+	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	int xOrig=0, yOrig=0;
+	GetViewStart(&xOrig, &yOrig);
+	xOrig *= xScrollUnits;
+	yOrig *= yScrollUnits;
+
+	x -= xOrig;
+	int height = m_pTracks->GetHeight();
+	int y = -yOrig;
+
+	IFloopyObj *obj = m_pTracks->GetSelectedObj();
+	if(obj && obj->IsKindOf(CLASSINFO(CTrack)))
+	{
+		CTrack *pTrack = (CTrack*)obj;
+		height = pTrack->GetHeight();
+		y = pTrack->GetTop()-yOrig;
+	}
+
+	if(height > 0)
+	{
+		caret->SetSize(1, height);
+		caret->Move( x, y );
+	//	caret->Show(TRUE);
+	}
+	//else
+	//	caret->Show(FALSE);
+	caret->Show(TRUE);
+}
+*/
 /*
 void CCaretView::OnDraw(wxDC& dc)
 {

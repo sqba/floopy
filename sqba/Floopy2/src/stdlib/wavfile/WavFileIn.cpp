@@ -61,6 +61,8 @@ BOOL CWavFileIn::Open(char *filename)
 			fread( &m_data,	sizeof(DATA),	1,	m_pFile );
 		}
 
+		m_nHeaderLength = ftell(m_pFile);
+
 		m_format.format			= m_fmt.fmtFORMAT.wFormatTag;
 		m_format.channels		= (int)m_fmt.fmtFORMAT.nChannels;
 		m_format.frequency		= m_fmt.fmtFORMAT.nSamplesPerSec;
@@ -73,8 +75,6 @@ BOOL CWavFileIn::Open(char *filename)
 
 		memset(m_filename, 0, sizeof(m_filename));
 		strncpy(m_filename, filename, MAX_PATH);
-	
-		m_nHeaderLength = (sizeof(RIFF) + sizeof(FMT) + sizeof(DATA));
 
 		return TRUE;
 	}

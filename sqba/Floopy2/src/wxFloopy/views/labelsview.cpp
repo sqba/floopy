@@ -82,24 +82,22 @@ void CLabelsView::OnKeyDown(wxKeyEvent& event)
 		if(obj->IsKindOf(CLASSINFO(CTrack)))
 		{
 			CTrack *track = (CTrack*)obj;
-			
-			int height = track->GetHeight();
-
-			//wxASSERT(height > 0 && height < 65535);
-
-			switch (event.GetKeyCode() )
+			if(track)
 			{
-			case '+':
-				height += 1;
-				break;
-			case '-':
-				height -= 1;
-				break;
-			default:
-				return;
+				switch (event.GetKeyCode() )
+				{
+				case '+':
+					track->SetHeight( track->GetHeight()+1 );
+					//m_pTracksView->SetFocus();
+					break;
+				case '-':
+					track->SetHeight( track->GetHeight()-1 );
+					//m_pTracksView->SetFocus();
+					break;
+				default:
+					return;
+				}
 			}
-
-			track->SetHeight( height );
 		}
 	}
 }

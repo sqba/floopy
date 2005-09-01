@@ -21,6 +21,9 @@ public:
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnSize( wxSizeEvent &event );
 
+//	int GetCaretPos(); // In samples!
+//	void SetCaretPos(int samples);
+
 private:
 	//wxRect m_rcSelection;
 	int m_iSelStart, m_iSelEnd;
