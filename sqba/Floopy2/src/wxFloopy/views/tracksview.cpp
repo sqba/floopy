@@ -205,11 +205,16 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 			else if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion::CBorder)))
 			{
 				CRegion *region = (CRegion*)m_pSelectedObj->GetParent();
-				CTrack *trk = (CTrack*)region->GetParent();
+				
 				if(region->GetWidth() <= 2)
-					trk->RemoveRegion( region );
+				{
+					CTrack *track = (CTrack*)region->GetParent();
+					region->CancelUpdate();
+					track->RemoveRegion( region );
+				}
 				else
 					region->Update();
+
 				m_pSelectedObj = NULL;
 			}
 		}
