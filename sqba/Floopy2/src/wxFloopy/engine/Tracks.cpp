@@ -1008,9 +1008,12 @@ void CTracks::Stop()
 
 void CTracks::SetCaretPos(int samples)
 {
+	wxCaret *caret = m_pTracksView->GetCaret();
+	if(NULL == caret)
+		return;
+
 	int x = samples / GetSamplesPerPixel();
 
-	wxCaret *caret = m_pTracksView->GetCaret();
 	caret->Show(FALSE);
 
 	//m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
@@ -1047,9 +1050,12 @@ void CTracks::SetCaretPos(int samples)
 
 int CTracks::GetCaretPos()
 {
+	wxCaret *caret = m_pTracksView->GetCaret();
+	if(NULL == caret)
+		return 0;
+
 	int x=0, y=0;
 	int xc1=0, yc1=0;
-	wxCaret *caret = m_pTracksView->GetCaret();
 	caret->GetPosition(&x, &y);
 	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 	return xc1 * GetSamplesPerPixel();
