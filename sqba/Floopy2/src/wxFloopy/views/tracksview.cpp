@@ -89,9 +89,7 @@ void CTracksView::ScrollWindow( int dx, int dy, const wxRect *rect )
 void CTracksView::OnKeyDown(wxKeyEvent& event)
 {
 	IFloopyObj *obj = m_pTracks->GetSelectedObj();
-	if(obj && !obj->IsKindOf(CLASSINFO(CTrack)))
-		obj->OnKeyDown(event);
-	else
+	if(NULL==obj || !obj->OnKeyDown(event))
 	{
 		switch (event.GetKeyCode() )
 		{

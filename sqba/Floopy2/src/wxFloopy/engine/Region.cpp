@@ -510,7 +510,7 @@ void CRegion::CancelUpdate()
 	m_iPrevStart = m_iPrevEnd = -1;
 }
 
-void CRegion::OnKeyDown(wxKeyEvent& event)
+bool CRegion::OnKeyDown(wxKeyEvent& event)
 {
 	switch (event.GetKeyCode() )
 	{
@@ -519,30 +519,30 @@ void CRegion::OnKeyDown(wxKeyEvent& event)
 		Move(+1, 0);
 		Update();
 		Refresh();
-		break;
+		return true;
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
 		Move(-1, 0);
 		Update();
 		Refresh();
-		break;
+		return true;
 	case WXK_UP:
 	case WXK_NUMPAD_UP:
 	case '+':
 		getTrack()->SetHeight( getTrack()->GetHeight() + 1 );
-		break;
+		return true;
 	case WXK_DOWN:
 	case WXK_NUMPAD_DOWN:
 	case '-':
 		getTrack()->SetHeight( getTrack()->GetHeight() - 1 );
-		break;
+		return true;
 	case WXK_DELETE:
 		getTrack()->RemoveRegion( this );
-		return;
+		return true;
 	case 'r':
 	case 'R':
 		SetReset( !GetReset() );
-		break;
+		return true;
 	case'o':
 	case'O':
 		{
@@ -558,7 +558,10 @@ void CRegion::OnKeyDown(wxKeyEvent& event)
 			}
 		break;
 		}
+		return true;
 	}
+	
+	return false;
 }
 
 void CRegion::OnMouseEvent(wxMouseEvent& event)

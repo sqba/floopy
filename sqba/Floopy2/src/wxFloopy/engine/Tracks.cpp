@@ -845,7 +845,7 @@ void CTracks::Clear()
 	Refresh();
 }
 
-void CTracks::OnKeyDown(wxKeyEvent& event)
+bool CTracks::OnKeyDown(wxKeyEvent& event)
 {
 //	int pps = GetPixelsPerSecond();
 //	int spp = GetSamplesPerPixel();
@@ -856,26 +856,26 @@ void CTracks::OnKeyDown(wxKeyEvent& event)
 	case WXK_NUMPAD_LEFT:
 	case '-':
 		SetSamplesPerPixel( GetSamplesPerPixel()*2 );
-		break;
+		return true;
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
 	case '+':
 		SetSamplesPerPixel( GetSamplesPerPixel()/2 );
-		break;
+		return true;
 	case WXK_UP:
 	case WXK_NUMPAD_UP:
 		changeHeight( +1 );
-		break;
+		return true;
 	case WXK_DOWN:
 	case WXK_NUMPAD_DOWN:
 		changeHeight( -1 );
-		break;
+		return true;
 	case WXK_DELETE:
 		RemoveSelectedObjects();
 		//RefreshRulers();
-		return;
+		return true;
 	default:
-		return;
+		return false;
 	}
 
 	//RefreshRulers();

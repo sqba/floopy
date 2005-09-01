@@ -123,6 +123,16 @@ void CCaretView::OnSize(wxSizeEvent& event)
 {
 	CGridView::OnSize( event );
 
+
+	wxCaret *caret = GetCaret();
+	if(NULL != caret)
+	{
+		int x=0, y=0;
+		caret->GetPosition(&x, &y);
+		caret->Move( x, y );
+	}
+
+
 	m_pTracks->SetCaretPos( m_pTracks->GetCaretPos() );
 
 	/*wxCaret *caret = GetCaret();

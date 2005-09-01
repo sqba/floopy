@@ -164,8 +164,10 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 
 
 	int n = m_height/2-2;
-	drawLoopSign(dc, wxRect(5, top+n, n, n));
-	drawCacheSign(dc, wxRect(n+5+1, top+n, n, n));
+	if(n > 20)
+		n = 20;
+	drawLoopSign(dc,  wxRect(5, top+height-n-2, n, n));
+	drawCacheSign(dc, wxRect(n+5+1, top+height-n-2, n, n));
 
 
 	dc.SetPen(oldpen);
@@ -602,7 +604,7 @@ void CTrack::loadRegions()
 	}
 }
 
-void CTrack::OnKeyDown(wxKeyEvent& event)
+bool CTrack::OnKeyDown(wxKeyEvent& event)
 {
 //	int value = IsSelected() ? GetHeight() : GetTracks()->GetPixelsPerSecond();
 //	int value = IsSelected() ? GetHeight() : GetTracks()->GetSamplesPerPixel();
@@ -613,47 +615,47 @@ void CTrack::OnKeyDown(wxKeyEvent& event)
 	case WXK_NUMPAD_UP:
 //		value += IsSelected() ? 1 : value;
 		SetHeight( GetHeight() + 1 );
-		break;
+		return true;
 	case WXK_DOWN:
 	case WXK_NUMPAD_DOWN:
 //		value -= IsSelected() ? 1 : value;
 		SetHeight( GetHeight() - 1 );
-		break;
+		return true;
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
 	case '-':
 		GetTracks()->SetSamplesPerPixel( GetTracks()->GetSamplesPerPixel()*2 );
-		break;
+		return true;
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
 	case '+':
 		GetTracks()->SetSamplesPerPixel( GetTracks()->GetSamplesPerPixel()/2 );
-		break;
+		return true;
 	case WXK_DELETE:
 		GetTracks()->RemoveTrack( this );
-		return;
+		return true;
 	case 'l':
 	case 'L':
 		SetLooped( !IsLooped() );
-		break;
+		return true;
 	case 'r':
 	case 'R':
 		SetReset( !GetReset() );
-		break;
+		return true;
 	case 'v':
 	case 'V':
 		SetReverse( !IsReverse() );
-		break;
+		return true;
 	case WXK_F5:
 	case WXK_SPACE:
 		if(GetTracks()->IsPlaying())
 			GetTracks()->Pause();
 		else
 			GetTracks()->Play();
-		break;
-	default:
-		return;
+		return true;
 	}
+		
+	return false;
 
 	/*if( IsSelected() )
 		SetHeight( value );

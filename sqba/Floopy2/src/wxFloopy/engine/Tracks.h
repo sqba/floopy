@@ -190,7 +190,7 @@ public:
 
 	IFloopySoundEngine *GetInput()				{ return m_pEngine; }
 
-	void OnKeyDown(wxKeyEvent& event);
+	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	IFloopyObj *GetSelectedObj();
 
@@ -373,7 +373,7 @@ public:
 	IFloopySoundInput *GetInput()	{ return m_pInput; }
 	IFloopySoundInput *GetSource()	{ return m_pSource; }
 
-	void OnKeyDown(wxKeyEvent& event);
+	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 
 	int GetRegionCount()			{ return m_regions.GetCount(); }
@@ -494,7 +494,7 @@ public:
 	void CancelUpdate();
 	void Remove();
 
-	void OnKeyDown(wxKeyEvent& event);
+	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 
 	int GetStartOffset()	{ return m_iStartSample; }
@@ -666,21 +666,25 @@ public:
 private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
 	void drawWaveform(wxDC& dc, wxRect& rc, int start);
-	IFloopySoundInput *getInput(CTrack *track);
 	void loadPeaks();
-	int getSourceLength();
+	int getLengthNotLooped();
+//	IFloopySoundInput *getInput(CTrack *track);
 
 private:
-	float m_fdB;
-//	PointList m_points;
-//	PeaksArray m_peaks;
-	IFloopySoundInput *m_pInput;
-	CRegion *m_pRegion;
-//	wxMutex *m_pMutex;
-	BOOL m_bLoaded;
-//	CLoadThread *m_pLoadThread;
-	PeaksArray m_peaks;
-	BOOL m_bDrawDBLines;
+	float				m_fdB;
+	IFloopySoundInput	*m_pInput;
+	CRegion				*m_pRegion;
+	BOOL				m_bLoaded;
+	PeaksArray			m_peaks;
+	BOOL				m_bDrawDBLines;
+
+	CTrack				*m_pTrack;
+	CTracks				*m_pTracks;
+
+//	PointList			m_points;
+//	PeaksArray			m_peaks;
+//	wxMutex				*m_pMutex;
+//	CLoadThread			*m_pLoadThread;
 };
 
 

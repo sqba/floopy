@@ -96,7 +96,7 @@ public:
 
 	virtual IFloopyObj *GetSelectedObj() { return NULL; }
 
-	virtual void OnKeyDown(wxKeyEvent& event) {}
+	virtual bool OnKeyDown(wxKeyEvent& event) { return false; }
 	virtual void OnMouseEvent(wxMouseEvent& event)
 	{
 		m_ptPrev.x = event.GetX();
