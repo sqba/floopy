@@ -9,16 +9,15 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-/* flags for wFormatTag field of WAVEFORMAT */
-#define MAX_PATH          260
+//#define MAX_PATH          260
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
 #include <tchar.h>
 
 #include "../../ifloopy.h"
-#include "headers.h"
 
 class CWavFileIn : public IFloopySoundInput
 {
@@ -33,21 +32,18 @@ public:
 	int Read(BYTE *data, int size);
 	void Close();
 
-	//char *GetName()			{ return "wavfile"; }
 	char *GetName()			{ return (m_pFile ? m_filename : "stdlib.wavfile"); }
 	char *GetDescription()	{ return "WAV file reader"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
 private:
-	int m_nHeaderLength;
-	int m_nSamplesToBytes;
-	int m_size;	// Number of samples
-	FILE *m_pFile;
-	RIFF m_riff;
-	FMT  m_fmt;
-	DATA m_data;
-	char m_filename[MAX_PATH];
+	int		m_nHeaderLength;
+	int		m_nSamplesToBytes;
+	int		m_size;	// Number of samples
+	FILE	*m_pFile;
+	int		m_iDataSize;
+	char	m_filename[_MAX_PATH];
 };
 
 #endif // !defined(AFX_WAVFILEIN_H__65A430F3_282F_497A_8035_BA212889D047__INCLUDED_)
