@@ -60,10 +60,24 @@ void CRegion::createMenu()
 
 void CRegion::Remove()
 {
-	IFloopySoundInput *track = getTrack()->GetInput();
-	assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_ENABLE) );
-	assert( track->ResetParamAt(m_iEndSample,   TIMELINE_PARAM_ENABLE) );
-	assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO) );
+	if(m_bEdit)
+	{
+		IFloopySoundInput *track = getTrack()->GetInput();
+		assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE) );
+		assert( track->ResetParamAt(m_iPrevEnd,   TIMELINE_PARAM_ENABLE) );
+		float value = 0.f;
+		if(track->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
+			assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO) );
+	}
+	else
+	{
+		IFloopySoundInput *track = getTrack()->GetInput();
+		assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_ENABLE) );
+		assert( track->ResetParamAt(m_iEndSample,   TIMELINE_PARAM_ENABLE) );
+		float value = 0.f;
+		if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
+			assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO) );
+	}
 }
 
 void CRegion::remove(IFloopyObj *evt)
