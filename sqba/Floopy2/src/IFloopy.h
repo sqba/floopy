@@ -191,7 +191,7 @@ public:
 	 * @param offset position in samples at which the change was supposed to occur.
 	 * @param index index of the parameter.
 	 */
-	virtual BOOL ResetParamAt(int offset, int index) { return FALSE; }
+	virtual BOOL ResetParamAt(int offset, int index, float value) { return FALSE; }
 
 	/**
 	 * Enables/disables object at specific offset.

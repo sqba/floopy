@@ -239,28 +239,28 @@ bool CRegion::HitTest(int x, int y)
 /////////////////////////////////////////////////////////////////////////////
 void CRegion::Move(int dx, int WXUNUSED(dy))
 {
-	Refresh();
+	Refresh(); // Old rectangle
 
 	int left=0, right=0;
 	calcPos(&left, &right);
 
-	if( (left >= 0) && (right <= getTrack()->GetWidth()) )
-	{
-		getTrack()->CheckIntersections(this, left, right, FALSE);
-		if( left < 0 )
-			left = 0;
+	left  += dx;
+	right += dx;
 
-		startEdit();
+	getTrack()->CheckIntersections(this, left, right, FALSE);
+	// if not, return...
 
-		int samples = dx * getTracks()->GetSamplesPerPixel();
-		m_iStartSample += samples;
-		m_iEndSample   += samples;
+	if( (left < 0) || (right > getTrack()->GetWidth()) )
+		return;
 
-//		if(m_iStartSample < 0)
-//			m_iStartSample = 0;
-	}
+	startEdit();
 
-	Refresh();
+	int spp = getTracks()->GetSamplesPerPixel();
+
+	m_iStartSample = left  * spp;
+	m_iEndSample   = right * spp;
+
+	Refresh(); // New rectangle
 }
 
 /////////////////////////////////////////////////////////////////////////////

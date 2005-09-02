@@ -80,7 +80,7 @@ public:
 
 	BOOL GetParamAt(int offset, int index, float *value);
 	void SetParamAt(int offset, int index, float value);
-	BOOL ResetParamAt(int offset, int index);
+	BOOL ResetParamAt(int offset, int index, float value);
 	void EnableAt(int offset, BOOL bEnable);
 
 	void Close();

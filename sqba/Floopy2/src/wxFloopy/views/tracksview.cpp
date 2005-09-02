@@ -154,6 +154,7 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 			
 				if( !track->IsSelected() )
 					m_pTracks->DeselectAllTracks();
+				
 				m_pTracks->DeselectAllRegions();
 
 				m_pTracks->SetCaretPos(m_pTracks->GetCaretPos());
@@ -175,18 +176,10 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 			}
 			else if(obj->IsKindOf(CLASSINFO(CRegion)))
 			{
-				CRegion *region = (CRegion*)obj;
-				CTrack *track = (CTrack*)region->GetParent();
-				if(!track->IsSelected())
-					m_pTracks->DeselectAllTracks();
-
-				if( !event.ShiftDown() && !m_bDrag )
+				if( !event.ShiftDown() && !obj->IsSelected())
 					m_pTracks->DeselectAllRegions();
-				else
-					m_bDrag = TRUE;
-
-				m_pSelectedObj->Select();
-				m_pSelectedObj->Refresh();
+				if( !obj->IsSelected() )
+					obj->Select();
 
 				return; // Don't move the caret
 			}

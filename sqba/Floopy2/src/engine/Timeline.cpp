@@ -51,9 +51,9 @@ BOOL CTimeline::MoveParam(int offset, int index, int newoffset)
 		return FALSE;
 }
 
-BOOL CTimeline::RemoveParam(int offset, int index)
+BOOL CTimeline::RemoveParam(int offset, int index, float value)
 {
-	tParam *tmp = getParam(offset, index);
+	tParam *tmp = getParam(offset, index, value);
 	if(tmp)
 	{
 		tmp = removeParam( tmp );
@@ -253,6 +253,22 @@ CTimeline::tParam *CTimeline::getParam(int offset, int index)
 	while(tmp)
 	{
 		if((tmp->offset == offset) && (tmp->index == index))
+			return tmp;
+		tmp = tmp->next;
+	}
+	return NULL;
+}
+
+CTimeline::tParam *CTimeline::getParam(int offset, int index, float value)
+{
+	tParam *tmp = m_pFirst;
+
+	if(m_pTemp && m_pTemp->offset <= offset)
+		tmp = m_pTemp;
+
+	while(tmp)
+	{
+		if((tmp->offset == offset) && (tmp->index == index) && (tmp->value == value))
 			return tmp;
 		tmp = tmp->next;
 	}

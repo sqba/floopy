@@ -33,7 +33,7 @@ public:
 
 	void SetParamVal(int offset, int index, float value);
 	BOOL GetParamVal(int offset, int index, float *value);
-	BOOL RemoveParam(int offset, int index);
+	BOOL RemoveParam(int offset, int index, float value);
 	int GetCount();
 	int GetNextOffset(int offset);
 	int GetPrevOffset(int offset);
@@ -48,6 +48,7 @@ public:
 
 private:
 	tParam *getParam(int offset, int index);
+	tParam *getParam(int offset, int index, float value);
 	tParam *getPrevParam(int offset);
 	tParam *insertAfter(CTimeline::tParam *prev, CTimeline::tParam *param);
 	CTimeline::tParam *removeParam(CTimeline::tParam *param);

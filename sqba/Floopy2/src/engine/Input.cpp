@@ -525,9 +525,9 @@ void CInput::SetParamAt(int offset, int index, float value)
 	recalcVariables();
 }
 
-BOOL CInput::ResetParamAt(int offset, int index)
+BOOL CInput::ResetParamAt(int offset, int index, float value)
 {
-	if(m_timeline.RemoveParam(offset * m_nSamplesToBytes, index))
+	if(m_timeline.RemoveParam(offset * m_nSamplesToBytes, index, value))
 	{
 		recalcVariables();
 		return TRUE;
