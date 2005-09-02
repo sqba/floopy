@@ -48,6 +48,7 @@ public:
 	void OnDraw(wxDC& dc);
 	void ScrollWindow( int dx, int dy, const wxRect *rect );
     void OnMouseEvent(wxMouseEvent& event);
+    void OnMouseWheel(wxMouseEvent& event);
 	void OnKeyDown(wxKeyEvent& event);
 	//void OnKeyUp(wxKeyEvent& event);
 

@@ -8,6 +8,7 @@
 
 BEGIN_EVENT_TABLE(CTracksView, CCaretView)
 	EVT_MOUSE_EVENTS(CTracksView::OnMouseEvent)
+	EVT_MOUSEWHEEL(CTracksView::OnMouseWheel)
 	EVT_KEY_DOWN( CTracksView::OnKeyDown )
 END_EVENT_TABLE()
 
@@ -96,6 +97,9 @@ void CTracksView::OnKeyDown(wxKeyEvent& event)
 void CTracksView::OnMouseEvent(wxMouseEvent& event)
 {
 	try {
+
+		//int n = event.GetWheelRotation();
+		//int d = event.GetWheelDelta();
 
 	int x, y, xScrollUnits, yScrollUnits;
 	GetViewStart(&x, &y);
@@ -243,4 +247,25 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 
 	if(event.LeftDown())
 		m_pTracks->SetCursorPosition(m_pTracks->GetCaretPos());
+}
+
+void CTracksView::OnMouseWheel(wxMouseEvent& event)
+{
+	// EVT_MOUSE_EVENTS( CTracksView::OnMouseEvent )
+	
+	// Zameniti OnMouseEvent pojedinacnim eventima
+
+	// EVT_LEFT_DOWN( CTracksView::OnLeftDown )
+	// EVT_LEFT_UP( CTracksView::OnLeftUp )
+	// EVT_LEFT_DCLICK( CTracksView::OnLeftDClick )
+	// EVT_MIDDLE_DOWN( CTracksView::OnMiddleDown )
+	// EVT_MIDDLE_UP( CTracksView::OnMiddleUp )
+	// EVT_MIDDLE_DCLICK( CTracksView::OnMiddleDClick )
+	// EVT_RIGHT_DOWN( CTracksView::OnRightDown )
+	// EVT_RIGHT_UP( CTracksView::OnRightUp )
+	// EVT_RIGHT_DCLICK( CTracksView::OnRightDClick )
+	// EVT_MOTION( CTracksView::OnMouseMove )
+	// EVT_ENTER_WINDOW( CTracksView::OnEnterWindow )
+	// EVT_LEAVE_WINDOW( CTracksView::OnLeaveWindow )
+	// EVT_MOUSEWHEEL( CTracksView::OnMouseWheel )
 }

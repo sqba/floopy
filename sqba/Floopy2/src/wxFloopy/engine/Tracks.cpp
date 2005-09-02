@@ -1110,6 +1110,12 @@ void CTracks::SetCaretPos(int samples)
 	if(NULL == caret)
 		return;
 
+	if(samples < 0)
+		samples = 0;
+
+	//if(samples > trackslength)
+	//	samples = trackslength;
+
 	int x = samples / GetSamplesPerPixel();
 
 	caret->Show(FALSE);
