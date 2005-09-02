@@ -16,7 +16,7 @@ bool CFloopyApp::OnInit()
 {
 	CFloopyFrame *frame = new CFloopyFrame();
 
-	frame->CreateStatusBar(3, wxST_SIZEGRIP);
+	frame->CreateStatusBar(3);//, wxST_SIZEGRIP);  // XP?
 	frame->SetStatusText("Floopy");
 
 	if(argc > 1)
