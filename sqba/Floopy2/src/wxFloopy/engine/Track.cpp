@@ -761,6 +761,7 @@ void CTrack::CheckIntersections(CRegion *pEvent1, int &left, int &right, bool bR
 	if((left == 0) || (right == GetTracks()->GetWidth()))
 		return;
 
+	int width = right - left;
 
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
@@ -786,13 +787,13 @@ void CTrack::CheckIntersections(CRegion *pEvent1, int &left, int &right, bool bR
 				{
 					if (iDir == dir_left)
 					{
-						left  = (iLastDir == dir_right ? r2 : l2 - (r1 - l1));
-						right = (iLastDir == dir_right ? r2 + (r1 - l1) : l2);
+						left  = (iLastDir == dir_right ? r2 : l2-width);
+						right = (iLastDir == dir_right ? r2+width : l2);
 					}
 					else if (iDir == dir_right)
 					{
-						left  = (iLastDir == dir_left ? l2 - (r1 - l1) : r2);
-						right = (iLastDir == dir_left ? l2 : r2 + (r1 - l1));
+						left  = (iLastDir == dir_left ? l2-width : r2);
+						right = (iLastDir == dir_left ? l2 : r2+width);
 					}
 				}
 				else		// Event is being resized

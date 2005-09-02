@@ -87,6 +87,11 @@ BOOL CWavFileIn::Open(char *filename)
 				return FALSE;
 
 			m_nSamplesToBytes = ((m_format.bitsPerSample/8) * m_format.channels);
+
+			// Skip the rest of the structure
+			int rest = hdr.len - sizeof(WAVEFORM);
+			if(rest > 0)
+				fseek(m_pFile, rest, SEEK_CUR);
 		}
 		else if(0 == strncmp("data", hdr.id, 4))
 		{

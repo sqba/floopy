@@ -20,6 +20,11 @@ CMixer::CMixer()
 	m_nLengths = NULL;
 	m_nLengthsSize = 0;
 
+	for(int i=0; i<MAX_INPUTS; i++)
+	{
+		m_pInputs[i] = NULL;
+	}
+
 #ifdef _DEBUG_TIMER_
 	m_bDebugTimer = TRUE;
 	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
@@ -47,8 +52,16 @@ int CMixer::AddSource(IFloopySoundInput *src)
 	{
 		if(0==m_nInputCount)
 			m_source = src;
-		m_pInputs[m_nInputCount++] = src;
-		return m_nInputCount;
+		//m_pInputs[m_nInputCount++] = src;
+		for(int i=0; i<MAX_INPUTS; i++)
+		{
+			if(NULL == m_pInputs[i])
+			{
+				m_pInputs[i] = src;
+				m_nInputCount++;
+				return m_nInputCount;
+			}
+		}
 	}
 	return -1;
 }
@@ -60,6 +73,7 @@ bool CMixer::RemoveSource(IFloopySoundInput *src)
 		if(src == m_pInputs[i])
 		{
 			m_pInputs[i] = NULL;
+			m_nInputCount--;
 			return true;
 		}
 	}
