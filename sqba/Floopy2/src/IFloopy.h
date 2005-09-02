@@ -211,7 +211,7 @@ public:
 	 */
 	virtual void MoveAllParamsBetween(int start, int end, int offset) {}
 
-	virtual BOOL MoveParam(int offset, int index, int newoffset) { return FALSE; }
+	virtual BOOL MoveParam(int offset, int index, float value, int newoffset) { return FALSE; }
 };
 
 

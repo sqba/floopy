@@ -42,9 +42,9 @@ void CTimeline::SetParamVal(int offset, int index, float value)
 		tmp = newParam(offset, index, value);
 }
 
-BOOL CTimeline::MoveParam(int offset, int index, int newoffset)
+BOOL CTimeline::MoveParam(int offset, int index, float value, int newoffset)
 {
-	tParam *param = getParam(offset, index);
+	tParam *param = getParam(offset, index, value);
 	if(param)
 		return moveParam(param, newoffset);
 	else

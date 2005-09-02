@@ -65,20 +65,20 @@ void CRegion::Remove()
 	if(m_bEdit)
 	{
 		IFloopySoundInput *track = getTrack()->GetInput();
-		assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE) );
-		assert( track->ResetParamAt(m_iPrevEnd,   TIMELINE_PARAM_ENABLE) );
+		assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) );
+		assert( track->ResetParamAt(m_iPrevEnd,   TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) );
 		float value = 0.f;
 		if(track->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
-			assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO) );
+			assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, value) );
 	}
 	else
 	{
 		IFloopySoundInput *track = getTrack()->GetInput();
-		assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_ENABLE) );
-		assert( track->ResetParamAt(m_iEndSample,   TIMELINE_PARAM_ENABLE) );
+		assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) );
+		assert( track->ResetParamAt(m_iEndSample,   TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) );
 		float value = 0.f;
 		if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
-			assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO) );
+			assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value) );
 	}
 }
 
@@ -705,10 +705,16 @@ void CRegion::SetReset(BOOL bReset)
 {
 //	m_bReset = bReset;
 
+	IFloopySoundInput *track = getTrack()->GetInput();
+
 	if(bReset)
-		getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, 0.f);
+		track->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, 0.f);
 	else
-		getTrack()->GetInput()->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO);
+	{
+		float value = 0.f;
+		if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
+			track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+	}
 
 	Invalidate();
 	Refresh();

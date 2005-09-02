@@ -38,7 +38,7 @@ public:
 	int GetNextOffset(int offset);
 	int GetPrevOffset(int offset);
 	void Clear();
-	BOOL MoveParam(int offset, int index, int newoffset);
+	BOOL MoveParam(int offset, int index, float value, int newoffset);
 	int GetPrevOffset(int offset, int index);
 	int GetStartOffset();
 

@@ -99,7 +99,7 @@ public:
 
 	enumClassType GetType() { return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
 
-	BOOL MoveParam(int offset, int index, int newoffset);
+	BOOL MoveParam(int offset, int index, float value, int newoffset);
 
 	void MoveAllParamsBetween(int start, int end, int offset);
 
