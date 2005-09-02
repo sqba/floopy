@@ -404,7 +404,7 @@ void CRegion::Update()
 
 //	float value=0.f;
 
-	if((m_iPrevStart >= 0.f) && (m_iPrevStart != m_iStartSample))
+	if((m_iPrevStart >= 0) && (m_iPrevStart != m_iStartSample))
 	{
 		//assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE) );
 		//track->EnableAt(m_iStartSample, TRUE);
@@ -420,8 +420,9 @@ void CRegion::Update()
 			getTrack()->Refresh();
 			return;
 		}*/
-		if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_ENABLE, m_iStartSample) )
+		if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED, m_iStartSample) )
 		{
+			assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) );
 			track->EnableAt(m_iStartSample, TRUE);
 		}
 
@@ -433,11 +434,14 @@ void CRegion::Update()
 		/////////////////////////////////////////////////////////////////////////////////////////
 
 //		if( getReset( m_iPrevStart ) )
-		float value = 0.f;
+		float value = 0;
 		if(getTrack()->GetInput()->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
 		{
-			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, m_iStartSample) )
+			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, value, m_iStartSample) )
+			{
+				assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, value) );
 				getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+			}
 
 			//assert( getReset( m_iStartSample ) );
 		}
@@ -459,8 +463,9 @@ void CRegion::Update()
 			getTrack()->Refresh();
 			return;
 		}*/
-		if( !track->MoveParam(m_iPrevEnd, TIMELINE_PARAM_ENABLE, m_iEndSample) )
+		if( !track->MoveParam(m_iPrevEnd, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED, m_iEndSample) )
 		{
+			assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) );
 			track->EnableAt(m_iEndSample, FALSE);
 		}
 	}
