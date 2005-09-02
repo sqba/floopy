@@ -60,6 +60,8 @@ void CRegion::createMenu()
 
 void CRegion::Remove()
 {
+	Refresh();
+
 	if(m_bEdit)
 	{
 		IFloopySoundInput *track = getTrack()->GetInput();
@@ -237,6 +239,8 @@ bool CRegion::HitTest(int x, int y)
 /////////////////////////////////////////////////////////////////////////////
 void CRegion::Move(int dx, int WXUNUSED(dy))
 {
+	Refresh();
+
 	int left=0, right=0;
 	calcPos(&left, &right);
 
@@ -255,6 +259,8 @@ void CRegion::Move(int dx, int WXUNUSED(dy))
 //		if(m_iStartSample < 0)
 //			m_iStartSample = 0;
 	}
+
+	Refresh();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -569,6 +575,8 @@ bool CRegion::OnKeyDown(wxKeyEvent& event)
 		break;
 		}
 		return true;
+	default:
+		return getTrack()->OnKeyDown(event);
 	}
 	
 	return false;
@@ -713,7 +721,12 @@ void CRegion::SetStartOffset(int sample)
 	getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, sample);
 }
 
+void CRegion::Select(bool selected)
+{
+	IFloopyObj::Select(selected);
 
+	Refresh();
+}
 
 
 

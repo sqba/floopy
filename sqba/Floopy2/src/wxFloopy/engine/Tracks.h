@@ -178,6 +178,7 @@ public:
 	CTrack *GetTrackAt(int y);
 	CTrack *GetTrack(int index);
 	IFloopyObj *GetChildAt(int x, int y);
+	int GetTrackIndex(CTrack *track);
 
 	void Refresh();
 	void Invalidate();
@@ -193,6 +194,7 @@ public:
 	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	IFloopyObj *GetSelectedObj();
+	CTrack *GetSelectedTrack();
 
 	void RefreshTracks(CTrack *track);
 
@@ -510,6 +512,8 @@ public:
 
 	wxColour GetBGColor();
 	wxColour GetForeColor();
+
+	void Select(bool selected=TRUE);
 
 private:
 	static void remove(IFloopyObj *event);

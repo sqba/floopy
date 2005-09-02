@@ -48,7 +48,7 @@ void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 		if(track)
 		{
 			track->Select();
-			track->Refresh();
+			//track->Refresh();
 		}
 
 		m_pTracksView->SetFocus();

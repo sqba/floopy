@@ -300,6 +300,7 @@ CRegion *CTrack::AddNewRegionAt(int left)
 	try {
 		region->SetReset( GetReset() );
 		m_regions.Append( region );
+		region->Refresh();
 
 		/*if( !GetReset() )
 		{
@@ -337,7 +338,7 @@ bool CTrack::RemoveRegion(CRegion *region)
 {
 	wxLogTrace(_T("CTrack"), _T("Removing region"));
 	try {
-		region->Refresh();
+		//region->Refresh();
 		region->Remove();
 		if(m_regions.DeleteObject( region ))
 			delete region;
@@ -382,8 +383,8 @@ void CTrack::DeselectAllRegions()
 	while (node)
 	{
 		CRegion *region = (CRegion*)node->GetData();
-		if( region->IsSelected() )
-			region->Refresh();
+		//if( region->IsSelected() )
+		//	region->Refresh();
 		region->Select(FALSE);
 		node = node->GetNext();
 	}
@@ -449,9 +450,9 @@ void CTrack::MoveSelectedRegions(int dx)
 		CRegion *region = (CRegion*)node->GetData();
 		if( region->IsSelected() )
 		{
-			region->Refresh();
+			//region->Refresh();
 			region->Move(dx, 0);
-			region->Refresh();
+			//region->Refresh();
 		}
 		node = node->GetNext();
 	}
@@ -667,6 +668,8 @@ bool CTrack::OnKeyDown(wxKeyEvent& event)
 		if(GetTracks()->IsPlaying())
 			GetTracks()->Stop();
 		return true;
+	default:
+		return GetTracks()->OnKeyDown(event);
 	}
 		
 	return false;
@@ -1046,6 +1049,11 @@ wxColour CTrack::GetForeColor()
 void CTrack::Select(bool selected)
 {
 	IFloopyObj::Select(selected);
+
+	if(!selected)
+		DeselectAllRegions();
+
+	Refresh();
 
 	CTracks *pTracks = GetTracks();
 

@@ -37,9 +37,9 @@ void *CPlayThread::Entry()
 		return NULL;
 
 	// Check if a track is selected
-	IFloopyObj *tmpobj = m_pTracks->GetSelectedObj();
-	if(tmpobj && tmpobj->IsKindOf(CLASSINFO(CTrack)))
-		m_pInput = ((CTrack*)tmpobj)->GetInput();
+	CTrack *track = m_pTracks->GetSelectedTrack();
+	if(track)
+		m_pInput = track->GetInput();
 
 	if(!m_pInput)
 		return NULL;

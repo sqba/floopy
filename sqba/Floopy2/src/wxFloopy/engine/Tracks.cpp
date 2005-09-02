@@ -291,6 +291,21 @@ CTrack *CTracks::GetTrackAt(int y)
 	return NULL;
 }
 
+int CTracks::GetTrackIndex(CTrack *track)
+{
+	int index = 0;
+	TracksList::Node *node = m_tracks.GetFirst();
+	while (node)
+	{
+		CTrack *tmp = (CTrack*)node->GetData();
+		if(tmp == track)
+			return index;
+		node = node->GetNext();
+		index++;
+	}
+	return -1;
+}
+
 CTrack *CTracks::GetTrack(int index)
 {
 	int count = 0;
@@ -317,8 +332,8 @@ void CTracks::DeselectAllTracks()
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
-		if( track->IsSelected() )
-			track->Refresh();
+		//if( track->IsSelected() )
+		//	track->Refresh();
 		track->Select(FALSE);
 		node = node->GetNext();
 	}
@@ -879,18 +894,72 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		//RefreshRulers();
 		return true;
 	case WXK_F5:
+	case WXK_END:
 	case WXK_SPACE:
 		if(IsPlaying())
 			Stop();
 		else
 			Play();
 		return true;
-	case WXK_END:
-	case WXK_RETURN:
-		if(IsPlaying())
-			Stop();
+	case WXK_PRIOR:
+	case WXK_PAGEUP:
+	case WXK_NUMPAD_PAGEUP:
+		{
+			CTrack *track = GetSelectedTrack();
+			if(track)
+			{
+				if(track->IsSelected())
+				{
+					int index = GetTrackIndex(track);
+					if(index > 0)
+					{
+						track = GetTrack(index-1);
+						if(track)
+						{
+							DeselectAllTracks();
+							track->Select();
+							//track->Refresh();
+						}
+					}
+				}
+			}
+		}
+		return true;
+	case WXK_NEXT:
+	case WXK_PAGEDOWN:
+	case WXK_NUMPAD_PAGEDOWN:
+		{
+			CTrack *track = GetSelectedTrack();
+			if(track)
+			{
+				if(track->IsSelected())
+				{
+					int index = GetTrackIndex(track);
+					if(index < m_tracks.GetCount())
+					{
+						track = GetTrack(index+1);
+						if(track)
+						{
+							DeselectAllTracks();
+							track->Select();
+							//track->Refresh();
+						}
+					}
+				}
+			}
+		}
 		return true;
 	default:
+		/*if(event.GetKeyCode() < m_tracks.GetCount())
+		{
+			DeselectAllTracks();
+			CTrack *track = GetTrack( event.GetKeyCode() );
+			if(track)
+			{
+				track->Select();
+				return true;
+			}
+		}*/
 		return false;
 	}
 
@@ -911,6 +980,19 @@ IFloopyObj *CTracks::GetSelectedObj()
 		IFloopyObj *tmp = track->GetSelectedObj();
 		if(tmp)
 			return tmp;
+		node = node->GetNext();
+	}
+	return NULL;
+}
+
+CTrack *CTracks::GetSelectedTrack()
+{
+	TracksList::Node *node = m_tracks.GetFirst();
+	while (node)
+	{
+		CTrack *track = (CTrack*)node->GetData();
+		if(track && track->IsSelected())
+			return track;
 		node = node->GetNext();
 	}
 	return NULL;

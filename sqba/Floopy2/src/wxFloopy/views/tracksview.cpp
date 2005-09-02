@@ -166,7 +166,7 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 				int x1 = event.GetX() + xOrig;
 				CRegion *region = track->AddNewRegionAt(x1);
 				m_pSelectedObj = region->GetBorder(FALSE);
-				region->Refresh();
+				//region->Refresh();
 				///////////////////////////////////////////
 			}
 			else if(obj->IsKindOf(CLASSINFO(CRegion)))
