@@ -87,7 +87,14 @@ void *CPlayThread::Entry()
 
 	while(m_iPosition<totalLength)
 	{
-		len = m_pInput->Read(buff, bufflen);
+		try
+		{
+			len = m_pInput->Read(buff, bufflen);
+		}
+		catch(...)
+		{
+			break;
+		}
 
 		// If the view has been resized horizontally the position is lost.
 		if(m_pTracks->GetViewUpdatedWhilePlaying())

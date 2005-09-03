@@ -25,31 +25,39 @@ int CConvert8to16bit::Read(BYTE *data, int size)
 {
 	size /= 2;
 
+	BYTE *pBuffer = m_pBuffer;
+	BOOL bDelete = FALSE;
+
 	if(size != m_nBuffSize)
 	{
-		if(m_pBuffer)
-			delete m_pBuffer;
-		m_nBuffSize = size;
-		m_pBuffer = new BYTE[m_nBuffSize];
+		if(pBuffer)
+		{
+			try {
+				delete pBuffer;
+				m_nBuffSize = size;
+			} catch(...) {
+				bDelete = TRUE;
+			}
+		}
+		pBuffer = new BYTE[size];
 	}
-	memset(m_pBuffer, 128, size); // Fill with 8bit silence
+	memset(pBuffer, 128, size); // Fill with 8bit silence
 
-	int len = IFloopySoundFilter::Read(m_pBuffer, size);
+	int len = IFloopySoundFilter::Read(pBuffer, size);
 
 	if(len != EOF)
 	{
-		SOUNDFORMAT *fmt = this->GetFormat();
-		if(!fmt || !fmt->bitsPerSample || !fmt->channels)
-			return 0;
-
 		int numsamples = len;
 
-		BYTE *in		= (BYTE*)m_pBuffer;
+		BYTE *in		= (BYTE*)pBuffer;
 		short int *out	= (short int*)data;
 
 		while(numsamples--)
 			*(out++) = (short int)(*(in++)) * 256 - 32768;
 	}
+
+	if(bDelete)
+		delete pBuffer;
 
 	return len*2;
 }

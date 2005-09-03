@@ -279,10 +279,10 @@ void CRegionDisplay::loadPeaks()
 				buffPos = 0;
 			}
 
+			short int sample = buffer[buffPos++];
+
 			for(ch=0; ch<channels; ch++)
 			{
-				short int sample = buffer[buffPos++];
-
 				if(sample > max[ch])
 					max[ch] = sample;
 				else if(sample < min[ch])
@@ -318,7 +318,7 @@ void CRegionDisplay::loadPeaks()
 						m_peaks.Add( peakMin );
 					}
 
-					max[ch] = min[ch] = 0;
+					max[ch] = min[ch] = sample;
 				}
 				counter = 0;
 				peakcount++;
