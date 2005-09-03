@@ -21,6 +21,7 @@ CRegionDisplay::CRegionDisplay(CRegion *region)
 	m_fdB			= -6.0;
 	m_bDrawDBLines	= TRUE;
 	m_bLoaded		= FALSE;
+	m_bDrawVertical = FALSE;
 
 	LoadPeaks();
 
@@ -103,6 +104,7 @@ void CRegionDisplay::LoadPeaks()
 */
 }
 
+/*
 // Do this in another thread!!!
 void CRegionDisplay::loadPeaks()
 {
@@ -199,7 +201,142 @@ void CRegionDisplay::loadPeaks()
 //	m_pMutex->Unlock();
 
 }
+*/
+void CRegionDisplay::loadPeaks()
+{
+//	m_pMutex->Lock();
 
+//	int maxSample = (int)pow(2, fmt->bitsPerSample) / 2;
+
+
+	m_bLoaded = FALSE;
+
+	m_peaks.Empty();
+
+	int interval = m_pTracks->GetSamplesPerPixel();
+	if(interval < 0)
+		return;
+
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
+	if(NULL == fmt)
+		return;
+	int channels = fmt->channels;
+	if(0 == channels)
+		return;
+
+	m_bDrawVertical = (interval > 10);
+
+	int start = m_pRegion->GetStartOffset();
+	int end   = m_pRegion->GetEndOffset();
+
+	if(end<=0 || start<0)
+		return;
+
+	int totalSamples = (end - start) * channels;
+
+	int buffSize = interval*2;// totalSamples>fmt->frequency ? totalSamples/fmt->frequency : totalSamples;
+
+	// Mozda bi bilo brze kada bi se uchitavalo u chankovima
+	short int *buffer = new short int[buffSize];
+	int bytes = buffSize * sizeof(short int);
+	memset(buffer, 0, bytes);
+
+	m_pInput->MoveTo(start);
+	int bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
+	int samples = bytesRead / (fmt->bitsPerSample / 8);
+	
+	m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
+	
+	if(EOF != bytesRead)
+	{
+		int counter=0;
+		int ch=0;
+		
+		int srcLen = getLengthNotLooped();
+
+		short int min[2]={0}, max[2]={0};
+		int peakcount=0;
+		counter = interval;
+
+		int buffPos = 0;
+
+		for(int pos=0; pos<=totalSamples; pos+=channels)
+		{
+			if(buffPos >= buffSize)
+			{
+				if(buffPos+buffSize > totalSamples)
+				{
+					buffSize = totalSamples - pos;
+					bytes = buffSize * sizeof(short int);
+				}
+				// Ovo je jako interesantno!
+				//m_pInput->MoveTo(pos);
+				memset(buffer, 0, bytes);
+				bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
+				if(EOF == bytesRead)
+					break;
+				samples = bytesRead / (fmt->bitsPerSample / 8);
+				buffPos = 0;
+			}
+
+			for(ch=0; ch<channels; ch++)
+			{
+				short int sample = buffer[buffPos++];
+
+				if(sample > max[ch])
+					max[ch] = sample;
+				else if(sample < min[ch])
+					min[ch] = sample;
+			}
+
+			if(counter >= interval || (srcLen && (pos/channels)%srcLen==0))
+			{
+				for(ch=0; ch<channels; ch++)
+				{
+					if(!m_bDrawVertical)
+					{
+						if(max[ch] == 0 && min[ch] != 0)
+							max[ch] = min[ch];
+						else if(min[ch] == 0 && max[ch] != 0)
+							min[ch] = max[ch];
+
+						Peak peak;
+						peak.value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
+						peak.pos = pos/channels;
+						m_peaks.Add( peak );
+					}
+					else
+					{
+						Peak peakMax;
+						peakMax.value = max[ch];
+						peakMax.pos = pos/channels;
+						m_peaks.Add( peakMax );
+
+						Peak peakMin;
+						peakMin.value = min[ch];
+						peakMin.pos = pos/channels;
+						m_peaks.Add( peakMin );
+					}
+
+					max[ch] = min[ch] = 0;
+				}
+				counter = 0;
+				peakcount++;
+
+				if(peakcount >= 280)
+				{ int d=1; }
+			} else
+				counter++;
+		}
+
+		m_bLoaded = TRUE;
+	}
+
+	delete buffer;
+
+//	m_pMutex->Unlock();
+
+}
 
 /**
  * Draws dB line(s) for a single channel.
@@ -244,44 +381,67 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	int max		= (int)pow(2, fmt->bitsPerSample);
 	int yscale	= max / height;
 	int count	= m_peaks.GetCount();
-	int i		= start;
+	int i		= start * (m_bDrawVertical ? 2 : 1);
 	int y		= mid;
 
 	wxPoint ptPrev(start, mid);
 
 
-	// Mozda je bolje da se krajevi lupova crtajy u CRegion-u
+	// Mozda je bolje da se krajevi lupova crtajy u CRegion-u?
 
-	//int top		= rc.GetTop();
-	//int bottom	= rc.GetBottom();
-	//int origLen	= getLengthNotLooped();
+	int top		= rc.GetTop();
+	int bottom	= rc.GetBottom();
+	int origLen	= getLengthNotLooped();
 
 	// Pen for drawing those little lines at the end of the loop
-	//wxPen oldpen = dc.GetPen();
-	//wxPen pen( wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), 2, wxSOLID );
+	wxPen oldpen = dc.GetPen();
+	wxPen pen( wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), 2, wxSOLID );
 
 	// Length of those little lines at the end of the loop
-	//int t = height / 8;
+	int t = height / 8;
 
+
+	int pos = 0;
 
 	for(int x=0; x<width && i<count; x++)
 	{
-		Peak peak = m_peaks.Item(i);
-		y = (int)((float)mid - peak.value/yscale);
-		dc.DrawLine(left+ptPrev.x, ptPrev.y, left+x, y);
+		if(!m_bDrawVertical)
+		{
+			Peak peak = m_peaks.Item(i);
+			y = (int)((float)mid - peak.value/yscale);
+			dc.DrawLine(left+ptPrev.x, ptPrev.y, left+x, y);
 
-		/*if((origLen>0) && (x>1) && ((peak.pos%origLen)==0))
+			pos = peak.pos;
+
+			ptPrev.x = x;
+			ptPrev.y = y;
+
+			i += channels;
+		}
+		else
+		{
+			Peak peakMax = m_peaks.Item(i);
+			Peak peakMin = m_peaks.Item(i+1);
+			int y1 = mid - peakMax.value/yscale;
+			int y2 = mid - peakMin.value/yscale;
+			if(y1 != y2)
+				dc.DrawLine(left+x, y1, left+x, y2);
+			else
+				dc.DrawPoint(left+x, mid);
+			
+			pos = peakMax.pos;
+
+			i += channels*2;
+		}
+
+		// Draw the end of the loop
+		if((origLen>0) && (x>1) && ((pos%origLen)==0))
 		{
 			dc.SetPen(pen);
 			dc.DrawLine(left+x, top, left+x, top+t);
 			dc.DrawLine(left+x, bottom-t, left+x, bottom);
 			dc.SetPen(oldpen);
-		}*/
-
-		ptPrev.x = x;
-		ptPrev.y = y;
-		
-		i += channels;
+		}
 	}
 }
 

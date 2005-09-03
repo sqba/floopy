@@ -685,6 +685,8 @@ private:
 	CTrack				*m_pTrack;
 	CTracks				*m_pTracks;
 
+	BOOL				m_bDrawVertical;
+
 //	PointList			m_points;
 //	PeaksArray			m_peaks;
 //	wxMutex				*m_pMutex;
