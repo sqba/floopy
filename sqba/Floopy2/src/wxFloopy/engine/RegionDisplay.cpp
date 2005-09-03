@@ -104,7 +104,7 @@ void CRegionDisplay::LoadPeaks()
 */
 }
 
-/*
+
 // Do this in another thread!!!
 void CRegionDisplay::loadPeaks()
 {
@@ -120,6 +120,8 @@ void CRegionDisplay::loadPeaks()
 	int interval = m_pTracks->GetSamplesPerPixel();
 	if(interval < 0)
 		return;
+
+	m_bDrawVertical = (interval > 10);
 
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 	if(NULL == fmt)
@@ -140,9 +142,19 @@ void CRegionDisplay::loadPeaks()
 	short int *buffer = new short int[samples];
 	int bytes = samples * sizeof(short int);
 	memset(buffer, 0, bytes);
+	
+	int bytesRead = 0;
 
-	m_pInput->MoveTo(start);
-	int bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
+	try
+	{
+		m_pInput->MoveTo(start);
+		bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
+	}
+	catch(...)
+	{
+		delete buffer;
+		return;
+	}
 	
 	m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
 	
@@ -161,10 +173,10 @@ void CRegionDisplay::loadPeaks()
 
 		for(int pos=0; pos<samples; pos+=channels)
 		{
+			short int sample = buffer[pos+ch];
+
 			for(ch=0; ch<channels; ch++)
 			{
-				short int sample = buffer[pos+ch];
-
 				if(sample > max[ch])
 					max[ch] = sample;
 				else if(sample < min[ch])
@@ -175,17 +187,32 @@ void CRegionDisplay::loadPeaks()
 			{
 				for(ch=0; ch<channels; ch++)
 				{
-					if(max[ch] == 0 && min[ch] != 0)
-						max[ch] = min[ch];
-					else if(min[ch] == 0 && max[ch] != 0)
-						min[ch] = max[ch];
+					if(!m_bDrawVertical)
+					{
+						if(max[ch] == 0 && min[ch] != 0)
+							max[ch] = min[ch];
+						else if(min[ch] == 0 && max[ch] != 0)
+							min[ch] = max[ch];
 
-					Peak peak;
-					peak.value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
-					peak.pos = pos/channels;
-					m_peaks.Add( peak );
+						Peak peak;
+						peak.value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
+						peak.pos = pos/channels;
+						m_peaks.Add( peak );
+					}
+					else
+					{
+						Peak peakMax;
+						peakMax.value = max[ch];
+						peakMax.pos = pos/channels;
+						m_peaks.Add( peakMax );
 
-					max[ch] = min[ch] = 0;
+						Peak peakMin;
+						peakMin.value = min[ch];
+						peakMin.pos = pos/channels;
+						m_peaks.Add( peakMin );
+					}
+
+					max[ch] = min[ch] = sample;
 				}
 				counter = 0;
 				peakcount++;
@@ -201,7 +228,7 @@ void CRegionDisplay::loadPeaks()
 //	m_pMutex->Unlock();
 
 }
-*/
+/*
 void CRegionDisplay::loadPeaks()
 {
 //	m_pMutex->Lock();
@@ -337,7 +364,7 @@ void CRegionDisplay::loadPeaks()
 //	m_pMutex->Unlock();
 
 }
-
+*/
 /**
  * Draws dB line(s) for a single channel.
  */
