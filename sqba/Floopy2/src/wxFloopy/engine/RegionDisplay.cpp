@@ -207,7 +207,7 @@ void CRegionDisplay::loadPeaks()
 		int peakcount=0;
 		counter = interval;
 
-		short int prev = 0;
+		short int prev[2] = {0};
 
 		for(int pos=0; pos<samples; pos+=channels)
 		{
@@ -234,10 +234,10 @@ void CRegionDisplay::loadPeaks()
 						else if(min[ch] == 0 && max[ch] != 0)
 							min[ch] = max[ch];
 
-						peak.prev = prev;
+						peak.prev = prev[ch];
 						peak.value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
 
-						prev = peak.value;
+						prev[ch] = peak.value;
 					}
 					else
 					{
