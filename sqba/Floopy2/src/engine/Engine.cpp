@@ -225,18 +225,18 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 		}
 	}
 
-	IFloopySoundFilter *track = (IFloopySoundFilter*)CreateInput("stdlib.track");
-	if(track)
-	{
-		track->SetSource(input);
-		input = track;
-	}
-
 	IFloopySoundFilter *volume = (IFloopySoundFilter*)CreateInput("stdlib.volume");
 	if(volume)
 	{
 		volume->SetSource(input);
 		input = volume;
+	}
+
+	IFloopySoundFilter *track = (IFloopySoundFilter*)CreateInput("stdlib.track");
+	if(track)
+	{
+		track->SetSource(input);
+		input = track;
 	}
 
 	if((fmt1->channels == 2) && (pfmt2->channels == 1))
