@@ -12,6 +12,9 @@
 #include <wx/thread.h>
 #include <wx/timer.h>
 
+#include <wx/dcmemory.h>
+#include <wx/bitmap.h>
+
 #include "../../../ifloopy.h"
 #include "../FloopyControl.h"
 #include "floopyobj.h"
@@ -39,8 +42,9 @@ class CRegionDisplay;
 
 struct Peak
 {
+	short int prev;
 	short int value;
-	int pos;
+	int pos;			// Sample offset
 };
 
 
@@ -222,6 +226,8 @@ public:
 
 	BOOL GetViewUpdatedWhilePlaying();
 	void SetViewUpdatedWhilePlaying(BOOL bUpdate);
+
+	void CenterView(int sample);
 
 	static IFloopySoundInput *GetComponent(IFloopySoundInput *src, char *name);
 
@@ -669,7 +675,7 @@ public:
 
 private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
-	void drawWaveform(wxDC& dc, wxRect& rc, int start);
+	void drawPeaks(wxDC& dc, wxRect& rc, int start);
 	void loadPeaks();
 	int getLengthNotLooped();
 //	IFloopySoundInput *getInput(CTrack *track);
@@ -686,6 +692,10 @@ private:
 	CTracks				*m_pTracks;
 
 	BOOL				m_bDrawVertical;
+
+	wxMemoryDC			m_tempDC;
+	wxBitmap			m_tempBitmap;
+	BOOL				m_bRepaint;
 
 //	PointList			m_points;
 //	PeaksArray			m_peaks;

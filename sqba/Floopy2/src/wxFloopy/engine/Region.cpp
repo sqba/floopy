@@ -181,17 +181,28 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 
 wxColour CRegion::GetBGColor()
 {
+	//wxColor color(255, 255, 255);
+
 	wxColor color = getTrack()->GetColor();
-	if( IsSelected() )
-		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+
+	//if( IsSelected() )
+	//	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+
 	return color;
 }
 
 wxColour CRegion::GetForeColor()
 {
-	wxColor color = getTrack()->GetColor();
-	if( !IsSelected() )
-		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	//wxColor color = getTrack()->GetColor();
+
+	wxColor color(0, 0, 100);
+
+	//if( IsSelected() )
+	//	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+
+	//if( !IsSelected() )
+	//	color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+
 	return color;
 }
 
@@ -397,6 +408,8 @@ void CRegion::Resize(int dl, int dr)
 
 void CRegion::Update()
 {
+	BOOL bRefresh = TRUE;
+
 	IFloopySoundInput *track = getTrack()->GetInput();
 
 	if(m_iStartSample < 0)
@@ -437,6 +450,8 @@ void CRegion::Update()
 		float value = 0;
 		if(getTrack()->GetInput()->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
 		{
+			bRefresh = FALSE;
+
 			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, value, m_iStartSample) )
 			{
 				assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, value) );
@@ -473,10 +488,11 @@ void CRegion::Update()
 	//if((m_iPrevEnd-m_iPrevStart) != (m_iEndSample-m_iStartSample))
 
 //	if( !GetReset() )
-//	{
+	if( bRefresh )
+	{
 		Invalidate();
 		Refresh();
-//	}
+	}
 //	else
 //	{
 		// Resize
@@ -502,6 +518,8 @@ void CRegion::Update()
 	getTrack()->InvalidateRegions( this );
 
 	getTracks()->SetChanged( TRUE );
+
+	getTracks()->SetViewUpdatedWhilePlaying(TRUE);
 }
 /*
 void CRegion::ddump()
@@ -710,26 +728,33 @@ void CRegion::SetReset(BOOL bReset)
 {
 //	m_bReset = bReset;
 
-	IFloopySoundInput *track = getTrack()->GetInput();
 
 	if(bReset)
-		track->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, 0.f);
+		SetStartOffset(0);
 	else
 	{
-		float value = 0.f;
+		IFloopySoundInput *track = getTrack()->GetInput();
+
+		float value = 0;
 		if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 			track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
 	}
+}
+
+void CRegion::SetStartOffset(int sample)
+{
+	IFloopySoundInput *track = getTrack()->GetInput();
+
+	float value = 0;
+	if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
+		track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+
+	track->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, sample);
 
 	Invalidate();
 	Refresh();
 
 	getTrack()->InvalidateRegions( this );
-}
-
-void CRegion::SetStartOffset(int sample)
-{
-	getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, sample);
 }
 
 void CRegion::Select(bool selected)

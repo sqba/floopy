@@ -203,6 +203,10 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 			input = conv;
 		}
 	}
+	else if(pfmt2->bitsPerSample > 16)
+	{
+		return NULL;
+	}
 
 	/*if(fmt1->bitsPerSample != pfmt2->bitsPerSample)
 	{

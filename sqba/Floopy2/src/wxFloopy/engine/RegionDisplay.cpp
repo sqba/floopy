@@ -5,6 +5,9 @@
 #include <math.h>
 #include "../engine/Tracks.h"
 
+#include <wx/dcbuffer.h>
+
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -22,6 +25,7 @@ CRegionDisplay::CRegionDisplay(CRegion *region)
 	m_bDrawDBLines	= TRUE;
 	m_bLoaded		= FALSE;
 	m_bDrawVertical = FALSE;
+	m_bRepaint		= FALSE;
 
 	LoadPeaks();
 
@@ -41,38 +45,71 @@ void CRegionDisplay::DrawBG(wxDC& dc, wxRect& rc)
 	if(!m_bDrawDBLines)
 		return;
 
-	SOUNDFORMAT *fmt = m_pInput->GetFormat();
+	SOUNDFORMAT *fmt	= m_pInput->GetFormat();
+	int channels		= fmt->channels;
+	int width			= rc.GetWidth();
+	int height			= rc.GetHeight() / channels;
 
-	int channels = fmt->channels;
-
-	int width	= rc.GetWidth();
-	int height	= rc.GetHeight() / channels;
-
-	wxRect rcTmp = rc;
+	wxRect rcChannel(rc);
+	rcChannel.SetHeight(height);
 	for(int i=0; i<channels; i++)
 	{
-		rcTmp.SetY(rc.GetY() + height*i);
-		rcTmp.SetHeight(height);
-		drawDBLines(dc, rcTmp);
+		rcChannel.Offset(0, height*i);
+		drawDBLines(dc, rcChannel);
 	}
 }
 
 void CRegionDisplay::DrawFore(wxDC& dc, wxRect& rc)
 {
-	SOUNDFORMAT *fmt = m_pInput->GetFormat();
-
-	int channels = fmt->channels;
-
 	int width	= rc.GetWidth();
-	int height	= rc.GetHeight() / channels;
+	int height	= rc.GetHeight();
 
+	if(m_bRepaint || height!=m_tempBitmap.GetHeight())
+	{
+		SOUNDFORMAT *fmt = m_pInput->GetFormat();
+		int channels = fmt->channels;
+		int channelHeight = height / channels;
+
+		m_tempDC.SetPen(dc.GetPen());
+		m_tempBitmap.Create(width, height, -1);
+		m_tempDC.SelectObject(m_tempBitmap);
+		m_tempDC.Clear();
+
+		wxRect rcTmp(0, 0, width, channelHeight);
+		for(int i=0; i<channels; i++)
+		{
+			rcTmp.Offset(0, channelHeight*i);
+			drawPeaks(m_tempDC, rcTmp, i);
+		}
+
+		m_bRepaint = FALSE;
+	}
+
+	//dc.Blit(rc.GetX(), rc.GetY(), width, height, &m_tempDC, 0, 0, wxAND);
+	
+	int logicalFunction = m_pRegion->IsSelected() ? wxAND_INVERT : wxAND;
+	dc.Blit(rc.GetX(), rc.GetY(), width, height, &m_tempDC, 0, 0, logicalFunction);
+
+
+
+	/*wxBufferedDC bdc(&dc, wxSize(rc.GetWidth(), rc.GetHeight()));
 	wxRect rcTmp = rc;
 	for(int i=0; i<channels; i++)
 	{
 		rcTmp.SetY(rc.GetY() + height*i);
 		rcTmp.SetHeight(height);
-		drawWaveform(dc, rcTmp, i);
-	}
+		drawPeaks(bdc, rcTmp, i);
+	}*/
+
+
+	// Drawing directly on the canvas
+	/*wxRect rcTmp = rc;
+	for(int i=0; i<channels; i++)
+	{
+		rcTmp.SetY(rc.GetY() + height/2*i);
+		rcTmp.SetHeight(height/2);
+		drawPeaks(dc, rcTmp, i);
+	}*/
 }
 
 void CRegionDisplay::LoadPeaks()
@@ -111,7 +148,6 @@ void CRegionDisplay::loadPeaks()
 //	m_pMutex->Lock();
 
 //	int maxSample		= (int)pow(2, fmt->bitsPerSample) / 2;
-
 
 	m_bLoaded = FALSE;
 
@@ -171,6 +207,8 @@ void CRegionDisplay::loadPeaks()
 		int peakcount=0;
 		counter = interval;
 
+		short int prev = 0;
+
 		for(int pos=0; pos<samples; pos+=channels)
 		{
 			short int sample = buffer[pos+ch];
@@ -187,6 +225,8 @@ void CRegionDisplay::loadPeaks()
 			{
 				for(ch=0; ch<channels; ch++)
 				{
+					Peak peak;
+
 					if(!m_bDrawVertical)
 					{
 						if(max[ch] == 0 && min[ch] != 0)
@@ -194,23 +234,19 @@ void CRegionDisplay::loadPeaks()
 						else if(min[ch] == 0 && max[ch] != 0)
 							min[ch] = max[ch];
 
-						Peak peak;
+						peak.prev = prev;
 						peak.value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
-						peak.pos = pos/channels;
-						m_peaks.Add( peak );
+
+						prev = peak.value;
 					}
 					else
 					{
-						Peak peakMax;
-						peakMax.value = max[ch];
-						peakMax.pos = pos/channels;
-						m_peaks.Add( peakMax );
-
-						Peak peakMin;
-						peakMin.value = min[ch];
-						peakMin.pos = pos/channels;
-						m_peaks.Add( peakMin );
+						peak.prev = max[ch];
+						peak.value = min[ch];
 					}
+
+					peak.pos = pos/channels;
+					m_peaks.Add( peak );
 
 					max[ch] = min[ch] = sample;
 				}
@@ -224,6 +260,8 @@ void CRegionDisplay::loadPeaks()
 	}
 
 	delete buffer;
+
+	m_bRepaint = TRUE;
 
 //	m_pMutex->Unlock();
 
@@ -372,17 +410,15 @@ void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
 {
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 
+	int left	= rc.GetX();
 	int width	= rc.GetWidth();
 	int height	= rc.GetHeight();
-	int max		= (int)pow(2, fmt->bitsPerSample) / 2;
-	int scale	= max / height;
-	int dby		= (pow(2, (m_fdB/20.0)) * height) / 4.0;
+	int dby		= (pow(2, (m_fdB/20.0)) * height) / 3.0;
 	int middle	= rc.GetY() + (height / 2);
-	int x1		= rc.GetX();
-	int x2		= rc.GetX()+width;
+	int x1		= left;
+	int x2		= left + width;
 	int y1		= middle - dby;
 	int y2		= middle + dby;
-	//int amp	= max * pow(2, (m_fdB/20.0));
 
 	dc.DrawLine(x1, y1, x2, y1);
 	dc.DrawLine(x1, y2, x2, y2);
@@ -391,7 +427,7 @@ void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
 /**
  * Draws a waveform of a single channel.
  */
-void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
+void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 {
 	if(!m_bLoaded)
 		return;
@@ -408,14 +444,12 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	int max		= (int)pow(2, fmt->bitsPerSample);
 	int yscale	= max / height;
 	int count	= m_peaks.GetCount();
-	int i		= start * (m_bDrawVertical ? 2 : 1);
-	int y		= mid;
+	int i		= start;
+	int right	= left + width;
 
-	wxPoint ptPrev(start, mid);
 
 
 	// Mozda je bolje da se krajevi lupova crtajy u CRegion-u?
-
 	int top		= rc.GetTop();
 	int bottom	= rc.GetBottom();
 	int origLen	= getLengthNotLooped();
@@ -428,45 +462,34 @@ void CRegionDisplay::drawWaveform(wxDC& dc, wxRect& rc, int start)
 	int t = height / 8;
 
 
-	int pos = 0;
 
-	for(int x=0; x<width && i<count; x++)
+	for(int x=left; x<right && i<count; x++)
 	{
+		Peak peak = m_peaks.Item(i);
+
+		int y1 = mid - peak.prev  / yscale;
+		int y2 = mid - peak.value / yscale;
+
 		if(!m_bDrawVertical)
 		{
-			Peak peak = m_peaks.Item(i);
-			y = (int)((float)mid - peak.value/yscale);
-			dc.DrawLine(left+ptPrev.x, ptPrev.y, left+x, y);
-
-			pos = peak.pos;
-
-			ptPrev.x = x;
-			ptPrev.y = y;
-
-			i += channels;
+			dc.DrawLine(x-1, y1, x, y2);
 		}
 		else
 		{
-			Peak peakMax = m_peaks.Item(i);
-			Peak peakMin = m_peaks.Item(i+1);
-			int y1 = mid - peakMax.value/yscale;
-			int y2 = mid - peakMin.value/yscale;
 			if(y1 != y2)
-				dc.DrawLine(left+x, y1, left+x, y2);
+				dc.DrawLine(x, y1, x, y2);
 			else
-				dc.DrawPoint(left+x, mid);
-			
-			pos = peakMax.pos;
-
-			i += channels*2;
+				dc.DrawPoint(x, y1);
 		}
 
+		i += channels;
+
 		// Draw the end of the loop
-		if((origLen>0) && (x>1) && ((pos%origLen)==0))
+		if((origLen>0) && (x>left+1) && ((peak.pos%origLen)==0))
 		{
 			dc.SetPen(pen);
-			dc.DrawLine(left+x, top, left+x, top+t);
-			dc.DrawLine(left+x, bottom-t, left+x, bottom);
+			dc.DrawLine(x, top, x, top+t);
+			dc.DrawLine(x, bottom-t, x, bottom);
 			dc.SetPen(oldpen);
 		}
 	}

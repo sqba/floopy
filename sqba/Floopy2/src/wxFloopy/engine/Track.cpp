@@ -340,6 +340,8 @@ bool CTrack::RemoveRegion(CRegion *region)
 	try {
 		//region->Refresh();
 		region->Remove();
+		if(region->GetEndOffset() - region->GetStartOffset() > GetTracks()->GetSamplesPerPixel())
+			InvalidateRegions( region );
 		if(m_regions.DeleteObject( region ))
 			delete region;
 	} catch(...) {
@@ -1068,7 +1070,8 @@ void CTrack::Select(bool selected)
 		pTracks->Stop();
 	}
 
-	pTracks->SetCaretPos( caretpos );
+	if(selected)
+		pTracks->SetCaretPos( caretpos );
 
 	if(bPlaying)
 		pTracks->Play();

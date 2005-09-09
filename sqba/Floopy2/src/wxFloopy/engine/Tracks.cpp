@@ -450,7 +450,7 @@ void CTracks::Refresh()
 		m_pLabelsView->Refresh();
 	}
 
-	SetCaretPos( GetCursorPosition() );
+//	SetCaretPos( GetCursorPosition() );
 }
 
 void CTracks::Invalidate()
@@ -571,7 +571,7 @@ void CTracks::SetSamplesPerPixel(int spp)
 	if( spp < 1 )
 		return;
 
-	int x=0, y=0;
+	/*int x=0, y=0;
 	
 	int width1=0, height1=0;
 	m_pTracksView->GetVirtualSize(&width1, &height1);
@@ -586,7 +586,9 @@ void CTracks::SetSamplesPerPixel(int spp)
 	int xs1 = m_pTracksView->GetScrollPos(wxHORIZONTAL);
 	int ys1 = m_pTracksView->GetScrollPos(wxVERTICAL);
 	int xScrollUnits, yScrollUnits;
-	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );*/
+
+	int pos = GetCaretPos();
 
 
 	//m_iSamplesPerPixel = spp;
@@ -594,11 +596,15 @@ void CTracks::SetSamplesPerPixel(int spp)
 	int freq = fmt->frequency;
 	m_iPixelsPerSecond = freq / spp;
 
+
 	Invalidate();
 	Refresh();
 
 
-	int width2=0, height2=0;
+	SetCaretPos( pos );
+
+
+	/*int width2=0, height2=0;
 	m_pTracksView->GetVirtualSize(&width2, &height2);
 
 	// Move caret
@@ -611,7 +617,10 @@ void CTracks::SetSamplesPerPixel(int spp)
 	// Move view
 	x = (int)(((float)width2  / (float)width1)  * (float)xs1);
 	y = (int)(((float)height2 / (float)height1) * (float)ys1);
-	m_pTracksView->Scroll(x, y);
+	m_pTracksView->Scroll(x, y);*/
+
+
+	CenterView( pos );
 
 
 
@@ -1117,34 +1126,41 @@ void CTracks::SetCaretPos(int samples)
 	//	samples = trackslength;
 
 	int x = samples / GetSamplesPerPixel();
+	int y = 0;
 
-	caret->Show(FALSE);
+//	caret->Show(FALSE);
 
-	//m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+	int xc1, yc1;
 
-	int xScrollUnits=0, yScrollUnits=0;
+	/*int xScrollUnits=0, yScrollUnits=0;
 	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 	int xOrig=0, yOrig=0;
 	m_pTracksView->GetViewStart(&xOrig, &yOrig);
 	xOrig *= xScrollUnits;
-	yOrig *= yScrollUnits;
+	yOrig *= yScrollUnits;*/
 
-	x -= xOrig;
+	//x -= xOrig;
 	int height = this->GetHeight();
-	int y = -yOrig;
+	//int y = 0;
 
 	IFloopyObj *obj = GetSelectedObj();
 	if(obj && obj->IsKindOf(CLASSINFO(CTrack)))
 	{
 		CTrack *pTrack = (CTrack*)obj;
 		height = pTrack->GetHeight();
-		y = pTrack->GetTop()-yOrig;
+		y = pTrack->GetTop();
 	}
+
+	m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+	//m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+
+	//x -= xOrig;
+	//y -= yOrig;
 
 	if(height > 0)
 	{
 		caret->SetSize(1, height);
-		caret->Move( x, y );
+		caret->Move( xc1, yc1 );
 	//	caret->Show(TRUE);
 	}
 	//else
@@ -1158,12 +1174,24 @@ int CTracks::GetCaretPos()
 	if(NULL == caret)
 		return 0;
 
-	int x=0, y=0;
-	int xc1=0, yc1=0;
+	int x=0, y=0, xc1=0, yc1=0;
 	caret->GetPosition(&x, &y);
 	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 	return xc1 * GetSamplesPerPixel();
-	//return x * GetSamplesPerPixel();
+}
+
+// Positions the view so that the sample is in the middle (if possible).
+void CTracks::CenterView(int sample)
+{
+	int xScrollUnits=0, yScrollUnits=0;
+	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+
+	int width=0, height=0;
+	m_pTracksView->GetClientSize(&width, &height);
+
+	int x = sample/GetSamplesPerPixel() - width/2;
+
+	m_pTracksView->Scroll(x/xScrollUnits, 0);
 }
 
 IFloopySoundMixer *CTracks::getMixer()
@@ -1281,7 +1309,6 @@ IFloopySoundInput *CTracks::GetComponent(IFloopySoundInput *src, char *name)
 }
 
 
-
 /////////////////////////////////////////////////////////////////////
 // CTimer functions
 /////////////////////////////////////////////////////////////////////
@@ -1309,7 +1336,12 @@ void CTracks::CTimer::Start()
 
 void CTracks::CTimer::Notify()
 {
-	m_pTracks->SetCaretPos( m_pTracks->GetCursorPosition() );
+	int pos = m_pTracks->GetCursorPosition();
+	m_pTracks->SetCaretPos( pos );
+	
+	// Mozda je bolje skrolovati konstantnom brzinom
+	// i povremeno vrsiti korekcije
+	//m_pTracks->CenterView( pos );
 }
 
 
