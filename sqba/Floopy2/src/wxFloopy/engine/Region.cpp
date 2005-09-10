@@ -738,6 +738,9 @@ void CRegion::SetReset(BOOL bReset)
 		float value = 0;
 		if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 			track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+
+		Invalidate();
+		Refresh();
 	}
 }
 

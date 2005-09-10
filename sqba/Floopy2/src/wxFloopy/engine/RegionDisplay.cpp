@@ -5,12 +5,14 @@
 #include <math.h>
 #include "../engine/Tracks.h"
 
-#include <wx/dcbuffer.h>
+//#include <wx/dcbuffer.h>
 
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
+
+#define SAMPLE	short int
 
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(PeaksArray);
@@ -56,6 +58,7 @@ void CRegionDisplay::DrawBG(wxDC& dc, wxRect& rc)
 	{
 		rcChannel.Offset(0, height*i);
 		drawDBLines(dc, rcChannel);
+		drawMiddleLine(dc, rcChannel);
 	}
 }
 
@@ -129,7 +132,8 @@ void CRegionDisplay::LoadPeaks()
 	if(NULL == m_pInput)
 		return;
 
-	loadPeaks();
+	//loadPeaks();
+	loadPeaksChunked();
 
 /*
 	if(m_pLoadThread)
@@ -198,23 +202,20 @@ void CRegionDisplay::loadPeaks()
 	{
 		samples = bytesRead / (fmt->bitsPerSample / 8);
 
-		int counter=0;
-		int ch=0;
-		
 		int srcLen = getLengthNotLooped();
+		int counter=interval;
+		int peakcount=0;
+		int ch=0;
 
 		short int min[2]={0}, max[2]={0};
-		int peakcount=0;
-		counter = interval;
-
 		short int prev[2] = {0};
 
 		for(int pos=0; pos<samples; pos+=channels)
 		{
-			short int sample = buffer[pos+ch];
-
 			for(ch=0; ch<channels; ch++)
 			{
+				short int sample = buffer[pos-channels+ch];
+
 				if(sample > max[ch])
 					max[ch] = sample;
 				else if(sample < min[ch])
@@ -225,6 +226,8 @@ void CRegionDisplay::loadPeaks()
 			{
 				for(ch=0; ch<channels; ch++)
 				{
+					short int sample = buffer[pos-channels+ch];
+
 					Peak peak;
 
 					if(!m_bDrawVertical)
@@ -266,8 +269,8 @@ void CRegionDisplay::loadPeaks()
 //	m_pMutex->Unlock();
 
 }
-/*
-void CRegionDisplay::loadPeaks()
+
+void CRegionDisplay::loadPeaksChunked()
 {
 //	m_pMutex->Lock();
 
@@ -282,6 +285,8 @@ void CRegionDisplay::loadPeaks()
 	if(interval < 0)
 		return;
 
+	m_bDrawVertical = (interval > 10);
+
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 	if(NULL == fmt)
 		return;
@@ -289,120 +294,115 @@ void CRegionDisplay::loadPeaks()
 	if(0 == channels)
 		return;
 
-	m_bDrawVertical = (interval > 10);
-
 	int start = m_pRegion->GetStartOffset();
 	int end   = m_pRegion->GetEndOffset();
-
 	if(end<=0 || start<0)
 		return;
-
-	int totalSamples = (end - start) * channels;
-
-	int buffSize = interval*2;// totalSamples>fmt->frequency ? totalSamples/fmt->frequency : totalSamples;
-
-	// Mozda bi bilo brze kada bi se uchitavalo u chankovima
-	short int *buffer = new short int[buffSize];
-	int bytes = buffSize * sizeof(short int);
-	memset(buffer, 0, bytes);
-
-	m_pInput->MoveTo(start);
-	int bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
-	int samples = bytesRead / (fmt->bitsPerSample / 8);
 	
 	m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
-	
-	if(EOF != bytesRead)
+
+	int srcLen		= getLengthNotLooped();	// Length of the not looped source
+	int counter		= interval;				// Load first sample
+	int peakcount	= 0;					// Number of peaks loaded
+	int ch			= 0;					// Channel counter
+	int totalSamples = (end - start) * channels;
+	int buffSize	= interval * 2;
+	int buffPos		= buffSize;				// Buffer position
+
+	SAMPLE min[2]={0}, max[2]={0};			// Largest and smallest sample values
+	SAMPLE prev[2] = {0};					// Previous peak value
+
+	SAMPLE *buffer = new SAMPLE[buffSize];	// Create the buffer
+
+	m_pInput->MoveTo(start);				// Move to the beginning of the region
+
+	for(int pos=0; pos<=totalSamples; pos+=channels)
 	{
-		int counter=0;
-		int ch=0;
-		
-		int srcLen = getLengthNotLooped();
-
-		short int min[2]={0}, max[2]={0};
-		int peakcount=0;
-		counter = interval;
-
-		int buffPos = 0;
-
-		for(int pos=0; pos<=totalSamples; pos+=channels)
+		// Load the chunk because we're at the
+		// beginning or the end of the chunk
+		if(buffPos >= buffSize)
 		{
-			if(buffPos >= buffSize)
-			{
-				if(buffPos+buffSize > totalSamples)
-				{
-					buffSize = totalSamples - pos;
-					bytes = buffSize * sizeof(short int);
-				}
-				// Ovo je jako interesantno!
-				//m_pInput->MoveTo(pos);
-				memset(buffer, 0, bytes);
-				bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
-				if(EOF == bytesRead)
-					break;
-				samples = bytesRead / (fmt->bitsPerSample / 8);
-				buffPos = 0;
-			}
+			// Fewer samples left than the buffer accepts
+			if(buffPos+buffSize > totalSamples)
+				buffSize = totalSamples - pos;
 
-			short int sample = buffer[buffPos++];
+			//m_pInput->MoveTo(pos); // <-- Ovo se neshto jako interesantno deshava!
 
-			for(ch=0; ch<channels; ch++)
-			{
-				if(sample > max[ch])
-					max[ch] = sample;
-				else if(sample < min[ch])
-					min[ch] = sample;
-			}
+			int bytes = buffSize * sizeof(SAMPLE);	// Buffer size in bytes
 
-			if(counter >= interval || (srcLen && (pos/channels)%srcLen==0))
-			{
-				for(ch=0; ch<channels; ch++)
-				{
-					if(!m_bDrawVertical)
-					{
-						if(max[ch] == 0 && min[ch] != 0)
-							max[ch] = min[ch];
-						else if(min[ch] == 0 && max[ch] != 0)
-							min[ch] = max[ch];
+			memset(buffer, 0, bytes);		// Fill with silence instead!
 
-						Peak peak;
-						peak.value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
-						peak.pos = pos/channels;
-						m_peaks.Add( peak );
-					}
-					else
-					{
-						Peak peakMax;
-						peakMax.value = max[ch];
-						peakMax.pos = pos/channels;
-						m_peaks.Add( peakMax );
+			int bytesRead = m_pInput->Read((BYTE*)buffer, bytes);	// Load the chunk
 
-						Peak peakMin;
-						peakMin.value = min[ch];
-						peakMin.pos = pos/channels;
-						m_peaks.Add( peakMin );
-					}
+			if(EOF == bytesRead)			// No data inside, exit the loop
+				break;
 
-					max[ch] = min[ch] = sample;
-				}
-				counter = 0;
-				peakcount++;
+			buffSize = bytesRead / (fmt->bitsPerSample / 8);
 
-				if(peakcount >= 280)
-				{ int d=1; }
-			} else
-				counter++;
+			buffPos = 0;					// Reset buffer position
 		}
 
-		m_bLoaded = TRUE;
+		// Find largest and smallest sample values
+		for(ch=0; ch<channels; ch++)
+		{
+			SAMPLE sample = buffer[buffPos+ch];
+
+			if(sample > max[ch])
+				max[ch] = sample;
+			else if(sample < min[ch])
+				min[ch] = sample;
+		}
+
+		// Time to add peak to the array
+		if(counter >= interval || (srcLen && pos%srcLen==0))
+		{
+			for(ch=0; ch<channels; ch++)
+			{
+				SAMPLE sample = buffer[buffPos+ch];
+
+				Peak peak;
+
+				if(!m_bDrawVertical)
+				{
+					if(max[ch] == 0 && min[ch] != 0)
+						max[ch] = min[ch];
+					else if(min[ch] == 0 && max[ch] != 0)
+						min[ch] = max[ch];
+
+					peak.prev	= prev[ch];
+					SAMPLE val	= (peakcount%2) == 0 ? max[ch] : min[ch];
+					peak.value	= val;
+
+					prev[ch]	= val;
+				}
+				else						// We're drawing vertical lines
+				{
+					peak.prev	= max[ch];	// Top point
+					peak.value	= min[ch];	// Bottom point
+				}
+
+				peak.pos = pos/channels;	// Sample offset
+				
+				m_peaks.Add( peak );
+				
+				max[ch] = min[ch] = sample;	// New value
+			}
+			counter = 0;					// Reset the counter
+			peakcount++;					// Increase peak counter
+		} else
+			counter++;						// Increase the counter
+
+		buffPos += channels;				// Increase buffer position
 	}
 
 	delete buffer;
 
-//	m_pMutex->Unlock();
+	m_bRepaint = TRUE;
+	m_bLoaded = TRUE;
 
+//	m_pMutex->Unlock();
 }
-*/
+
 /**
  * Draws dB line(s) for a single channel.
  */
@@ -422,6 +422,14 @@ void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
 
 	dc.DrawLine(x1, y1, x2, y1);
 	dc.DrawLine(x1, y2, x2, y2);
+}
+
+void CRegionDisplay::drawMiddleLine(wxDC& dc, wxRect& rc)
+{
+	int x1	= rc.GetX();
+	int x2	= x1 + rc.GetWidth();
+	int y	= rc.GetY() + (rc.GetHeight() / 2);
+	dc.DrawLine(x1, y, x2, y);
 }
 
 /**
