@@ -126,6 +126,10 @@ SOURCE=.\mp3file\Mp3File.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Performance\Performance.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\playrgn\PlayRegion.cpp
 # End Source File
 # Begin Source File
@@ -199,6 +203,10 @@ SOURCE=.\mono2stereo\Mono2Stereo.h
 # Begin Source File
 
 SOURCE=.\mp3file\Mp3File.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Performance\Performance.h
 # End Source File
 # Begin Source File
 
