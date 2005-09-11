@@ -153,17 +153,6 @@ private:
 
 	/// Optimization variables
 	int m_nStartOffset, m_nEndOffset, m_nSamplesToBytes;
-
-#ifdef _DEBUG_TIMER_
-	clock_t	debugStartMeasuring();
-	void	debugStopMeasuring(clock_t start, int size);
-	void	debugFormatBytes(int bytes, char *str);
-	void	debugPrint();
-	BOOL	m_bDebugTimer;
-	clock_t	m_time;
-	int		m_nFrameCount;
-	int		m_nFrameSize;
-#endif // _DEBUG_TIMER_
 };
 
 #endif // !defined(AFX_INPUT_H__0D3139FE_D3F2_4CAF_A696_AB92E4A51331__INCLUDED_)

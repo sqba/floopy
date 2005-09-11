@@ -82,3 +82,50 @@ void CPerformance::printResults()
 
 	m_nFrameSize = m_ReadTime = m_nFrameCount = 0;
 }
+
+
+int CPerformance::GetPropertyCount()
+{
+	return 3;
+}
+
+BOOL CPerformance::GetPropertyIndex(char *name, int *index)
+{
+	return FALSE;
+}
+
+BOOL CPerformance::GetPropertyVal(int index, float *value)
+{
+	switch(index)
+	{
+	case 0:
+		*value = (float)m_ReadTime;
+		return TRUE;
+	case 1:
+		*value = (float)m_nFrameSize;
+		return TRUE;
+	case 2:
+		*value = (float)m_nFrameCount;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+char *CPerformance::GetPropertyName(int index)
+{
+	switch(index)
+	{
+	case 0:
+		return "ReadTime";
+	case 1:
+		return "FrameSize";
+	case 2:
+		return "FrameCount";
+	}
+	return NULL;
+}
+
+char *CPerformance::GetPropertyDesc(int index)
+{
+	return NULL;
+}

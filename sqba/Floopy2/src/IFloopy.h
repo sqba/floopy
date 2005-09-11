@@ -110,6 +110,35 @@ public:
 
 
 /*********************************************************************
+ *! \class IFloopyProperty
+ *  \brief Functions for manipulating component's properties.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 11. september 2005.
+ *
+ *  Not to be directly overriden in implementations.
+ *
+ *  Properties are not connected to the timeline.
+ *********************************************************************/
+class IFloopyProperty
+{
+public:
+	virtual int   GetPropertyCount()			{ return 0; }
+
+	virtual BOOL  GetPropertyIndex(char *name, int *index)	{ return FALSE; }
+
+	virtual BOOL  GetPropertyVal(int index, float *value)	{ return FALSE; }
+	virtual void  SetPropertyVal(int index, float value)	{ }
+
+	virtual float GetPropertyMin(int index)		{ return 0.f; }
+	virtual float GetPropertyMax(int index)		{ return 0.f; }
+	virtual float GetPropertyStep(int index)	{ return 0.f; }
+	virtual char *GetPropertyName(int index)	{ return NULL; }
+	virtual char *GetPropertyDesc(int index)	{ return NULL; }
+	virtual char *GetPropertyUnit(int index)	{ return NULL; }
+};
+
+/*********************************************************************
  *! \class IFloopyParam
  *  \brief Functions for manipulating component's parameters.
  *  \author Filip Pavlovic
@@ -118,7 +147,7 @@ public:
  *
  *  Not to be directly overriden in implementations.
  *********************************************************************/
-class IFloopyParam
+class IFloopyParam : public IFloopyProperty
 {
 public:
 	IFloopyParam()			{ m_bEnabled = TRUE; }

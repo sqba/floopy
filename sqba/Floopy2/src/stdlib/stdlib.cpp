@@ -20,6 +20,7 @@
 #include "track/track.h"
 #include "reverse/reverse.h"
 #include "invert/invert.h"
+#include "performance/performance.h"
 
 // Output classes
 #include "wavfile/wavfileout.h"
@@ -64,6 +65,8 @@ __declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 		return new CInvert();
 	if( 0 == stricmp(name, "8to16bit") )
 		return new CConvert8to16bit();
+	if( 0 == stricmp(name, "performance") )
+		return new CPerformance();
 	//if( 0 == stricmp(name, "wavein") )
 	//	return NULL;
 
@@ -87,7 +90,7 @@ __declspec( dllexport ) IFloopySoundOutput *CreateOutput(char *name, SOUNDFORMAT
 
 __declspec( dllexport ) int GetPluginCount()
 {
-	return 14;
+	return 17;
 }
 
 __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
@@ -156,6 +159,10 @@ __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
 		break;
 	case 15:
 		name = "8to16bit";
+		*type = TYPE_FLOOPY_SOUND_FILTER;
+		break;
+	case 16:
+		name = "performance";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
 	};

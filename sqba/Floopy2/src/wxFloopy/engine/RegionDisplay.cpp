@@ -308,7 +308,7 @@ void CRegionDisplay::loadPeaksChunked()
 	int totalSamples = (end - start) * channels;
 	//int buffSize	= srcLen > 0 ? srcLen : interval * 2;
 	int buffSize	= interval * 2;
-	int buffPos		= buffSize;				// Buffer position
+	int buffPos		= 0;					// Buffer position
 
 	SAMPLE min[2]={0}, max[2]={0};			// Largest and smallest sample values
 	SAMPLE prev[2] = {0};					// Previous peak value
@@ -324,7 +324,7 @@ void CRegionDisplay::loadPeaksChunked()
 		if(buffPos >= buffSize)
 		{
 			// Fewer samples left than the buffer accepts
-			if(buffPos+buffSize > totalSamples)
+			if( (buffPos == 0) || (buffPos+buffSize > totalSamples) )
 				buffSize = totalSamples - pos;
 
 			if(buffSize <= 0)
