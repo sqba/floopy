@@ -281,7 +281,7 @@ void CRegionDisplay::loadPeaksChunked()
 
 	m_peaks.Empty();
 
-	int interval = m_pTracks->GetSamplesPerPixel();
+	int interval = m_pTracks->GetSamplesPerPixel() - 1;
 	if(interval < 0)
 		return;
 
@@ -306,6 +306,7 @@ void CRegionDisplay::loadPeaksChunked()
 	int peakcount	= 0;					// Number of peaks loaded
 	int ch			= 0;					// Channel counter
 	int totalSamples = (end - start) * channels;
+	//int buffSize	= srcLen > 0 ? srcLen : interval * 2;
 	int buffSize	= interval * 2;
 	int buffPos		= buffSize;				// Buffer position
 
@@ -326,7 +327,10 @@ void CRegionDisplay::loadPeaksChunked()
 			if(buffPos+buffSize > totalSamples)
 				buffSize = totalSamples - pos;
 
-			//m_pInput->MoveTo(pos); // <-- Ovo se neshto jako interesantno deshava!
+			if(buffSize <= 0)
+				break;
+
+			//m_pInput->MoveTo(pos); // <-- Ovde se neshto jako interesantno deshava!
 
 			int bytes = buffSize * sizeof(SAMPLE);	// Buffer size in bytes
 
