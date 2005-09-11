@@ -354,7 +354,7 @@ void CRegionDisplay::loadPeaksChunked()
 		}
 
 		// Time to add peak to the array
-		if(counter >= interval || (srcLen && pos%srcLen==0))
+		if(counter >= interval)// || (srcLen && pos%srcLen==0))
 		{
 			for(ch=0; ch<channels; ch++)
 			{

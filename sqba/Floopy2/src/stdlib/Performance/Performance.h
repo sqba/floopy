@@ -9,12 +9,41 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <time.h>
+#include <stdio.h>
+
+#include "../../ifloopy.h"
+
 class CPerformance : public IFloopySoundFilter  
 {
 public:
 	CPerformance();
 	virtual ~CPerformance();
 
+	char *GetName()			{ return "stdlib.performance"; }
+	char *GetDescription()	{ return "Performance measuring"; }
+	char *GetVersion()		{ return "0.1"; }
+	char *GetAuthor()		{ return "sqba"; }
+
+	int Read(BYTE *data, int size);
+	//void MoveTo(int samples);
+	//void Reset();
+	//int GetSourceSize();
+	//BOOL Open(char *filename);
+	//int GetSize();
+	//int GetPos();
+	void Close();
+
+	BOOL ReadSourceIfDisabled()	{ return TRUE; }
+
+private:
+	void formatBytes(int bytes, char *str);
+	void printResults();
+
+private:
+	clock_t	m_ReadTime;
+	int		m_nFrameCount;
+	int		m_nFrameSize;
 };
 
 #endif // !defined(AFX_PERFORMANCE_H__A67BDCC0_9CAA_47F7_A142_51B43D646520__INCLUDED_)
