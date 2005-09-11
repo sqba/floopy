@@ -80,6 +80,14 @@ void CRegion::Remove()
 		if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 			assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value) );
 	}
+
+	if(m_iEndSample - m_iStartSample > getTrack()->GetTracks()->GetSamplesPerPixel())
+	{
+		Invalidate();
+		Refresh();
+
+		getTrack()->InvalidateRegions( this );
+	}
 }
 
 void CRegion::remove(IFloopyObj *evt)
@@ -757,7 +765,8 @@ void CRegion::SetStartOffset(int sample)
 	Invalidate();
 	Refresh();
 
-	getTrack()->InvalidateRegions( this );
+	if(m_iEndSample - m_iStartSample > getTrack()->GetTracks()->GetSamplesPerPixel())
+		getTrack()->InvalidateRegions( this );
 }
 
 void CRegion::Select(bool selected)

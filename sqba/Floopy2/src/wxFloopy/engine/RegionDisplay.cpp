@@ -321,10 +321,10 @@ void CRegionDisplay::loadPeaksChunked()
 	{
 		// Load the chunk because we're at the
 		// beginning or the end of the chunk
-		if(buffPos >= buffSize)
+		if((buffPos == 0) || (buffPos >= buffSize))
 		{
 			// Fewer samples left than the buffer accepts
-			if( (buffPos == 0) || (buffPos+buffSize > totalSamples) )
+			if( buffPos + buffSize > totalSamples )
 				buffSize = totalSamples - pos;
 
 			if(buffSize <= 0)
