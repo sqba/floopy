@@ -451,19 +451,44 @@ BOOL CInput::GetParamIndex(char *name, int *index)
 		return TRUE;
 	}
 
-	int count = m_plugin->GetParamCount();
-	if(count > 0)
+	if( m_plugin->GetParamIndex(name, index) )
+		return TRUE;
+	else
 	{
-		for(int i=0; i<count; i++)
+		int count = m_plugin->GetParamCount();
+		if(count > 0)
 		{
-			if(0==strcmpi(m_plugin->GetParamName(i), name))
+			for(int i=0; i<count; i++)
+			{
+				if(0==strcmpi(m_plugin->GetParamName(i), name))
+				{
+					*index = i;
+					return TRUE;
+				}
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+BOOL CInput::GetPropertyIndex(char *name, int *index)
+{
+	if( m_plugin->GetPropertyIndex(name, index) )
+		return TRUE;
+	else
+	{
+		for(int i=0; i<m_plugin->GetPropertyCount(); i++)
+		{
+			float propVal = 0.f;
+			char *tmp = m_plugin->GetPropertyName(i);
+			if( 0 == strcmpi(name, tmp) )
 			{
 				*index = i;
 				return TRUE;
 			}
 		}
 	}
-
 	return FALSE;
 }
 
