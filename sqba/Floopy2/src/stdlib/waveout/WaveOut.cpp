@@ -18,11 +18,11 @@ CWaveOut::CWaveOut(SOUNDFORMAT fmt) : IFloopySoundOutput(fmt)
 	InitializeCriticalSection(&waveCriticalSection);
 
 	// set up the WAVEFORMATEX structure.
-	m_wfx.nSamplesPerSec  = fmt.frequency;		// sample rate
-	m_wfx.wBitsPerSample  = fmt.bitsPerSample;	// sample size
-	m_wfx.nChannels       = fmt.channels;		// channels
+	m_wfx.nSamplesPerSec  = fmt.frequency;						// sample rate
+	m_wfx.wBitsPerSample  = (unsigned short)fmt.bitsPerSample;	// sample size
+	m_wfx.nChannels       = fmt.channels;						// channels
 	
-	m_wfx.cbSize          = 0;					// size of _extra_ info
+	m_wfx.cbSize          = 0;									// size of _extra_ info
 	m_wfx.wFormatTag      = WAVE_FORMAT_PCM;
 	m_wfx.nBlockAlign     = (m_wfx.wBitsPerSample * m_wfx.nChannels) >> 3;
 	m_wfx.nAvgBytesPerSec = m_wfx.nBlockAlign * m_wfx.nSamplesPerSec;
@@ -170,7 +170,8 @@ int CWaveOut::GetWrittenSamples()
 	int samples = 0;
 	MMTIME mmt;
 	mmt.wType = TIME_SAMPLES;
-	if(MMSYSERR_NOERROR == waveOutGetPosition(m_hWaveOut, &mmt, sizeof(mmt)) )
+	MMRESULT result = waveOutGetPosition(m_hWaveOut, &mmt, sizeof(mmt));
+	if(MMSYSERR_NOERROR == result)
 		samples = mmt.u.sample;
 
 	return samples;
@@ -179,4 +180,66 @@ int CWaveOut::GetWrittenSamples()
 void CWaveOut::Reset()
 {
 	waveOutReset( m_hWaveOut );
+
+	// wait for all buffers to be returned by the reset
+	//while(waveFreeBlockCount < BLOCK_COUNT)
+	//	Sleep(10);
+
+	// Why doesn't the buffer get emptied when the playback restarts?
+}
+
+void CWaveOut::Flush()
+{
+    WAVEHDR* current;
+    //assert(ivwave_device);
+
+    current = &waveBlocks[waveCurrentBlock];
+    
+    /*
+     * if the current buffer has some data in it then write it
+     * anyway.
+     */
+    if(current->dwUser) {
+        current->dwBufferLength = current->dwUser;
+        current->dwUser = 0;
+        
+        waveOutPrepareHeader(m_hWaveOut, current, sizeof(WAVEHDR));
+        waveOutWrite(m_hWaveOut, current, sizeof(WAVEHDR));
+        
+        EnterCriticalSection(&waveCriticalSection);
+        waveFreeBlockCount--;
+        LeaveCriticalSection(&waveCriticalSection);
+    }
+
+    /*
+     * reset the device - take note that the microsoft documentation
+     * states that calling other waveOut functions from the callback
+     * will cause a deadlock - well calling waveOutUnprepare header
+     * doesn't until you call waveOutReset, at which point the app
+     * will freeze (hence the lame arse implementation here).
+     */
+    waveOutReset(m_hWaveOut);
+    
+    /*
+     * wait for all buffers to be returned by the reset
+     */ 
+    while(waveFreeBlockCount != BLOCK_COUNT)
+        Sleep(10);
+
+    /*
+     * point to the next block
+     */
+    waveCurrentBlock++;
+    waveCurrentBlock %= BLOCK_COUNT;
+
+    /*
+     * reset positioning/statistics variables
+     */
+    //ivwave_output = 0;
+    //ivwave_written = 0;
+    //ivwave_pos = time;
+
+    /*
+     * playback can now continue
+     */
 }

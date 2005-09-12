@@ -122,6 +122,8 @@ void *CPlayThread::Entry()
 		} while(m_iPosition < m_pOutput->GetWrittenSamples());
 	}
 
+	m_pOutput->Flush();
+
 	m_bPlaying = FALSE;
 
 	delete buff;

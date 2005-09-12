@@ -620,6 +620,12 @@ public:
 			m_dest->Reset();
 	}
 
+	virtual void Flush()
+	{
+		if(NULL != m_dest)
+			m_dest->Flush();
+	}
+
 protected:
 	IFloopySoundOutput *m_dest;
 };

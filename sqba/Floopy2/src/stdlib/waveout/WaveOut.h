@@ -44,6 +44,7 @@ public:
 
 	int GetWrittenSamples();
 	void Reset();
+	void Flush();
 
 private:
 	static void CALLBACK	waveOutProc(HWAVEOUT, UINT, DWORD, DWORD, DWORD);
