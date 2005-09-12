@@ -157,7 +157,7 @@ void CRegionDisplay::loadPeaks()
 
 	m_peaks.Empty();
 
-	int interval = m_pTracks->GetSamplesPerPixel();
+	int interval = m_pTracks->GetSamplesPerPixel() - 1;
 	if(interval < 0)
 		return;
 
@@ -285,7 +285,7 @@ void CRegionDisplay::loadPeaksChunked()
 	if(interval < 0)
 		return;
 
-	m_bDrawVertical = (interval > 10);
+	m_bDrawVertical = (interval > 200);
 
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 	if(NULL == fmt)

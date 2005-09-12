@@ -624,11 +624,11 @@ void CTracks::SetSamplesPerPixel(int spp)
 
 
 
-	if( m_Timer.IsRunning() )
+	/*if( m_Timer.IsRunning() )
 	{
 		m_Timer.Stop();
 		m_Timer.Start();
-	}
+	}*/
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1314,7 +1314,7 @@ IFloopySoundInput *CTracks::GetComponent(IFloopySoundInput *src, char *name)
 /////////////////////////////////////////////////////////////////////
 void CTracks::CTimer::Start()
 {
-	IFloopySoundEngine *pEngine = m_pTracks->GetEngine();
+	/*IFloopySoundEngine *pEngine = m_pTracks->GetEngine();
 	if(NULL == pEngine)
 		return;
 
@@ -1331,7 +1331,9 @@ void CTracks::CTimer::Start()
 		if(milliseconds < 1)
 			milliseconds = 1;
 		wxTimer::Start(milliseconds, wxTIMER_CONTINUOUS);
-	}
+	}*/
+
+	wxTimer::Start(1, wxTIMER_CONTINUOUS);
 }
 
 void CTracks::CTimer::Notify()
