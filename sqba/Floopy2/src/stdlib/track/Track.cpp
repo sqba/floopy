@@ -27,7 +27,7 @@ CTrack::~CTrack()
 
 int CTrack::GetPropertyCount()
 {
-	return 6;
+	return 7;
 }
 
 BOOL CTrack::GetPropertyVal(int index, float *value)

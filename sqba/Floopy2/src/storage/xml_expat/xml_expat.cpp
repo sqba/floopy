@@ -408,12 +408,12 @@ void saveParamTimeline(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, int
 
 void writeProperties(FILE *fp, IFloopySoundInput *input)
 {
-	bool bStart = TRUE;
-
-	fprintf(fp, "<properties ");
-
 	if(input->GetPropertyCount() > 0)
 	{
+		bool bStart = TRUE;
+
+		fprintf(fp, "<properties ");
+
 		for(int i=0; i<input->GetPropertyCount(); i++)
 		{
 			float propVal = 0.f;
@@ -429,8 +429,9 @@ void writeProperties(FILE *fp, IFloopySoundInput *input)
 				fprintf(fp, "%s='%.4f'", propName, propVal);
 			}
 		}
+
+		fprintf(fp, "/>");
 	}
-	fprintf(fp, "/>");
 }
 
 

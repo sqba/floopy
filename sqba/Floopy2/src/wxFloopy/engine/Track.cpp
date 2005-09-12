@@ -47,8 +47,16 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *par
 	if(tmp)
 		name = tmp + 1;
 
-	m_name    = name;
 	m_height  = MIN_HEIGHT*3;
+	int index = 0;
+	if(m_pInput->GetPropertyIndex("height", &index))
+	{
+		float val = 0;
+		if(m_pInput->GetPropertyVal(index, &val))
+			m_height = (int)val;
+	}
+
+	m_name    = name;
 	m_top     = 0;
 	m_pBitmap = new wxBitmap();
 	m_pBitmap->LoadFile("res/help.bmp", wxBITMAP_TYPE_BMP);
@@ -495,6 +503,10 @@ void CTrack::SetHeight(int height)
 	if( MIN_HEIGHT <= height )
 	{
 		m_height = height - m_pBorder->GetHeight();
+
+		int index = 0;
+		if(m_pInput->GetPropertyIndex("height", &index))
+			m_pInput->SetPropertyVal(index, (float)m_height);
 
 		Refresh();
 		GetTracks()->RefreshTracks(this);
