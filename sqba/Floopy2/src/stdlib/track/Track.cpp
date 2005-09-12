@@ -4,6 +4,8 @@
 
 #include "Track.h"
 
+#define MIN_HEIGHT	15
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -12,7 +14,7 @@ CTrack::CTrack()
 {
 	Enable( FALSE );
 
-	m_nHeight = 16;
+	m_nHeight = MIN_HEIGHT * 3;
 	m_nBGRed = m_nBGGreen = m_nBGBlue = 256;
 	m_nForeRed = m_nForeGreen = m_nForeBlue = 256;
 }
@@ -141,7 +143,7 @@ float CTrack::GetPropertyMin(int index)
 	case 5:
 		return 0.f;
 	case 6:
-		return 15.f;
+		return (float)MIN_HEIGHT;
 	}
 	return 0.f;
 }
