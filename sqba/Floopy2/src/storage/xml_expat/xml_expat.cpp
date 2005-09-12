@@ -430,7 +430,7 @@ void writeProperties(FILE *fp, IFloopySoundInput *input)
 			}
 		}
 
-		fprintf(fp, "/>");
+		fprintf(fp, "/>\n");
 	}
 }
 
