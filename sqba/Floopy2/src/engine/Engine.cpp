@@ -215,7 +215,7 @@ IFloopySoundInput *CEngine::CreateTrack(char *name)
 		return NULL;
 	}*/
 
-	if(TRUE)
+	if(SIZE_INFINITE != input->GetSize())
 	{
 		IFloopySoundFilter *loop = (IFloopySoundFilter*)CreateInput("stdlib.loop");
 		if(loop)

@@ -90,7 +90,8 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	SOUNDFORMAT *fmt = input->GetFormat();
 	if(fmt->frequency > 0)
 	{
-		float size = (float)input->GetSize() / (float)fmt->frequency;
+		int samples = input->GetSize();
+		float size = samples != SIZE_INFINITE ? (float)samples / (float)fmt->frequency : (float)samples;
 
 		char *space = new char[level*2+1];
 		memset(space, ' ', level*2);

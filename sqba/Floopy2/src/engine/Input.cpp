@@ -368,6 +368,8 @@ void CInput::Reset()
 {
 	m_offset = 0;
 
+	recalcVariables();
+
 	if(NULL != m_plugin)
 		m_plugin->Reset();
 }

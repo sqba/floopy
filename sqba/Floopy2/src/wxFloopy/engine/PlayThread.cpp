@@ -62,29 +62,33 @@ void *CPlayThread::Entry()
 	BYTE *buff = new BYTE[bufflen];
 
 	engine->EmptyBuffer( buff, bufflen );
-	m_pInput->MoveTo( m_iStartPos ); // Move to cursor position
+	//int size = m_pInput->GetSize();		// Recalculate variables
+	m_pInput->Reset();					// Recalculate variables
+	m_pInput->MoveTo( m_iStartPos );	// Move to cursor position
 
 	m_pOutput->Reset();
 
 	int totalLength = m_pTracks->GetLength() * fmt->frequency;
 
-	/*while((len=m_pInput->Read(buff, bufflen)) != EOF)
+	// Play till the end of the track
+	while((len=m_pInput->Read(buff, bufflen)) != EOF)
 	{
 		// If the view has been resized horizontally the position is lost.
 		if(m_pTracks->GetViewUpdatedWhilePlaying())
 		{
 			m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
-			engine->MoveTo( pos );
+			engine->MoveTo( m_iPosition );
 		}
 
-		pos += len / stb;
+		m_iPosition += len / stb;
 		m_pOutput->Write( buff, len );
 		engine->EmptyBuffer( buff, bufflen );
 
 		if ( TestDestroy() )
 			break;
-	}*/
-
+	}
+/*
+	// Play till the end of the project
 	while(m_iPosition<totalLength)
 	{
 		try
@@ -113,7 +117,7 @@ void *CPlayThread::Entry()
 		if ( TestDestroy() )
 			break;
 	}
-
+*/
 	// Wait for output to finish!!!
 	if( !TestDestroy() )
 	{

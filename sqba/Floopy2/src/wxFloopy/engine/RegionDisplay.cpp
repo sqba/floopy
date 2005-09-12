@@ -285,7 +285,7 @@ void CRegionDisplay::loadPeaksChunked()
 	if(interval < 0)
 		return;
 
-	m_bDrawVertical = (interval > 200);
+	m_bDrawVertical = (interval > 10);
 
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 	if(NULL == fmt)
