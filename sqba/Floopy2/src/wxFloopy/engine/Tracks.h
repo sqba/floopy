@@ -608,7 +608,7 @@ public:
 	BOOL IsPlaying()	{ return m_bPlaying; }
 	BOOL IsPaused()		{ return m_bPaused; }
 
-	int GetWrittenSamples();
+	int GetPosition();
 
 	void SetStartPos(int pos);
 

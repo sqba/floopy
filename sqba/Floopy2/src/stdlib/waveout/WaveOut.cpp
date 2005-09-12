@@ -8,7 +8,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CWaveOut::CWaveOut(SOUNDFORMAT fmt)
+CWaveOut::CWaveOut(SOUNDFORMAT fmt) : IFloopySoundOutput(fmt)
 {
 	// initialise the module variables
 	waveBlocks         = allocateBlocks(BLOCK_SIZE, BLOCK_COUNT);
@@ -18,31 +18,26 @@ CWaveOut::CWaveOut(SOUNDFORMAT fmt)
 	InitializeCriticalSection(&waveCriticalSection);
 
 	// set up the WAVEFORMATEX structure.
-	wfx.nSamplesPerSec  = fmt.frequency;	// sample rate
-	wfx.wBitsPerSample  = fmt.bitsPerSample;// sample size
-	wfx.nChannels       = fmt.channels;		// channels
+	m_wfx.nSamplesPerSec  = fmt.frequency;		// sample rate
+	m_wfx.wBitsPerSample  = fmt.bitsPerSample;	// sample size
+	m_wfx.nChannels       = fmt.channels;		// channels
 	
-	wfx.cbSize          = 0;		// size of _extra_ info
-	wfx.wFormatTag      = WAVE_FORMAT_PCM;
-	wfx.nBlockAlign     = (wfx.wBitsPerSample * wfx.nChannels) >> 3;
-	wfx.nAvgBytesPerSec = wfx.nBlockAlign * wfx.nSamplesPerSec;
-
-//	bytesRead = 0;
-	samplesToBytes = (wfx.wBitsPerSample / 8) * wfx.nChannels;
+	m_wfx.cbSize          = 0;					// size of _extra_ info
+	m_wfx.wFormatTag      = WAVE_FORMAT_PCM;
+	m_wfx.nBlockAlign     = (m_wfx.wBitsPerSample * m_wfx.nChannels) >> 3;
+	m_wfx.nAvgBytesPerSec = m_wfx.nBlockAlign * m_wfx.nSamplesPerSec;
 	
 	// try to open the default wave device. WAVE_MAPPER is
 	// a constant defined in mmsystem.h, it always points to the
 	// default wave device on the system (some people have 2 or
 	// more sound cards).
-	if(waveOutOpen(
-		&hWaveOut, 
-		WAVE_MAPPER, 
-		&wfx, 
-		(LONG)waveOutProc, 
-//		(LONG)&waveFreeBlockCount, 
-		(LONG)this, 
-		CALLBACK_FUNCTION
-		) != MMSYSERR_NOERROR) {
+	if(MMSYSERR_NOERROR != waveOutOpen(
+								&m_hWaveOut, 
+								WAVE_MAPPER, 
+								&m_wfx, 
+								(LONG)waveOutProc, 
+								(LONG)this, 
+								CALLBACK_FUNCTION)) {
 		fprintf(stderr, "Unable to open wave mapper device\n");
 		ExitProcess(1);
 	}
@@ -58,17 +53,59 @@ CWaveOut::~CWaveOut()
 	for(int i = 0; i < waveFreeBlockCount; i++) 
 	{
 		if(waveBlocks[i].dwFlags & WHDR_PREPARED)
-			waveOutUnprepareHeader(hWaveOut, &waveBlocks[i], sizeof(WAVEHDR));
+			waveOutUnprepareHeader(m_hWaveOut, &waveBlocks[i], sizeof(WAVEHDR));
 	}
 		
 	DeleteCriticalSection(&waveCriticalSection);
 	freeBlocks(waveBlocks);
-	waveOutClose(hWaveOut);
+	waveOutClose(m_hWaveOut);
 }
 
 int CWaveOut::Write(BYTE *data, int size)
 {
-	writeAudio(hWaveOut, (char*)data, size);
+	WAVEHDR* current;
+	int remain;
+	
+	current = &waveBlocks[waveCurrentBlock];
+	
+	while(size > 0)
+	{
+		// first make sure the header we're going to use is unprepared
+		if(current->dwFlags & WHDR_PREPARED) 
+			waveOutUnprepareHeader(m_hWaveOut, current, sizeof(WAVEHDR));
+		
+		if(size < (int)(BLOCK_SIZE - current->dwUser)) {
+			memcpy(current->lpData + current->dwUser, data, size);
+			current->dwUser += size;
+			break;
+		}
+		
+		remain = BLOCK_SIZE - current->dwUser;
+		memcpy(current->lpData + current->dwUser, data, remain);
+		size -= remain;
+		data += remain;
+		current->dwBufferLength = BLOCK_SIZE;
+		
+		waveOutPrepareHeader(m_hWaveOut, current, sizeof(WAVEHDR));
+		waveOutWrite(m_hWaveOut, current, sizeof(WAVEHDR));
+		
+		EnterCriticalSection(&waveCriticalSection);
+		waveFreeBlockCount--;
+		LeaveCriticalSection(&waveCriticalSection);
+		
+		// wait for a block to become free
+		while(!waveFreeBlockCount)
+			Sleep(10);
+		
+		// point to the next block
+		waveCurrentBlock++;
+		waveCurrentBlock %= BLOCK_COUNT;
+		
+		current = &waveBlocks[waveCurrentBlock];
+		current->dwUser = 0;
+	}
+
+
 	return size;
 }
 
@@ -76,18 +113,16 @@ int CWaveOut::Write(BYTE *data, int size)
 
 
 void CALLBACK CWaveOut::waveOutProc(
-    HWAVEOUT hWaveOut, 
+    HWAVEOUT m_hWaveOut, 
     UINT uMsg, 
     DWORD dwInstance,  
     DWORD dwParam1,    
-    DWORD dwParam2     
-)
+    DWORD dwParam2)
 {
 	CWaveOut *pWaveOut = (CWaveOut*)dwInstance;
-	int* freeBlockCounter = &pWaveOut->waveFreeBlockCount;
 
 	// pointer to free block counter
-//	int* freeBlockCounter = (int*)dwInstance;
+	int* freeBlockCounter = &pWaveOut->waveFreeBlockCount;
 	
 	// ignore calls that occur due to openining and closing the device.
 	if(uMsg != WOM_DONE)
@@ -96,8 +131,6 @@ void CALLBACK CWaveOut::waveOutProc(
 	EnterCriticalSection(&waveCriticalSection);
 	(*freeBlockCounter)++;
 	LeaveCriticalSection(&waveCriticalSection);
-
-//	pWaveOut->bytesRead += BLOCK_SIZE * sizeof(char);
 }
 
 WAVEHDR* CWaveOut::allocateBlocks(int size, int count)
@@ -132,60 +165,12 @@ void CWaveOut::freeBlocks(WAVEHDR* blockArray)
 	HeapFree(GetProcessHeap(), 0, blockArray);
 }
 
-void CWaveOut::writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size)
-{
-	WAVEHDR* current;
-	int remain;
-	
-	current = &waveBlocks[waveCurrentBlock];
-	
-	while(size > 0) {
-		// first make sure the header we're going to use is unprepared
-		if(current->dwFlags & WHDR_PREPARED) 
-			waveOutUnprepareHeader(hWaveOut, current, sizeof(WAVEHDR));
-		
-		if(size < (int)(BLOCK_SIZE - current->dwUser)) {
-			memcpy(current->lpData + current->dwUser, data, size);
-			current->dwUser += size;
-			break;
-		}
-		
-		remain = BLOCK_SIZE - current->dwUser;
-		memcpy(current->lpData + current->dwUser, data, remain);
-		size -= remain;
-		data += remain;
-		current->dwBufferLength = BLOCK_SIZE;
-		
-		waveOutPrepareHeader(hWaveOut, current, sizeof(WAVEHDR));
-		waveOutWrite(hWaveOut, current, sizeof(WAVEHDR));
-		
-		EnterCriticalSection(&waveCriticalSection);
-		waveFreeBlockCount--;
-		LeaveCriticalSection(&waveCriticalSection);
-		
-		// wait for a block to become free
-		while(!waveFreeBlockCount)
-			Sleep(10);
-		
-		// point to the next block
-		waveCurrentBlock++;
-		waveCurrentBlock %= BLOCK_COUNT;
-		
-		current = &waveBlocks[waveCurrentBlock];
-		current->dwUser = 0;
-	}
-}
-
 int CWaveOut::GetWrittenSamples()
 {
-//	return bytesRead / samplesToBytes;
-
-
 	int samples = 0;
 	MMTIME mmt;
-	//mmt.wType = TIME_BYTES;
 	mmt.wType = TIME_SAMPLES;
-	if(MMSYSERR_NOERROR == waveOutGetPosition(hWaveOut, &mmt, sizeof(mmt)) )
+	if(MMSYSERR_NOERROR == waveOutGetPosition(m_hWaveOut, &mmt, sizeof(mmt)) )
 		samples = mmt.u.sample;
 
 	return samples;
@@ -193,6 +178,5 @@ int CWaveOut::GetWrittenSamples()
 
 void CWaveOut::Reset()
 {
-//	bytesRead = 0;
-	waveOutReset( hWaveOut );
+	waveOutReset( m_hWaveOut );
 }

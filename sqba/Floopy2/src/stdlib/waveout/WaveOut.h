@@ -21,13 +21,12 @@
 #include "../../ifloopy.h"
 
 // some good values for block size and count
-#define BLOCK_SIZE  8192
-#define BLOCK_COUNT 20
+#define BLOCK_SIZE		8192
+#define BLOCK_COUNT		20
 
 // module level variables
 static CRITICAL_SECTION waveCriticalSection;
 static WAVEHDR*         waveBlocks;
-//static volatile int     waveFreeBlockCount;
 static int              waveCurrentBlock;
 
 class CWaveOut : public IFloopySoundOutput
@@ -46,19 +45,14 @@ public:
 	int GetWrittenSamples();
 	void Reset();
 
-	int waveFreeBlockCount;
-	int samplesToBytes;
-//	int bytesRead;
-
 private:
-	// function prototypes
 	static void CALLBACK	waveOutProc(HWAVEOUT, UINT, DWORD, DWORD, DWORD);
 	static WAVEHDR*			allocateBlocks(int size, int count);
 	static void				freeBlocks(WAVEHDR* blockArray);
-//	static void				writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size);
-	void writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size);
 
-	HWAVEOUT hWaveOut;	// device handle
-	WAVEFORMATEX wfx;	// look this up in your documentation
+private:
+	int				waveFreeBlockCount;
+	HWAVEOUT		m_hWaveOut;	// device handle
+	WAVEFORMATEX	m_wfx;
 };
 #endif // !defined(AFX_WAVEOUT_H__E86DF3E1_4689_4FCA_9D36_21200D8A38EA__INCLUDED_)

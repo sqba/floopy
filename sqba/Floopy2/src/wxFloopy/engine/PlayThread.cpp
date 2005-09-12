@@ -166,7 +166,7 @@ void CPlayThread::OnExit()
 	m_pTracks->OnExitThread();
 }
 
-int CPlayThread::GetWrittenSamples()
+int CPlayThread::GetPosition()
 {
 	if(!m_pInput)
 		return 0;
@@ -174,17 +174,9 @@ int CPlayThread::GetWrittenSamples()
 	if(!m_pOutput)
 		return m_iStartPos;
 
-	SOUNDFORMAT *fmt = m_pInput->GetFormat();
-
-	// E, sad, ovo je vrednost dobijena iskljuchivo putem
-	// eksperimentisanja. O chemu se tu zapravo radi?
-	int delaySamples = fmt->channels == 2 ? 40000 : 80000;
-
 	int samples = m_pOutput->GetWrittenSamples();
-	if(samples > delaySamples)
-		return m_iStartPos + samples - delaySamples;
-	else
-		return m_iStartPos;
+
+	return m_iStartPos + samples;
 }
 
 void CPlayThread::SetStartPos(int pos)

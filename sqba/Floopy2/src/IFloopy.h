@@ -318,6 +318,31 @@ protected:
 
 
 /*********************************************************************
+ *! \class IFloopySound
+ *  \brief Main sound interface.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 12. september 2005
+ *
+ *  Interface implemented and used by all sound objects.
+ *********************************************************************/
+class IFloopySound : public IFloopy
+{
+public:
+	IFloopySound() : IFloopy()
+		{ memset(&m_format, 0, sizeof(SOUNDFORMAT)); }
+
+	IFloopySound(SOUNDFORMAT fmt) : IFloopy()
+		{ memcpy(&m_format, &fmt, sizeof(SOUNDFORMAT)); }
+
+	virtual SOUNDFORMAT *GetFormat()	{ return &m_format; }
+
+protected:
+	SOUNDFORMAT m_format;
+};
+
+
+/*********************************************************************
  *! \class IFloopySoundInput
  *  \brief Main sound input interface.
  *  \author Filip Pavlovic
@@ -327,13 +352,10 @@ protected:
  *  Interface implemented and used by all sound
  *  input and filter (effect) objects.
  *********************************************************************/
-class IFloopySoundInput : public IFloopy
+class IFloopySoundInput : public IFloopySound
 {
 public:
-	IFloopySoundInput() : IFloopy()
-	{
-		memset(&m_format, 0, sizeof(SOUNDFORMAT));
-	}
+	IFloopySoundInput() : IFloopySound() {}
 	virtual ~IFloopySoundInput() {}
 
 	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_INPUT; }
@@ -377,8 +399,6 @@ public:
 	 */
 	virtual void Reset()					{}
 
-	virtual SOUNDFORMAT *GetFormat()		{ return &m_format; }
-
 
 	/**
 	 * Specifies whether the source should be read and passed on 
@@ -398,7 +418,6 @@ public:
 	virtual BOOL IsFilter()				{ return FALSE; }
 
 protected:
-	SOUNDFORMAT m_format;
 	//int m_pos;
 };
 
@@ -547,11 +566,11 @@ public:
  *  Interface implemented and used by all sound output objects
  *  such as file writers and encoders.
  *********************************************************************/
-class IFloopySoundOutput : public IFloopy
+class IFloopySoundOutput : public IFloopySound
 {
 public:
-	IFloopySoundOutput() : IFloopy()				{ m_dest = NULL; }
-	IFloopySoundOutput(SOUNDFORMAT fmt) : IFloopy() { m_dest = NULL; }
+	IFloopySoundOutput() : IFloopySound()				{ m_dest = NULL; }
+	IFloopySoundOutput(SOUNDFORMAT fmt) : IFloopySound(fmt) { m_dest = NULL; }
 	virtual ~IFloopySoundOutput() {}
 
 	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_OUTPUT; }
@@ -601,7 +620,7 @@ public:
 			m_dest->Reset();
 	}
 
-private:
+protected:
 	IFloopySoundOutput *m_dest;
 };
 

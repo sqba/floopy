@@ -103,10 +103,10 @@ void COutput::SetParamVal(int index, float value)
 
 int COutput::GetWrittenSamples()
 {
-	int result = m_offset;// * m_samplesToBytes;
-	if(m_plugin->GetWrittenSamples() > result)
-		result = m_plugin->GetWrittenSamples();
-	return result;
+	if(NULL != m_plugin)
+		return m_plugin->GetWrittenSamples();
+	else
+		return 0; // m_offset?
 }
 
 void COutput::Reset()
