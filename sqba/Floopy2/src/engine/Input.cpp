@@ -645,11 +645,13 @@ void CInput::recalcSourceVariables()
 			IFloopySoundMixer *mixer = (IFloopySoundMixer*)src;
 			for(int i=0; i<mixer->GetInputCount(); i++)
 			{
-				mixer->GetSource(i)->GetSize();
+				mixer->GetSource(i)->Reset();
+				//mixer->GetSource(i)->GetSize();
 			}
 		}
 		else
-			src->GetSize();
+			src->Reset();
+			//src->GetSize();
 	}
 }
 
