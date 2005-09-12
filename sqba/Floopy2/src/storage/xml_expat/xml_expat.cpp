@@ -196,6 +196,31 @@ void startElement(void *userData, const char *name, const char **atts)
 			}
 		}
 	}
+	else if(0 == strcmp(name, "properties"))
+	{
+		int n = XML_GetSpecifiedAttributeCount(parser);
+		if(n > 0)
+		{
+			char *source = NULL;
+			char *desc = NULL;
+
+			IFloopySoundInput *input = si->gInput;
+			
+			for(int i=0; i<n-1; i+=2)
+			{
+				if(atts[i])
+				{
+					int index = 0;
+					char *name = (char*)atts[i];
+					if( input->GetPropertyIndex(name, &index) )
+					{
+						float value = (float)atof(atts[i+1]);
+						input->SetPropertyVal(index, value);
+					}
+				}
+			}
+		}
+	}
 }
 
 void endElement(void *userData, const char *name)
@@ -381,6 +406,109 @@ void saveParamTimeline(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, int
 */
 
 
+void writeProperties(FILE *fp, IFloopySoundInput *input)
+{
+	bool bStart = TRUE;
+
+	fprintf(fp, "<properties ");
+
+	if(input->GetPropertyCount() > 0)
+	{
+		for(int i=0; i<input->GetPropertyCount(); i++)
+		{
+			float propVal = 0.f;
+			if(input->GetPropertyVal(i, &propVal))
+			{
+				char *propName = input->GetPropertyName(i);
+				
+				if(!bStart)
+					fprintf(fp, " "); // Separator
+				else
+					bStart = false;
+				
+				fprintf(fp, "%s='%.4f'", propName, propVal);
+			}
+		}
+	}
+	fprintf(fp, "/>");
+}
+
+
+bool writeParameters(FILE *fp, IFloopySoundInput *input, float seconds)
+{
+	bool bStart = TRUE;
+
+	float paramVal = 0.f;
+	if(input->GetParamVal(TIMELINE_PARAM_ENABLE, &paramVal))
+	{
+		char *enabled = (paramVal == PARAM_VALUE_ENABLED ? "ON" : "OFF");
+		if(!bStart)
+			fprintf(fp, ", "); // Separator
+		else
+			bStart = false;
+		
+		fprintf(fp, "%.4f:%s", seconds, enabled);
+	}
+
+	if(input->GetParamVal(TIMELINE_PARAM_MOVETO, &paramVal))
+	{
+		if(!bStart)
+			fprintf(fp, ", "); // Separator
+		else
+			bStart = false;
+		
+		if(paramVal==0.f)
+			fprintf(fp, "%.4f:RESET", seconds);
+		else
+			fprintf(fp, "%.4f:MOVETO:%d", seconds, (int)paramVal);
+	}
+
+	if(input->GetParamCount() > 0)
+	{
+		for(int i=0; i<input->GetParamCount(); i++)
+		{
+			float paramVal = 0.f;
+			if(input->GetParamVal(i, &paramVal))
+			{
+				//char *paramName = input->GetParamName(i);
+				if(!bStart)
+					fprintf(fp, ", "); // Separator
+				else
+					bStart = false;
+				
+				fprintf(fp, "%.4f:%d:%.4f", seconds, i, paramVal);
+			}
+		}
+	}
+
+	return bStart;
+}
+
+
+void writeTimeline(FILE *fp, IFloopySoundInput *input)
+{
+	SOUNDFORMAT *fmt = input->GetFormat();
+	int freq = fmt->frequency;
+
+	int offset=0;
+
+	BOOL bStart = TRUE;
+
+	fprintf(fp, "<timeline>");
+	do
+	{
+		float seconds = (float)offset / (float)freq;
+		input->MoveTo(offset);
+
+		if(!bStart)
+			fprintf(fp, ", "); // Separator
+
+		bStart = writeParameters(fp, input, seconds);
+
+		offset = input->GetNextOffset(offset);
+	} while (offset > 0);
+	fprintf(fp, "</timeline>\n");
+}
 
 
 void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursive)
@@ -431,64 +559,11 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 */
 
 
+	fprintf(fp, "%s ", space);
+	writeProperties(fp, input);
 
-
-
-	fprintf(fp, "%s <timeline>", space);
-
-	SOUNDFORMAT *fmt = input->GetFormat();
-	int freq = fmt->frequency;
-
-	bool bStart = TRUE;
-
-	int offset=0;
-	do {
-		float seconds = (float)offset / (float)freq;
-		input->MoveTo(offset);
-
-		float paramVal = 0.f;
-		if(input->GetParamVal(TIMELINE_PARAM_ENABLE, &paramVal))
-		{
-			char *enabled = (paramVal == PARAM_VALUE_ENABLED ? "ON" : "OFF");
-			if(!bStart)
-				fprintf(fp, ", "); // Separator
-			else
-				bStart = false;
-			fprintf(fp, "%.4f:%s", seconds, enabled);
-		}
-
-		if(input->GetParamVal(TIMELINE_PARAM_MOVETO, &paramVal))
-		{
-			if(!bStart)
-				fprintf(fp, ", "); // Separator
-			else
-				bStart = false;
-			if(paramVal==0.f)
-				fprintf(fp, "%.4f:RESET", seconds);
-			else
-				fprintf(fp, "%.4f:MOVETO:%d", seconds, (int)paramVal);
-		}
-
-		if(input->GetParamCount() > 0)
-		{
-			for(int i=0; i<input->GetParamCount(); i++)
-			{
-				float paramVal = 0.f;
-				if(input->GetParamVal(i, &paramVal))
-				{
-					//char *paramName = input->GetParamName(i);
-					if(!bStart)
-						fprintf(fp, ", "); // Separator
-					else
-						bStart = false;
-					fprintf(fp, "%.4f:%d:%.4f", seconds, i, paramVal);
-				}
-			}
-		}
-		offset = input->GetNextOffset(offset);
-	} while (offset > 0);
-
-	fprintf(fp, "</timeline>\n");
+	fprintf(fp, "%s ", space);
+	writeTimeline(fp, input);
 
 	if(recursive)
 	{

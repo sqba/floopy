@@ -62,7 +62,7 @@ public:
 	void  SetPropertyVal(int index, float value)	{ m_plugin->SetPropertyVal(index, value); }
 	char *GetPropertyName(int index)				{ return m_plugin->GetPropertyName(index); }
 	char *GetPropertyDesc(int index)				{ return m_plugin->GetPropertyDesc(index); }
-	BOOL  GetPropertyIndex(char *name, int *index)	{ return m_plugin->GetPropertyIndex(name, index); }
+	BOOL  GetPropertyIndex(char *name, int *index);//	{ return m_plugin->GetPropertyIndex(name, index); }
 	float GetPropertyMax(int index)					{ return m_plugin->GetPropertyMax(index); }
 	float GetPropertyMin(int index)					{ return m_plugin->GetPropertyMin(index); }
 	char *GetPropertyUnit(int index)				{ return m_plugin->GetPropertyUnit(index); }
