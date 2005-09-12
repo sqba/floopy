@@ -12,6 +12,7 @@ CTrack::CTrack()
 {
 	Enable( FALSE );
 
+	m_nHeight = 16;
 	m_nBGRed = m_nBGGreen = m_nBGBlue = 256;
 	m_nForeRed = m_nForeGreen = m_nForeBlue = 256;
 }
@@ -49,6 +50,9 @@ BOOL CTrack::GetPropertyVal(int index, float *value)
 	case 5:
 		*value = (float)m_nForeBlue;
 		return TRUE;
+	case 6:
+		*value = (float)m_nHeight;
+		return TRUE;
 	}
 	return FALSE;
 }
@@ -75,6 +79,9 @@ void CTrack::SetPropertyVal(int index, float value)
 	case 5:
 		m_nForeBlue = (int)value;
 		break;
+	case 6:
+		m_nHeight = (int)value;
+		break;
 	}
 }
 
@@ -94,6 +101,8 @@ char *CTrack::GetPropertyName(int index)
 		return "ForeColorGreen";
 	case 5:
 		return "ForeColorBlue";
+	case 6:
+		return "Height";
 	}
 	return NULL;
 }
@@ -114,18 +123,44 @@ char *CTrack::GetPropertyDesc(int index)
 		return "Green component of the foreground coror";
 	case 5:
 		return "Blue component of the foreground coror";
+	case 6:
+		return "Track height";
 	}
 	return NULL;
 }
 
 float CTrack::GetPropertyMin(int index)
 {
+	switch(index)
+	{
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+		return 0.f;
+	case 6:
+		return 15.f;
+	}
 	return 0.f;
 }
 
 float CTrack::GetPropertyMax(int index)
 {
-	return 255.f;
+	switch(index)
+	{
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+		return 255.f;
+	case 6:
+		return 300.f;
+	}
+	return 0.f;
 }
 
 float CTrack::GetPropertyStep(int index)

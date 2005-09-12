@@ -38,6 +38,7 @@ public:
 	//char *GetPropertyUnit(int index);
 
 private:
+	int m_nHeight;
 	int m_nBGRed, m_nBGGreen, m_nBGBlue;
 	int m_nForeRed, m_nForeGreen, m_nForeBlue;
 };
