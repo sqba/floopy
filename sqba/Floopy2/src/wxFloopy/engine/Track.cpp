@@ -25,15 +25,9 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *par
 	m_nLevel = level;
 
 	m_pInput = CTracks::GetComponent(input, "track");
-	//m_pInput = input;
+
 	m_pSource = parent;
 
-	/*if( m_pSource->IsFilter() )
-	{
-		m_pSource = ((IFloopySoundFilter*)m_pSource)->GetSource();
-	}*/
-
-	//m_pInput = GetComponent("track");
 	assert(NULL != m_pInput);
 
 	m_bHide = false;

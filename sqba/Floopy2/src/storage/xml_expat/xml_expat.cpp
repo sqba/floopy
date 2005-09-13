@@ -95,6 +95,14 @@ void loadTimelines(tSessionInfo *si);
 
 
 
+bool IsFilter(IFloopySoundInput *input)
+{
+	int type = input->GetType();
+	return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
+}
+
+
+
 void loadColor(char *str, UINT *r, UINT *g, UINT *b)
 {
 	char seps[]   = ",";
@@ -170,7 +178,7 @@ void startElement(void *userData, const char *name, const char **atts)
 				IFloopySoundInput *input = si->gEngine->CreateInput(tmp);
 				if(input && si->gInput)
 				{
-					if( si->gInput->IsFilter() )
+					if( IsFilter(si->gInput) )
 					{
 						((IFloopySoundFilter*)si->gInput)->SetSource(input);
 						si->gInput = input;
@@ -595,7 +603,7 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, bool recursiv
 				saveXML(si, fp, mixer->GetSource(i), true);
 			}
 		}
-		else if( input->IsFilter() )
+		else if( IsFilter(input) )
 			saveXML(si, fp, ((IFloopySoundFilter*)input)->GetSource(), true);
 	}
 

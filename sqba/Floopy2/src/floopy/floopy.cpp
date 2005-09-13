@@ -74,6 +74,12 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, bool bTree, bool b
 }
 */
 
+bool IsFilter(IFloopySoundInput *input)
+{
+	int type = input->GetType();
+	return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
+}
+
 void printTree(FILE *fp, IFloopySoundInput *input, int level, bool bTree, bool bLast)
 {
 	if(!input)
@@ -122,7 +128,7 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, bool bTree, bool b
 	}
 	else
 	{
-		if( input->IsFilter() )
+		if( IsFilter(input) )
 			printTree(fp, ((IFloopySoundFilter*)input)->GetSource(), level+1, false, true);
 	}
 }

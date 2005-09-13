@@ -844,8 +844,12 @@ void CTracks::loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, in
 
 		return;
 	}
-	else if( input->IsFilter() )
-		loadTracks(((IFloopySoundFilter*)input)->GetSource(), parent, ++level);
+	else
+	{
+		int type = input->GetType();
+		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
+			loadTracks(((IFloopySoundFilter*)input)->GetSource(), parent, ++level);
+	}
 	
 	if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
 		AddTrack(input, parent, 0);

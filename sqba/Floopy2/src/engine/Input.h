@@ -132,6 +132,7 @@ private:
 	inline bool isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : false); }
 //	inline bool isEngine() { return (m_source ? m_source->Is(TYPE_FLOOPY_SOUND_ENGINE) : false); }
 //	inline bool isTrack() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_TRACK : false); }
+	inline bool isFilter();
 	void applyParamsAt(int offset);
 	bool applyPreviousParams(int offset);
 	int getSamplesToBytes();

@@ -414,9 +414,6 @@ public:
 		return samples * ( (fmt->bitsPerSample / 8) * fmt->channels );
 	}*/
 
-	/** Do not override in implementations! */
-	virtual bool IsFilter()				{ return false; }
-
 protected:
 	//int m_pos;
 };
@@ -431,8 +428,6 @@ protected:
  *
  *  Interface implemented and used by all sound objects that process
  *  input from some other source instead of generating it.
- *  IFloopySoundInput::IsFilter() function is called by objects that
- *  need to know if there is some other source before this object.
  *********************************************************************/
 class IFloopySoundFilter : public IFloopySoundInput
 {
@@ -441,9 +436,6 @@ public:
 
 	int GetType()	{ return TYPE_FLOOPY_SOUND_FILTER; }
 
-
-	/** Do not override in implementations! */
-	virtual bool IsFilter()				{ return true; }
 
 	/**
 	 * Return source size.
