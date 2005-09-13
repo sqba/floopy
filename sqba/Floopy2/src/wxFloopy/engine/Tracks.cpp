@@ -1292,7 +1292,7 @@ IFloopySoundInput *CTracks::GetComponent(IFloopySoundInput *src, char *name)
 			return src;
 
 		int type = src->GetType();
-		switch(type)
+		/*switch(type)
 		{
 		case TYPE_FLOOPY_SOUND_FILTER:
 		case TYPE_FLOOPY_SOUND_MIXER:
@@ -1303,7 +1303,14 @@ IFloopySoundInput *CTracks::GetComponent(IFloopySoundInput *src, char *name)
 		}
 		default:
 			src = NULL;
+		}*/
+		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
+		{
+			src = ((IFloopySoundFilter*)src)->GetSource();
+			break;
 		}
+		else
+			src = NULL;
 	}
 	return NULL;
 }

@@ -106,9 +106,9 @@ public:
 		memcpy(m_szDisplayName, name, (len<50?len:50));
 	}
 
-	char *GetPath() { return isEngine() ? m_source->GetPath() : m_szObjPath; }
+	char *GetPath()	{ return isEngine() ? m_source->GetPath() : m_szObjPath; }
 
-	enumClassType GetType() { return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
+	int GetType()	{ return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
 
 	bool MoveParam(int offset, int index, float value, int newoffset);
 
@@ -130,6 +130,7 @@ public:
 
 private:
 	inline bool isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : false); }
+//	inline bool isEngine() { return (m_source ? m_source->Is(TYPE_FLOOPY_SOUND_ENGINE) : false); }
 //	inline bool isTrack() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_TRACK : false); }
 	void applyParamsAt(int offset);
 	bool applyPreviousParams(int offset);

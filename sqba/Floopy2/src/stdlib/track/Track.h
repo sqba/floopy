@@ -17,7 +17,7 @@ public:
 	CTrack();
 	virtual ~CTrack();
 
-	enumClassType GetType() { return TYPE_FLOOPY_SOUND_TRACK; }
+	int GetType()				{ return TYPE_FLOOPY_SOUND_TRACK; }
 
 	char *GetName()				{ return "stdlib.track"; }
 	char *GetDescription()		{ return "Audio track"; }

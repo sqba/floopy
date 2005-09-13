@@ -71,25 +71,13 @@ typedef struct SoundFormat
 } SOUNDFORMAT;
 
 
-/*********************************************************************
- *! \enum enumClassType
- *  \brief Runtime class information.
- *  \author Filip Pavlovic
- *  \version 0.0
- *  \date 30. May 2005.
- *
- *  Returned by IFloopy::GetType().
- *********************************************************************/
-enum enumClassType
-{
-	TYPE_FLOOPY = 0,			/** IFloopy				*/
-	TYPE_FLOOPY_SOUND_INPUT,	/** IFloopySoundInput	*/
-	TYPE_FLOOPY_SOUND_FILTER,	/** IFloopySoundFilter	*/
-	TYPE_FLOOPY_SOUND_MIXER,	/** IFloopySoundMixer	*/
-	TYPE_FLOOPY_SOUND_OUTPUT,	/** IFloopySound		*/
-	TYPE_FLOOPY_SOUND_ENGINE,	/** IFloopySoundEngine	*/
-	TYPE_FLOOPY_SOUND_TRACK		/** Track */
-};
+#define TYPE_FLOOPY					0x00010000								/** IFloopy				*/
+#define TYPE_FLOOPY_SOUND_INPUT		(TYPE_FLOOPY|0x00000001L)				/** IFloopySoundInput	*/
+#define TYPE_FLOOPY_SOUND_FILTER	(TYPE_FLOOPY_SOUND_INPUT|0x00000002L)	/** IFloopySoundFilter	*/
+#define TYPE_FLOOPY_SOUND_MIXER		(TYPE_FLOOPY_SOUND_FILTER|0x00000004L)	/** IFloopySoundMixer	*/
+#define TYPE_FLOOPY_SOUND_ENGINE	(TYPE_FLOOPY_SOUND_FILTER|0x00000008L)	/** IFloopySoundEngine	*/
+#define TYPE_FLOOPY_SOUND_TRACK		(TYPE_FLOOPY_SOUND_FILTER|0x00000010L)	/** Just a track (for the GUI) */
+#define TYPE_FLOOPY_SOUND_OUTPUT	(TYPE_FLOOPY|0x00000020L)				/** IFloopySound		*/
 
 
 /*********************************************************************
@@ -291,8 +279,11 @@ public:
 class IFloopy : public IFloopyDisplay
 {
 public:
-	IFloopy()			{ m_nLastError = 0; }
-	virtual ~IFloopy()	{ }
+	IFloopy()							{ m_nLastError = 0; }
+	virtual ~IFloopy()					{ }
+
+//	bool Is(int type)
+//	{ int t=this->GetType(); return (t == (type | t)); }
 
 	/**
 	 * Returns class type identificator.
@@ -300,23 +291,23 @@ public:
 	 * Do not override in implementations!!!
 	 * @return class type identificator.
 	 */
-	virtual enumClassType GetType()	{ return TYPE_FLOOPY; }
+	virtual int GetType()				{ return TYPE_FLOOPY; }
 
 	// Component description
-	virtual char *GetName()			{ return "IFloopy"; }
-	virtual char *GetDescription()	{ return "IFloopy interface"; }
-	virtual char *GetVersion()		{ return "0.1"; }
-	virtual char *GetAuthor()		{ return "sqba"; }
+	virtual char *GetName()				{ return "IFloopy"; }
+	virtual char *GetDescription()		{ return "IFloopy interface"; }
+	virtual char *GetVersion()			{ return "0.1"; }
+	virtual char *GetAuthor()			{ return "sqba"; }
 
-			int   GetLastError()			{ return m_nLastError; }
-	virtual char *GetLastErrorDesc()		{ return NULL; }
+			int   GetLastError()		{ return m_nLastError; }
+	virtual char *GetLastErrorDesc()	{ return NULL; }
 	//virtual bool  GetLastError(char *str, int len)	{ return false; }
 
 	/** Do not override in implementations, handled by the engine */
-	virtual char *GetPath()							{ return NULL; }
+	virtual char *GetPath()				{ return NULL; }
 
-	virtual bool Open(char *filename)				{ return false; }
-	virtual void Close()							{ }
+	virtual bool Open(char *filename)	{ return false; }
+	virtual void Close()				{ }
 
 //	virtual void SetCallback(IFloopyCallback *cbk) { m_callback = cbk; }
 //	IFloopyCallback *m_callback;
@@ -367,7 +358,7 @@ public:
 	IFloopySoundInput() : IFloopySound() {}
 	virtual ~IFloopySoundInput() {}
 
-	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_INPUT; }
+	int GetType()			{ return TYPE_FLOOPY_SOUND_INPUT; }
 
 	// Component description
 	char *GetName()			{ return "IFloopySoundInput"; }
@@ -448,7 +439,7 @@ class IFloopySoundFilter : public IFloopySoundInput
 public:
 	IFloopySoundFilter() : IFloopySoundInput()	{ m_source = NULL; m_bBypass = false; }
 
-	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_FILTER; }
+	int GetType()	{ return TYPE_FLOOPY_SOUND_FILTER; }
 
 
 	/** Do not override in implementations! */
@@ -538,7 +529,7 @@ public:
 	char *GetName()			{ return "IFloopySoundMixer"; }
 	char *GetDescription()	{ return "IFloopySoundMixer interface"; }
 
-	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_MIXER; }
+	int GetType()			{ return TYPE_FLOOPY_SOUND_MIXER; }
 
 	virtual int AddSource(IFloopySoundInput *src)
 	{
@@ -582,7 +573,7 @@ public:
 	IFloopySoundOutput(SOUNDFORMAT fmt) : IFloopySound(fmt) { m_dest = NULL; }
 	virtual ~IFloopySoundOutput() {}
 
-	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_OUTPUT; }
+	int GetType()			{ return TYPE_FLOOPY_SOUND_OUTPUT; }
 
 	char *GetName()			{ return "IFloopySoundOutput"; }
 	char *GetDescription()	{ return "IFloopySoundOutput interface"; }
@@ -657,7 +648,7 @@ typedef void (*UpdateCallback)(IFloopy *src, int offset, int param);
 class IFloopySoundEngine : public IFloopySoundFilter
 {
 public:
-	enumClassType GetType() { return TYPE_FLOOPY_SOUND_ENGINE; }
+	int GetType()			{ return TYPE_FLOOPY_SOUND_ENGINE; }
 
 	char *GetName()			{ return "IFloopySoundEngine"; }
 	char *GetDescription()	{ return "IFloopySoundEngine interface"; }
@@ -708,6 +699,22 @@ public:
 	 * @return number of bytes written.
 	 */
 	virtual int EmptyBuffer(BYTE *data, int size) { return 0; }
+
+/*
+	// Utility functions
+	bool IsFilter(IFloopySoundInput *input)
+	{
+		int type = input->GetType();
+		return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
+	}
+
+	// Utility
+	int CalcNumberOfSamples(int bytes)
+	{
+		SOUNDFORMAT *fmt = GetFormat();
+		return bytes / ( (fmt->bitsPerSample / 8) * fmt->channels );
+	}
+*/
 };
 
 

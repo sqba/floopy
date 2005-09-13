@@ -911,9 +911,17 @@ void CTrack::SetReverse(bool bReverse)
 			IFloopySoundInput *src = ((IFloopySoundFilter*)m_pInput)->GetSource();
 			while(src && src->GetSize() == SIZE_INFINITE)
 			{
-				int t = src->GetType();
+				/*int t = src->GetType();
 				if(t == TYPE_FLOOPY_SOUND_FILTER || t == TYPE_FLOOPY_SOUND_MIXER || t == TYPE_FLOOPY_SOUND_TRACK)
 					src = ((IFloopySoundFilter*)src)->GetSource();
+				else
+					src = NULL;*/
+				int type = src->GetType();
+				if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
+				{
+					src = ((IFloopySoundFilter*)src)->GetSource();
+					break;
+				}
 				else
 					src = NULL;
 			}
