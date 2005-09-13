@@ -37,18 +37,18 @@ public:
 
 	int Read(BYTE *data, int size);
 
-	BOOL SetSource(IFloopySoundInput *src) { return (AddSource(src) != -1); }
+	bool SetSource(IFloopySoundInput *src) { return (AddSource(src) != -1); }
 	int AddSource(IFloopySoundInput *src);
 	IFloopySoundInput *GetSource(int index);
 	bool RemoveSource(IFloopySoundInput *src);
 	int GetInputCount();
 
-	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+	bool ReadSourceIfDisabled()	{ return false; }
 
 #ifdef _DEBUG_TIMER_
 	int   GetParamCount()			{ return 0; }
 	void  SetParamVal(int index, float value);
-	BOOL  GetParamVal(int index, float *value);
+	bool  GetParamVal(int index, float *value);
 	char *GetParamName(int index);
 	char *GetParamDesc(int index);
 #endif // _DEBUG_TIMER_
@@ -68,7 +68,7 @@ private:
 	int		m_nInputCount;
 
 #ifdef _DEBUG_TIMER_
-	BOOL	m_bDebugTimer;
+	bool	m_bDebugTimer;
 	DWORD	m_dwSpeed;
 	int		m_nFrameCount;
 	int		m_nFrameSize;

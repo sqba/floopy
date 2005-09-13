@@ -10,7 +10,7 @@
 
 CGridView::CGridView(wxWindow* parent, CTracks *tracks) : CMainView(parent, tracks)
 {
-	m_bDrawVGrid = TRUE;
+	m_bDrawVGrid = true;
 }
 
 CGridView::~CGridView()

@@ -29,17 +29,17 @@ public:
 	//void MoveTo(int samples);
 	//void Reset();
 	//int GetSourceSize();
-	//BOOL Open(char *filename);
+	//bool Open(char *filename);
 	//int GetSize();
 	//int GetPos();
 	void Close();
 
-	BOOL ReadSourceIfDisabled()	{ return TRUE; }
+	bool ReadSourceIfDisabled()	{ return true; }
 
 
 	int   GetPropertyCount();
-	BOOL  GetPropertyIndex(char *name, int *index);
-	BOOL  GetPropertyVal(int index, float *value);
+	bool  GetPropertyIndex(char *name, int *index);
+	bool  GetPropertyVal(int index, float *value);
 	//void  SetPropertyVal(int index, float value);
 	//float GetPropertyMin(int index);
 	//float GetPropertyMax(int index);

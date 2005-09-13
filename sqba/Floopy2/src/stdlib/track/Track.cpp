@@ -12,7 +12,7 @@
 
 CTrack::CTrack()
 {
-	Enable( FALSE );
+	Enable( false );
 
 	m_nHeight = MIN_HEIGHT * 3;
 	m_nBGRed = m_nBGGreen = m_nBGBlue = 256;
@@ -30,33 +30,33 @@ int CTrack::GetPropertyCount()
 	return 7;
 }
 
-BOOL CTrack::GetPropertyVal(int index, float *value)
+bool CTrack::GetPropertyVal(int index, float *value)
 {
 	switch(index)
 	{
 	case 0:
 		*value = (float)m_nBGRed;
-		return TRUE;
+		return true;
 	case 1:
 		*value = (float)m_nBGGreen;
-		return TRUE;
+		return true;
 	case 2:
 		*value = (float)m_nBGBlue;
-		return TRUE;
+		return true;
 	case 3:
 		*value = (float)m_nForeRed;
-		return TRUE;
+		return true;
 	case 4:
 		*value = (float)m_nForeGreen;
-		return TRUE;
+		return true;
 	case 5:
 		*value = (float)m_nForeBlue;
-		return TRUE;
+		return true;
 	case 6:
 		*value = (float)m_nHeight;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void CTrack::SetPropertyVal(int index, float value)
@@ -174,8 +174,8 @@ float CTrack::GetPropertyStep(int index)
 
 
 /*
-BOOL CTrack::GetPropertyIndex(char *name, int *index)
+bool CTrack::GetPropertyIndex(char *name, int *index)
 {
-	return FALSE;
+	return false;
 }
 */

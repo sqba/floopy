@@ -33,7 +33,7 @@ COutput::~COutput()
 }
 
 
-BOOL COutput::Create(char *plugin, SOUNDFORMAT fmt)
+bool COutput::Create(char *plugin, SOUNDFORMAT fmt)
 {
 	char *library = plugin;
 
@@ -68,7 +68,7 @@ BOOL COutput::Create(char *plugin, SOUNDFORMAT fmt)
 				m_plugin = func( plugin, fmt );
 				IFloopySoundOutput::SetDest( m_plugin );
 				m_samplesToBytes = (fmt.bitsPerSample / 8) * fmt.channels;
-				return TRUE;
+				return true;
 			}
 		}
 		else
@@ -81,7 +81,7 @@ BOOL COutput::Create(char *plugin, SOUNDFORMAT fmt)
 	{
 		sprintf(m_szLastError, "Error: %s not found.\n\0", filename);
 	}
-	return FALSE;
+	return false;
 }
 
 int COutput::Write(BYTE *data, int size)
@@ -91,7 +91,7 @@ int COutput::Write(BYTE *data, int size)
 	return len;
 }
 
-BOOL COutput::GetParamVal(int index, float *value)
+bool COutput::GetParamVal(int index, float *value)
 {
 	return m_plugin->GetParamVal(index, value);
 }

@@ -24,7 +24,7 @@ public:
 
 	int Read(BYTE *data, int size);
 
-	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+	bool ReadSourceIfDisabled()	{ return false; }
 
 	SOUNDFORMAT *GetFormat();
 

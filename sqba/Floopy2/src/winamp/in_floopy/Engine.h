@@ -25,7 +25,7 @@ public:
 	char *GetVersion()		{ return m_plugin->GetVersion(); }
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
-	BOOL Create (char *plugin);
+	bool Create (char *plugin);
 
 	IFloopySoundInput  *CreateInput(char *plugin)
 	{
@@ -39,7 +39,7 @@ public:
 
 	IFloopySoundInput *GetSource() { return (m_plugin ? m_plugin->GetSource() : NULL); }
 
-	BOOL Save(char *filename) { return (m_plugin ? m_plugin->Save(filename) : FALSE); }
+	bool Save(char *filename) { return (m_plugin ? m_plugin->Save(filename) : false); }
 
 	void Close() { if(m_plugin) m_plugin->Close(); }
 

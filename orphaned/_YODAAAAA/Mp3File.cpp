@@ -105,10 +105,10 @@ int CMp3File::GetSize()
 	return size / samplesToBytes();
 }
 
-BOOL CMp3File::Open(char *filename)
+bool CMp3File::Open(char *filename)
 {
 	if (m_hinstLib == NULL) 
-		return FALSE;
+		return false;
 
 	long lSamprate = 0;
 	WORD wBitsPerSample = 0;
@@ -139,10 +139,10 @@ BOOL CMp3File::Open(char *filename)
 		memset(m_filename, 0, sizeof(m_filename));
 		strncpy(m_filename, filename, MAX_PATH);
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CMp3File::Close()

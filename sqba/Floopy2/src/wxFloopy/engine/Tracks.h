@@ -189,8 +189,8 @@ public:
 
 	void Dump(ostream& stream);
 
-	BOOL Open(char *filename);
-	BOOL Save(char *filename);
+	bool Open(char *filename);
+	bool Save(char *filename);
 	void Clear();
 
 	IFloopySoundEngine *GetInput()				{ return m_pEngine; }
@@ -211,7 +211,7 @@ public:
 	void Pause();
 	void Stop();
 	void OnExitThread();
-	BOOL IsPlaying();
+	bool IsPlaying();
 
 	int GetCursorPosition();
 	void SetCursorPosition(int pos);
@@ -219,13 +219,13 @@ public:
 	wxStatusBar *GetStatusBar()					{ return m_pFrame->GetStatusBar(); }
 	void SetFrame(wxFrame *pFrame)				{ m_pFrame = pFrame; }
 
-	void SetChanged(BOOL bChanged)				{ m_bChanged = bChanged; }
-	BOOL IsChanged()							{ return m_bChanged; }
+	void SetChanged(bool bChanged)				{ m_bChanged = bChanged; }
+	bool IsChanged()							{ return m_bChanged; }
 
 	char *GetFilename()							{ return m_filename; }
 
-	BOOL GetViewUpdatedWhilePlaying();
-	void SetViewUpdatedWhilePlaying(BOOL bUpdate);
+	bool GetViewUpdatedWhilePlaying();
+	void SetViewUpdatedWhilePlaying(bool bUpdate);
 
 	void CenterView(int sample);
 
@@ -233,7 +233,7 @@ public:
 
 private:
 	IFloopySoundMixer *getMixer();
-	BOOL createEngine(char *plugin);
+	bool createEngine(char *plugin);
 	void loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, int level);
 	void changeHeight(int dy);
 	void init();
@@ -250,21 +250,21 @@ private:
 	IFloopySoundMixer	*m_pMixer;
 	wxDynamicLibrary	m_libEngine;
 
-	BOOL m_bSnapTo;
+	bool m_bSnapTo;
 
 	CPlayThread			*m_pPlayThread;
 
 	int					m_iCursorPosition;
 	wxStatusBar			*m_pStatusBar;
 	wxFrame				*m_pFrame;
-	BOOL				m_bChanged;
+	bool				m_bChanged;
 
 	CTimer				m_Timer;
 	int					m_iStartSample;
 
 	char				m_filename[MAX_PATH];
 
-	BOOL				m_bViewUpdatedWhilePlaying;
+	bool				m_bViewUpdatedWhilePlaying;
 };
 
 class CTrack : public IFloopyObj  
@@ -345,7 +345,7 @@ public:
 	void DrawFore (wxDC& dc, wxRect& rc);
 	void DrawPreview(wxDC& dc, wxRect& rc);
 
-	bool GetName(wxString& name)	{ name = _T("Track"); return TRUE; }
+	bool GetName(wxString& name)	{ name = _T("Track"); return true; }
 	int GetWidth()					{ return GetTracks()->GetWidth(); }
 	int GetHeight()					{ return m_height + m_pBorder->GetHeight(); }
 	int GetTop()					{ return m_top; }
@@ -391,14 +391,14 @@ public:
 	bool IsHidden()					{ return m_bHide; } // ->Collapse/expand
 	void Hide(bool bHide)			{ m_bHide = bHide; }
 
-	BOOL IsLooped();
-	void SetLooped(BOOL bLooped);
+	bool IsLooped();
+	void SetLooped(bool bLooped);
 
-	BOOL IsReverse();
-	void SetReverse(BOOL bReverse);
+	bool IsReverse();
+	void SetReverse(bool bReverse);
 
-	BOOL GetReset();
-	void SetReset(BOOL bReset);
+	bool GetReset();
+	void SetReset(bool bReset);
 
 	void InvalidateRegions(CRegion *start);
 
@@ -407,7 +407,7 @@ public:
 
 	IFloopySoundInput *GetComponent(char *name);
 
-	void Select(bool selected=TRUE);
+	void Select(bool selected=true);
 
 	wxColour GetColor();
 	void SetColor(wxColour color);
@@ -433,7 +433,7 @@ private:
 	CLoopButton		*m_pButtonLoop;
 	CCacheButton	*m_pButtonCache;
 
-	BOOL		m_bReset;
+	bool		m_bReset;
 
 	IFloopySoundInput *m_pSource;
 };
@@ -511,15 +511,15 @@ public:
 	int GetHeight()	{ return getTrack()->GetHeight() - 2; }
 	int GetTop()	{ return getTrack()->GetTop() + 1; }
 
-	BOOL GetReset();
-	void SetReset(BOOL bReset);
+	bool GetReset();
+	void SetReset(bool bReset);
 
 	void SetStartOffset(int sample);
 
 	wxColour GetBGColor();
 	wxColour GetForeColor();
 
-	void Select(bool selected=TRUE);
+	void Select(bool selected=true);
 
 private:
 	static void remove(IFloopyObj *event);
@@ -530,10 +530,10 @@ private:
 	inline CTracks *getTracks()	{ return (CTracks*)getTrack()->GetParent(); }
 	void loadParameters(IFloopySoundInput *obj);
 	void drawParametersFore(wxDC& dc, wxRect& rc);
-	BOOL getReset(int sample);
+	bool getReset(int sample);
 
 private:
-	BOOL			m_bEdit;
+	bool			m_bEdit;
 	int				m_iStartSample, m_iEndSample, m_iPrevStart, m_iPrevEnd;
 	wxRect			m_rcRegion;
 	CBorder			*m_pLeftBorder, *m_pRightBorder;
@@ -583,7 +583,7 @@ private:
 
 private:
 	int		m_index;
-	BOOL	m_bEdit;
+	bool	m_bEdit;
 	int		m_iSamplePos, m_iPrevSamplePos;
 	CPoint	*m_pPoint;
 	IFloopySoundInput *m_pObj;
@@ -605,8 +605,8 @@ public:
 
 	void OnExit();
 
-	BOOL IsPlaying()	{ return m_bPlaying; }
-	BOOL IsPaused()		{ return m_bPaused; }
+	bool IsPlaying()	{ return m_bPlaying; }
+	bool IsPaused()		{ return m_bPaused; }
 
 	int GetPosition();
 
@@ -615,7 +615,7 @@ public:
 private:
 	CTracks *m_pTracks;
 	int m_iStartPos;
-	BOOL m_bPlaying, m_bPaused;
+	bool m_bPlaying, m_bPaused;
 	IFloopySoundOutput *m_pOutput;
 	IFloopySoundInput *m_pInput;
 	int m_iBufferLength; // In samples
@@ -686,18 +686,18 @@ private:
 	float				m_fdB;
 	IFloopySoundInput	*m_pInput;
 	CRegion				*m_pRegion;
-	BOOL				m_bLoaded;
+	bool				m_bLoaded;
 	PeaksArray			m_peaks;
-	BOOL				m_bDrawDBLines;
+	bool				m_bDrawDBLines;
 
 	CTrack				*m_pTrack;
 	CTracks				*m_pTracks;
 
-	BOOL				m_bDrawVertical;
+	bool				m_bDrawVertical;
 
 	wxMemoryDC			m_tempDC;
 	wxBitmap			m_tempBitmap;
-	BOOL				m_bRepaint;
+	bool				m_bRepaint;
 
 //	PointList			m_points;
 //	PeaksArray			m_peaks;

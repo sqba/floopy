@@ -14,12 +14,12 @@
 
 
 /*
-BOOL APIENTRY DllMain( HANDLE hModule, 
+bool APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
 					 )
 {
-    return TRUE;
+    return true;
 }
 */
 
@@ -55,26 +55,26 @@ struct tSessionInfo
 	IFloopySoundEngine *gEngine;
 	IFloopySoundInput *gInput;
 
-	BOOL bInitialized;
+	bool bInitialized;
 	//char filename[MAX_PATH];
 };
 
-BOOL loadXML(IFloopySoundEngine *engine, char *filename);
-BOOL saveXML(IFloopySoundEngine *engine, char *filename);
+bool loadXML(IFloopySoundEngine *engine, char *filename);
+bool saveXML(IFloopySoundEngine *engine, char *filename);
 
 
-void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursive);
+void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, bool recursive);
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-__declspec( dllexport ) BOOL Load(IFloopySoundEngine *engine, char *filename)
+__declspec( dllexport ) bool Load(IFloopySoundEngine *engine, char *filename)
 {
 	return loadXML(engine, filename);
 }
 
-__declspec( dllexport ) BOOL Save(IFloopySoundEngine *engine, char *filename)
+__declspec( dllexport ) bool Save(IFloopySoundEngine *engine, char *filename)
 {
 	return saveXML(engine, filename);
 }
@@ -280,7 +280,7 @@ void elementData(void *userData, const char *data, int len)
 }
 
 
-BOOL loadXML(IFloopySoundEngine *engine, char *filename)
+bool loadXML(IFloopySoundEngine *engine, char *filename)
 {
 	tSessionInfo si;
 	memset(&si, 0, sizeof(tSessionInfo));
@@ -301,7 +301,7 @@ BOOL loadXML(IFloopySoundEngine *engine, char *filename)
 
 	FILE *fp = fopen(filename, "r");
 	if(NULL == fp)
-		return FALSE;
+		return false;
 	char buf[BUFSIZ];
 	si.parser = XML_ParserCreate(NULL);
 	int done;
@@ -318,7 +318,7 @@ BOOL loadXML(IFloopySoundEngine *engine, char *filename)
 				"%s at line %d\n",
 				XML_ErrorString(XML_GetErrorCode(si.parser)),
 				XML_GetCurrentLineNumber(si.parser));
-			return FALSE;
+			return false;
 		}
 	} while (!done);
 	loadTimelines(&si);
@@ -326,10 +326,10 @@ BOOL loadXML(IFloopySoundEngine *engine, char *filename)
 	XML_ParserFree(si.parser);
 	fclose(fp);
 
-//	printTree(stdout, engine, 0, FALSE, FALSE);
+//	printTree(stdout, engine, 0, false, false);
 //	SOUNDFORMAT *fmt = engine->GetFormat();
 
-	return TRUE;
+	return true;
 }
 
 
@@ -337,14 +337,14 @@ BOOL loadXML(IFloopySoundEngine *engine, char *filename)
 
 
 
-BOOL saveXML(IFloopySoundEngine *engine, char *filename)
+bool saveXML(IFloopySoundEngine *engine, char *filename)
 {
 	tSessionInfo si;
 	memset(&si, 0, sizeof(tSessionInfo));
 
 	si.level = 0;
 
-	si.bInitialized = FALSE;
+	si.bInitialized = false;
 	/*strcpy(si.filename, filename);
 	char *c = strrchr(si.filename, '\\');
 	if(c)
@@ -353,11 +353,11 @@ BOOL saveXML(IFloopySoundEngine *engine, char *filename)
 	FILE *fp = fopen(filename, "w");
 	if(fp)
 	{
-		saveXML(&si, fp, engine, TRUE);
+		saveXML(&si, fp, engine, true);
 		fclose(fp);
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 
@@ -410,7 +410,7 @@ void writeProperties(FILE *fp, IFloopySoundInput *input)
 {
 	if(input->GetPropertyCount() > 0)
 	{
-		bool bStart = TRUE;
+		bool bStart = true;
 
 		fprintf(fp, "<properties ");
 
@@ -437,7 +437,7 @@ void writeProperties(FILE *fp, IFloopySoundInput *input)
 
 bool writeParameters(FILE *fp, IFloopySoundInput *input, float seconds)
 {
-	bool bStart = TRUE;
+	bool bStart = true;
 
 	float paramVal = 0.f;
 	if(input->GetParamVal(TIMELINE_PARAM_ENABLE, &paramVal))
@@ -493,7 +493,7 @@ void writeTimeline(FILE *fp, IFloopySoundInput *input)
 
 	int offset=0;
 
-	BOOL bStart = TRUE;
+	bool bStart = true;
 
 	fprintf(fp, "<timeline>");
 	do
@@ -512,7 +512,7 @@ void writeTimeline(FILE *fp, IFloopySoundInput *input)
 }
 
 
-void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursive)
+void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, bool recursive)
 {
 	if(NULL == input)
 		return;
@@ -523,7 +523,7 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 	if(si->level < 100)
 		memset(space, ' ', si->level);
 
-	BOOL bEngine = (input->GetType() == TYPE_FLOOPY_SOUND_ENGINE);
+	bool bEngine = (input->GetType() == TYPE_FLOOPY_SOUND_ENGINE);
 
 	//fprintf(fp, "<%s source='%s'>\n", input->GetName(), comp->GetName());
 	if(bEngine && si->bInitialized)
@@ -533,7 +533,7 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 			path += strlen(si->gPath);*/
 		fprintf(fp, "%s<input source='%s' name='%s'", 
 			space, path, input->GetDisplayName());
-		recursive = FALSE;
+		recursive = false;
 	}
 	else
 		fprintf(fp, "%s<input source='%s' name='%s'", 
@@ -542,10 +542,27 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 	UINT r=0, g=0, b=0;
 	if( input->GetColor(&r, &g, &b) )
 		fprintf(fp, " color='%d,%d,%d'", r, g, b);
+/*
+	if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+	{
+		float red=0.f, green=0.f, blue=0.f;
+		int index=0;
+		
+		if( input->GetPropertyIndex("BGColorRed", &index) )
+			input->GetPropertyVal(index, &red);
 
+		if( input->GetPropertyIndex("BGColorGreen", &index) )
+			input->GetPropertyVal(index, &green);
+
+		if( input->GetPropertyIndex("BGColorBlue", &index) )
+			input->GetPropertyVal(index, &blue);
+
+		fprintf(fp, " color='%d,%d,%d'", red, green, blue);
+	}
+*/
 	fprintf(fp, ">\n");
 
-	si->bInitialized = TRUE;
+	si->bInitialized = true;
 
 
 
@@ -575,11 +592,11 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, BOOL recursiv
 			IFloopySoundMixer *mixer = (IFloopySoundMixer*)input;
 			for(int i=0; i<mixer->GetInputCount(); i++)
 			{
-				saveXML(si, fp, mixer->GetSource(i), TRUE);
+				saveXML(si, fp, mixer->GetSource(i), true);
 			}
 		}
 		else if( input->IsFilter() )
-			saveXML(si, fp, ((IFloopySoundFilter*)input)->GetSource(), TRUE);
+			saveXML(si, fp, ((IFloopySoundFilter*)input)->GetSource(), true);
 	}
 
 	si->level--;

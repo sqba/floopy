@@ -24,10 +24,10 @@ CRegionDisplay::CRegionDisplay(CRegion *region)
 	m_pTracks		= (CTracks*)m_pTrack->GetParent();
 	m_pInput		= m_pTrack->GetInput();
 	m_fdB			= -6.0;
-	m_bDrawDBLines	= TRUE;
-	m_bLoaded		= FALSE;
-	m_bDrawVertical = FALSE;
-	m_bRepaint		= FALSE;
+	m_bDrawDBLines	= true;
+	m_bLoaded		= false;
+	m_bDrawVertical = false;
+	m_bRepaint		= false;
 
 	LoadPeaks();
 
@@ -85,7 +85,7 @@ void CRegionDisplay::DrawFore(wxDC& dc, wxRect& rc)
 			drawPeaks(m_tempDC, rcTmp, i);
 		}
 
-		m_bRepaint = FALSE;
+		m_bRepaint = false;
 	}
 
 	//dc.Blit(rc.GetX(), rc.GetY(), width, height, &m_tempDC, 0, 0, wxAND);
@@ -153,7 +153,7 @@ void CRegionDisplay::loadPeaks()
 
 //	int maxSample		= (int)pow(2, fmt->bitsPerSample) / 2;
 
-	m_bLoaded = FALSE;
+	m_bLoaded = false;
 
 	m_peaks.Empty();
 
@@ -196,7 +196,7 @@ void CRegionDisplay::loadPeaks()
 		return;
 	}
 	
-	m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
+	m_pTracks->SetViewUpdatedWhilePlaying(true);
 	
 	if(EOF != bytesRead)
 	{
@@ -259,12 +259,12 @@ void CRegionDisplay::loadPeaks()
 				counter++;
 		}
 
-		m_bLoaded = TRUE;
+		m_bLoaded = true;
 	}
 
 	delete buffer;
 
-	m_bRepaint = TRUE;
+	m_bRepaint = true;
 
 //	m_pMutex->Unlock();
 
@@ -277,7 +277,7 @@ void CRegionDisplay::loadPeaksChunked()
 //	int maxSample = (int)pow(2, fmt->bitsPerSample) / 2;
 
 
-	m_bLoaded = FALSE;
+	m_bLoaded = false;
 
 	m_peaks.Empty();
 
@@ -299,7 +299,7 @@ void CRegionDisplay::loadPeaksChunked()
 	if(end<=0 || start<0)
 		return;
 	
-	m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
+	m_pTracks->SetViewUpdatedWhilePlaying(true);
 
 	int srcLen		= getLengthNotLooped();	// Length of the not looped source
 	int counter		= interval;				// Load first sample
@@ -401,8 +401,8 @@ void CRegionDisplay::loadPeaksChunked()
 
 	delete buffer;
 
-	m_bRepaint = TRUE;
-	m_bLoaded = TRUE;
+	m_bRepaint = true;
+	m_bLoaded = true;
 
 //	m_pMutex->Unlock();
 }

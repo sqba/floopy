@@ -39,7 +39,7 @@ CEngine::~CEngine()
 		FreeLibrary(m_hModule);
 }
 
-BOOL CEngine::Create(char *plugin)
+bool CEngine::Create(char *plugin)
 {
 	//MessageBox(NULL, m_path, "m_path", MB_OK);
 	/*getcwd(path, MAX_PATH);
@@ -55,7 +55,7 @@ BOOL CEngine::Create(char *plugin)
 	memset(path, 0 , MAX_PATH);
 	strcat(path, "D:\\sqba\\Projekti\\Floopy!\\Floopy2\\Debug");*/
 	if(!m_path && !*m_path)
-		return FALSE;
+		return false;
 
 	char *filename = new char[strlen(m_path) + strlen(plugin) + 5];
 	strcpy(filename, m_path);
@@ -76,7 +76,7 @@ BOOL CEngine::Create(char *plugin)
 			SetSource( m_plugin );
 //			MessageBox(NULL, "Created engine", "In_Floopy", MB_OK);
 			delete[] filename;
-			return TRUE;
+			return true;
 		}
 		else
  			sprintf(m_szLastError, "Error: %s not found in %s.\n", PROC_NAME, filename);
@@ -85,7 +85,7 @@ BOOL CEngine::Create(char *plugin)
 	else
 		sprintf(m_szLastError, "Error: %s not found in %s.\n", filename, m_path);
 	delete[] filename;
-	return FALSE;
+	return false;
 }
 
 void CEngine::init()

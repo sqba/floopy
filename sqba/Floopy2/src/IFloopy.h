@@ -4,32 +4,27 @@
 
 #include <memory.h>	// for memset()
 
-//#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-//#include <windows.h>
 
+#define TIMELINE_PARAM_ENABLE		-1	/// Index of the Enable/Disable parameter
+#define PARAM_VALUE_ENABLED		1000.f	/// Value of the Enable parameter
+#define PARAM_VALUE_DISABLED	2000.f	/// Value of the Disable parameter
+#define TIMELINE_PARAM_MOVETO		-2	/// Index of the MoveTo parameter
 
+#define SIZE_INFINITE				-1	/// Value returned by GetSize() if the source
+										/// is a generator or is looped
 
-#define TIMELINE_PARAM_ENABLE		-1 /// Index of the Enable/Disable parameter
-#define PARAM_VALUE_ENABLED		1000.f /// Value of the Enable parameter
-#define PARAM_VALUE_DISABLED	2000.f /// Value of the Disable parameter
-#define TIMELINE_PARAM_MOVETO		-2 /// Index of the MoveTo parameter
-
-#define SIZE_INFINITE				-1
-
-
-#define WAVE_FORMAT_PCM     1
-
+#define WAVE_FORMAT_PCM				 1	/// Pulse Code Modulation
 
 
 //////////////////////////////////////////////////////////////////////
 // Defines from windows.h
 //////////////////////////////////////////////////////////////////////
-typedef int                 INT;	/// 32-bit signed integer.
-typedef unsigned int        UINT;	/// Unsigned INT.
-typedef int                 BOOL;	/// Boolean variable (should be TRUE or FALSE).
-typedef unsigned short      WORD;	/// 16-bit unsigned integer.
-typedef unsigned char       BYTE;	/// Byte (8 bits).
-typedef unsigned long       DWORD;	/// 32-bit unsigned integer.
+typedef int						INT;	/// 32-bit signed integer.
+typedef unsigned int			UINT;	/// Unsigned INT.
+typedef int						BOOL;	/// Boolean variable (should be true or false).
+typedef unsigned short			WORD;	/// 16-bit unsigned integer.
+typedef unsigned char			BYTE;	/// Byte (8 bits).
+typedef unsigned long			DWORD;	/// 32-bit unsigned integer.
 
 #ifndef NULL
 #ifdef __cplusplus
@@ -38,7 +33,7 @@ typedef unsigned long       DWORD;	/// 32-bit unsigned integer.
 #define NULL    ((void *)0)
 #endif
 #endif
-
+/*
 #ifndef FALSE
 #define FALSE               0
 #endif
@@ -46,11 +41,18 @@ typedef unsigned long       DWORD;	/// 32-bit unsigned integer.
 #ifndef TRUE
 #define TRUE                1
 #endif
+  */
 //////////////////////////////////////////////////////////////////////
 
 
-
 //#define EOF     (-1)	// defined in stdio
+
+
+/*
+#define SAMPLE_8BIT					unsigned char
+#define SAMPLE_16BIT				short int
+*/
+
 
 /*********************************************************************
  *! \struct SoundFormat
@@ -86,7 +88,7 @@ enum enumClassType
 	TYPE_FLOOPY_SOUND_MIXER,	/** IFloopySoundMixer	*/
 	TYPE_FLOOPY_SOUND_OUTPUT,	/** IFloopySound		*/
 	TYPE_FLOOPY_SOUND_ENGINE,	/** IFloopySoundEngine	*/
-	TYPE_FLOOPY_SOUND_TRACK		/** Just a track */
+	TYPE_FLOOPY_SOUND_TRACK		/** Track */
 };
 
 
@@ -125,18 +127,21 @@ class IFloopyProperty
 public:
 	virtual int   GetPropertyCount()			{ return 0; }
 
-	virtual BOOL  GetPropertyIndex(char *name, int *index)	{ return FALSE; }
+	virtual bool  GetPropertyIndex(char *name, int *index)	{ return false; }
 
-	virtual BOOL  GetPropertyVal(int index, float *value)	{ return FALSE; }
+	virtual bool  GetPropertyVal(int index, float *value)	{ return false; }
 	virtual void  SetPropertyVal(int index, float value)	{ }
 
 	virtual float GetPropertyMin(int index)		{ return 0.f; }
 	virtual float GetPropertyMax(int index)		{ return 0.f; }
 	virtual float GetPropertyStep(int index)	{ return 0.f; }
+	//virtual bool GetPropertyInfo(int index, float *min, float *max, float *step)
+	//	{ return false; }
 	virtual char *GetPropertyName(int index)	{ return NULL; }
 	virtual char *GetPropertyDesc(int index)	{ return NULL; }
 	virtual char *GetPropertyUnit(int index)	{ return NULL; }
 };
+
 
 /*********************************************************************
  *! \class IFloopyParam
@@ -146,31 +151,35 @@ public:
  *  \date 14. June 2005.
  *
  *  Not to be directly overriden in implementations.
+ *
+ *  Parameters are connected to the timeline.
  *********************************************************************/
 class IFloopyParam : public IFloopyProperty
 {
 public:
-	IFloopyParam()			{ m_bEnabled = TRUE; }
+	IFloopyParam()			{ m_bEnabled = true; }
 
 	virtual int   GetParamCount()					{ return 0; }
 
-	virtual BOOL  GetParamIndex(char *name, int *index)	{ return FALSE; }
+	virtual bool  GetParamIndex(char *name, int *index)	{ return false; }
 
-	virtual BOOL  GetParamVal(int index, float *value)	{ return FALSE; }
+	virtual bool  GetParamVal(int index, float *value)	{ return false; }
 	virtual void  SetParamVal(int index, float value)	{ }
 
 	virtual float GetParamMin(int index)	{ return 0.f; }
 	virtual float GetParamMax(int index)	{ return 0.f; }
 	virtual float GetParamStep(int index)	{ return 0.f; }
+	//virtual bool GetParamInfo(int index, float *min, float *max, float *step)
+	//	{ return false; }
 	virtual char *GetParamName(int index)	{ return NULL; }
 	virtual char *GetParamDesc(int index)	{ return NULL; }
 	virtual char *GetParamUnit(int index)	{ return NULL; }
 
-	virtual void  Enable(BOOL bEnabled)		{ m_bEnabled = bEnabled; }
-	virtual BOOL  IsEnabled()				{ return m_bEnabled; }
+	virtual void  Enable(bool bEnabled)		{ m_bEnabled = bEnabled; }
+	virtual bool  IsEnabled()				{ return m_bEnabled; }
 
 private:
-	BOOL m_bEnabled;	/** Is this component disabled or enabled. */
+	bool m_bEnabled;	/** Is this component disabled or enabled. */
 };
 
 
@@ -212,7 +221,7 @@ public:
 	 * @param index index of the parameter.
 	 * @param value new parameter value.
 	 */
-	virtual BOOL GetParamAt(int offset, int index, float *value) { return FALSE; }
+	virtual bool GetParamAt(int offset, int index, float *value) { return false; }
 
 	/**
 	 * Removes scheduled parameter change.
@@ -220,7 +229,7 @@ public:
 	 * @param offset position in samples at which the change was supposed to occur.
 	 * @param index index of the parameter.
 	 */
-	virtual BOOL ResetParamAt(int offset, int index, float value) { return FALSE; }
+	virtual bool ResetParamAt(int offset, int index, float value) { return false; }
 
 	/**
 	 * Enables/disables object at specific offset.
@@ -228,7 +237,7 @@ public:
 	 * @param offset position in samples at which the change was supposed to occur.
 	 * @param bEnable enable or disable.
 	 */
-	virtual void EnableAt(int offset, BOOL bEnable) {}
+	virtual void EnableAt(int offset, bool bEnable) {}
 
 	virtual void ClearAllParams() {}
 
@@ -240,7 +249,7 @@ public:
 	 */
 	virtual void MoveAllParamsBetween(int start, int end, int offset) {}
 
-	virtual BOOL MoveParam(int offset, int index, float value, int newoffset) { return FALSE; }
+	virtual bool MoveParam(int offset, int index, float value, int newoffset) { return false; }
 };
 
 
@@ -263,7 +272,7 @@ public:
 	virtual void  SetDisplayName(char *name, int len){ }
 
 	/** Do not override in implementations, handled by the engine */
-	virtual BOOL GetColor(UINT *red, UINT *green, UINT *blue) { return FALSE; }
+	virtual bool GetColor(UINT *red, UINT *green, UINT *blue) { return false; }
 
 	/** Do not override in implementations, handled by the engine */
 	virtual void  SetColor(UINT red, UINT green, UINT blue){ }
@@ -301,12 +310,12 @@ public:
 
 			int   GetLastError()			{ return m_nLastError; }
 	virtual char *GetLastErrorDesc()		{ return NULL; }
-	//virtual BOOL  GetLastError(char *str, int len)	{ return FALSE; }
+	//virtual bool  GetLastError(char *str, int len)	{ return false; }
 
 	/** Do not override in implementations, handled by the engine */
 	virtual char *GetPath()							{ return NULL; }
 
-	virtual BOOL Open(char *filename)				{ return FALSE; }
+	virtual bool Open(char *filename)				{ return false; }
 	virtual void Close()							{ }
 
 //	virtual void SetCallback(IFloopyCallback *cbk) { m_callback = cbk; }
@@ -367,7 +376,7 @@ public:
 	/**
 	 * Open source file.
 	 */
-	BOOL Open(char *filename)				{ return FALSE; }
+	bool Open(char *filename)				{ return false; }
 
 	/**
 	 * Return total track size.
@@ -405,7 +414,7 @@ public:
 	 * if this component is disabled. If false then nothing
 	 * will be read.
 	 */
-	virtual BOOL ReadSourceIfDisabled()	{ return TRUE; }
+	virtual bool ReadSourceIfDisabled()	{ return true; }
 
 	// Utility
 	/*int SamplesToBytes(int samples)
@@ -415,7 +424,7 @@ public:
 	}*/
 
 	/** Do not override in implementations! */
-	virtual BOOL IsFilter()				{ return FALSE; }
+	virtual bool IsFilter()				{ return false; }
 
 protected:
 	//int m_pos;
@@ -437,13 +446,13 @@ protected:
 class IFloopySoundFilter : public IFloopySoundInput
 {
 public:
-	IFloopySoundFilter() : IFloopySoundInput()	{ m_source = NULL; m_bBypass = FALSE; }
+	IFloopySoundFilter() : IFloopySoundInput()	{ m_source = NULL; m_bBypass = false; }
 
 	enumClassType GetType()	{ return TYPE_FLOOPY_SOUND_FILTER; }
 
 
 	/** Do not override in implementations! */
-	virtual BOOL IsFilter()				{ return TRUE; }
+	virtual bool IsFilter()				{ return true; }
 
 	/**
 	 * Return source size.
@@ -454,10 +463,10 @@ public:
 		return GetSize();
 	}
 
-	virtual BOOL SetSource(IFloopySoundInput *src)
+	virtual bool SetSource(IFloopySoundInput *src)
 	{
 		m_source = src;
-		return TRUE;
+		return true;
 	}
 
 	virtual IFloopySoundInput *GetSource()
@@ -466,9 +475,9 @@ public:
 	}
 
 
-	virtual BOOL Open(char *filename)
+	virtual bool Open(char *filename)
 	{
-		return (NULL != m_source ? m_source->Open(filename) : FALSE);
+		return (NULL != m_source ? m_source->Open(filename) : false);
 	}
 
 	virtual int GetSize()
@@ -504,12 +513,12 @@ public:
 	/**
 	 * Bypas the component without affecting the timeline.
 	 */
-	virtual BOOL GetBypass() { return m_bBypass; }
-	virtual void SetBypass(BOOL bBypass) { m_bBypass = bBypass; }
+	virtual bool GetBypass() { return m_bBypass; }
+	virtual void SetBypass(bool bBypass) { m_bBypass = bBypass; }
 
 protected:
 	IFloopySoundInput *m_source;
-	BOOL m_bBypass;
+	bool m_bBypass;
 };
 
 
@@ -581,9 +590,9 @@ public:
 	/**
 	 * Opens destination (file).
 	 */
-	BOOL Open(char *filename)
+	bool Open(char *filename)
 	{
-		return (NULL != m_dest ? m_dest->Open(filename) : FALSE);
+		return (NULL != m_dest ? m_dest->Open(filename) : false);
 	}
 
 	/**
@@ -684,7 +693,7 @@ public:
 	 * Serializes current engine state into a file.
 	 * @param filename Project file name.
 	 */
-	virtual BOOL Save(char *filename) { return FALSE; }
+	virtual bool Save(char *filename) { return false; }
 
 	/**
 	 * Sets the callback function that is called on parameter changes.

@@ -20,16 +20,16 @@ CTimeline::~CTimeline()
 	Clear();
 }
 
-BOOL CTimeline::GetParamVal(int offset, int index, float *value)
+bool CTimeline::GetParamVal(int offset, int index, float *value)
 {
 	tParam *tmp = getParam(offset, index);
 	if(tmp)
 	{
 		*value = tmp->value;
-		return TRUE;
+		return true;
 	}
 	else
-		return FALSE;
+		return false;
 }
 
 void CTimeline::SetParamVal(int offset, int index, float value)
@@ -42,16 +42,16 @@ void CTimeline::SetParamVal(int offset, int index, float value)
 		tmp = newParam(offset, index, value);
 }
 
-BOOL CTimeline::MoveParam(int offset, int index, float value, int newoffset)
+bool CTimeline::MoveParam(int offset, int index, float value, int newoffset)
 {
 	tParam *param = getParam(offset, index, value);
 	if(param)
 		return moveParam(param, newoffset);
 	else
-		return FALSE;
+		return false;
 }
 
-BOOL CTimeline::RemoveParam(int offset, int index, float value)
+bool CTimeline::RemoveParam(int offset, int index, float value)
 {
 	tParam *tmp = getParam(offset, index, value);
 	if(tmp)
@@ -62,10 +62,10 @@ BOOL CTimeline::RemoveParam(int offset, int index, float value)
 		if(tmp)
 		{
 			delete tmp;
-			return TRUE;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 int CTimeline::GetPrevOffset(int offset)
@@ -374,7 +374,7 @@ CTimeline::tParam *CTimeline::newParam(int offset, int index, float value)
 	return tmp;
 }
 
-BOOL CTimeline::moveParam(CTimeline::tParam *param, int newoffset)
+bool CTimeline::moveParam(CTimeline::tParam *param, int newoffset)
 {
 	tParam *prev = getPrevParam(newoffset);
 	if(prev)
@@ -382,21 +382,21 @@ BOOL CTimeline::moveParam(CTimeline::tParam *param, int newoffset)
 		param->offset = newoffset;
 		insertAfter(prev, param);
 		//assert(count == GetCount());
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL CTimeline::_checkSortOrder()
+bool CTimeline::_checkSortOrder()
 {
 	tParam *tmp = m_pFirst;
 	int offset = 0;
 	while(tmp)
 	{
 		if(tmp->offset < offset)
-			return FALSE;
+			return false;
 		offset = tmp->offset;
 		tmp = tmp->next;
 	}
-	return TRUE;
+	return true;
 }

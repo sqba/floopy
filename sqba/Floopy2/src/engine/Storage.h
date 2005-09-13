@@ -20,8 +20,8 @@ public:
 	CStorage(IFloopySoundEngine *engine, char *plugin);
 	virtual ~CStorage();
 
-	BOOL Load(char *filename);
-	BOOL Save(char *filename);
+	bool Load(char *filename);
+	bool Save(char *filename);
 
 private:
 	HINSTANCE m_hinst;

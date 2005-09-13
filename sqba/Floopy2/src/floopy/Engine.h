@@ -37,7 +37,7 @@ public:
 
 	IFloopySoundInput *GetSource() { return (m_plugin ? m_plugin->GetSource() : NULL); }
 
-	BOOL Save(char *filename) { return (m_plugin ? m_plugin->Save(filename) : FALSE); }
+	bool Save(char *filename) { return (m_plugin ? m_plugin->Save(filename) : false); }
 
 	void Close() { if(m_plugin) m_plugin->Close(); }
 

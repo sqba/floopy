@@ -35,9 +35,9 @@ public:
 	char *GetParamDesc(int);
 	float GetParamStep(int)			{ return 0.01f; }
 	void  SetParamVal(int, float);
-	BOOL  GetParamVal(int, float*);
+	bool  GetParamVal(int, float*);
 
-	BOOL ReadSourceIfDisabled()		{ return FALSE; }
+	bool ReadSourceIfDisabled()		{ return false; }
 
 private:
 	int getChannels();

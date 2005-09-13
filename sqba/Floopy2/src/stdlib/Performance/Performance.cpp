@@ -89,26 +89,26 @@ int CPerformance::GetPropertyCount()
 	return 3;
 }
 
-BOOL CPerformance::GetPropertyIndex(char *name, int *index)
+bool CPerformance::GetPropertyIndex(char *name, int *index)
 {
-	return FALSE;
+	return false;
 }
 
-BOOL CPerformance::GetPropertyVal(int index, float *value)
+bool CPerformance::GetPropertyVal(int index, float *value)
 {
 	switch(index)
 	{
 	case 0:
 		*value = (float)m_ReadTime;
-		return TRUE;
+		return true;
 	case 1:
 		*value = (float)m_nFrameSize;
-		return TRUE;
+		return true;
 	case 2:
 		*value = (float)m_nFrameCount;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 char *CPerformance::GetPropertyName(int index)

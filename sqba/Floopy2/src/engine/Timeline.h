@@ -32,13 +32,13 @@ public:
 	virtual ~CTimeline();
 
 	void SetParamVal(int offset, int index, float value);
-	BOOL GetParamVal(int offset, int index, float *value);
-	BOOL RemoveParam(int offset, int index, float value);
+	bool GetParamVal(int offset, int index, float *value);
+	bool RemoveParam(int offset, int index, float value);
 	int GetCount();
 	int GetNextOffset(int offset);
 	int GetPrevOffset(int offset);
 	void Clear();
-	BOOL MoveParam(int offset, int index, float value, int newoffset);
+	bool MoveParam(int offset, int index, float value, int newoffset);
 	int GetPrevOffset(int offset, int index);
 	int GetStartOffset();
 
@@ -53,9 +53,9 @@ private:
 	tParam *insertAfter(CTimeline::tParam *prev, CTimeline::tParam *param);
 	CTimeline::tParam *removeParam(CTimeline::tParam *param);
 	tParam *newParam(int offset, int index, float value);
-	BOOL moveParam(CTimeline::tParam *param, int newoffset);
+	bool moveParam(CTimeline::tParam *param, int newoffset);
 
-	BOOL _checkSortOrder();
+	bool _checkSortOrder();
 
 private:
 	tParam *m_pFirst, *m_pLast, *m_pTemp;

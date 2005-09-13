@@ -51,7 +51,7 @@ public:
 
 	int Read(BYTE *data, int size);
 	void Reset();
-	BOOL Open(char *filename);
+	bool Open(char *filename);
 	void Close();
 	int GetSize();
 

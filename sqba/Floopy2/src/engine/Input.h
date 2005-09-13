@@ -38,8 +38,8 @@ public:
 	CInput(UpdateCallback func);
 	virtual ~CInput();
 
-	BOOL Create(char *plugin);
-	BOOL Create(IFloopySoundEngine *src);
+	bool Create(char *plugin);
+	bool Create(IFloopySoundEngine *src);
 
 	char *GetName()			{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
@@ -47,34 +47,34 @@ public:
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
 	int   GetParamCount()			{ return m_plugin->GetParamCount(); }
-	BOOL  GetParamVal(int index, float *value);
+	bool  GetParamVal(int index, float *value);
 	void  SetParamVal(int index, float value);
 	char *GetParamName(int index)	{ return m_plugin->GetParamName(index); }
 	char *GetParamDesc(int index)	{ return m_plugin->GetParamDesc(index); }
-	BOOL  GetParamIndex(char *name, int *index);
+	bool  GetParamIndex(char *name, int *index);
 	float GetParamMax(int index)	{ return m_plugin->GetParamMax(index); }
 	float GetParamMin(int index)	{ return m_plugin->GetParamMin(index); }
 	char *GetParamUnit(int index)	{ return m_plugin->GetParamUnit(index); }
 	float GetParamStep(int index)	{ return m_plugin->GetParamStep(index); }
 
 	int   GetPropertyCount()						{ return m_plugin->GetPropertyCount(); }
-	BOOL  GetPropertyVal(int index, float *value)	{ return m_plugin->GetPropertyVal(index, value); }
+	bool  GetPropertyVal(int index, float *value)	{ return m_plugin->GetPropertyVal(index, value); }
 	void  SetPropertyVal(int index, float value)	{ m_plugin->SetPropertyVal(index, value); }
 	char *GetPropertyName(int index)				{ return m_plugin->GetPropertyName(index); }
 	char *GetPropertyDesc(int index)				{ return m_plugin->GetPropertyDesc(index); }
-	BOOL  GetPropertyIndex(char *name, int *index);//	{ return m_plugin->GetPropertyIndex(name, index); }
+	bool  GetPropertyIndex(char *name, int *index);//	{ return m_plugin->GetPropertyIndex(name, index); }
 	float GetPropertyMax(int index)					{ return m_plugin->GetPropertyMax(index); }
 	float GetPropertyMin(int index)					{ return m_plugin->GetPropertyMin(index); }
 	char *GetPropertyUnit(int index)				{ return m_plugin->GetPropertyUnit(index); }
 	float GetPropertyStep(int index)				{ return m_plugin->GetPropertyStep(index); }
 
-	BOOL GetColor(UINT *r, UINT *g, UINT *b);
+	bool GetColor(UINT *r, UINT *g, UINT *b);
 	void SetColor(UINT r, UINT g, UINT b);
 
-	void Enable(BOOL bEnable);
-	BOOL IsEnabled();
+	void Enable(bool bEnable);
+	bool IsEnabled();
 
-	BOOL Open(char *filename);
+	bool Open(char *filename);
 
 	void MoveTo(int samples);
 	void Reset();
@@ -83,21 +83,21 @@ public:
 	int GetSize();
 	int GetSourceSize();
 
-	BOOL SetSource(IFloopySoundInput *src);
+	bool SetSource(IFloopySoundInput *src);
 	IFloopySoundInput *GetSource();
 
 	int GetNextOffset(int offset);
 	int GetPrevOffset(int offset);
 
-	BOOL GetParamAt(int offset, int index, float *value);
+	bool GetParamAt(int offset, int index, float *value);
 	void SetParamAt(int offset, int index, float value);
-	BOOL ResetParamAt(int offset, int index, float value);
-	void EnableAt(int offset, BOOL bEnable);
+	bool ResetParamAt(int offset, int index, float value);
+	void EnableAt(int offset, bool bEnable);
 
 	void Close();
 
 //	int GetLastError();
-	BOOL GetLastError(char *str, int len);
+	bool GetLastError(char *str, int len);
 
 	char *GetDisplayName() { return m_szDisplayName; }
 	void SetDisplayName(char *name, int len)
@@ -110,7 +110,7 @@ public:
 
 	enumClassType GetType() { return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
 
-	BOOL MoveParam(int offset, int index, float value, int newoffset);
+	bool MoveParam(int offset, int index, float value, int newoffset);
 
 	void MoveAllParamsBetween(int start, int end, int offset);
 
@@ -125,14 +125,14 @@ public:
 
 	void ClearAllParams();
 
-	BOOL GetBypass();
-	void SetBypass(BOOL bBypass);
+	bool GetBypass();
+	void SetBypass(bool bBypass);
 
 private:
-	inline BOOL isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : FALSE); }
-//	inline BOOL isTrack() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_TRACK : FALSE); }
+	inline bool isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : false); }
+//	inline bool isTrack() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_TRACK : false); }
 	void applyParamsAt(int offset);
-	BOOL applyPreviousParams(int offset);
+	bool applyPreviousParams(int offset);
 	int getSamplesToBytes();
 	int getStartOffset();
 	int getEndOffset();

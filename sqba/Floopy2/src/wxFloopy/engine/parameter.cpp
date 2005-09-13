@@ -84,12 +84,12 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 		//dc.SetBrush( wxBrush(m_colour) );
 		dc.SetPen( wxPen(m_color) );
 
-		BOOL bDrawCircle = TRUE;
+		bool bDrawCircle = true;
 
 		if(!input->GetParamAt(offset, m_index, &value))
 		{
 			offset = input->GetPrevOffset(offset);
-			bDrawCircle = FALSE;
+			bDrawCircle = false;
 		}
 
 		do {
@@ -102,7 +102,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 					dc.DrawCircle(prevX+1, y, 3);
 					//dc.DrawRectangle(prevX-2, y-2, 5, 5);
 
-				bDrawCircle = TRUE;
+				bDrawCircle = true;
 				
 				if(prevX > left)
 					dc.DrawLine(prevX, prevY, prevX, y);
@@ -205,11 +205,11 @@ bool CParameter::HitTest(int x, int y)
 		IFloopySoundInput *input = getTrack()->GetInput();
 		if( input->GetParamAt(offset, m_index, &value) )
 		{
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CParameter::CPoint::Move(int dx, int WXUNUSED(dy))

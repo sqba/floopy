@@ -23,20 +23,20 @@ public:
 	char *GetAuthor()			{ return "sqba"; }
 
 	int Read(BYTE *data, int size);
-	BOOL SetSource(IFloopySoundInput *src);
+	bool SetSource(IFloopySoundInput *src);
 
 	void MoveTo(int samples)	{ m_nPosition = samples * samplesToBytes(); }
 	int GetPos()				{ return m_nPosition / samplesToBytes(); }
 	void Reset()				{ m_nPosition = 0; }
 	void Close();
 
-	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+	bool ReadSourceIfDisabled()	{ return false; }
 
 private:
 	int samplesToBytes();
-	BOOL createBuffer();
-	inline BOOL passedTheEnd()	{ return (m_nPosition > m_nSize); }
-	inline BOOL bufferIsEmpty()	{ return (m_nSize == 0); }
+	bool createBuffer();
+	inline bool passedTheEnd()	{ return (m_nPosition > m_nSize); }
+	inline bool bufferIsEmpty()	{ return (m_nSize == 0); }
 	void clearBuffer();
 
 private:

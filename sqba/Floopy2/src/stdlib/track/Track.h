@@ -24,11 +24,11 @@ public:
 	char *GetVersion()			{ return "0.1"; }
 	char *GetAuthor()			{ return "sqba"; }
 
-	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+	bool ReadSourceIfDisabled()	{ return false; }
 
 	int   GetPropertyCount();
-	//BOOL  GetPropertyIndex(char *name, int *index);
-	BOOL  GetPropertyVal(int index, float *value);
+	//bool  GetPropertyIndex(char *name, int *index);
+	bool  GetPropertyVal(int index, float *value);
 	void  SetPropertyVal(int index, float value);
 	float GetPropertyMin(int index);
 	float GetPropertyMax(int index);

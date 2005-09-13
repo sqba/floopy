@@ -97,7 +97,7 @@ int CEcho::read(BYTE *data, int size)
 }
 
 /*
-BOOL CEcho::SetSource(IFloopySoundInput *src)
+bool CEcho::SetSource(IFloopySoundInput *src)
 {
 //	SOUNDFORMAT *fmt = src->GetFormat();
 //	assert( fmt->bitsPerSample == 16 );

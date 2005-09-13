@@ -26,7 +26,7 @@ int CConvert8to16bit::Read(BYTE *data, int size)
 	size /= 2;
 
 	BYTE *pBuffer = m_pBuffer;
-	BOOL bDelete = FALSE;
+	bool bDelete = false;
 
 	if(size != m_nBuffSize)
 	{
@@ -36,7 +36,7 @@ int CConvert8to16bit::Read(BYTE *data, int size)
 				delete pBuffer;
 				m_nBuffSize = size;
 			} catch(...) {
-				bDelete = TRUE;
+				bDelete = true;
 			}
 		}
 		pBuffer = new BYTE[size];
@@ -74,7 +74,7 @@ SOUNDFORMAT *CConvert8to16bit::GetFormat()
 
 // Zashto nece ovako!?
 /*
-BOOL CConvert8to16bit::SetSource(IFloopySoundInput *src)
+bool CConvert8to16bit::SetSource(IFloopySoundInput *src)
 {
 	memcpy(&m_format, src->GetFormat(), sizeof(SOUNDFORMAT));
 	if(m_format.bitsPerSample == 8)
@@ -83,8 +83,8 @@ BOOL CConvert8to16bit::SetSource(IFloopySoundInput *src)
 
 		IFloopySoundFilter::SetSource( src );
 
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 */

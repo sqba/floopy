@@ -287,9 +287,9 @@ IFloopySoundOutput *CEngine::CreateOutput(char *filename, SOUNDFORMAT fmt)
 	return obj;
 }
 
-BOOL CEngine::Open(char *filename)
+bool CEngine::Open(char *filename)
 {
-	BOOL bResult = FALSE;
+	bool bResult = false;
 
 	char *plugin = getPluginName(filename);
 	if(plugin)
@@ -312,15 +312,15 @@ BOOL CEngine::Open(char *filename)
 	return bResult;
 }
 
-BOOL CEngine::Save(char *filename)
+bool CEngine::Save(char *filename)
 {
 	if(!filename && m_szFileName)
 		filename = m_szFileName;
 
 	if(!filename)
-		return FALSE;
+		return false;
 
-	BOOL result = FALSE;
+	bool result = false;
 	char *name = getPluginName(filename);
 	if(name)
 	{
@@ -439,16 +439,16 @@ int CEngine::EmptyBuffer(BYTE *data, int size)
 }
 
 
-BOOL CEngine::GetColor(UINT *r, UINT *g, UINT *b)
+bool CEngine::GetColor(UINT *r, UINT *g, UINT *b)
 {
 	if(m_red<256 && m_green<256 && m_blue<256)
 	{
 		*r = m_red;
 		*g = m_green;
 		*b = m_blue;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void CEngine::SetColor(UINT r, UINT g, UINT b)
@@ -483,11 +483,11 @@ int CEngine::GetLastError()
 	return 0;
 }
 
-BOOL CEngine::GetLastError(char *str, int len)
+bool CEngine::GetLastError(char *str, int len)
 {
 	int l = sizeof(m_szLastError);
 	memcpy(str, m_szLastError, (len>l?l:len));
-	return TRUE;
+	return true;
 }
 
 void CEngine::setLastError(char *err, char *str)
@@ -532,7 +532,7 @@ void CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
 	}
 }
 
-BOOL CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
+bool CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
 {
 	tComponent *tmp = m_pFirst;
 	while(tmp)
@@ -545,14 +545,14 @@ BOOL CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
 				CInput *input = (CInput*)obj;
 				return input->ResetParamAt(offset, index);
 			}
-			return FALSE;
+			return false;
 		}
 		tmp = tmp->next;
 	}
-	return FALSE;
+	return false;
 }
 
-void CEngine::EnableAt(IFloopy *obj, int offset, BOOL bEnable)
+void CEngine::EnableAt(IFloopy *obj, int offset, bool bEnable)
 {
 	tComponent *tmp = m_pFirst;
 	while(tmp)

@@ -39,10 +39,10 @@ int CCache::Read(BYTE *data, int size)
 	return size;
 }
 
-BOOL CCache::SetSource(IFloopySoundInput *src)
+bool CCache::SetSource(IFloopySoundInput *src)
 {
 	if(	createBuffer() )
-		return FALSE;
+		return false;
 
 	return IFloopySoundFilter::SetSource(src);
 }
@@ -71,7 +71,7 @@ void CCache::clearBuffer()
 	m_nSize = 0;
 }
 
-BOOL CCache::createBuffer()
+bool CCache::createBuffer()
 {
 	if( !bufferIsEmpty() )
 		clearBuffer();
@@ -107,7 +107,7 @@ BOOL CCache::createBuffer()
 				m_nSize = len;
 			}
 			else
-				return FALSE;
+				return false;
 		}
 	}
 

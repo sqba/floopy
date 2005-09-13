@@ -31,7 +31,7 @@ public:
 	COutput();
 	virtual ~COutput();
 
-	BOOL Create(char *plugin, SOUNDFORMAT fmt);
+	bool Create(char *plugin, SOUNDFORMAT fmt);
 
 	char *GetName()			{ return m_plugin->GetName(); }
 	char *GetDescription()	{ return m_plugin->GetDescription(); }
@@ -39,7 +39,7 @@ public:
 	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
 
 	int   GetParamCount()					{ return m_plugin->GetParamCount(); }
-	BOOL  GetParamVal(int index, float *value);
+	bool  GetParamVal(int index, float *value);
 	void  SetParamVal(int index, float value);//	{ m_plugin->SetParam(index, value); }
 	char *GetParamName(int index)			{ return m_plugin->GetParamName(index); }
 	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }

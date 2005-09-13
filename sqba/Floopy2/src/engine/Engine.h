@@ -43,8 +43,8 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
-	BOOL Open(char *filename);
-	BOOL Save(char *filename);
+	bool Open(char *filename);
+	bool Save(char *filename);
 	void Close();
 
 	IFloopySoundInput  *CreateInput(char *plugin);
@@ -52,8 +52,8 @@ public:
 	IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt);
 
 //	void SetParamAt(IFloopy *obj, int offset, int index, float value);
-//	BOOL ResetParamAt(IFloopy *obj, int offset, int index);
-//	void EnableAt(IFloopy *obj, int offset, BOOL bEnable);
+//	bool ResetParamAt(IFloopy *obj, int offset, int index);
+//	void EnableAt(IFloopy *obj, int offset, bool bEnable);
 
 	char *GetDisplayName();
 	void SetDisplayName(char *name, int len);
@@ -62,9 +62,9 @@ public:
 
 	char *GetLastErrorDesc();
 	//int GetLastError();
-	//BOOL GetLastError(char *str, int len);
+	//bool GetLastError(char *str, int len);
 
-	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+	bool ReadSourceIfDisabled()	{ return false; }
 
 	char *GetPath() { return m_szFileName; }
 
@@ -72,7 +72,7 @@ public:
 
 //	int GetSize();
 
-	BOOL GetColor(UINT *r, UINT *g, UINT *b);
+	bool GetColor(UINT *r, UINT *g, UINT *b);
 	void SetColor(UINT r, UINT g, UINT b);
 
 private:

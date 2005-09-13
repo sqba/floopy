@@ -25,7 +25,7 @@ public:
 	CWavFileIn();
 	virtual ~CWavFileIn();
 
-	BOOL Open(char *filename);
+	bool Open(char *filename);
 	int GetSize();
 	void MoveTo(int samples);
 	void Reset();

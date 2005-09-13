@@ -42,7 +42,7 @@ CWavFileOut::~CWavFileOut()
 
 }
 
-BOOL CWavFileOut::Open(char *filename)
+bool CWavFileOut::Open(char *filename)
 {
 	m_pFile = fopen(filename, "wb");
 	if(NULL != m_pFile)
@@ -56,9 +56,9 @@ BOOL CWavFileOut::Open(char *filename)
 		memset(m_filename, 0, sizeof(m_filename));
 		strncpy(m_filename, filename, MAX_PATH);
 
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 int CWavFileOut::Write(BYTE *data, int size)

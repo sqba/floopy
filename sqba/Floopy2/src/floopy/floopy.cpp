@@ -14,7 +14,7 @@
 
 int length=0;
 /*
-void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast)
+void printTree(FILE *fp, IFloopySoundInput *input, int level, bool bTree, bool bLast)
 {
 	int len=0;
 
@@ -74,7 +74,7 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 }
 */
 
-void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL bLast)
+void printTree(FILE *fp, IFloopySoundInput *input, int level, bool bTree, bool bLast)
 {
 	if(!input)
 		return;
@@ -123,7 +123,7 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, BOOL bTree, BOOL b
 	else
 	{
 		if( input->IsFilter() )
-			printTree(fp, ((IFloopySoundFilter*)input)->GetSource(), level+1, FALSE, TRUE);
+			printTree(fp, ((IFloopySoundFilter*)input)->GetSource(), level+1, false, true);
 	}
 }
 
@@ -251,8 +251,8 @@ void main(int argc, char* argv[])
 	//length = fprintf(stdout, "%s < ", output->GetName());
 	if(output)
 		fprintf(stdout, "%s", output->GetName());
-	//printTree(stdout, engine->GetSource(), 1, FALSE, FALSE);
-	printTree(stdout, engine, 1, FALSE, FALSE);
+	//printTree(stdout, engine->GetSource(), 1, false, false);
+	printTree(stdout, engine, 1, false, false);
 	fprintf(stdout, "\n");
 
 

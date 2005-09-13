@@ -12,7 +12,7 @@ CPlayThread::CPlayThread(CTracks *pTracks)
 {
 	m_pTracks		= pTracks;
 	m_iStartPos		= 0;
-	m_bPlaying		= m_bPaused = FALSE;
+	m_bPlaying		= m_bPaused = false;
 	m_pOutput		= NULL;
 	m_pInput		= NULL;
 	m_iBufferLength	= 128; // In samples
@@ -76,7 +76,7 @@ void *CPlayThread::Entry()
 		// If the view has been resized horizontally the position is lost.
 		if(m_pTracks->GetViewUpdatedWhilePlaying())
 		{
-			m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
+			m_pTracks->SetViewUpdatedWhilePlaying(true);
 			engine->MoveTo( m_iPosition );
 		}
 
@@ -103,7 +103,7 @@ void *CPlayThread::Entry()
 		// If the view has been resized horizontally the position is lost.
 		if(m_pTracks->GetViewUpdatedWhilePlaying())
 		{
-			m_pTracks->SetViewUpdatedWhilePlaying(TRUE);
+			m_pTracks->SetViewUpdatedWhilePlaying(true);
 			m_pInput->MoveTo( m_iPosition );
 		}
 
@@ -128,7 +128,7 @@ void *CPlayThread::Entry()
 
 	m_pOutput->Flush();
 
-	m_bPlaying = FALSE;
+	m_bPlaying = false;
 
 	delete buff;
 
@@ -137,8 +137,8 @@ void *CPlayThread::Entry()
 
 void CPlayThread::Play(int sample)
 {
-	m_bPlaying = TRUE;
-	m_bPaused  = FALSE;
+	m_bPlaying = true;
+	m_bPaused  = false;
 
 	if( wxThread::IsPaused() )
 		wxThread::Resume();
@@ -155,7 +155,7 @@ void CPlayThread::Pause()
 		wxThread::Resume();
 	else if( wxThread::IsRunning() )
 	{
-		m_bPaused = TRUE;
+		m_bPaused = true;
 		wxThread::Pause();
 	}
 }

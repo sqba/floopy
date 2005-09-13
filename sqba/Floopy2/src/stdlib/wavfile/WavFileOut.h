@@ -26,7 +26,7 @@ public:
 	CWavFileOut(int nSamplesPerSec, int wBitsPerSample, int nChannels);
 	virtual ~CWavFileOut();
 
-	BOOL Open(char *filename);
+	bool Open(char *filename);
 	int Write(BYTE *data, int size);
 	void Close();
 

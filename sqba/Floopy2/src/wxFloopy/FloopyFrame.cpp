@@ -77,9 +77,9 @@ void CFloopyFrame::OnFullScreen( wxCommandEvent &WXUNUSED(event) )
 
 void CFloopyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
-    // TRUE is to force the frame to close
+    // true is to force the frame to close
 	if( Close() )
-		wxFrame::Close( TRUE );
+		wxFrame::Close( true );
 }
 
 void CFloopyFrame::OnFileOpen(wxCommandEvent& WXUNUSED(event))
@@ -238,7 +238,7 @@ bool CFloopyFrame::Save()
 	char *filename = m_pTracks->GetFilename();
 	if(strlen(filename) > 0)
 		return m_pTracks->Save(filename);
-	return FALSE;
+	return false;
 }
 
 void CFloopyFrame::SaveAs()
@@ -259,7 +259,7 @@ void CFloopyFrame::SaveAs()
 
 bool CFloopyFrame::Close()
 {
-	bool bResult = TRUE;
+	bool bResult = true;
 	if(m_pTracks->IsChanged())
 	{
 		int answer = wxMessageBox(_T("File changed, save now?"), _T("Floopy!"),
@@ -274,7 +274,7 @@ bool CFloopyFrame::Close()
 			m_pTracks->Clear();
 			break;
 		case wxCANCEL:
-			bResult =  FALSE;
+			bResult =  false;
 			break;
 		}
 	}

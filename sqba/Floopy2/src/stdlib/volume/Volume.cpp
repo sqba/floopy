@@ -75,21 +75,21 @@ int CVolume::Read(BYTE *data, int size)
 		return 0;
 }
 
-BOOL CVolume::GetParamVal(int index, float *value)
+bool CVolume::GetParamVal(int index, float *value)
 {
 	switch(index)
 	{
 	case 0:
 		*value = (float)(m_left > m_right ? m_left : m_right);
-		return TRUE;
+		return true;
 	case 1:
 		*value = (float)m_left;
-		return TRUE;
+		return true;
 	case 2:
 		*value = (float)(getChannels() == 2 ? m_right : m_left);
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void CVolume::SetParamVal(int index, float value)

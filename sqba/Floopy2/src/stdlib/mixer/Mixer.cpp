@@ -26,7 +26,7 @@ CMixer::CMixer()
 	}
 
 #ifdef _DEBUG_TIMER_
-	m_bDebugTimer = TRUE;
+	m_bDebugTimer = true;
 	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
 #endif // _DEBUG_TIMER_
 }
@@ -296,7 +296,7 @@ void CMixer::SetParamVal(int index, float value)
 		m_bDebugTimer = (value==1.f);
 }
 
-BOOL CMixer::GetParamVal(int index, float *value)
+bool CMixer::GetParamVal(int index, float *value)
 {
 	float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
 	float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
@@ -306,19 +306,19 @@ BOOL CMixer::GetParamVal(int index, float *value)
 	{
 	case -333:
 		*value = (m_bDebugTimer ? 1.f : 0.f);
-		return TRUE;
+		return true;
 	case -334:
 		*value = afmt;
-		return TRUE;
+		return true;
 	case -335:
 		*value = afsz;
-		return TRUE;
+		return true;
 	case -336:
 		*value = amr;
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 char *CMixer::GetParamName(int index)

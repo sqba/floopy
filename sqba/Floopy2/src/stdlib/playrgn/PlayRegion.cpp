@@ -117,7 +117,7 @@ void  CPlayRegion::SetParamVal(int index, float value)
 	calcVariables();
 }
 
-BOOL CPlayRegion::GetParamVal(int index, float *value)
+bool CPlayRegion::GetParamVal(int index, float *value)
 {
 	calcVariables();
 
@@ -125,12 +125,12 @@ BOOL CPlayRegion::GetParamVal(int index, float *value)
 	{
 	case 0:
 		*value = (float)m_startSample;//m_startOffset / m_samplesToBytes;
-		return TRUE;
+		return true;
 	case 1:
 		*value = (float)m_endSample;//m_endOffset   / m_samplesToBytes;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 char *CPlayRegion::GetParamName(int index)

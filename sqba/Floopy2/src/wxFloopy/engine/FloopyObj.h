@@ -51,7 +51,7 @@ class IFloopyObj : public wxObject
 public:
 	IFloopyObj(IFloopyObj *parent = NULL)
 	{
-		m_bSelected = FALSE;
+		m_bSelected = false;
 		m_pParent = parent;
 		m_pMenu = NULL;
 		m_ptPrev.x = m_ptPrev.y = 0;
@@ -63,8 +63,8 @@ public:
 			delete m_pMenu;
 	}
 
-	virtual bool GetName(wxString& WXUNUSED(name))			{ return FALSE; };
-	virtual bool GetDescription(wxString& WXUNUSED(desc))	{ return FALSE; };
+	virtual bool GetName(wxString& WXUNUSED(name))			{ return false; };
+	virtual bool GetDescription(wxString& WXUNUSED(desc))	{ return false; };
 
 	//////////////////////////////////////////////////////////////////
 	// IFloopyObj::Update
@@ -72,7 +72,7 @@ public:
 	//////////////////////////////////////////////////////////////////
 	//virtual void Update()								{}
 
-	virtual void Select(bool selected=TRUE)	{ m_bSelected = selected; }
+	virtual void Select(bool selected=true)	{ m_bSelected = selected; }
 	virtual bool IsSelected()				{ return m_bSelected; }
 
 	virtual IFloopyObj *GetParent()			{ return m_pParent; }

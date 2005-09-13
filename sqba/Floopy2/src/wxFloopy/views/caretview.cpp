@@ -20,7 +20,7 @@ CCaretView::CCaretView(wxWindow* parent, CTracks *tracks)
 {
 	wxLog::AddTraceMask(_T("CCaretView"));
 
-	m_bSelection   = FALSE;
+	m_bSelection   = false;
 	m_iSelStart    = m_iSelEnd      = -1;
 	m_ptSelStart.x = m_ptSelStart.y = -1;
 	m_ptSelEnd.x   = m_ptSelEnd.y   = -1;
@@ -98,7 +98,7 @@ void CCaretView::OnMouseEvent(wxMouseEvent& event)
 		//wxLogTrace(_T("CCaretView"), _T("Dragging() x=%d y=%d"), event.GetX(), event.GetY());
 		//m_ptSelStart, m_ptSelEnd
 		m_ptSelEnd = event.GetPosition();
-		m_bSelection = TRUE;
+		m_bSelection = true;
 		Refresh();
 	}
 	else if( event.LeftUp() )
@@ -107,7 +107,7 @@ void CCaretView::OnMouseEvent(wxMouseEvent& event)
 		m_ptSelEnd = event.GetPosition();
 		if(m_bSelection)
 		{
-			m_bSelection = FALSE;
+			m_bSelection = false;
 			m_iSelStart = m_ptSelStart.x;
 			m_iSelEnd = m_ptSelEnd.x;
 		}
@@ -176,7 +176,7 @@ void CCaretView::SetCaretPos(int samples)
 
 	int x = samples / m_pTracks->GetSamplesPerPixel();
 
-	caret->Show(FALSE);
+	caret->Show(false);
 
 	//m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
 
@@ -203,11 +203,11 @@ void CCaretView::SetCaretPos(int samples)
 	{
 		caret->SetSize(1, height);
 		caret->Move( x, y );
-	//	caret->Show(TRUE);
+	//	caret->Show(true);
 	}
 	//else
-	//	caret->Show(FALSE);
-	caret->Show(TRUE);
+	//	caret->Show(false);
+	caret->Show(true);
 }
 */
 /*

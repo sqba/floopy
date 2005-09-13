@@ -8,7 +8,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef BOOL (*StorageProc)(IFloopySoundEngine*, char*);
+typedef bool (*StorageProc)(IFloopySoundEngine*, char*);
 #define PROC_NAME_LOAD "Load"
 #define PROC_NAME_SAVE "Save"
 #define PLUG_EXT ".dll"
@@ -32,26 +32,26 @@ CStorage::~CStorage()
 		FreeLibrary(m_hinst);
 }
 
-BOOL CStorage::Load(char *filename)
+bool CStorage::Load(char *filename)
 {
 	if(NULL == m_hinst)
-		return FALSE;
+		return false;
 
 	StorageProc func = (StorageProc)GetProcAddress(m_hinst, PROC_NAME_LOAD); 
 	if(NULL == func)
-		return FALSE;
+		return false;
 
 	return func(m_engine, filename);
 }
 
-BOOL CStorage::Save(char *filename)
+bool CStorage::Save(char *filename)
 {
 	if(NULL == m_hinst)
-		return FALSE;
+		return false;
 
 	StorageProc func = (StorageProc)GetProcAddress(m_hinst, PROC_NAME_SAVE); 
 	if(NULL == func)
-		return FALSE;
+		return false;
 
 	return func(m_engine, filename);
 }

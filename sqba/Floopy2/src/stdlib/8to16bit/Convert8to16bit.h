@@ -25,11 +25,11 @@ public:
 
 	int Read(BYTE *data, int size);
 
-	BOOL ReadSourceIfDisabled()	{ return FALSE; }
+	bool ReadSourceIfDisabled()	{ return false; }
 
 	SOUNDFORMAT *GetFormat();
 
-//	BOOL SetSource(IFloopySoundInput *src);
+//	bool SetSource(IFloopySoundInput *src);
 
 private:
 	BYTE *m_pBuffer;

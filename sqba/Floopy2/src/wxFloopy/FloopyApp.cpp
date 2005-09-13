@@ -25,7 +25,7 @@ bool CFloopyApp::OnInit()
 			frame->Open(argv[i]);
 	}
 
-	frame->Show(TRUE);
+	frame->Show(true);
 
 	SetTopWindow(frame);
 

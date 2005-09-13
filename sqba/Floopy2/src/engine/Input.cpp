@@ -34,7 +34,7 @@ CInput::CInput(UpdateCallback func)
 	// Optimization variables
 	m_nStartOffset = m_nEndOffset = m_nSamplesToBytes = 0;
 
-//	m_bRecording = FALSE;
+//	m_bRecording = false;
 }
 
 CInput::~CInput()
@@ -49,11 +49,11 @@ CInput::~CInput()
 /**
  * Create the plugin.
  * @param plugin library name.
- * @return TRUE if succesfull.
+ * @return true if succesfull.
  */
-BOOL CInput::Create(char *name)
+bool CInput::Create(char *name)
 {
-	BOOL result = FALSE;
+	bool result = false;
 
 	/////////////////////////////////////////
 	// Split name: [library].[plugin]
@@ -106,7 +106,7 @@ BOOL CInput::Create(char *name)
 
 				Enable( m_plugin->IsEnabled() ); // Default
 
-				result = TRUE;
+				result = true;
 			}
 			else
 				sprintf(m_szLastError,
@@ -128,9 +128,9 @@ BOOL CInput::Create(char *name)
 /**
  * Set another engine to be the source.
  * @param src pointer to the engine.
- * @return TRUE (if succesfull).
+ * @return true (if succesfull).
  */
-BOOL CInput::Create(IFloopySoundEngine *src)
+bool CInput::Create(IFloopySoundEngine *src)
 {
 	m_plugin = src;
 	
@@ -140,12 +140,12 @@ BOOL CInput::Create(IFloopySoundEngine *src)
 	if(name)
 		SetDisplayName(name, strlen(name));
 
-	Enable(FALSE);
+	Enable(false);
 
-	return TRUE;
+	return true;
 }
 
-BOOL CInput::Open(char *filename)
+bool CInput::Open(char *filename)
 {
 	if(m_plugin && m_plugin->Open(filename))
 	{
@@ -153,9 +153,9 @@ BOOL CInput::Open(char *filename)
 		filename = tmp ? tmp+1 : filename;
 		SetDisplayName(filename, strlen(filename));
 		recalcVariables();
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void CInput::Close()
@@ -163,14 +163,14 @@ void CInput::Close()
 	m_plugin->Close();
 }
 
-BOOL CInput::SetSource(IFloopySoundInput *src)
+bool CInput::SetSource(IFloopySoundInput *src)
 {
 	// Check if src has been created by this engine.
 	// Ne radi ako je src engine!
 //	if(m_iCheck != ((CInput*)src)->m_iCheck)
-//		return FALSE;
+//		return false;
 
-	BOOL result = FALSE;
+	bool result = false;
 	if(m_plugin && m_plugin->IsFilter())
 	{
 		result = ((IFloopySoundFilter*)m_plugin)->SetSource(src);
@@ -224,7 +224,7 @@ int CInput::Read(BYTE *data, int size)
 	int readBytes = 0;
 	int len = 0;
 	IFloopySoundInput *src = m_plugin;
-	BOOL bEOF = FALSE;
+	bool bEOF = false;
 
 	// Apply all due parameters
 	applyParamsAt( m_offset );
@@ -250,7 +250,7 @@ int CInput::Read(BYTE *data, int size)
 			m_offset += len;
 		}
 		else
-			bEOF = TRUE;
+			bEOF = true;
 	
 		applyParamsAt( offset );
 	}
@@ -302,7 +302,7 @@ void CInput::MoveTo(int samples)
 
 	m_offset = samples * m_nSamplesToBytes;
 
-	BOOL bMoved = applyPreviousParams( m_offset );
+	bool bMoved = applyPreviousParams( m_offset );
 
 	if( isEngine() && m_nStartOffset > 0)
 	{
@@ -390,7 +390,7 @@ int CInput::GetPrevOffset(int offset)
  * Enable at the current offset.
  * @param bEnable enable/disable.
  */
-void CInput::Enable(BOOL bEnable)
+void CInput::Enable(bool bEnable)
 {
 	//if( m_bRecording )
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
@@ -405,20 +405,20 @@ void CInput::Enable(BOOL bEnable)
 }
 
 /**
- * @return TRUE if the object is enabled at the current offset.
+ * @return true if the object is enabled at the current offset.
  */
-BOOL CInput::IsEnabled()
+bool CInput::IsEnabled()
 {
 	float value = PARAM_VALUE_ENABLED;
 	if(m_timeline.GetParamVal(m_offset, TIMELINE_PARAM_ENABLE, &value))
 	{
-		BOOL bEnabled = (PARAM_VALUE_DISABLED != value);
+		bool bEnabled = (PARAM_VALUE_DISABLED != value);
 		return bEnabled;
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL CInput::GetParamVal(int index, float *value)
+bool CInput::GetParamVal(int index, float *value)
 {
 	return m_timeline.GetParamVal(m_offset, index, value);
 }
@@ -436,25 +436,25 @@ void CInput::SetParamVal(int index, float value)
 	recalcVariables();
 }
 
-BOOL CInput::GetParamIndex(char *name, int *index)
+bool CInput::GetParamIndex(char *name, int *index)
 {
 	if(NULL==name || NULL==index)
-		return FALSE;
+		return false;
 
 	if(0==strcmpi(name, "Enable"))
 	{
 		*index = TIMELINE_PARAM_ENABLE;
-		return TRUE;
+		return true;
 	}
 
 	if(0==strcmpi(name, "MoveTo"))
 	{
 		*index = TIMELINE_PARAM_MOVETO;
-		return TRUE;
+		return true;
 	}
 
 	if( m_plugin->GetParamIndex(name, index) )
-		return TRUE;
+		return true;
 	else
 	{
 		int count = m_plugin->GetParamCount();
@@ -465,19 +465,19 @@ BOOL CInput::GetParamIndex(char *name, int *index)
 				if(0==strcmpi(m_plugin->GetParamName(i), name))
 				{
 					*index = i;
-					return TRUE;
+					return true;
 				}
 			}
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
-BOOL CInput::GetPropertyIndex(char *name, int *index)
+bool CInput::GetPropertyIndex(char *name, int *index)
 {
 	if( m_plugin->GetPropertyIndex(name, index) )
-		return TRUE;
+		return true;
 	else
 	{
 		for(int i=0; i<m_plugin->GetPropertyCount(); i++)
@@ -487,14 +487,14 @@ BOOL CInput::GetPropertyIndex(char *name, int *index)
 			if( 0 == strcmpi(name, tmp) )
 			{
 				*index = i;
-				return TRUE;
+				return true;
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL CInput::GetParamAt(int offset, int index, float *value)
+bool CInput::GetParamAt(int offset, int index, float *value)
 {
 	return m_timeline.GetParamVal(offset * m_nSamplesToBytes, index, value);
 }
@@ -507,24 +507,24 @@ void CInput::SetParamAt(int offset, int index, float value)
 	recalcVariables();
 }
 
-BOOL CInput::ResetParamAt(int offset, int index, float value)
+bool CInput::ResetParamAt(int offset, int index, float value)
 {
 	if(m_timeline.RemoveParam(offset * m_nSamplesToBytes, index, value))
 	{
 		recalcVariables();
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL CInput::MoveParam(int offset, int index, float value, int newoffset)
+bool CInput::MoveParam(int offset, int index, float value, int newoffset)
 {
 	if(m_timeline.MoveParam(offset * m_nSamplesToBytes, index, value, newoffset * m_nSamplesToBytes))
 	{
 		recalcVariables();
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 /**
@@ -532,7 +532,7 @@ BOOL CInput::MoveParam(int offset, int index, float value, int newoffset)
  * @param offset number of samples.
  * @param bEnable enable/disable.
  */
-void CInput::EnableAt(int offset, BOOL bEnable)
+void CInput::EnableAt(int offset, bool bEnable)
 {
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
 	m_timeline.SetParamVal(offset * m_nSamplesToBytes, TIMELINE_PARAM_ENABLE, value);
@@ -540,16 +540,16 @@ void CInput::EnableAt(int offset, BOOL bEnable)
 }
 
 
-BOOL CInput::GetColor(UINT *r, UINT *g, UINT *b)
+bool CInput::GetColor(UINT *r, UINT *g, UINT *b)
 {
 	if(m_red<256 && m_green<256 && m_blue<256)
 	{
 		*r = m_red;
 		*g = m_green;
 		*b = m_blue;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void CInput::SetColor(UINT r, UINT g, UINT b)
@@ -679,10 +679,10 @@ void CInput::applyParamsAt(int offset)
 
 	float value = 0.f;
 
-	BOOL bResult = m_timeline.GetParamVal(offset, TIMELINE_PARAM_ENABLE, &value);
+	bool bResult = m_timeline.GetParamVal(offset, TIMELINE_PARAM_ENABLE, &value);
 	if(bResult || offset == 0)
 	{
-		BOOL bEnable = bResult ? ( PARAM_VALUE_DISABLED != value ) : FALSE;
+		bool bEnable = bResult ? ( PARAM_VALUE_DISABLED != value ) : false;
 		IFloopy::Enable( bEnable );
 		m_plugin->Enable(bEnable);
 
@@ -718,20 +718,20 @@ void CInput::applyParamsAt(int offset)
 
 /**
  * 
- * @return TRUE if MoveTo has been called.
+ * @return true if MoveTo has been called.
  * Not the nicest way to tell MoveTo() not to move the source.
  */
-BOOL CInput::applyPreviousParams(int offset)
+bool CInput::applyPreviousParams(int offset)
 {
 	float value = 0.f;
-	BOOL bMoved = FALSE;
+	bool bMoved = false;
 
 	int prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_ENABLE);
 
-	BOOL bResult = m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_ENABLE, &value);
+	bool bResult = m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_ENABLE, &value);
 	if(bResult || prevOffset == 0)
 	{
-		BOOL bEnable = bResult ? ( PARAM_VALUE_DISABLED != value ) : FALSE;
+		bool bEnable = bResult ? ( PARAM_VALUE_DISABLED != value ) : false;
 		IFloopy::Enable( bEnable );
 		m_plugin->Enable(bEnable);
 	}
@@ -744,7 +744,7 @@ BOOL CInput::applyPreviousParams(int offset)
 		int pos = newOffset + diff;
 		m_plugin->MoveTo( pos );
 //		m_offset = pos * m_nSamplesToBytes;
-		bMoved = TRUE;
+		bMoved = true;
 	}
 
 	int count = GetParamCount();
@@ -817,14 +817,14 @@ void CInput::ClearAllParams()
 	m_timeline.Clear();
 }
 
-BOOL CInput::GetBypass()
+bool CInput::GetBypass()
 {
 	if( m_plugin->IsFilter() )
 		return ((IFloopySoundFilter*)m_plugin)->GetBypass();
-	return FALSE;
+	return false;
 }
 
-void CInput::SetBypass(BOOL bBypass)
+void CInput::SetBypass(bool bBypass)
 {
 	if( m_plugin->IsFilter() )
 		((IFloopySoundFilter*)m_plugin)->SetBypass(bBypass);

@@ -35,7 +35,7 @@ public:
 
 	int   GetParamCount()			{ return 1; }
 	void  SetParamVal(int, float);
-	BOOL  GetParamVal(int, float*);
+	bool  GetParamVal(int, float*);
 	char *GetParamName(int index)	{ return(index==0 ? "Frequency" : NULL); }
 	char *GetParamDesc(int index)	{ return(index==0 ? "Tone Frequency" : NULL); }
 	float GetParamMax(int index)	{ return(index==0 ? 20000.f : 0.f); }

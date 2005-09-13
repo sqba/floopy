@@ -74,7 +74,7 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *par
 	m_pButtonLoop = new CLoopButton(this);
 	m_pButtonCache = new CCacheButton(this);
 
-	m_bReset = TRUE;
+	m_bReset = true;
 
 //	m_pDisplay = new CWaveDisplay(this);
 
@@ -120,7 +120,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 
 	int left, top, width, height;
 
-	if(TRUE)
+	if(true)
 	{
 		// Draw background
 		left   = m_nLevel*4+2;
@@ -281,9 +281,9 @@ void CTrack::DrawPreview(wxDC& dc, wxRect& rc)
 
 /////////////////////////////////////////////////////////////////////////////
 // HitTest
-//! Returns TRUE if the vertical coordinate y is in the track.
+//! Returns true if the vertical coordinate y is in the track.
 //! \param y [in] vertical coordinate
-//! \return TRUE if the vertical coordinate y is in the track
+//! \return true if the vertical coordinate y is in the track
 /////////////////////////////////////////////////////////////////////////////
 bool CTrack::HitTest(int y)
 {
@@ -301,8 +301,8 @@ CRegion *CTrack::AddNewRegionAt(int left)
 	int end   = start + nSamplesPerPixel;
 
 	// Dodati novi event u input
-	m_pInput->EnableAt(start, TRUE);
-	m_pInput->EnableAt(end, FALSE);
+	m_pInput->EnableAt(start, true);
+	m_pInput->EnableAt(end, false);
 
 	CRegion *region = new CRegion( this, start, end );
 	try {
@@ -354,9 +354,9 @@ bool CTrack::RemoveRegion(CRegion *region)
 			delete region;
 	} catch(...) {
 		wxLogTrace(_T("CTrack"), _T("RemoveRegion exception"));
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 
 IFloopyObj *CTrack::GetChildAt(int x, int y)
@@ -395,7 +395,7 @@ void CTrack::DeselectAllRegions()
 		CRegion *region = (CRegion*)node->GetData();
 		//if( region->IsSelected() )
 		//	region->Refresh();
-		region->Select(FALSE);
+		region->Select(false);
 		node = node->GetNext();
 	}
 }
@@ -530,7 +530,7 @@ void CTrack::Move(int dx, int dy)
 /////////////////////////////////////////////////////////////////////////////
 bool CTrack::LoadDisplay(wxString strType)
 {
-	bool result = FALSE;
+	bool result = false;
 	//wxDynamicLibrary dlib;
 
 	/*if( m_libDisplay.Load(strType) ) {
@@ -543,7 +543,7 @@ bool CTrack::LoadDisplay(wxString strType)
 			try {
 				m_pDisplay = func();
 				//func( &m_pDisplay );
-				result = TRUE;
+				result = true;
 			} catch(...) {
 				wxLogTrace(_T("CTrack"), _T("CreateDisplay failed!"));
 				m_libDisplay.Unload();
@@ -711,7 +711,7 @@ void CTrack::OnMouseEvent(wxMouseEvent& event)
 	{
 		wxScrolledWindow *panel = getTracks()->GetPanel();
 		wxCaret *caret = panel->GetCaret();
-		caret->Show(FALSE);
+		caret->Show(false);
 
 		int x=0;
 		caret->GetPosition(&x, NULL);
@@ -733,13 +733,13 @@ void CTrack::OnMouseEvent(wxMouseEvent& event)
 			caret->SetSize(1, panel->GetSize().GetHeight());
 			caret->Move( x-xOrig, 0 );
 		}
-		caret->Show(TRUE);
+		caret->Show(true);
 
 		///////////////////////////////////////////
 		// Add new event
 		int x1 = event.GetX() + xOrig;
 		CRegion *evt = AddEventAt(x1);
-		//m_pSelectedObj = evt->GetBorder(FALSE);
+		//m_pSelectedObj = evt->GetBorder(false);
 		evt->Refresh();
 		///////////////////////////////////////////
 	}
@@ -841,15 +841,15 @@ void CTrack::drawCacheSign(wxDC& dc, wxRect& rc)
 	m_pButtonCache->DrawFore(dc, rc);
 }
 
-BOOL CTrack::IsLooped()
+bool CTrack::IsLooped()
 {
 	IFloopySoundFilter *loop = (IFloopySoundFilter*)GetComponent("loop");
 	if(loop)
 		return !loop->GetBypass();
-	return FALSE;
+	return false;
 }
 
-void CTrack::SetLooped(BOOL bLooped)
+void CTrack::SetLooped(bool bLooped)
 {
 	IFloopySoundFilter *loop = (IFloopySoundFilter*)GetComponent("loop");
 	if(loop)
@@ -872,8 +872,8 @@ void CTrack::SetLooped(BOOL bLooped)
 			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateInput("stdlib.loop");
 			if(loop)
 			{
-				loop->EnableAt(0, TRUE);
-				loop->SetBypass(FALSE);
+				loop->EnableAt(0, true);
+				loop->SetBypass(false);
 
 				loop->SetSource( src );
 				((IFloopySoundFilter*)m_pInput)->SetSource( loop );
@@ -885,15 +885,15 @@ void CTrack::SetLooped(BOOL bLooped)
 	}
 }
 
-BOOL CTrack::IsReverse()
+bool CTrack::IsReverse()
 {
 	IFloopySoundFilter *reverse = (IFloopySoundFilter*)GetComponent("reverse");
 	if(reverse)
 		return !reverse->GetBypass();
-	return FALSE;
+	return false;
 }
 
-void CTrack::SetReverse(BOOL bReverse)
+void CTrack::SetReverse(bool bReverse)
 {
 	IFloopySoundFilter *reverse = (IFloopySoundFilter*)GetComponent("reverse");
 	if(reverse)
@@ -925,8 +925,8 @@ void CTrack::SetReverse(BOOL bReverse)
 			IFloopySoundFilter *reverse = (IFloopySoundFilter*)engine->CreateInput("stdlib.reverse");
 			if(reverse)
 			{
-				reverse->EnableAt(0, TRUE);
-				reverse->SetBypass(FALSE);
+				reverse->EnableAt(0, true);
+				reverse->SetBypass(false);
 
 				reverse->SetSource( src );
 				((IFloopySoundFilter*)m_pInput)->SetSource( reverse );
@@ -938,7 +938,7 @@ void CTrack::SetReverse(BOOL bReverse)
 	}
 }
 
-BOOL CTrack::GetReset()
+bool CTrack::GetReset()
 {
 	return m_bReset;
 
@@ -948,10 +948,10 @@ BOOL CTrack::GetReset()
 		if(m_pInput->GetParamAt(0, 0, &value))
 			return value != 0.f;
 	}
-	return FALSE;*/
+	return false;*/
 }
 
-void CTrack::SetReset(BOOL bReset)
+void CTrack::SetReset(bool bReset)
 {
 	m_bReset = bReset;
 
@@ -998,14 +998,14 @@ IFloopySoundInput *CTrack::GetComponent(char *name)
 
 void CTrack::InvalidateRegions(CRegion *start)
 {
-//	BOOL bStart = FALSE;
+//	bool bStart = false;
 	int startOffset = start->GetStartOffset();
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
 	{
 		CRegion *region = (CRegion*)node->GetData();
 //		if(start == region)
-//			bStart = TRUE;
+//			bStart = true;
 //		else if( bStart && !region->GetReset() )
 		if( (region->GetStartOffset() > startOffset) && (!region->GetReset()) )
 		{
@@ -1074,11 +1074,11 @@ void CTrack::Select(bool selected)
 
 	int caretpos = pTracks->GetCaretPos();
 
-	BOOL bPlaying = FALSE;
+	bool bPlaying = false;
 
 	if(pTracks->IsPlaying())
 	{
-		bPlaying = TRUE;
+		bPlaying = true;
 		pTracks->Stop();
 	}
 

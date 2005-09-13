@@ -26,7 +26,7 @@ private:
 			{
 				m_pFrame->Open( (char*)filenames.Item(i).GetData() );
 			}
-			return TRUE;
+			return true;
 		}
 
 	private:

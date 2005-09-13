@@ -48,15 +48,15 @@ int CToneGen::Read(BYTE *data, int size)
 	return size;
 }
 
-BOOL CToneGen::GetParamVal(int index, float *value)
+bool CToneGen::GetParamVal(int index, float *value)
 {
 	switch(index)
 	{
 	case 0:
 		*value = (float)m_freq;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void CToneGen::SetParamVal(int index, float value)

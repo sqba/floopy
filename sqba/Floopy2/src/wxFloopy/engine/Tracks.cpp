@@ -34,13 +34,13 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_pBorder			= new CBorder(this);
 	m_pEngine			= NULL;
 	m_pMixer			= NULL;
-	m_bSnapTo			= TRUE;
+	m_bSnapTo			= true;
 	m_pPlayThread		= new CPlayThread(this);
 	m_pFrame			= NULL;
 	m_iCursorPosition	= 0;
-	m_bChanged			= FALSE;
+	m_bChanged			= false;
 //	m_pPlayThread		= NULL;
-	m_bViewUpdatedWhilePlaying = FALSE;
+	m_bViewUpdatedWhilePlaying = false;
 
 	memset(m_filename, 0, sizeof(m_filename));
 
@@ -243,7 +243,7 @@ bool CTracks::RemoveTrack(CTrack *track)
 			{
 				Refresh();
 				delete track;
-				return TRUE;
+				return true;
 			}
 		}
 	}
@@ -251,7 +251,7 @@ bool CTracks::RemoveTrack(CTrack *track)
 	{
 		wxLogTrace(_T("CTracks"), _T("RemoveTrack exception"));
 	}
-	return FALSE;
+	return false;
 }
 
 void CTracks::init()
@@ -334,7 +334,7 @@ void CTracks::DeselectAllTracks()
 		CTrack *track = (CTrack*)node->GetData();
 		//if( track->IsSelected() )
 		//	track->Refresh();
-		track->Select(FALSE);
+		track->Select(false);
 		node = node->GetNext();
 	}
 }
@@ -702,13 +702,13 @@ typedef IFloopySoundEngine* (*CreateProc)(HMODULE);
 #define PROC_NAME "CreateSoundEngine"
 #define PLUG_EXT ".dll"
 
-BOOL CTracks::createEngine(char *plugin)
+bool CTracks::createEngine(char *plugin)
 {
 	char *filename = new char[strlen(plugin) + 5];
 	strcpy(filename, plugin);
 	strcat(filename, PLUG_EXT);
 
-	bool result = FALSE;
+	bool result = false;
 	//wxDynamicLibrary dlib;
 
 	if( m_libEngine.Load(filename) ) {
@@ -721,7 +721,7 @@ BOOL CTracks::createEngine(char *plugin)
 			try {
 				m_pEngine = func( NULL );
 				//func( &m_pDisplay );
-				result = TRUE;
+				result = true;
 			} catch(...) {
 				wxLogTrace(_T("CEngine"), _T("CreateDisplay failed!"));
 				m_libEngine.Unload();
@@ -734,7 +734,7 @@ BOOL CTracks::createEngine(char *plugin)
 	return result;
 }
 
-BOOL CTracks::Open(char *filename)
+bool CTracks::Open(char *filename)
 {
 	if(m_pEngine)
 	{
@@ -754,7 +754,7 @@ BOOL CTracks::Open(char *filename)
 //			m_pPlayThread = new CPlayThread(this);
 			Refresh();
 			m_pMixer = getMixer();
-			return TRUE;
+			return true;
 		}
 		else
 		{
@@ -764,7 +764,7 @@ BOOL CTracks::Open(char *filename)
 				if(!m_pMixer)
 				{
 					m_pMixer = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
-					m_pMixer->Enable(TRUE);
+					m_pMixer->Enable(true);
 					m_pEngine->SetSource(m_pMixer);
 				}
 				IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateInput("stdlib.track");
@@ -773,7 +773,7 @@ BOOL CTracks::Open(char *filename)
 				m_pMixer->AddSource(track);
 				AddTrack(track, 0);
 				Refresh();
-				return TRUE;
+				return true;
 			}*/
 			IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateTrack(filename);
 			if(track)
@@ -781,7 +781,7 @@ BOOL CTracks::Open(char *filename)
 				if(!m_pMixer)
 				{
 					m_pMixer = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
-					m_pMixer->Enable(TRUE);
+					m_pMixer->Enable(true);
 					m_pEngine->SetSource(m_pMixer);
 				}
 				track->SetDisplayName(filename, strlen(filename));
@@ -789,37 +789,37 @@ BOOL CTracks::Open(char *filename)
 				{
 					AddTrack(track, track, 0);
 					Refresh();
-					return TRUE;
+					return true;
 				}
 				else
 				{
 					wxString err;
 					err.Printf("Mixer supports maximum %d tracks!", m_tracks.GetCount());
 					(void)wxMessageBox(err, _T("Mixer error"), wxICON_EXCLAMATION);
-					return FALSE;
+					return true;
 				}
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL CTracks::Save(char *filename)
+bool CTracks::Save(char *filename)
 {
 	if(m_pEngine)
 		return m_pEngine->Save(filename);
-	return FALSE;
+	return false;
 }
 
 void CTracks::RefreshTracks(CTrack *startTrack)
 {
-	BOOL bStart = FALSE;
+	bool bStart = false;
 	TracksList::Node *node = m_tracks.GetFirst();
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
 		if(track == startTrack)
-			bStart = TRUE;
+			bStart = true;
 		else if(bStart)
 			track->Refresh();
 		node = node->GetNext();
@@ -1128,7 +1128,7 @@ void CTracks::SetCaretPos(int samples)
 	int x = samples / GetSamplesPerPixel();
 	int y = 0;
 
-//	caret->Show(FALSE);
+//	caret->Show(false);
 
 	int xc1, yc1;
 
@@ -1161,11 +1161,11 @@ void CTracks::SetCaretPos(int samples)
 	{
 		caret->SetSize(1, height);
 		caret->Move( xc1, yc1 );
-	//	caret->Show(TRUE);
+	//	caret->Show(true);
 	}
 	//else
-	//	caret->Show(FALSE);
-	caret->Show(TRUE);
+	//	caret->Show(false);
+	caret->Show(true);
 }
 
 int CTracks::GetCaretPos()
@@ -1238,7 +1238,7 @@ void CTracks::SetCursorPosition(int samples)
 	{
 		//m_pPlayThread->Pause();
 		m_pPlayThread->SetStartPos(samples);
-		SetViewUpdatedWhilePlaying(TRUE);
+		SetViewUpdatedWhilePlaying(true);
 	}
 
 
@@ -1261,18 +1261,18 @@ void CTracks::SetCursorPosition(int samples)
 */
 }
 
-BOOL CTracks::IsPlaying()
+bool CTracks::IsPlaying()
 {
-	return m_pPlayThread ? m_pPlayThread->IsPlaying() : FALSE;
+	return m_pPlayThread ? m_pPlayThread->IsPlaying() : false;
 }
 
-BOOL CTracks::GetViewUpdatedWhilePlaying()
+bool CTracks::GetViewUpdatedWhilePlaying()
 {
 	return m_bViewUpdatedWhilePlaying;
-	//return IsPlaying() ? m_bViewUpdatedWhilePlaying : FALSE;
+	//return IsPlaying() ? m_bViewUpdatedWhilePlaying : false;
 }
 
-void CTracks::SetViewUpdatedWhilePlaying(BOOL bUpdate)
+void CTracks::SetViewUpdatedWhilePlaying(bool bUpdate)
 {
 	if( IsPlaying() )
 		m_bViewUpdatedWhilePlaying = bUpdate;

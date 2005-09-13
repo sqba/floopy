@@ -20,12 +20,12 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 	m_iStartSample = startSample;
 	m_iEndSample   = endSample;
 
-	m_pLeftBorder  = new CBorder(this, TRUE);
-	m_pRightBorder = new CBorder(this, FALSE);
+	m_pLeftBorder  = new CBorder(this, true);
+	m_pRightBorder = new CBorder(this, false);
 
 	m_iPrevStart = m_iPrevEnd = -1;
 
-	m_bEdit = FALSE;
+	m_bEdit = false;
 
 	createMenu();
 
@@ -34,7 +34,7 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 	//loadParameters( getTrack()->GetInput() );
 //	loadParameters( getTrack()->GetComponent("volume") );
 
-//	m_bReset = FALSE;
+//	m_bReset = false;
 
 	m_pDisplay = new CRegionDisplay(this);
 //	m_pDisplay->Run();
@@ -236,10 +236,10 @@ void CRegion::DrawPreview(wxDC& dc, wxRect& rc)
 
 /////////////////////////////////////////////////////////////////////////////
 // HitTest
-//! Returns TRUE if the coordinates are in the region's rectangle.
+//! Returns true if the coordinates are in the region's rectangle.
 //! \param x [in] horizontal coordinate
 //! \param y [in] vertical coordinate
-//! \return TRUE if the coordinates are in the region's rectangle
+//! \return true if the coordinates are in the region's rectangle
 /////////////////////////////////////////////////////////////////////////////
 bool CRegion::HitTest(int x, int y)
 {
@@ -266,7 +266,7 @@ void CRegion::Move(int dx, int WXUNUSED(dy))
 	left  += dx;
 	right += dx;
 
-	getTrack()->CheckIntersections(this, left, right, FALSE);
+	getTrack()->CheckIntersections(this, left, right, false);
 	// if not, return...
 
 	if( (left < 0) || (right > getTrack()->GetWidth()) )
@@ -389,7 +389,7 @@ void CRegion::Resize(int dl, int dr)
 	if(0 != dl)
 	{
 		left += + dl;
-		getTrack()->CheckIntersections(this, left, right, FALSE);
+		getTrack()->CheckIntersections(this, left, right, false);
 		if( 0 <= left )
 		{
 			startEdit();
@@ -402,7 +402,7 @@ void CRegion::Resize(int dl, int dr)
 	else if(0 != dr)
 	{
 		right += dr;
-		getTrack()->CheckIntersections(this, left, right, FALSE);
+		getTrack()->CheckIntersections(this, left, right, false);
 		if( (0 <= right) && (right <= getTrack()->GetWidth()) )
 		{
 			startEdit();
@@ -416,7 +416,7 @@ void CRegion::Resize(int dl, int dr)
 
 void CRegion::Update()
 {
-	BOOL bRefresh = TRUE;
+	bool bRefresh = true;
 
 	IFloopySoundInput *track = getTrack()->GetInput();
 
@@ -428,7 +428,7 @@ void CRegion::Update()
 	if((m_iPrevStart >= 0) && (m_iPrevStart != m_iStartSample))
 	{
 		//assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE) );
-		//track->EnableAt(m_iStartSample, TRUE);
+		//track->EnableAt(m_iStartSample, true);
 //		ddump();
 //		assert( track->GetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, &value) );
 //		assert( track->MoveParam(m_iPrevStart, TIMELINE_PARAM_ENABLE, m_iStartSample) );
@@ -437,14 +437,14 @@ void CRegion::Update()
 		{
 			m_iStartSample = m_iPrevStart;
 			m_iPrevStart = m_iPrevEnd = -1;
-			m_bEdit = FALSE;
+			m_bEdit = false;
 			getTrack()->Refresh();
 			return;
 		}*/
 		if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED, m_iStartSample) )
 		{
 			assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) );
-			track->EnableAt(m_iStartSample, TRUE);
+			track->EnableAt(m_iStartSample, true);
 		}
 
 		//float paramVal=0.f;
@@ -458,7 +458,7 @@ void CRegion::Update()
 		float value = 0;
 		if(getTrack()->GetInput()->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
 		{
-			bRefresh = FALSE;
+			bRefresh = false;
 
 			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, value, m_iStartSample) )
 			{
@@ -473,7 +473,7 @@ void CRegion::Update()
 	if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))
 	{
 		//assert( track->ResetParamAt(m_iPrevEnd, TIMELINE_PARAM_ENABLE) );
-		//track->EnableAt(m_iEndSample, FALSE);
+		//track->EnableAt(m_iEndSample, false);
 //		ddump();
 //		assert( track->GetParamAt(m_iPrevEnd, TIMELINE_PARAM_ENABLE, &value) );
 //		assert( track->MoveParam(m_iPrevEnd, TIMELINE_PARAM_ENABLE, m_iEndSample) );
@@ -482,14 +482,14 @@ void CRegion::Update()
 		{
 			m_iEndSample = m_iPrevEnd;
 			m_iPrevStart = m_iPrevEnd = -1;
-			m_bEdit = FALSE;
+			m_bEdit = false;
 			getTrack()->Refresh();
 			return;
 		}*/
 		if( !track->MoveParam(m_iPrevEnd, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED, m_iEndSample) )
 		{
 			assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) );
-			track->EnableAt(m_iEndSample, FALSE);
+			track->EnableAt(m_iEndSample, false);
 		}
 	}
 
@@ -521,13 +521,13 @@ void CRegion::Update()
 
 	m_iPrevStart = m_iPrevEnd = -1;
 
-	m_bEdit = FALSE;
+	m_bEdit = false;
 
 	getTrack()->InvalidateRegions( this );
 
-	getTracks()->SetChanged( TRUE );
+	getTracks()->SetChanged( true );
 
-	getTracks()->SetViewUpdatedWhilePlaying(TRUE);
+	getTracks()->SetViewUpdatedWhilePlaying(true);
 }
 /*
 void CRegion::ddump()
@@ -629,7 +629,7 @@ void CRegion::OnMouseEvent(wxMouseEvent& event)
 			//getTracks()->DeselectAllTracks();
 			getTracks()->DeselectAllRegions();
 		} //else
-		//	m_bDrag = TRUE;
+		//	m_bDrag = true;
 
 		//m_pSelectedObj->Select();
 		//m_pSelectedObj->Refresh();
@@ -652,7 +652,7 @@ void CRegion::startEdit()
 		m_iPrevStart = m_iStartSample;
 		m_iPrevEnd   = m_iEndSample;
 
-		m_bEdit = TRUE;
+		m_bEdit = true;
 	}
 }
 
@@ -710,7 +710,7 @@ void CRegion::drawParametersFore(wxDC& dc, wxRect& rc)
 	}
 }
 
-BOOL CRegion::GetReset()
+bool CRegion::GetReset()
 {
 //	return m_bReset;
 
@@ -720,19 +720,19 @@ BOOL CRegion::GetReset()
 	if(getTrack()->GetInput()->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 		return value==0.f;
 	else
-		return FALSE;*/
+		return false;*/
 }
 
-BOOL CRegion::getReset(int sample)
+bool CRegion::getReset(int sample)
 {
 	float value = 0.f;
 	if(getTrack()->GetInput()->GetParamAt(sample, TIMELINE_PARAM_MOVETO, &value))
 		return value==0.f;
 	else
-		return FALSE;
+		return false;
 }
 
-void CRegion::SetReset(BOOL bReset)
+void CRegion::SetReset(bool bReset)
 {
 //	m_bReset = bReset;
 

@@ -22,7 +22,7 @@ CTracksView::CTracksView(wxWindow* parent, wxScrolledWindow *labels, CTracks *tr
  : CCaretView(parent, tracks)
 {
 	m_pObjMenu		= NULL;
-	m_bDrag			= FALSE;
+	m_bDrag			= false;
 	m_pLabelsView	= labels;
 	m_pSelectedObj	= NULL;
 	m_ptPrev.x = m_ptPrev.y = 0;
@@ -170,7 +170,7 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 				// Add new region
 				int x1 = event.GetX() + xOrig;
 				CRegion *region = track->AddNewRegionAt(x1);
-				m_pSelectedObj = region->GetBorder(FALSE);
+				m_pSelectedObj = region->GetBorder(false);
 				//region->Refresh();
 				///////////////////////////////////////////
 			}
@@ -196,7 +196,7 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 		else if( event.LeftUp() && m_pSelectedObj )
 		{
 			if(m_pSelectedObj->IsKindOf(CLASSINFO(CTrack)))
-				m_bDrag = FALSE;
+				m_bDrag = false;
 			else if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion)))
 				m_pTracks->UpdateSelectedRegions();
 			else if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion::CBorder)))

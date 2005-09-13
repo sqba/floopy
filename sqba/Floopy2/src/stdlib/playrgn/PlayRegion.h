@@ -25,7 +25,7 @@ public:
 
 	int   GetParamCount()	{ return 2; }
 	void  SetParamVal(int index, float value);
-	BOOL  GetParamVal(int index, float *value);
+	bool  GetParamVal(int index, float *value);
 	char *GetParamName(int index);
 	char *GetParamDesc(int index);
 

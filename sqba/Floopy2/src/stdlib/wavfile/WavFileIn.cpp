@@ -42,11 +42,11 @@ CWavFileIn::~CWavFileIn()
 		fclose(m_pFile);
 }
 
-BOOL CWavFileIn::Open(char *filename)
+bool CWavFileIn::Open(char *filename)
 {
 	m_pFile = fopen(filename, "rb");
 	if(NULL == m_pFile)
-		return FALSE;
+		return false;
 
 	chunk_hdr hdr;
 
@@ -63,10 +63,10 @@ BOOL CWavFileIn::Open(char *filename)
 			int numread = fread( wave_id, sizeof(char), 4, m_pFile );
 
 			if(numread != 4)
-				return FALSE;
+				return false;
 
 			if(0 != strncmp("WAVE", wave_id, 4))
-				return FALSE;
+				return false;
 		}
 		else if(0 == strncmp("fmt", hdr.id, 3))
 		{
@@ -75,7 +75,7 @@ BOOL CWavFileIn::Open(char *filename)
 			int numread = fread( &format, sizeof(WAVEFORM), 1, m_pFile );
 
 			if(numread != 1)
-				return FALSE;
+				return false;
 
 			m_format.format			= format.wFormatTag;
 			m_format.channels		= (int)format.nChannels;
@@ -84,7 +84,7 @@ BOOL CWavFileIn::Open(char *filename)
 
 			if( !m_format.format || !m_format.channels ||
 				!m_format.frequency || !m_format.bitsPerSample )
-				return FALSE;
+				return false;
 
 			m_nSamplesToBytes = ((m_format.bitsPerSample/8) * m_format.channels);
 
@@ -96,7 +96,7 @@ BOOL CWavFileIn::Open(char *filename)
 		else if(0 == strncmp("data", hdr.id, 4))
 		{
 			if(0 == m_nSamplesToBytes)
-				return FALSE;
+				return false;
 			m_nHeaderLength = ftell(m_pFile);
 			m_iDataSize = hdr.len;
 			m_size = hdr.len / m_nSamplesToBytes; // Number of samples
@@ -110,12 +110,12 @@ BOOL CWavFileIn::Open(char *filename)
 	}
 
 	if(0==m_nHeaderLength || m_iDataSize==0)
-		return FALSE;
+		return false;
 
 	memset(m_filename, 0, sizeof(m_filename));
 	strcpy(m_filename, filename);
 
-	return TRUE;
+	return true;
 }
 
 int CWavFileIn::GetSize()

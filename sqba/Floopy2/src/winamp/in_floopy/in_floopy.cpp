@@ -31,7 +31,7 @@ int seek_needed; // if != -1, it is the point that the decode thread should seek
 int killDecodeThread=0;
 HANDLE thread_handle=INVALID_HANDLE_VALUE;
 int file_length=0; // file length, in ms
-BOOL file_open=FALSE;
+bool file_open=false;
 
 //int file_length; // file length, in ms
 //return (file_length*10)/(SAMPLERATE/100*NCH*(BPS/8)); 
@@ -52,9 +52,9 @@ __declspec( dllexport ) In_Module * winampGetInModule2()
 
 
 // avoid CRT. Evil. Big. Bloated.
-BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+bool WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
-	return TRUE;
+	return true;
 }
 
 
@@ -121,7 +121,7 @@ int play(char *fn)
 		return 1;
 	}
 	seek_needed=-1;
-	file_open = TRUE;
+	file_open = true;
 
 	// Mora ovako zbog toga sto se GetSize izracunava u odnosu
 	// na trenutnu poziciju!
@@ -162,7 +162,7 @@ void stop() {
 	if (file_open)
 	{
 		engine.Close();
-		file_open = FALSE;
+		file_open = false;
 	}
 
 	mod.outMod->Close();

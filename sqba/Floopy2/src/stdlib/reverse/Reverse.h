@@ -27,7 +27,7 @@ public:
 	void MoveTo(int samples);
 	void Reset();
 
-	BOOL ReadSourceIfDisabled()	{ return TRUE; }
+	bool ReadSourceIfDisabled()	{ return true; }
 
 private:
 	int samplesToBytes();
