@@ -205,7 +205,7 @@ int CInput::Read(BYTE *data, int size)
 	}
 
 	// Passed the end
-	if((m_nEndOffset > 0) && (m_offset >= m_nEndOffset))
+	if((m_nEndOffset > 0) && (m_offset >= m_nEndOffset) && !m_plugin->ReadSourceIfDisabled())
 		return EOF;
 
 	int endpos = m_offset + size;
@@ -228,6 +228,8 @@ int CInput::Read(BYTE *data, int size)
 
 	// Apply all due parameters
 	applyParamsAt( m_offset );
+
+//	assert( IFloopy::IsEnabled() );
 
 	while(((offset=m_timeline.GetNextOffset(offset)) < endpos) && (offset>0) && !bEOF)
 	{
