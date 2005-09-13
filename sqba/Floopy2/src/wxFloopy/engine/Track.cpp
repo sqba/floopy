@@ -912,10 +912,7 @@ void CTrack::SetReverse(bool bReverse)
 					src = NULL;*/
 				int type = src->GetType();
 				if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
-				{
 					src = ((IFloopySoundFilter*)src)->GetSource();
-					break;
-				}
 				else
 					src = NULL;
 			}

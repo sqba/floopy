@@ -1309,10 +1309,7 @@ IFloopySoundInput *CTracks::GetComponent(IFloopySoundInput *src, char *name)
 			src = NULL;
 		}*/
 		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
-		{
 			src = ((IFloopySoundFilter*)src)->GetSource();
-			break;
-		}
 		else
 			src = NULL;
 	}
