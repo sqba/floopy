@@ -171,7 +171,7 @@ bool CInput::SetSource(IFloopySoundInput *src)
 //		return false;
 
 	bool result = false;
-	if(m_plugin && m_plugin->IsFilter())
+	if(m_plugin && isFilter())
 	{
 		result = ((IFloopySoundFilter*)m_plugin)->SetSource(src);
 	
@@ -186,7 +186,7 @@ bool CInput::SetSource(IFloopySoundInput *src)
 
 IFloopySoundInput *CInput::GetSource()
 {
-	if(m_plugin && m_plugin->IsFilter())
+	if(m_plugin && isFilter())
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	return NULL;
 }
@@ -339,7 +339,7 @@ int CInput::GetSize()
 
 	int size = 0;
 
-	if( GetBypass() && m_plugin->IsFilter() )
+	if( GetBypass() && isFilter() )
 	{
 		IFloopySoundInput *src = this->GetSource();
 		size = src->GetSize();
@@ -361,7 +361,7 @@ int CInput::GetSize()
 
 int CInput::GetSourceSize()
 {
-	if(m_plugin && m_plugin->IsFilter())
+	if(m_plugin && isFilter())
 		return ((IFloopySoundFilter*)m_plugin)->GetSourceSize();
 	return 0;
 }
@@ -613,6 +613,24 @@ void CInput::MoveAllParamsBetween(int start, int end, int offset)
 									offset*m_nSamplesToBytes);
 }
 
+void CInput::ClearAllParams()
+{
+	m_timeline.Clear();
+}
+
+bool CInput::GetBypass()
+{
+	if( isFilter() )
+		return ((IFloopySoundFilter*)m_plugin)->GetBypass();
+	return false;
+}
+
+void CInput::SetBypass(bool bBypass)
+{
+	if( isFilter() )
+		((IFloopySoundFilter*)m_plugin)->SetBypass(bBypass);
+}
+
 
 
 
@@ -804,30 +822,18 @@ int CInput::getEndOffset()
 
 IFloopySoundInput *CInput::getSource()
 {
-	if( m_plugin->IsFilter() && ((IFloopySoundFilter*)m_plugin)->GetBypass() )
+	if( isFilter() && ((IFloopySoundFilter*)m_plugin)->GetBypass() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
-	else if( IFloopy::IsEnabled() )// || _isSource() )
+	else if( IFloopy::IsEnabled() )
 		return m_plugin;
-	else if( m_plugin->IsFilter() && m_plugin->ReadSourceIfDisabled() )
+	else if( isFilter() && m_plugin->ReadSourceIfDisabled() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	else
 		return NULL;
 }
 
-void CInput::ClearAllParams()
+bool CInput::isFilter()
 {
-	m_timeline.Clear();
-}
-
-bool CInput::GetBypass()
-{
-	if( m_plugin->IsFilter() )
-		return ((IFloopySoundFilter*)m_plugin)->GetBypass();
-	return false;
-}
-
-void CInput::SetBypass(bool bBypass)
-{
-	if( m_plugin->IsFilter() )
-		((IFloopySoundFilter*)m_plugin)->SetBypass(bBypass);
+	int type = m_plugin->GetType();
+	return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
 }
