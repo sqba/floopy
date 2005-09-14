@@ -42,7 +42,7 @@ public:
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
-	int GetWrittenSamples();
+	int GetPosition();
 	void Reset();
 	void Flush();
 

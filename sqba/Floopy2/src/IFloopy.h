@@ -82,6 +82,11 @@ typedef struct SoundFormat
 #define TYPE_FLOOPY_SOUND_OUTPUT	(TYPE_FLOOPY|0x00000020L)				/** IFloopySound		*/
 
 
+
+class IFloopySoundEngine;
+
+
+
 /*********************************************************************
  *! \class IFloopyCallback
  *  \brief Main callback interface.
@@ -281,7 +286,7 @@ public:
 class IFloopy : public IFloopyDisplay
 {
 public:
-	IFloopy()							{ m_nLastError = 0; }
+	IFloopy()							{ m_nLastError = 0; m_pEngine = NULL; }
 	virtual ~IFloopy()					{ }
 
 //	bool Is(int type)
@@ -311,11 +316,17 @@ public:
 	virtual bool Open(char *filename)	{ return false; }
 	virtual void Close()				{ }
 
+	/** Do not override in implementations, handled by the engine */
+	virtual void SetEngine(IFloopySoundEngine *pEngine)	{ m_pEngine = pEngine; }
+	/** Do not override in implementations, handled by the engine */
+	virtual IFloopySoundEngine *GetEngine()				{ return m_pEngine; }
+
 //	virtual void SetCallback(IFloopyCallback *cbk) { m_callback = cbk; }
 //	IFloopyCallback *m_callback;
 
 protected:
 	int m_nLastError;	/** Last error code. */
+	IFloopySoundEngine *m_pEngine;
 };
 
 
@@ -392,11 +403,6 @@ public:
 	 * @param samples number of samples to move from the start.
 	 */
 	virtual void MoveTo(int samples)		{}
-
-	/**
-	 * Returns current sample position.
-	 */
-	virtual int GetPos()					{ return 0; }
 
 	/**
 	 * Moves to the starting position.
@@ -482,9 +488,9 @@ public:
 		if(NULL != m_source) m_source->MoveTo(samples);
 	}
 
-	virtual int GetPos()
+	virtual int GetPosition()
 	{
-		return (NULL != m_source ? m_source->GetPos() : 0);
+		return (NULL != m_source ? m_source->GetPosition() : EOF);
 	}
 
 	virtual void Reset()
@@ -502,11 +508,6 @@ public:
 	 */
 	virtual bool GetBypass() { return m_bBypass; }
 	virtual void SetBypass(bool bBypass) { m_bBypass = bBypass; }
-
-	virtual int GetPosition()
-	{
-		return (NULL != m_source ? m_source->GetPosition() : EOF);
-	}
 
 protected:
 	IFloopySoundInput *m_source;
@@ -610,9 +611,9 @@ public:
 	virtual void SetDest(IFloopySoundOutput *dst)	{ m_dest = dst; }
 	virtual IFloopySoundOutput *GetDest()			{ return m_dest; }
 
-	virtual int GetWrittenSamples()
+	virtual int GetPosition()
 	{
-		return (NULL != m_dest ? m_dest->GetWrittenSamples() : 0);
+		return (NULL != m_dest ? m_dest->GetPosition() : 0);
 	}
 
 	virtual void Reset()

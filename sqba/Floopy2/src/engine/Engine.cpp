@@ -58,6 +58,8 @@ CEngine::~CEngine()
 
 tComponent *CEngine::add(IFloopy *obj, enumObjType type)
 {
+	obj->SetEngine( this );
+
 	if(NULL == m_pLast)
 	{
 		m_pFirst = new tComponent;

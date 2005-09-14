@@ -26,7 +26,7 @@ public:
 	bool SetSource(IFloopySoundInput *src);
 
 	void MoveTo(int samples)	{ m_nPosition = samples * samplesToBytes(); }
-	int GetPos()				{ return m_nPosition / samplesToBytes(); }
+	int GetPosition()			{ return m_nPosition / samplesToBytes(); }
 	void Reset()				{ m_nPosition = 0; }
 	void Close();
 

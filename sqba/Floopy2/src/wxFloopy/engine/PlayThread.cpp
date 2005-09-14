@@ -123,7 +123,7 @@ void *CPlayThread::Entry()
 	{
 		do {
 			wxThread::Sleep(1000);
-		} while(m_iPosition < m_pOutput->GetWrittenSamples());
+		} while(m_iPosition < m_pOutput->GetPosition());
 	}
 
 	m_pOutput->Flush();
@@ -180,7 +180,7 @@ int CPlayThread::GetPosition()
 	if(!m_pOutput)
 		return m_iStartPos;
 
-	int samples = m_pOutput->GetWrittenSamples();
+	int samples = m_pOutput->GetPosition();
 
 	return m_iStartPos + samples;
 }

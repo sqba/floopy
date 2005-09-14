@@ -41,21 +41,21 @@ public:
 	bool Create(char *plugin);
 	bool Create(IFloopySoundEngine *src);
 
-	char *GetName()			{ return m_plugin->GetName(); }
-	char *GetDescription()	{ return m_plugin->GetDescription(); }
-	char *GetVersion()		{ return m_plugin->GetVersion(); }
-	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
+	char *GetName()									{ return m_plugin->GetName(); }
+	char *GetDescription()							{ return m_plugin->GetDescription(); }
+	char *GetVersion()								{ return m_plugin->GetVersion(); }
+	char *GetAuthor()								{ return m_plugin->GetAuthor(); }
 
-	int   GetParamCount()			{ return m_plugin->GetParamCount(); }
+	int   GetParamCount()							{ return m_plugin->GetParamCount(); }
 	bool  GetParamVal(int index, float *value);
 	void  SetParamVal(int index, float value);
-	char *GetParamName(int index)	{ return m_plugin->GetParamName(index); }
-	char *GetParamDesc(int index)	{ return m_plugin->GetParamDesc(index); }
+	char *GetParamName(int index)					{ return m_plugin->GetParamName(index); }
+	char *GetParamDesc(int index)					{ return m_plugin->GetParamDesc(index); }
 	bool  GetParamIndex(char *name, int *index);
-	float GetParamMax(int index)	{ return m_plugin->GetParamMax(index); }
-	float GetParamMin(int index)	{ return m_plugin->GetParamMin(index); }
-	char *GetParamUnit(int index)	{ return m_plugin->GetParamUnit(index); }
-	float GetParamStep(int index)	{ return m_plugin->GetParamStep(index); }
+	float GetParamMax(int index)					{ return m_plugin->GetParamMax(index); }
+	float GetParamMin(int index)					{ return m_plugin->GetParamMin(index); }
+	char *GetParamUnit(int index)					{ return m_plugin->GetParamUnit(index); }
+	float GetParamStep(int index)					{ return m_plugin->GetParamStep(index); }
 
 	int   GetPropertyCount()						{ return m_plugin->GetPropertyCount(); }
 	bool  GetPropertyVal(int index, float *value)	{ return m_plugin->GetPropertyVal(index, value); }
@@ -68,13 +68,25 @@ public:
 	char *GetPropertyUnit(int index)				{ return m_plugin->GetPropertyUnit(index); }
 	float GetPropertyStep(int index)				{ return m_plugin->GetPropertyStep(index); }
 
+	int GetType()									{ return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
+
+	char *GetPath()									{ return isEngine() ? m_source->GetPath() : m_szObjPath; }
+
+	char *GetDisplayName()							{ return m_szDisplayName; }
+	void SetDisplayName(char*, int);
+
+	int GetPosition()								{ return m_offset / m_nSamplesToBytes; }
+
+	void SetEngine(IFloopySoundEngine *pEngine)		{ m_plugin->SetEngine(pEngine); }
+
 	bool GetColor(UINT *r, UINT *g, UINT *b);
 	void SetColor(UINT r, UINT g, UINT b);
 
 	void Enable(bool bEnable);
 	bool IsEnabled();
 
-	bool Open(char *filename);
+	bool Open(char*);
+	void Close();
 
 	void MoveTo(int samples);
 	void Reset();
@@ -86,33 +98,20 @@ public:
 	bool SetSource(IFloopySoundInput *src);
 	IFloopySoundInput *GetSource();
 
-	int GetNextOffset(int offset);
-	int GetPrevOffset(int offset);
+	int GetNextOffset(int);
+	int GetPrevOffset(int);
 
-	bool GetParamAt(int offset, int index, float *value);
-	void SetParamAt(int offset, int index, float value);
-	bool ResetParamAt(int offset, int index, float value);
-	void EnableAt(int offset, bool bEnable);
+	bool GetParamAt(int, int, float*);
+	void SetParamAt(int, int, float);
+	bool ResetParamAt(int, int, float);
+	void EnableAt(int, bool);
+	bool MoveParam(int, int, float, int);
+	void MoveAllParamsBetween(int, int, int);
 
-	void Close();
 
-//	int GetLastError();
-	bool GetLastError(char *str, int len);
+	bool GetLastError(char*, int);
 
-	char *GetDisplayName() { return m_szDisplayName; }
-	void SetDisplayName(char *name, int len)
-	{
-		memset(m_szDisplayName, 0, 50);
-		memcpy(m_szDisplayName, name, (len<50?len:50));
-	}
 
-	char *GetPath()	{ return isEngine() ? m_source->GetPath() : m_szObjPath; }
-
-	int GetType()	{ return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
-
-	bool MoveParam(int offset, int index, float value, int newoffset);
-
-	void MoveAllParamsBetween(int start, int end, int offset);
 
 	///////////////////////////////////////////
 	// IFloopySoundMixer functions
@@ -126,34 +125,24 @@ public:
 	void ClearAllParams();
 
 	bool GetBypass();
-	void SetBypass(bool bBypass);
+	void SetBypass(bool);
 
 	bool ReadSourceIfDisabled();
 
-	int GetPosition()	{ return m_offset / m_nSamplesToBytes; }
-
 private:
+	inline IFloopySoundInput *getSource();
 	inline bool isEngine();
 	inline bool isFilter();
-	void applyParamsAt(int offset);
-	int applyPreviousParams(int offset);
-	int getSamplesToBytes();
-	int getStartOffset();
-	int getEndOffset();
-	void recalcVariables();
-	void recalcSourceVariables();
-	inline IFloopySoundInput *getSource();
+	inline bool isEndOfTrack();
 
-	bool isEndOfTrack();
-//	int readSilent(BYTE *data, int size);
-//	int read1(BYTE *data, int size);
-	int read2(BYTE *data, int size);
-//	int read3(BYTE *data, int size);
-	int skipChunk(int size);
-
-protected:
-//	int m_iCheck;	/** Some random number, used to check if the
-//						component was created by the same engine */
+	void	applyParamsAt(int);
+	int		applyPreviousParams(int);
+	int		getSamplesToBytes();
+	int		getStartOffset();
+	int		getEndOffset();
+	void	recalcVariables();
+	void	recalcSourceVariables();
+	int		skipChunk(int);
 
 private:
 	char m_szDisplayName[50];
@@ -162,12 +151,12 @@ private:
 
 	UINT m_red, m_green, m_blue;
 
-	UpdateCallback m_callback;
+	UpdateCallback		m_callback;	/* Pointer to the function called after every parameter change */
 
-	int m_offset;
-	HINSTANCE m_hinst;
-	IFloopySoundInput *m_plugin;
-	CTimeline m_timeline;
+	int					m_offset;	/* Current position, in bytes */
+	HINSTANCE			m_hinst;	/* Windows specific, handle to the DLL containing plugin code */
+	IFloopySoundInput*	m_plugin;	/* Pointer to the plugin */
+	CTimeline			m_timeline;	/* Array of parameter changes and their offsets */
 
 	/// Optimization variables
 	int m_nStartOffset, m_nEndOffset, m_nSamplesToBytes;

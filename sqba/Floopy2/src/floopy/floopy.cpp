@@ -133,7 +133,7 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, bool bTree, bool b
 	}
 }
 
-void process(IFloopySoundInput *input, IFloopySoundOutput *output)
+void process(IFloopySoundInput *input, IFloopySoundOutput *output, int buffSize)
 {
 	int samples = input->GetSize();
 	fprintf(stderr, "Reading %d samples...\n\n", samples);
@@ -145,7 +145,8 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 	clock_t start = clock();
 
 	int offset = 0;
-	int bufflen = fmt->frequency * stb / 10;
+	int bufflen = buffSize * stb;
+	//int bufflen = fmt->frequency * stb / 10;
 	//int buffsize = fmt->frequency/10; // In samples
 	//int bufflen = buffsize * stb;
 	BYTE *buff = new BYTE[bufflen];
@@ -166,7 +167,7 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output)
 		percent = (int)((float)offset * 100.f / (float)max);
 		for(int i=0; i<del; i++)
 			fprintf(stderr, "\b");
-		del = fprintf(stderr, "%d - %d%%", output->GetWrittenSamples(), percent);
+		del = fprintf(stderr, "%d - %d%%", output->GetPosition(), percent);
 	}
 
 	DWORD speed = clock() - start;
@@ -186,12 +187,13 @@ void main(int argc, char* argv[])
 {
 	if(argc == 1)
 	{
-		fprintf(stderr, "Usage: %s -i [input] -s [start] -e [end] -o [output] -v [filename]\n", argv[0]);
+		fprintf(stderr, "Usage: %s -i [input] -s [start] -e [end] -o [output] -v [filename] -b [128]\n", argv[0]);
 		fprintf(stderr, "\t-i - Input file\n");
 		fprintf(stderr, "\t-s - Start (in seconds)\n");
 		fprintf(stderr, "\t-e - End (in seconds)\n");
 		fprintf(stderr, "\t-o - Output (file name or waveout)\n");
 		fprintf(stderr, "\t-v - Document file (save to)\n");
+		fprintf(stderr, "\t-b - Buffer size (in samples)\n");
 		return;
 	}
 
@@ -205,6 +207,8 @@ void main(int argc, char* argv[])
 	IFloopySoundInput *input = engine;
 
 	char *filename = GetArg(argc, argv, "i", "test.test");
+
+	int buffSize = GetArg(argc, argv, "b", 128);
 
 	fprintf(stderr, "Opening %s", filename);
 	if(!engine->Open(filename))
@@ -271,7 +275,7 @@ void main(int argc, char* argv[])
 
 	if(output)
 	{
-		process(input, output);
+		process(input, output, buffSize);
 
 		engine->Reset();
 	}

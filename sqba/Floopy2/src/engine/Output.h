@@ -53,7 +53,7 @@ public:
 
 	char *GetLastErrorDesc() { return m_szLastError; }
 
-	int GetWrittenSamples();
+	int GetPosition();
 	void Reset();
 
 private:

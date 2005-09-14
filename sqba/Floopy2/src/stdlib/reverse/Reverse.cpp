@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
+#include <assert.h>
 
 #include "Reverse.h"
 
@@ -19,9 +20,10 @@
 
 CReverse::CReverse()
 {
-	m_nPosition = 0;
-	m_pBuffer = NULL;
-	m_nBuffSize = NULL;
+	m_nPosition	= 0;
+	m_pBuffer	= NULL;
+	m_nBuffSize	= 0;
+	m_nSamplesToBytes = 0;
 }
 
 CReverse::~CReverse()
@@ -40,8 +42,7 @@ int CReverse::Read(BYTE *data, int size)
 	if(m_nPosition <= 0)
 		return EOF;
 
-
-	if(size != m_nBuffSize)
+	if(size > m_nBuffSize)
 	{
 		if(m_pBuffer)
 			delete m_pBuffer;
@@ -50,24 +51,19 @@ int CReverse::Read(BYTE *data, int size)
 	}
 
 	//memset(m_pBuffer, 0, m_nBuffSize);
-	memcpy(m_pBuffer, data, size);
-
-
-	int stb = samplesToBytes();
+	//memcpy(m_pBuffer, data, size);
+	GetEngine()->EmptyBuffer(m_pBuffer, m_nBuffSize);
 
 	int buffsize = size;
 
-	int tmp = srcSize*stb;
+	int tmp = srcSize * m_nSamplesToBytes;
 	if(buffsize > tmp)
 		buffsize = tmp;
 
-//	if(buffsize/stb > srcSize-m_nPosition)
-//		buffsize = (srcSize-m_nPosition)*stb;
+	if(m_nPosition < buffsize/m_nSamplesToBytes)
+		buffsize = m_nPosition * m_nSamplesToBytes;
 
-	if(m_nPosition < buffsize/stb)
-		buffsize = m_nPosition*stb;
-
-	int start = m_nPosition - buffsize/stb;
+	int start = m_nPosition - (buffsize / m_nSamplesToBytes);
 	//assert(start >= 0);
 	IFloopySoundFilter::MoveTo(start);
 
@@ -75,13 +71,10 @@ int CReverse::Read(BYTE *data, int size)
 
 	if(EOF != len)
 	{
-		//assert(m_nPosition >= len/stb);
+		//assert(m_nPosition >= len/m_nSamplesToBytes);
 		reverse(data, len);
-		m_nPosition -= len/stb;
-		//IFloopySoundFilter::MoveTo(m_nPosition);
+		m_nPosition -= len / m_nSamplesToBytes;
 	}
-//	else
-//		m_nPosition -= srcSize;
 
 //	assert(len == size);
 
@@ -91,35 +84,23 @@ int CReverse::Read(BYTE *data, int size)
 void CReverse::reverse(BYTE *data, int size)
 {
 	SOUNDFORMAT *fmt = GetFormat();
-	if(size>0 && fmt && fmt->bitsPerSample && fmt->channels)
+	if(size>0 && fmt && fmt->channels>0 && fmt->bitsPerSample==16)
 	{
-		if(fmt->bitsPerSample==16)
-		{
-			short int *tmp = (short int*)(m_pBuffer+size);
-			short int *out = (short int*)data;
+		short int *tmp = (short int*)(m_pBuffer+size);
+		short int *out = (short int*)data;
 
-			int numsamples = size / (fmt->bitsPerSample/8);
+		int numsamples = size / (fmt->bitsPerSample/8);
 
-			int pos = numsamples;
+		int pos = numsamples;
 
-			//int pos1 = numsamples;
+		do {
+			tmp -= fmt->channels;
+			for(int ch=0; ch<fmt->channels; ch++)
+				*(out++) = *(tmp++);
+			tmp -= fmt->channels;
+		} while(pos -= fmt->channels);
 
-			
-			do {
-				tmp -= fmt->channels;
-				for(int ch=0; ch<fmt->channels; ch++)
-				//{
-					*(out++) = *(tmp++);
-				//	pos1--;
-				//}
-				tmp -= fmt->channels;
-			} while(pos -= fmt->channels);
-
-			//assert(pos == pos1);
-
-			//while(numsamples--)
-			//	*(out++) = *(tmp--);
-		}
+		//assert(pos == pos1);
 	}
 }
 
@@ -131,8 +112,6 @@ void CReverse::MoveTo(int samples)
 	{
 		if(size >= samples)
 			samples = size - samples;
-		//else
-		//	samples = size;
 	}
 
 	m_nPosition = samples;
@@ -149,9 +128,30 @@ void CReverse::Reset()
 	IFloopySoundFilter::MoveTo(size);
 }
 
-int CReverse::samplesToBytes()
+int CReverse::GetPosition()
 {
-	SOUNDFORMAT *fmt = GetFormat();
-	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	return (fmt->bitsPerSample / 8) * fmt->channels;
+	int size = IFloopySoundFilter::GetSize();
+	return size - m_nPosition;
 }
+
+bool CReverse::SetSource(IFloopySoundInput *src)
+{
+	SOUNDFORMAT *fmt = src->GetFormat();
+	assert(fmt && (fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	m_nSamplesToBytes = (fmt->bitsPerSample / 8) * fmt->channels;
+	return IFloopySoundFilter::SetSource(src);
+}
+
+/*
+void CReverse::Enable(bool bEnabled)
+{
+	int size = IFloopySoundFilter::GetSize();
+	if(bEnabled)
+		m_nPosition = size;
+	else
+		m_nPosition = 0;
+	IFloopySoundFilter::MoveTo(m_nPosition);
+
+	IFloopySoundFilter::Enable(bEnabled);
+}
+*/

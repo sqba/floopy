@@ -37,7 +37,7 @@ public:
 	void  SetParamVal(int, float);
 	bool  GetParamVal(int, float*);
 
-	bool ReadSourceIfDisabled()		{ return false; }
+	bool ReadSourceIfDisabled()		{ return true; }
 
 private:
 	int getChannels();

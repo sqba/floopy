@@ -165,7 +165,7 @@ void CWaveOut::freeBlocks(WAVEHDR* blockArray)
 	HeapFree(GetProcessHeap(), 0, blockArray);
 }
 
-int CWaveOut::GetWrittenSamples()
+int CWaveOut::GetPosition()
 {
 	int samples = 0;
 	MMTIME mmt;

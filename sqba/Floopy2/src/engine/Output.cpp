@@ -101,10 +101,10 @@ void COutput::SetParamVal(int index, float value)
 	m_plugin->SetParamVal(index, value);
 }
 
-int COutput::GetWrittenSamples()
+int COutput::GetPosition()
 {
 	if(NULL != m_plugin)
-		return m_plugin->GetWrittenSamples();
+		return m_plugin->GetPosition();
 	else
 		return 0; // m_offset?
 }
