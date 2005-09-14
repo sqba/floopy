@@ -907,7 +907,6 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		//RefreshRulers();
 		return true;
 	case WXK_F5:
-	case WXK_END:
 	case WXK_SPACE:
 		if(IsPlaying())
 			Stop();
@@ -961,6 +960,12 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 				}
 			}
 		}
+		return true;
+	case WXK_HOME:
+		SetCaretPos( 0 );
+		CenterView( 0 );
+		return true;
+	case WXK_END:
 		return true;
 	default:
 		/*if(event.GetKeyCode() < m_tracks.GetCount())
