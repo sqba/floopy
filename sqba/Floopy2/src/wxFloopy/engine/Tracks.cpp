@@ -1066,7 +1066,7 @@ void CTracks::Play()
 {
 	if(NULL == m_pPlayThread)
 	{
-		GetStatusBar()->SetStatusText("NULL == m_pPlayThread", 0);
+		GetStatusBar()->SetStatusText("Failed to create play thread", 0);
 		return;
 	}
 
@@ -1075,7 +1075,7 @@ void CTracks::Play()
 
 	if(m_pPlayThread->IsPaused() || (wxTHREAD_NO_ERROR == m_pPlayThread->Create()))
 	{
-		GetStatusBar()->SetStatusText("Playing", 1);
+		GetStatusBar()->SetStatusText("Playing", 0);
 		m_iStartSample = GetCaretPos();
 		m_pPlayThread->Play( m_iStartSample );
 	}
@@ -1233,15 +1233,28 @@ int CTracks::GetCursorPosition()
 	return m_pPlayThread->GetPosition();
 }
 
+void CTracks::SetStatusText(int samples)
+{
+//	int size = m_pEngine->GetSize();
+//	int percent = (int)((float)samples * 100.f / (float)size);
+
+	float seconds = 0.f;
+	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+	if(fmt && fmt->frequency>0)
+		seconds = (float)samples / (float)fmt->frequency;
+
+	wxString str;
+	//str.Printf("%d samples - %.4f seconds %d%%", samples, seconds, percent);
+	str.Printf("%d samples / %.4f seconds", samples, seconds);
+
+	GetStatusBar()->SetStatusText(str, 1);
+}
+
 void CTracks::SetCursorPosition(int samples)
 {
-	int size = m_pEngine->GetSize();
-	int percent = (int)((float)samples * 100.f / (float)size);
-
 	m_iCursorPosition = samples;
-	wxString str;
-	str.Printf("Cursor position: %d (%d%%)", samples, percent);
-	GetStatusBar()->SetStatusText(str, 1);
+
+	SetStatusText( samples );
 
 	if(IsPlaying())
 	{
@@ -1249,7 +1262,6 @@ void CTracks::SetCursorPosition(int samples)
 		m_pPlayThread->SetStartPos(samples);
 		SetViewUpdatedWhilePlaying(true);
 	}
-
 
 	//m_pTracksView->SetFocus();
 //	SetCaretPos( samples );
@@ -1353,6 +1365,7 @@ void CTracks::CTimer::Notify()
 {
 	int pos = m_pTracks->GetCursorPosition();
 	m_pTracks->SetCaretPos( pos );
+	m_pTracks->SetStatusText( pos );
 	
 	// Mozda je bolje skrolovati konstantnom brzinom
 	// i povremeno vrsiti korekcije

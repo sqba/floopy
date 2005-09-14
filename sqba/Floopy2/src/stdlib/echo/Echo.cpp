@@ -95,12 +95,14 @@ int CEcho::read(BYTE *data, int size)
 
 	return len;
 }
-
 /*
-bool CEcho::SetSource(IFloopySoundInput *src)
+void CEcho::Enable(bool bEnabled)
 {
-//	SOUNDFORMAT *fmt = src->GetFormat();
-//	assert( fmt->bitsPerSample == 16 );
-	return IFloopySoundFilter::SetSource(src);
+	//if(!bEnabled)
+	{
+		memset(echo_buf, 0, sizeof(echo_buf));
+		memset(echo_buf2, 0, sizeof(echo_buf));
+	}
+	IFloopySoundFilter::Enable(bEnabled);
 }
 */

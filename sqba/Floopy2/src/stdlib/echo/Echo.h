@@ -24,6 +24,7 @@ public:
 
 	int Read(BYTE *data, int size);
 	void Reset();
+//	void Enable(bool bEnabled);
 
 private:
 	int read(BYTE *data, int size);

@@ -31,6 +31,7 @@ public:
 	void Reset();
 	int Read(BYTE *data, int size);
 	void Close();
+	int GetPosition();
 
 	char *GetName()			{ return (m_pFile ? m_filename : "stdlib.wavfile"); }
 	char *GetDescription()	{ return "WAV file reader"; }

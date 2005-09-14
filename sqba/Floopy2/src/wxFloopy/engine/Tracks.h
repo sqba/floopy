@@ -215,6 +215,7 @@ public:
 
 	int GetCursorPosition();
 	void SetCursorPosition(int pos);
+	void SetStatusText(int pos);
 
 	wxStatusBar *GetStatusBar()					{ return m_pFrame->GetStatusBar(); }
 	void SetFrame(wxFrame *pFrame)				{ m_pFrame = pFrame; }

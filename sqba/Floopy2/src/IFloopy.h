@@ -45,7 +45,9 @@ typedef unsigned long			DWORD;	/// 32-bit unsigned integer.
 //////////////////////////////////////////////////////////////////////
 
 
-//#define EOF     (-1)	// defined in stdio
+#ifndef EOF
+#define EOF     (-1)	// defined in stdio
+#endif
 
 
 /*
@@ -337,6 +339,8 @@ public:
 
 	virtual SOUNDFORMAT *GetFormat()	{ return &m_format; }
 
+	virtual int GetPosition() { return EOF; }
+
 protected:
 	SOUNDFORMAT m_format;
 };
@@ -498,6 +502,11 @@ public:
 	 */
 	virtual bool GetBypass() { return m_bBypass; }
 	virtual void SetBypass(bool bBypass) { m_bBypass = bBypass; }
+
+	virtual int GetPosition()
+	{
+		return (NULL != m_source ? m_source->GetPosition() : EOF);
+	}
 
 protected:
 	IFloopySoundInput *m_source;

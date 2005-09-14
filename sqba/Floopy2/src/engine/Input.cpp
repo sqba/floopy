@@ -23,7 +23,7 @@ CInput::CInput(UpdateCallback func)
 	m_hinst		= NULL;
 	m_plugin	= NULL;
 	m_offset	= 0;
-	m_iCheck	= 23526; // some random number
+//	m_iCheck	= 23526; // some random number
 	m_callback	= func;
 	m_red = m_green = m_blue = 256;
 
@@ -193,104 +193,17 @@ IFloopySoundInput *CInput::GetSource()
 
 int CInput::Read(BYTE *data, int size)
 {
-	assert(size >= 0);
-
-	if( GetBypass() )
-	{
-		m_offset += size;
-		IFloopySoundInput *src = GetSource();
-		if( src )
-			src->Read( data, size );
+	if(m_nSamplesToBytes <= 0)
+		recalcVariables();
+	if(m_nSamplesToBytes <= 0)
 		return size;
-	}
+	assert(m_nSamplesToBytes > 0);
 
-	// Passed the end
-	if((m_nEndOffset > 0) && (m_offset >= m_nEndOffset) && !m_plugin->ReadSourceIfDisabled())
-		return EOF;
 
-	int endpos = m_offset + size;
 
-	if(isEngine())
-	{
-		// Avoid wasting processor time
-		if(endpos <= m_nStartOffset)
-		{
-			m_offset += size;
-			return size;
-		}
-	}
-
-	int offset = m_offset;
-	int readBytes = 0;
-	int len = 0;
-	IFloopySoundInput *src = m_plugin;
-	bool bEOF = false;
-
-	// Apply all due parameters
-	applyParamsAt( m_offset );
-
-//	assert( IFloopy::IsEnabled() );
-
-	while(((offset=m_timeline.GetNextOffset(offset)) < endpos) && (offset>0) && !bEOF)
-	{
-		// Fill small chunks between parameter changes
-		src = getSource();
-		//len = src ? src->Read(data, offset - m_offset) : offset-m_offset;
-		if(src)
-			len = src->Read(data, offset - m_offset);
-		else
-		{
-			// Skip this chunk
-			len = offset - m_offset;
-			MoveTo( (m_offset + len) / m_nSamplesToBytes );
-		}
-
-		if(EOF != len)
-		{
-			data += len;
-			readBytes += len;
-			m_offset += len;
-		}
-		else
-			bEOF = true;
-	
-		applyParamsAt( offset );
-	}
-
-	if( !bEOF )
-	{
-		// Fill the rest of the data
-		src = getSource();
-		if(src && (size>readBytes))
-		{
-			len = src->Read(data, size - readBytes);
-			if(EOF != len)
-				readBytes += len;
-		}
-		else
-		{
-			// Skip this chunk
-			len = size - readBytes;
-			MoveTo( (m_offset + len) / m_nSamplesToBytes );
-		}
-	}
-
-	m_offset = endpos;
-
-	if(readBytes == 0)
-	{
-		if(bEOF)
-		{
-			// Check if this is really the end (no more parameters)
-			//int nextOffset = GetNextOffset(m_offset);
-			//readBytes = nextOffset ? size : EOF;
-			readBytes = m_offset >= m_nEndOffset ? EOF : size;
-		}
-		else
-			readBytes = size;
-	}
-
-	return readBytes;
+	//return read1(data, size);	// Staaara
+	return read2(data, size);	// Nova
+	//return read3(data, size);	// Newest latest
 }
 
 /**
@@ -300,33 +213,30 @@ int CInput::Read(BYTE *data, int size)
 void CInput::MoveTo(int samples)
 {
 	if(m_nSamplesToBytes <= 0)
+		recalcVariables();
+	if(m_nSamplesToBytes <= 0)
 		return;
+	assert(m_nSamplesToBytes > 0);
+
+
 
 	m_offset = samples * m_nSamplesToBytes;
 
-	bool bMoved = applyPreviousParams( m_offset );
+	int offset = applyPreviousParams( m_offset );
 
-	if( isEngine() && m_nStartOffset > 0)
+	if( isEngine() && m_nStartOffset>0)
 	{
 		if( m_offset >= m_nStartOffset )
-			samples -= (m_nStartOffset / m_nSamplesToBytes);
+			offset -= (m_nStartOffset / m_nSamplesToBytes);
 		else
-			samples = 0;
+			offset = 0;
 	}
 
-	if(!bMoved && NULL != m_source)
-	{
-		if( GetBypass() )
-		{
-			IFloopySoundInput *src = GetSource();
-			if( src )
-				src->MoveTo( samples );
-		}
-		else
-		{
-			m_plugin->MoveTo( samples );
-		}
-	}
+	/*IFloopySoundInput *src = getSource();
+	if(	src	)
+		src->MoveTo( offset );*/
+
+	m_plugin->MoveTo( offset );
 }
 
 /**
@@ -348,10 +258,20 @@ int CInput::GetSize()
 	{
 		size = m_plugin->GetSize();
 
-		if((m_nEndOffset > 0) && (m_nSamplesToBytes > 0))
-			size = m_nEndOffset / m_nSamplesToBytes;
-		else if (m_nSamplesToBytes > 0)
-			size += m_nStartOffset / m_nSamplesToBytes;
+		if(m_nSamplesToBytes > 0)
+		{
+			if(m_nEndOffset > 0)
+				size = m_nEndOffset / m_nSamplesToBytes;
+			else
+				size += m_nStartOffset / m_nSamplesToBytes;
+		}
+
+		if(m_plugin->ReadSourceIfDisabled())
+		{
+			int srcSize = GetSourceSize();
+			if(srcSize > size)
+				size = srcSize;
+		}
 	}
 
 	size = size > 0 ? size : -1;
@@ -459,16 +379,12 @@ bool CInput::GetParamIndex(char *name, int *index)
 		return true;
 	else
 	{
-		int count = m_plugin->GetParamCount();
-		if(count > 0)
+		for(int i=0; i<m_plugin->GetParamCount(); i++)
 		{
-			for(int i=0; i<count; i++)
+			if(0==strcmpi(m_plugin->GetParamName(i), name))
 			{
-				if(0==strcmpi(m_plugin->GetParamName(i), name))
-				{
-					*index = i;
-					return true;
-				}
+				*index = i;
+				return true;
 			}
 		}
 	}
@@ -484,9 +400,7 @@ bool CInput::GetPropertyIndex(char *name, int *index)
 	{
 		for(int i=0; i<m_plugin->GetPropertyCount(); i++)
 		{
-			float propVal = 0.f;
-			char *tmp = m_plugin->GetPropertyName(i);
-			if( 0 == strcmpi(name, tmp) )
+			if(0==strcmpi(m_plugin->GetPropertyName(i), name))
 			{
 				*index = i;
 				return true;
@@ -539,6 +453,24 @@ void CInput::EnableAt(int offset, bool bEnable)
 	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
 	m_timeline.SetParamVal(offset * m_nSamplesToBytes, TIMELINE_PARAM_ENABLE, value);
 	recalcVariables();
+}
+
+void CInput::ClearAllParams()
+{
+	m_timeline.Clear();
+}
+
+bool CInput::GetBypass()
+{
+	if( isFilter() )
+		return ((IFloopySoundFilter*)m_plugin)->GetBypass();
+	return false;
+}
+
+void CInput::SetBypass(bool bBypass)
+{
+	if( isFilter() )
+		((IFloopySoundFilter*)m_plugin)->SetBypass(bBypass);
 }
 
 
@@ -613,24 +545,6 @@ void CInput::MoveAllParamsBetween(int start, int end, int offset)
 									offset*m_nSamplesToBytes);
 }
 
-void CInput::ClearAllParams()
-{
-	m_timeline.Clear();
-}
-
-bool CInput::GetBypass()
-{
-	if( isFilter() )
-		return ((IFloopySoundFilter*)m_plugin)->GetBypass();
-	return false;
-}
-
-void CInput::SetBypass(bool bBypass)
-{
-	if( isFilter() )
-		((IFloopySoundFilter*)m_plugin)->SetBypass(bBypass);
-}
-
 
 
 
@@ -693,9 +607,7 @@ int CInput::getSamplesToBytes()
  */
 void CInput::applyParamsAt(int offset)
 {
-	int sample = -1;
-	if(m_nSamplesToBytes)
-		sample = offset / m_nSamplesToBytes;
+	int sample = offset / m_nSamplesToBytes;
 
 	float value = 0.f;
 
@@ -706,32 +618,26 @@ void CInput::applyParamsAt(int offset)
 		IFloopy::Enable( bEnable );
 		m_plugin->Enable(bEnable);
 
-		if(m_callback && sample >= 0)
+		if(m_callback && sample>=0)
 			m_callback(this, sample, TIMELINE_PARAM_ENABLE);
 	}
 
 	if( m_timeline.GetParamVal(offset, TIMELINE_PARAM_MOVETO, &value) )
 	{
-		m_offset = (int)value * m_nSamplesToBytes;
+		m_plugin->MoveTo( (int)value );
 
-		m_plugin->MoveTo((int)value);
-
-		if(m_callback && sample >= 0)
+		if(m_callback && sample>=0)
 			m_callback(this, sample, TIMELINE_PARAM_MOVETO);
 	}
 
-	int count = GetParamCount();
-	if(count > 0)
+	for(int index=0; index<GetParamCount(); index++)
 	{
-		for(int index=0; index<count; index++)
+		if( m_timeline.GetParamVal(offset, index, &value) )
 		{
-			if( m_timeline.GetParamVal(offset, index, &value) )
-			{
-				m_plugin->SetParamVal(index, value);
+			m_plugin->SetParamVal(index, value);
 
-				if(m_callback && sample >= 0)
-					m_callback(this, sample, index);
-			}
+			if(m_callback && sample>=0)
+				m_callback(this, sample, index);
 		}
 	}
 }
@@ -741,10 +647,10 @@ void CInput::applyParamsAt(int offset)
  * @return true if MoveTo has been called.
  * Not the nicest way to tell MoveTo() not to move the source.
  */
-bool CInput::applyPreviousParams(int offset)
+int CInput::applyPreviousParams(int offset)
 {
 	float value = 0.f;
-	bool bMoved = false;
+	int result = offset / m_nSamplesToBytes;
 
 	int prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_ENABLE);
 
@@ -761,10 +667,7 @@ bool CInput::applyPreviousParams(int offset)
 	{
 		int newOffset =  (int)value;
 		int diff = (offset - prevOffset) / m_nSamplesToBytes;
-		int pos = newOffset + diff;
-		m_plugin->MoveTo( pos );
-//		m_offset = pos * m_nSamplesToBytes;
-		bMoved = true;
+		result = newOffset + diff;
 	}
 
 	int count = GetParamCount();
@@ -778,7 +681,7 @@ bool CInput::applyPreviousParams(int offset)
 		}
 	}
 
-	return bMoved;
+	return result;
 }
 
 /**
@@ -800,33 +703,47 @@ int CInput::getEndOffset()
 	int tmp = 0;
 	float value = 0.f;
 
-	float last = IsEnabled() ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED;
+	float status = IsEnabled() ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED;
 
 	do {
 		if( m_timeline.GetParamVal(tmp, TIMELINE_PARAM_ENABLE, &value) )
 		{
-			last = value;
+			status = value;
 			if((value == PARAM_VALUE_DISABLED) && (tmp > offset))
 				offset = tmp;
 		}
 	} while((tmp=m_timeline.GetNextOffset(tmp)) > 0);
 
 	// Proveriti da li se na kraju iskljucuje.
-	if((last==PARAM_VALUE_ENABLED) && m_plugin)
+	if((status==PARAM_VALUE_ENABLED) && m_plugin)
 	{
 		offset = m_nStartOffset + m_plugin->GetSize() * m_nSamplesToBytes;
+	}
+
+	if( ReadSourceIfDisabled() )
+	{
+		int srcSize = GetSourceSize();
+		if(srcSize > offset)
+			offset = srcSize;
 	}
 
 	return offset;
 }
 
+bool CInput::ReadSourceIfDisabled()
+{
+	if( isFilter() )
+		return m_plugin->ReadSourceIfDisabled();
+	return false;
+}
+
 IFloopySoundInput *CInput::getSource()
 {
-	if( isFilter() && ((IFloopySoundFilter*)m_plugin)->GetBypass() )
+	if( GetBypass() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	else if( IFloopy::IsEnabled() )
 		return m_plugin;
-	else if( isFilter() && m_plugin->ReadSourceIfDisabled() )
+	else if( ReadSourceIfDisabled() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	else
 		return NULL;
@@ -837,3 +754,372 @@ bool CInput::isFilter()
 	int type = m_plugin->GetType();
 	return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
 }
+
+bool CInput::isEngine()
+{
+	return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : false);
+}
+
+bool CInput::isEndOfTrack()
+{
+	return((m_nEndOffset>0) && (m_offset>=m_nEndOffset) && !ReadSourceIfDisabled());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Ova josh radi najbolje!
+// offset.xml, SoundCube_mono.xml, radio.xml
+int CInput::read2(BYTE *data, int size)
+{
+	int bytesRead	= 0;
+	int len			= 0;
+	bool bEOF		= false;
+	int endpos		= m_offset + size;
+	IFloopySoundInput *src = NULL;
+	
+	assert(size > 0);
+
+	if( isEndOfTrack() )
+		return EOF;
+
+	if(isEngine() && (endpos <= m_nStartOffset))
+	{
+		// Avoid wasting processor time
+		m_offset += size;
+		return size;
+	}
+
+	if( GetBypass() )
+	{
+		if( isEngine() || NULL == (src=GetSource()) )
+			bytesRead = skipChunk(size);
+		else
+		{
+			len = src->Read( data, size );
+			if(EOF != len)
+				m_offset += len;
+			bytesRead = len;
+		}
+	}
+	else
+	{
+		while(m_offset<endpos && bytesRead<size && !bEOF)
+		{
+			applyParamsAt( m_offset );
+
+			int chunkSize = size-bytesRead;
+
+			int nextOffset = m_timeline.GetNextOffset(m_offset);
+
+			if(nextOffset>0 && m_offset+chunkSize>nextOffset)
+				chunkSize = nextOffset - m_offset;
+
+			assert(bytesRead+chunkSize <= size);
+
+			if( NULL != (src=getSource()) )
+			{
+				len = src->Read(data, chunkSize);
+				bEOF = (len != chunkSize);
+			}
+			else // Skip this chunk
+			{
+				len = skipChunk( chunkSize );
+			}
+
+			if(EOF != len)
+			{
+				data += len;
+				bytesRead += len;
+				m_offset += len;
+			}
+			else
+			{
+				m_offset += chunkSize;
+			}
+
+			applyParamsAt( m_offset );
+		}
+	}
+
+	assert(bytesRead <= size);
+
+	if(bytesRead == 0)
+	{
+		if(bEOF)
+			bytesRead = m_offset>=m_nEndOffset ? EOF : size;
+		else
+			bytesRead = size;
+	}
+
+	return bytesRead;
+}
+
+
+
+int CInput::skipChunk(int size)
+{
+	int pos = m_plugin->GetPosition();
+	if(EOF == pos)
+		pos = 0;
+	m_plugin->MoveTo( pos + (size / m_nSamplesToBytes) );
+	return size;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+// ReadSourceIfDisabled.xml
+int CInput::read1(BYTE *data, int size)
+{
+	assert(size >= 0);
+
+	// Passed the end
+	if( isEndOfTrack() )
+		return EOF;
+
+	if( GetBypass() )
+	{
+		m_offset += size;
+		IFloopySoundInput *src = GetSource();
+		if( src )
+			src->Read( data, size );
+		//if(!IFloopy::IsEnabled() && m_plugin->ReadSourceIfDisabled())
+		//	MoveTo((m_offset + size) / m_nSamplesToBytes);
+		return size;
+	}
+
+	int endpos = m_offset + size;
+
+	if(isEngine() && (endpos <= m_nStartOffset))
+	{
+		// Avoid wasting processor time
+		m_offset += size;
+		return size;
+	}
+
+	int offset = m_offset;
+	int readBytes = 0;
+	int len = 0;
+	IFloopySoundInput *src = m_plugin;
+	bool bEOF = false;
+
+	applyParamsAt( m_offset );
+
+	while(((offset=m_timeline.GetNextOffset(offset)) < endpos) && (offset>0) && !bEOF)
+	{
+		src = getSource();
+		if(src)
+			len = src->Read(data, offset - m_offset);
+		else
+		{
+			// Skip this chunk
+			len = offset - m_offset;
+			MoveTo( offset / m_nSamplesToBytes );
+		}
+
+		if(EOF != len)
+		{
+			data += len;
+			readBytes += len;
+			m_offset += len;
+		}
+		else
+			bEOF = true;
+	
+		applyParamsAt( offset );
+	}
+
+	if( !bEOF && (size>readBytes) )
+	{
+		// Fill the rest of the data
+		if( NULL != (src=getSource()) )
+		{
+			len = src->Read(data, size - readBytes);
+			if(EOF != len)
+				readBytes += len;
+		}
+		else
+		{
+			// Skip this chunk
+			len = size - readBytes;
+			MoveTo( (m_offset + len) / m_nSamplesToBytes );
+		}
+	}
+
+	m_offset = endpos;
+
+	if(readBytes == 0)
+	{
+		if(bEOF)
+			readBytes = m_offset >= m_nEndOffset ? EOF : size;
+		else
+			readBytes = size;
+	}
+
+	return readBytes;
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+int CInput::readSilent(BYTE *data, int size)
+{
+	MoveTo( (m_offset + size) / m_nSamplesToBytes );
+	return size;
+}
+*/
+
+
+
+
+
+
+
+
+
+/*
+// offset.xml, SoundCube_mono.xml, radio.xml
+int CInput::read3(BYTE *data, int size)
+{
+	int bytesRead	= 0;
+	int len			= 0;
+	bool bEOF		= false;
+	int endpos		= m_offset + size;
+	IFloopySoundInput *src = NULL;
+
+	if( isEndOfTrack() )
+		return EOF;
+
+	if(isEngine() && (endpos <= m_nStartOffset))
+	{
+		// Avoid wasting processor time
+		m_offset += size;
+		return size;
+	}
+
+	if( GetBypass() )
+	{
+		if( isEngine() )
+		{
+			MoveTo((m_offset + size) / m_nSamplesToBytes);
+		}
+		else
+		{
+			if( NULL != (src = GetSource()) )
+			{
+				m_offset += size;
+				src->Read( data, size );
+			}
+			else
+				MoveTo((m_offset + size) / m_nSamplesToBytes);
+		}
+		return size;
+	}
+
+	int nextOffset = 0;
+
+	do {
+		int prevOffset = m_offset;
+		
+		applyParamsAt( m_offset );
+
+		int chunkSize = size-bytesRead;
+
+		nextOffset = m_timeline.GetNextOffset(m_offset);
+
+		if(nextOffset>0 && m_offset+chunkSize>=nextOffset)
+			chunkSize = nextOffset - m_offset;
+
+		if( NULL != (src=getSource()) )
+		{
+			len = src->Read(data, chunkSize);
+
+			if(len > 0)
+			{
+				m_offset += len;
+				data += len;
+				bytesRead += len;
+			}
+		}
+		else // Skip this chunk
+		{
+			MoveTo( (m_offset + chunkSize) / m_nSamplesToBytes );
+			len = chunkSize;
+			data += len;
+			bytesRead += len;
+		}
+	} while(len!=EOF && bytesRead<size && nextOffset>0);
+
+	if(bytesRead == 0)
+	{
+		if(len == EOF)
+			bytesRead = m_offset>=m_nEndOffset ? EOF : size;
+		else
+			bytesRead = size;
+
+		//bytesRead = isEndOfTrack() ? EOF : bytesRead;
+		//bytesRead = len==EOF ? EOF : bytesRead;
+	}
+	
+	return bytesRead;
+}
+*/

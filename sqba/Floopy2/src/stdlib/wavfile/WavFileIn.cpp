@@ -149,6 +149,13 @@ int CWavFileIn::Read(BYTE *data, int size)
 	return 0;
 }
 
+int CWavFileIn::GetPosition()
+{
+	if(NULL != m_pFile)
+		return (ftell(m_pFile) - m_nHeaderLength) / m_nSamplesToBytes;
+	return EOF;
+}
+
 void CWavFileIn::Close()
 {
 	if(NULL != m_pFile)

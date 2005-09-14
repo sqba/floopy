@@ -128,13 +128,15 @@ public:
 	bool GetBypass();
 	void SetBypass(bool bBypass);
 
+	bool ReadSourceIfDisabled();
+
+	int GetPosition()	{ return m_offset / m_nSamplesToBytes; }
+
 private:
-	inline bool isEngine() { return (m_source ? m_source->GetType() == TYPE_FLOOPY_SOUND_ENGINE : false); }
-//	inline bool isEngine() { return (m_source ? m_source->Is(TYPE_FLOOPY_SOUND_ENGINE) : false); }
-//	inline bool isTrack() { return (m_plugin ? m_plugin->GetType() == TYPE_FLOOPY_SOUND_TRACK : false); }
+	inline bool isEngine();
 	inline bool isFilter();
 	void applyParamsAt(int offset);
-	bool applyPreviousParams(int offset);
+	int applyPreviousParams(int offset);
 	int getSamplesToBytes();
 	int getStartOffset();
 	int getEndOffset();
@@ -142,13 +144,16 @@ private:
 	void recalcSourceVariables();
 	inline IFloopySoundInput *getSource();
 
-	//void _applyParamsUntil(int endoffset);
-//	SOUNDFORMAT *GetFormat();
-
+	bool isEndOfTrack();
+//	int readSilent(BYTE *data, int size);
+//	int read1(BYTE *data, int size);
+	int read2(BYTE *data, int size);
+//	int read3(BYTE *data, int size);
+	int skipChunk(int size);
 
 protected:
-	int m_iCheck;	/** Some random number, used to check if the
-						component was created by the same engine */
+//	int m_iCheck;	/** Some random number, used to check if the
+//						component was created by the same engine */
 
 private:
 	char m_szDisplayName[50];
