@@ -31,7 +31,6 @@ public:
 	//int GetSourceSize();
 	//bool Open(char *filename);
 	//int GetSize();
-	//int GetPos();
 	void Close();
 
 	bool ReadSourceIfDisabled()	{ return true; }
