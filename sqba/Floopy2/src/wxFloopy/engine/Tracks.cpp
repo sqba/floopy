@@ -1152,8 +1152,8 @@ void CTracks::SetCaretPos(int samples)
 	int height = this->GetHeight();
 	//int y = 0;
 
-	IFloopyObj *obj = GetSelectedObj();
-	if(obj && obj->IsKindOf(CLASSINFO(CTrack)))
+	IFloopyObj *obj = GetSelectedTrack();
+	if( obj )
 	{
 		CTrack *pTrack = (CTrack*)obj;
 		height = pTrack->GetHeight();
