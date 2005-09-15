@@ -373,7 +373,7 @@ char *CEngine::getPluginName(char *filename)
 		if(0 == strcmpi(ext, "wav"))
 			return "stdlib.wavfile";
 		if(0 == strcmpi(ext, "svg"))
-			return "svgfile";
+			return "svgfile.svgout";
 		if(0 == strcmpi(ext, "mp3"))
 			return "mp3file";
 	}
