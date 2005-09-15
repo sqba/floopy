@@ -210,7 +210,7 @@ void CRegionDisplay::loadPeaks()
 		short int min[2]={0}, max[2]={0};
 		short int prev[2] = {0};
 
-		for(int pos=0; pos<samples; pos+=channels)
+		for(int pos=channels; pos<samples; pos+=channels)
 		{
 			for(ch=0; ch<channels; ch++)
 			{
@@ -317,7 +317,7 @@ void CRegionDisplay::loadPeaksChunked()
 
 	m_pInput->MoveTo(start);				// Move to the beginning of the region
 
-	for(int pos=0; pos<=totalSamples; pos+=channels)
+	for(int pos=channels; pos<=totalSamples; pos+=channels)
 	{
 		// Load the chunk because we're at the
 		// beginning or the end of the chunk
