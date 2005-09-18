@@ -37,6 +37,17 @@ public:
 	void  SetParamVal(int, float);
 	bool  GetParamVal(int, float*);
 
+	int   GetPropertyCount();
+	//bool  GetPropertyIndex(char *name, int *index);
+	bool  GetPropertyVal(int index, float *value);
+	void  SetPropertyVal(int index, float value);
+	//float GetPropertyMin(int index);
+	//float GetPropertyMax(int index);
+	//float GetPropertyStep(int index);
+	char *GetPropertyName(int index);
+	char *GetPropertyDesc(int index);
+	//char *GetPropertyUnit(int index);
+
 	bool ReadSourceIfDisabled()		{ return true; }
 
 private:
@@ -44,6 +55,7 @@ private:
 
 private:
 	int m_left, m_right; // In percents
+	int m_masterLeft, m_masterRight; // Not affected by the timeline, in percents
 };
 
 #endif // !defined(AFX_VOLUME_H__05C04C12_471D_4FD8_BCD1_350030686D0F__INCLUDED_)

@@ -143,6 +143,8 @@ private:
 	void	recalcVariables();
 	void	recalcSourceVariables();
 	int		skipChunk(int);
+	void	moveTo1(int);
+	void	moveTo2(int);
 
 private:
 	char m_szDisplayName[50];

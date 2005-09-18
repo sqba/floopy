@@ -13,7 +13,7 @@
 
 CVolume::CVolume()
 {
-	m_left = m_right = 100;
+	m_masterLeft = m_masterRight = m_left = m_right = 100;
 }
 
 CVolume::~CVolume()
@@ -27,8 +27,11 @@ int CVolume::Read(BYTE *data, int size)
 	if(EOF == len)
 		return len;
 
-	if(m_left == 100 && m_right == 100)
+	if(m_masterLeft==100 && m_masterRight==100 && m_left==100 && m_right==100)
 		return len;
+
+//	if(m_left == 100 && m_right == 100)
+//		return len;
 
 	SOUNDFORMAT *fmt = GetFormat();
 	if(!fmt || !fmt->bitsPerSample || !fmt->channels)
@@ -41,15 +44,24 @@ int CVolume::Read(BYTE *data, int size)
 	{
 		int numsamples = len / (fmt->bitsPerSample/8);
 
-		float lpercent = (float)m_left / 100.f;
-		float rpercent = (float)m_right / 100.f;
+		float lpercentmast = (float)m_masterLeft / 100.f;
+		float rpercentmast = (float)m_masterRight / 100.f;
+
+		if(m_left != 100 || m_right != 100)
+		{
+			float lpercent = (float)m_left / 100.f;
+			float rpercent = (float)m_right / 100.f;
+
+			lpercentmast *= lpercent;
+			rpercentmast *= rpercent;
+		}
 
 		short int *sample = (short int*)data;
 
 		do {
 			for(int ch=0; ch<fmt->channels; ch++)
 			{
-				float percent = (ch == 0 ? lpercent : rpercent);
+				float percent = (ch == 0 ? lpercentmast : rpercentmast);
 				if(percent != 1.f && *sample != 0)
 				{
 					int tmp = (int)((float)*sample * percent);
@@ -146,4 +158,74 @@ int CVolume::getChannels()
 		return fmt->channels;
 	else
 		return 0;
+}
+
+
+int CVolume::GetPropertyCount()
+{
+	return 1;
+}
+
+bool CVolume::GetPropertyVal(int index, float *value)
+{
+	switch(index)
+	{
+	case 0:
+		*value = (float)(m_masterLeft > m_masterRight ? m_masterLeft : m_masterRight);
+		return true;
+	case 1:
+		*value = (float)m_masterLeft;
+		return true;
+	case 2:
+		*value = (float)(getChannels() == 2 ? m_masterRight : m_masterLeft);
+		return true;
+	}
+	return false;
+}
+
+void CVolume::SetPropertyVal(int index, float value)
+{
+	switch(index)
+	{
+	case 0:
+		m_masterLeft = m_masterRight = (int)value;
+		break;
+	case 1:
+		m_masterLeft = (int)value;
+		break;
+	case 2:
+		(getChannels() == 2 ? m_masterRight : m_masterLeft) = (int)value;
+		break;
+	default:
+		m_masterLeft = m_masterRight = (int)value;
+		break;
+	}
+}
+
+char *CVolume::GetPropertyName(int index)
+{
+	switch(index)
+	{
+	case 0:
+		return "Master";
+	case 1:
+		return "MasterLeft";
+	case 2:
+		return "MasterRight";
+	}
+	return NULL;
+}
+
+char *CVolume::GetPropertyDesc(int index)
+{
+	switch(index)
+	{
+	case 0:
+		return "Master volume";
+	case 1:
+		return "Master  volume left";
+	case 2:
+		return "Master  volume right";
+	}
+	return NULL;
 }

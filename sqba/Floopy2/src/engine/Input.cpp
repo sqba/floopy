@@ -272,24 +272,8 @@ int CInput::Read(BYTE *data, int size)
  */
 void CInput::MoveTo(int samples)
 {
-	assert(m_nSamplesToBytes > 0);
-
-	m_offset = samples * m_nSamplesToBytes;
-
-	int offset = applyPreviousParams( m_offset );
-
-	if( isEngine() && m_nStartOffset>0)
-	{
-		if( m_offset >= m_nStartOffset )
-			offset -= (m_nStartOffset / m_nSamplesToBytes);
-		else
-			offset = 0;
-	}
-
-	IFloopySoundInput *src = m_plugin;
-	if( GetBypass() )
-		src = ((IFloopySoundFilter*)m_plugin)->GetSource();
-	src->MoveTo( offset );
+	moveTo1( samples );
+	//moveTo2( samples );
 }
 
 /**
@@ -721,7 +705,6 @@ int CInput::applyPreviousParams(int offset)
 	int result		= offset / m_nSamplesToBytes;
 
 	prevOffset = m_timeline.GetPrevOffset(offset, TIMELINE_PARAM_ENABLE);
-
 	bResult = m_timeline.GetParamVal(prevOffset, TIMELINE_PARAM_ENABLE, &value);
 	if(bResult || prevOffset == 0)
 	{
@@ -828,5 +811,76 @@ bool CInput::isEngine()
 bool CInput::isEndOfTrack()
 {
 	return((m_nEndOffset>0) && (m_offset>=m_nEndOffset) && !ReadSourceIfDisabled());
+}
+
+
+
+
+void CInput::moveTo1(int samples)
+{
+	assert(m_nSamplesToBytes > 0);
+
+	m_offset = samples * m_nSamplesToBytes;
+
+	int offset = applyPreviousParams( m_offset );
+
+	if( isEngine() && m_nStartOffset>0)
+	{
+		if( m_offset >= m_nStartOffset )
+			offset -= (m_nStartOffset / m_nSamplesToBytes);
+		else
+			offset = 0;
+	}
+
+	IFloopySoundInput *src = m_plugin;
+	if( GetBypass() )
+		src = ((IFloopySoundFilter*)m_plugin)->GetSource();
+	src->MoveTo( offset );
+}
+
+// Ova funkcija se vraca na nulti sempl i odatle primeni
+// svaku promenu parametara.
+void CInput::moveTo2(int samples)
+{
+	float value		= 0.f;
+	int prevOffset	= 0;
+	bool bResult	= false;
+	int offset		= samples * m_nSamplesToBytes;
+
+
+	if(0 == samples)
+	{
+		m_plugin->MoveTo( 0 );
+		applyParamsAt( 0 );
+		return;
+	}
+
+	char *name = GetName();
+	if(offset>0 && 0==strcmpi(name, "stdlib.reverse"))
+	{
+		int d=1;
+	}
+
+	IFloopySoundInput *src = NULL;
+	m_plugin->MoveTo( 0 );
+	applyParamsAt( 0 );
+	int tmpOffset	= 0;
+	do
+	{
+		if(offset>prevOffset && NULL != (src = getSource()) )
+		{
+			int diff = (tmpOffset - prevOffset) / m_nSamplesToBytes;
+			src->MoveTo( src->GetPosition() + diff );
+		}
+		applyParamsAt( tmpOffset );
+		prevOffset = tmpOffset;
+		tmpOffset = m_timeline.GetNextOffset(tmpOffset);
+	} while (tmpOffset>0 && tmpOffset<offset);
+
+	if(offset>prevOffset && NULL != (src = getSource()))
+	{
+		int diff = (offset - prevOffset) / m_nSamplesToBytes;
+		src->MoveTo( src->GetPosition() + diff );
+	}
 }
 

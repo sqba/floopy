@@ -222,7 +222,8 @@ void CRegionDisplay::loadPeaks()
 					min[ch] = sample;
 			}
 
-			if(counter >= interval || (srcLen && pos%srcLen==0))
+			//if(counter >= interval || (srcLen && pos%srcLen==0))
+			if(counter >= interval || (srcLen && (pos&(srcLen-1))==0))
 			{
 				for(ch=0; ch<channels; ch++)
 				{
@@ -238,7 +239,8 @@ void CRegionDisplay::loadPeaks()
 							min[ch] = max[ch];
 
 						peak.prev = prev[ch];
-						peak.value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
+						//peak.value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
+						peak.value = ( (peakcount & 1) == 0 ? max[ch] : min[ch] );
 
 						prev[ch] = peak.value;
 					}
@@ -374,7 +376,9 @@ void CRegionDisplay::loadPeaksChunked()
 						min[ch] = max[ch];
 
 					peak.prev	= prev[ch];
-					SAMPLE val	= (peakcount%2) == 0 ? max[ch] : min[ch];
+					// Trick: x % a = x & (a - 1) for binary numbers
+					//SAMPLE val	= (peakcount%2) == 0 ? max[ch] : min[ch];
+					SAMPLE val	= (peakcount&1) == 0 ? max[ch] : min[ch];
 					peak.value	= val;
 
 					prev[ch]	= val;
