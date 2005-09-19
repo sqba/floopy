@@ -29,6 +29,8 @@ public:
 	SOUNDFORMAT *GetFormat();
 
 private:
+	BYTE *m_pBuffer;
+	int m_nBuffSize;
 };
 
 #endif // !defined(AFX_MONO2STEREO_H__FA02682D_F5C0_4929_97AE_6F64D57BF411__INCLUDED_)

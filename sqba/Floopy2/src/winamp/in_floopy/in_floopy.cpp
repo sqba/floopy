@@ -16,14 +16,16 @@
 #define WM_WA_MPEG_EOF WM_USER+2
 
 // raw configuration
-#define NCH 2
-#define SAMPLERATE 44100
-#define BPS 16
+#define NCH	2
+#define SAMPLERATE	44100
+#define BPS			16
+
+#define BUFF_SIZE	576*NCH*(BPS/8)
 
 //#define BUFF_SIZE	2048
 extern In_Module mod;
 CEngine engine(mod.hDllInstance);
-char sample_buffer[576*NCH*(BPS/8)*2]; // sample buffer
+char sample_buffer[BUFF_SIZE*2]; // sample buffer
 //char lastfn[MAX_PATH]; // currently playing file (used for getting info on the current file)
 int decode_pos_ms; // current decoding position, in milliseconds
 int paused; // are we paused?
@@ -267,7 +269,7 @@ In_Module mod =
 int get_576_samples(char *buf)
 {
 	//memset(buf, 0, sizeof(buf));
-	return engine.Read((BYTE*)buf, 576*NCH*(BPS/8));
+	return engine.Read((BYTE*)buf, BUFF_SIZE);
 }
 */
 
@@ -298,18 +300,20 @@ DWORD WINAPI __stdcall PlayThread(void *b)
 			}
 			Sleep(10);
 		}
-		else if (mod.outMod->CanWrite() >= ((576*NCH*(BPS/8))<<(mod.dsp_isactive()?1:0)))
+		else if (mod.outMod->CanWrite() >= ((BUFF_SIZE)<<(mod.dsp_isactive()?1:0)))
 		{	
-			int l=576*NCH*(BPS/8);
+			int l=BUFF_SIZE;
 			//l=get_576_samples(sample_buffer);
 			memset(sample_buffer, 0, sizeof(sample_buffer));
-			l = engine.Read((BYTE*)sample_buffer, 576*NCH*(BPS/8));
+			l = engine.Read((BYTE*)sample_buffer, BUFF_SIZE);
 			if (l == EOF) 
 			{
 				done=1;
 			}
 			else
 			{
+				if(l==0)
+					l = BUFF_SIZE;
 				mod.SAAddPCMData((char *)sample_buffer,NCH,BPS,decode_pos_ms);
 				mod.VSAAddPCMData((char *)sample_buffer,NCH,BPS,decode_pos_ms);
 				decode_pos_ms+=(576*1000)/SAMPLERATE;

@@ -2,10 +2,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "engine.h"
-#include "storage.h"
 #include <assert.h>
 #include <direct.h>
+
+#include "engine.h"
+#include "storage.h"
+#include "input.h"
+#include "output.h"
 
 #define ERR_STR_FILENOTFOUND	"File '%s' not found.\0"
 
@@ -18,10 +21,10 @@ CEngine::CEngine(HMODULE hModule)
 	m_hModule = hModule;
 
 	m_pFirst = m_pLast = NULL;
-	memset(m_szDisplayname, 0, sizeof(m_szDisplayname));
-	memset(m_szLastError, 0, sizeof(m_szLastError));
-	memset(m_szPath, 0, sizeof(m_szPath));
-	memset(m_szFileName, 0, sizeof(m_szFileName));
+	memset(m_szDisplayname,	0, sizeof(m_szDisplayname));
+	memset(m_szLastError,	0, sizeof(m_szLastError));
+	memset(m_szPath,		0, sizeof(m_szPath));
+	memset(m_szFileName,	0, sizeof(m_szFileName));
 
 	m_callback = NULL;
 

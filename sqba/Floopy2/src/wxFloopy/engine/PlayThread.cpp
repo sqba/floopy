@@ -80,6 +80,9 @@ void *CPlayThread::Entry()
 			engine->MoveTo( m_iPosition );
 		}
 
+		if(len == 0)
+			len = bufflen;
+
 		m_iPosition += len / stb;
 		m_pOutput->Write( buff, len );
 		engine->EmptyBuffer( buff, bufflen );

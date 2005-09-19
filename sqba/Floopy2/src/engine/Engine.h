@@ -12,9 +12,10 @@
 #include <stdio.h>
 #include <time.h>
 #include "../ifloopy.h"
-#include "input.h"
-#include "output.h"
 #include "timeline.h"
+
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#include <windows.h>
 
 #define NAME_LEN	50
 
