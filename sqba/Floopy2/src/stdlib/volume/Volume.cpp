@@ -24,7 +24,8 @@ CVolume::~CVolume()
 int CVolume::Read(BYTE *data, int size)
 {
 	int len = IFloopySoundFilter::Read(data, size);
-	if(EOF == len)
+	//if(EOF == len)
+	if(len <= 0)
 		return len;
 
 	if(m_masterLeft==100 && m_masterRight==100 && m_left==100 && m_right==100)
