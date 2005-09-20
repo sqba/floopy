@@ -22,16 +22,17 @@ CInput::CInput(UpdateCallback func)
 {
 	m_hinst		= NULL;
 	m_plugin	= NULL;
-	m_offset	= 0;
 	m_callback	= func;
 
 	m_red = m_green = m_blue = 256;
 
-	memset(m_szDisplayName, 0, 50);
-	memset(m_szLastError, 0, sizeof(m_szLastError));
-	memset(m_szObjPath,   0, sizeof(m_szObjPath));
+	memset(m_szDisplayName,	0, 50);
+	memset(m_szLastError,	0, sizeof(m_szLastError));
+	memset(m_szObjPath,		0, sizeof(m_szObjPath));
 	
-	m_nStartOffset = m_nEndOffset = m_nSamplesToBytes = 0;
+	m_offset = m_nStartOffset = m_nEndOffset = m_nSamplesToBytes = 0;
+
+	m_bFadeEdges = true;
 }
 
 CInput::~CInput()
@@ -157,7 +158,8 @@ bool CInput::Open(char *filename)
 
 void CInput::Close()
 {
-	m_plugin->Close();
+	if(NULL != m_plugin)
+		m_plugin->Close();
 }
 
 bool CInput::SetSource(IFloopySoundInput *src)
@@ -172,15 +174,12 @@ bool CInput::SetSource(IFloopySoundInput *src)
 			recalcVariables();
 	}
 
-	//if(m_callback && result)
-	//	m_callback(this, m_offset/getSamplesToBytes(), -333);
-
 	return result;
 }
 
 IFloopySoundInput *CInput::GetSource()
 {
-	if(m_plugin && isFilter())
+	if( isFilter() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	return NULL;
 }
@@ -193,8 +192,6 @@ IFloopySoundInput *CInput::GetSource()
  */
 int CInput::Read(BYTE *data, int size)
 {
-	//bool bTrack = (TYPE_FLOOPY_SOUND_TRACK==m_plugin->GetType());
-
 	assert(m_nSamplesToBytes > 0);
 	assert(size > 0);
 
@@ -213,7 +210,7 @@ int CInput::Read(BYTE *data, int size)
 		if( isEngine() || NULL == (src=GetSource()) )
 		{
 			skipChunk(size);
-			result = size;
+			result = 0;
 			m_offset += size;
 		}
 		else
@@ -226,34 +223,29 @@ int CInput::Read(BYTE *data, int size)
 	else if(isEngine() && endpos<=m_nStartOffset)
 	{
 		m_offset += size;
-		result = size;
+		result = 0;
 	}
 	else
 	{
-		int bytesRead = 0;
-		while(m_offset<endpos && bytesRead<size && len!=EOF)
+		while(m_offset<endpos && result<size && len!=EOF)
 		{
 			applyParamsAt( m_offset );
 
-			int chunkSize	= size - bytesRead;
+			int chunkSize	= size - result;
 			int nextOffset	= m_timeline.GetNextOffset(m_offset);
 
 			if(nextOffset>0 && m_offset+chunkSize>nextOffset)
 				chunkSize = nextOffset - m_offset;
 
 			if( NULL != (src=getSource()) )
-			{
 				len = src->Read(data, chunkSize);
-				if(EOF != len)
-					result = bytesRead + len;
-			}
 			else
 				len = skipChunk( chunkSize );
 
 			if(EOF != len)
 			{
-				data		+= len;
-				bytesRead	+= len;
+				data	+= len;
+				result	+= len;
 			}
 
 			m_offset += chunkSize;
@@ -262,6 +254,7 @@ int CInput::Read(BYTE *data, int size)
 
 	if(result==0 && len==EOF)
 		result = EOF;
+
 	return result;
 }
 
@@ -352,11 +345,8 @@ int CInput::GetPrevOffset(int offset)
  */
 void CInput::Enable(bool bEnable)
 {
-	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
-	m_timeline.SetParamVal(m_offset, TIMELINE_PARAM_ENABLE, value);
-
+	m_timeline.EnableAt(m_offset, bEnable);
 	IFloopy::Enable(bEnable);
-
 	recalcVariables();
 }
 
@@ -365,13 +355,18 @@ void CInput::Enable(bool bEnable)
  */
 bool CInput::IsEnabled()
 {
+	bool result = false;
 	float value = PARAM_VALUE_ENABLED;
 	if(m_timeline.GetParamVal(m_offset, TIMELINE_PARAM_ENABLE, &value))
 	{
-		bool bEnabled = (PARAM_VALUE_DISABLED != value);
-		return bEnabled;
+		result = (PARAM_VALUE_DISABLED != value);
 	}
-	return false;
+	else
+	{
+		int prev = m_timeline.GetParamVal(m_offset, TIMELINE_PARAM_ENABLE, &value);
+		result = (PARAM_VALUE_DISABLED != value);
+	}
+	return result;
 }
 
 bool CInput::GetParamVal(int index, float *value)
@@ -445,7 +440,7 @@ bool CInput::GetPropertyIndex(char *name, int *index)
 
 bool CInput::GetParamAt(int offset, int index, float *value)
 {
-	return m_timeline.GetParamVal(offset * m_nSamplesToBytes, index, value);
+	return m_timeline.GetParamVal(offset*m_nSamplesToBytes, index, value);
 }
 
 void CInput::SetParamAt(int offset, int index, float value)
@@ -488,8 +483,7 @@ bool CInput::MoveParam(int offset, int index, float value, int newOffset)
 void CInput::EnableAt(int offset, bool bEnable)
 {
 	offset *= m_nSamplesToBytes;
-	float value = (bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED);
-	m_timeline.SetParamVal(offset, TIMELINE_PARAM_ENABLE, value);
+	m_timeline.EnableAt(offset, bEnable);
 	recalcVariables();
 }
 
@@ -543,26 +537,27 @@ void CInput::SetColor(UINT r, UINT g, UINT b)
 
 int CInput::AddSource(IFloopySoundInput *src)
 {
-	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
+	if( isMixer() )
 		return ((IFloopySoundMixer*)m_plugin)->AddSource(src);
-	else
-	{
-		m_plugin = src;
+	else if( SetSource(src) )
 		return 0;
-	}
+	else
+		return -1;
 }
 
 IFloopySoundInput *CInput::GetSource(int index)
 {
-	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
+	if( isMixer() )
 		return ((IFloopySoundMixer*)m_plugin)->GetSource(index);
+	else if( isFilter() )
+		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	else
-		return m_plugin;
+		return false;
 }
 
 bool CInput::RemoveSource(IFloopySoundInput *src)
 {
-	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
+	if( isMixer() )
 		return ((IFloopySoundMixer*)m_plugin)->RemoveSource(src);
 	else
 		return false;
@@ -570,17 +565,19 @@ bool CInput::RemoveSource(IFloopySoundInput *src)
 
 int CInput::GetInputCount()
 {
-	if(m_plugin && (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER))
+	if( isMixer() )
 		return ((IFloopySoundMixer*)m_plugin)->GetInputCount();
+	else if(NULL!=GetSource())
+		return 1;
 	else
-		return(m_plugin ? 1 : 0);
+		return 0;
 }
 
-void CInput::MoveAllParamsBetween(int start, int end, int offset)
+bool CInput::MoveAllParamsBetween(int start, int end, int offset)
 {
-	m_timeline.MoveAllParamsBetween(start*m_nSamplesToBytes,
-									end*m_nSamplesToBytes,
-									offset*m_nSamplesToBytes);
+	return m_timeline.MoveAllParamsBetween( start*m_nSamplesToBytes,
+											end*m_nSamplesToBytes,
+											offset*m_nSamplesToBytes );
 }
 
 void CInput::SetDisplayName(char *name, int len)
@@ -591,9 +588,7 @@ void CInput::SetDisplayName(char *name, int len)
 
 bool CInput::ReadSourceIfDisabled()
 {
-	if( isFilter() )
-		return m_plugin->ReadSourceIfDisabled();
-	return false;
+	return (isFilter() ? m_plugin->ReadSourceIfDisabled() : false);
 }
 
 
@@ -627,14 +622,10 @@ void CInput::recalcSourceVariables()
 		{
 			IFloopySoundMixer *mixer = (IFloopySoundMixer*)src;
 			for(int i=0; i<mixer->GetInputCount(); i++)
-			{
 				mixer->GetSource(i)->Reset();
-				//mixer->GetSource(i)->GetSize();
-			}
 		}
 		else
 			src->Reset();
-			//src->GetSize();
 	}
 }
 
@@ -804,6 +795,13 @@ bool CInput::isEngine()
 	return(m_source?m_source->GetType()==TYPE_FLOOPY_SOUND_ENGINE:false);
 }
 
+bool CInput::isMixer()
+{
+	if(NULL != m_plugin)
+		return (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER);
+	return false;
+}
+
 bool CInput::isEndOfTrack()
 {
 	return(m_nEndOffset>0 && m_offset>=m_nEndOffset && !ReadSourceIfDisabled());
@@ -812,6 +810,10 @@ bool CInput::isEndOfTrack()
 
 
 
+// Ova funkcija se vraca na prethodnu promenu parametra,
+// primeni je i, ako je to bio poziv MoveTo onda
+// skache na razliku izmedju trazenog ofseta i ovog
+// poziva, a ako ne onda samo skache na trazeni ofset.
 void CInput::moveTo1(int samples)
 {
 	assert(m_nSamplesToBytes > 0);
@@ -838,36 +840,33 @@ void CInput::moveTo1(int samples)
 // svaku promenu parametara.
 void CInput::moveTo2(int samples)
 {
-	float value		= 0.f;
-	int prevOffset	= 0;
-	bool bResult	= false;
-	int offset		= samples * m_nSamplesToBytes;
-	int tmpOffset	= 0;
-	IFloopySoundInput *src = NULL;
+	int endOffset = samples * m_nSamplesToBytes;
+	int chunkSize = endOffset;
+
+	m_offset = 0;
 
 	m_plugin->MoveTo( 0 );
 	applyParamsAt( 0 );
 
-	if(0 == samples)
-		return;
-
-	do
+	while(m_offset<endOffset)
 	{
-		if(offset>prevOffset && NULL != (src = getSource()) )
-		{
-			int diff = (tmpOffset - prevOffset) / m_nSamplesToBytes;
-			if(diff > 0)
-				src->MoveTo( src->GetPosition() + diff );
-		}
-		applyParamsAt( tmpOffset );
-		prevOffset = tmpOffset;
-		tmpOffset = m_timeline.GetNextOffset(tmpOffset);
-	} while (tmpOffset>0 && tmpOffset<offset);
+		int nextOffset = m_timeline.GetNextOffset(m_offset);
 
-	if(offset>prevOffset && NULL != (src = getSource()))
-	{
-		int diff = (offset - prevOffset) / m_nSamplesToBytes;
-		if(diff > 0)
-			src->MoveTo( src->GetPosition() + diff );
+		if(nextOffset>0 && m_offset+chunkSize>nextOffset)
+			chunkSize = nextOffset - m_offset;
+
+		if(m_offset+chunkSize>endOffset)
+			chunkSize = endOffset - m_offset;
+
+		IFloopySoundInput *src = getSource();
+		if(NULL != src)
+			src->MoveTo( src->GetPosition() + chunkSize);
+
+		m_offset += chunkSize;
+		
+		applyParamsAt( m_offset );
 	}
+
+	m_offset = endOffset;
+
 }

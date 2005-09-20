@@ -1,22 +1,6 @@
-// Reverse.cpp: implementation of the CReverse class.
-//
-//////////////////////////////////////////////////////////////////////
-
-#include <stdio.h>
 #include <assert.h>
-
 #include "Reverse.h"
 
-
-
-
-
-// Zasto se periodicno pojavljuju nule koje izazivaju pucketanje?
-
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 CReverse::CReverse()
 {
@@ -50,8 +34,6 @@ int CReverse::Read(BYTE *data, int size)
 		m_pBuffer = new BYTE[m_nBuffSize];
 	}
 
-	//memset(m_pBuffer, 0, m_nBuffSize);
-	//memcpy(m_pBuffer, data, size);
 	GetEngine()->EmptyBuffer(m_pBuffer, m_nBuffSize);
 
 	int buffsize = size;
@@ -76,7 +58,7 @@ int CReverse::Read(BYTE *data, int size)
 		m_nPosition -= len / m_nSamplesToBytes;
 	}
 
-//	assert(len == size);
+	//assert(len == size);
 
 	return len;
 }
@@ -99,8 +81,6 @@ void CReverse::reverse(BYTE *data, int size)
 				*(out++) = *(tmp++);
 			tmp -= fmt->channels;
 		} while(pos -= fmt->channels);
-
-		//assert(pos == pos1);
 	}
 }
 
@@ -141,17 +121,3 @@ bool CReverse::SetSource(IFloopySoundInput *src)
 	m_nSamplesToBytes = (fmt->bitsPerSample / 8) * fmt->channels;
 	return IFloopySoundFilter::SetSource(src);
 }
-
-/*
-void CReverse::Enable(bool bEnabled)
-{
-	int size = IFloopySoundFilter::GetSize();
-	if(bEnabled)
-		m_nPosition = size;
-	else
-		m_nPosition = 0;
-	IFloopySoundFilter::MoveTo(m_nPosition);
-
-	IFloopySoundFilter::Enable(bEnabled);
-}
-*/

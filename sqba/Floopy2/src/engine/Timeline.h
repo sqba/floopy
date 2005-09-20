@@ -9,9 +9,6 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <stdio.h>
-#include <memory.h>
-
 #include "../ifloopy.h"
 
 
@@ -42,9 +39,9 @@ public:
 	int GetPrevOffset(int offset, int index);
 	int GetStartOffset();
 
-	void MoveAllParamsBetween(int start, int end, int offset);
+	bool MoveAllParamsBetween(int start, int end, int offset);
 
-//	void dump(FILE *fp);
+	void EnableAt(int offset, bool bEnable);
 
 private:
 	tParam *getParam(int offset, int index);

@@ -106,7 +106,7 @@ public:
 	bool ResetParamAt(int, int, float);
 	void EnableAt(int, bool);
 	bool MoveParam(int, int, float, int);
-	void MoveAllParamsBetween(int, int, int);
+	bool MoveAllParamsBetween(int, int, int);
 
 
 	bool GetLastError(char*, int);
@@ -134,6 +134,7 @@ private:
 	inline bool isEngine();
 	inline bool isFilter();
 	inline bool isEndOfTrack();
+	inline bool isMixer();
 
 	void	applyParamsAt(int);
 	int		applyPreviousParams(int);
@@ -154,15 +155,17 @@ private:
 
 	UINT m_red, m_green, m_blue;
 
-	UpdateCallback		m_callback;	/* Pointer to the function called after every parameter change */
+	UpdateCallback		m_callback;	/** Pointer to the function called after every parameter change */
 
-	int					m_offset;	/* Current position, in bytes */
-	HINSTANCE			m_hinst;	/* Windows specific, handle to the DLL containing plugin code */
-	IFloopySoundInput*	m_plugin;	/* Pointer to the plugin */
-	CTimeline			m_timeline;	/* Array of parameter changes and their offsets */
+	int					m_offset;	/** Current position, in bytes */
+	HINSTANCE			m_hinst;	/** Windows specific, handle to the DLL containing plugin code */
+	IFloopySoundInput*	m_plugin;	/** Pointer to the plugin */
+	CTimeline			m_timeline;	/** Array of parameter changes and their offsets */
 
 	/// Optimization variables
 	int m_nStartOffset, m_nEndOffset, m_nSamplesToBytes;
+
+	bool m_bFadeEdges;				/** Fade edges when enabling/disabling to prevent clicks */
 };
 
 #endif // !defined(AFX_INPUT_H__0D3139FE_D3F2_4CAF_A696_AB92E4A51331__INCLUDED_)
