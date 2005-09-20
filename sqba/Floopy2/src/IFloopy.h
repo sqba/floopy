@@ -242,9 +242,9 @@ public:
 	 * @param end end offset, in samples.
 	 * @param offset number of samples. If -1 then the parameters are removed.
 	 */
-	virtual void MoveAllParamsBetween(int start, int end, int offset) {}
+	virtual bool MoveAllParamsBetween(int start, int end, int offset)			{ return false; }
 
-	virtual bool MoveParam(int offset, int index, float value, int newoffset) { return false; }
+	virtual bool MoveParam(int offset, int index, float value, int newoffset)	{ return false; }
 };
 
 

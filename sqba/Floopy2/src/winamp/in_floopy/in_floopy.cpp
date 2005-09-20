@@ -314,11 +314,15 @@ DWORD WINAPI __stdcall PlayThread(void *b)
 			{
 				if(l==0)
 					l = BUFF_SIZE;
-				mod.SAAddPCMData((char *)sample_buffer,NCH,BPS,decode_pos_ms);
-				mod.VSAAddPCMData((char *)sample_buffer,NCH,BPS,decode_pos_ms);
-				decode_pos_ms+=(576*1000)/SAMPLERATE;
+
+				int t=mod.outMod->GetWrittenTime();
+				mod.SAAddPCMData((char *)sample_buffer,NCH,BPS,t);
+				mod.VSAAddPCMData((char *)sample_buffer,NCH,BPS,t);
+
+				//decode_pos_ms+=(576*1000)/SAMPLERATE;
 				if (mod.dsp_isactive())
 					l=mod.dsp_dosamples((short *)sample_buffer,l/NCH/(BPS/8),BPS,NCH,SAMPLERATE)*(NCH*(BPS/8));
+				
 				mod.outMod->Write(sample_buffer,l);
 			}
 		}
