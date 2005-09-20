@@ -17,7 +17,7 @@
 class CEngine : public IFloopySoundEngine
 {
 public:
-	CEngine(HINSTANCE hDLLInstance);
+	CEngine();
 	virtual ~CEngine();
 
 	char *GetName()			{ return m_plugin->GetName(); }
@@ -46,7 +46,7 @@ public:
 	char *GetDisplayName() { return (m_plugin ? m_plugin->GetDisplayName() : NULL); }
 	void SetDisplayName(char *name, int len) { m_plugin->SetDisplayName(name, len); }
 
-	void init();
+	bool init(HINSTANCE hDLLInstance);
 
 	char *GetLastErrorDesc() { return m_szLastError; }
 
@@ -55,7 +55,8 @@ private:
 	IFloopySoundEngine *m_plugin;
 	char m_path[MAX_PATH];
 	char m_szLastError[100];
-	HINSTANCE m_hDLLInstance;
+//	HINSTANCE m_hDLLInstance;
+//	HWND m_hMainWindow;
 };
 
 #endif // !defined(AFX_ENGINE_H__2971634E_ED26_4A50_ABC1_123ADF851EA5__INCLUDED_)

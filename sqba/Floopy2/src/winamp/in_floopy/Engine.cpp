@@ -18,9 +18,8 @@ typedef IFloopySoundEngine* (*CreateProc)(HMODULE);
 #define PLUG_EXT ".dll"
 
 
-CEngine::CEngine(HINSTANCE hDLLInstance)
+CEngine::CEngine()
 {
-	m_hDLLInstance = hDLLInstance;
 	m_hModule = NULL;
 	m_plugin = NULL;
 	memset(m_path, 0, MAX_PATH);
@@ -88,22 +87,36 @@ bool CEngine::Create(char *plugin)
 	return false;
 }
 
-void CEngine::init()
+bool CEngine::init(HINSTANCE hDLLInstance)
 {
-	//char path[MAX_PATH] = {0};
-	//getcwd(path, MAX_PATH);
-	//MessageBox(NULL, path, "path", MB_OK);
-	//GetModuleFileName(GetModuleHandle(NULL), m_path, MAX_PATH);
-	//char *tmp = strrchr(m_path, '\\');
-	//if(tmp)
-	//	*(tmp+1) = '\0';
-	//MessageBox(NULL, m_path, "path", MB_OK);
-	FILE *fp = fopen(".\\plugins\\in_floopy.cfg", "r");
-	if(fp)
+	char path[MAX_PATH] = {0};
+
+	if(GetModuleFileName(hDLLInstance, path, MAX_PATH))
 	{
-		fscanf(fp, "%s", m_path);
-		if(m_path[strlen(m_path)-1] != '\\')
-			m_path[strlen(m_path)] = '\\';
-		fclose(fp);
+		char *tmp = strrchr(path, '\\');
+		if(NULL == tmp)
+			tmp = path;
+		else
+			--tmp;
+
+		strcpy(tmp+1, "\\in_floopy.cfg");
+
+		FILE *fp = fopen(path, "r");
+		if(fp)
+		{
+			fscanf(fp, "%s", m_path);
+			if(m_path[strlen(m_path)-1] != '\\')
+				m_path[strlen(m_path)] = '\\';
+			fclose(fp);
+			return true;
+		}
+		else
+		{
+			char tmp[MAX_PATH+20] = {0};
+			sprintf(tmp, "File not found: '%s'", path);
+			MessageBox(NULL, tmp, "in_floopy", MB_OK|MB_ICONEXCLAMATION);
+		}
 	}
+
+	return false;
 }

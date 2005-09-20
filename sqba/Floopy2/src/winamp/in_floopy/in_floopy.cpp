@@ -24,7 +24,7 @@
 
 //#define BUFF_SIZE	2048
 extern In_Module mod;
-CEngine engine(mod.hDllInstance);
+CEngine engine;
 char sample_buffer[BUFF_SIZE*2]; // sample buffer
 //char lastfn[MAX_PATH]; // currently playing file (used for getting info on the current file)
 int decode_pos_ms; // current decoding position, in milliseconds
@@ -44,7 +44,6 @@ extern "C" {
 #endif
 __declspec( dllexport ) In_Module * winampGetInModule2()
 {
-	engine.init();
 	mod.FileExtensions = "xml\0Floopy XML files\0";
 	return &mod;
 }
@@ -72,7 +71,10 @@ void about(HWND hwndParent)
 	MessageBox(hwndParent,"Floopy Player\n  Esqban S. Simon","About Floopy Player",MB_OK);
 }
 
-void init() { }
+void init()
+{
+//	engine.init( mod.hMainWindow );
+}
 
 void quit() { }
 
@@ -86,6 +88,9 @@ int isourfile(char *fn)
 
 int play(char *fn)
 { 
+	if(! engine.init( mod.hDllInstance ) )
+		return 0;
+
 	int maxlatency;
 	unsigned long thread_id;
 	
