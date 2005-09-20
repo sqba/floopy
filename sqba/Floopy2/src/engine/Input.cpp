@@ -836,8 +836,9 @@ void CInput::moveTo1(int samples)
 	src->MoveTo( offset );
 }
 
-// Ova funkcija se vraca na nulti sempl i odatle primeni
-// svaku promenu parametara.
+// Ova funkcija se vraca na nulti sempl i odatle
+// primeni svaku promenu parametara.
+// Samo shto josh ne radi!
 void CInput::moveTo2(int samples)
 {
 	int endOffset = samples * m_nSamplesToBytes;
