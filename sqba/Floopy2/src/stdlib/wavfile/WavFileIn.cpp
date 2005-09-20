@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <string.h>
+
 #include "wavfilein.h"
 
 
@@ -163,4 +165,11 @@ void CWavFileIn::Close()
 		fclose(m_pFile);
 		m_pFile = NULL;
 	}
+}
+
+bool CWavFileIn::IsEOF()
+{
+	if(NULL != m_pFile)
+		return( 0 != feof(m_pFile) );
+	return true;
 }

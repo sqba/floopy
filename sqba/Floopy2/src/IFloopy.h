@@ -415,7 +415,9 @@ public:
 	 * if this component is disabled. If false then nothing
 	 * will be read.
 	 */
-	virtual bool ReadSourceIfDisabled()	{ return true; }
+	virtual bool ReadSourceIfDisabled()		{ return true; }
+
+	virtual bool IsEOF()					{ return true; }
 
 	// Utility
 	/*int SamplesToBytes(int samples)
@@ -508,6 +510,11 @@ public:
 	 */
 	virtual bool GetBypass() { return m_bBypass; }
 	virtual void SetBypass(bool bBypass) { m_bBypass = bBypass; }
+
+	virtual bool IsEOF()
+	{
+		return (NULL != m_source ? m_source->IsEOF() : true);
+	}
 
 protected:
 	IFloopySoundInput *m_source;
