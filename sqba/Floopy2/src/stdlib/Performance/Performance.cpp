@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <assert.h>
+
 #include "Performance.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -35,52 +37,32 @@ int CPerformance::Read(BYTE *data, int size)
 
 void CPerformance::Close()
 {
-	//printResults();
+	IFloopySoundFilter::Close();
 }
 
-
-
-
-void CPerformance::formatBytes(int bytes, char *str)
+void CPerformance::MoveTo(int samples)
 {
-	if(bytes < 1024)
-		sprintf(str, "%d b", bytes);
-	else if(bytes > 1024 * 1024)
-		sprintf(str, "%.2f Mb", (float)bytes / (1024.f*1024.f));
-	else
-		sprintf(str, "%.2f Kb", (float)bytes / 1024.f);
+	IFloopySoundFilter::MoveTo( samples );
 }
 
-void CPerformance::printResults()
+void CPerformance::Reset()
 {
-	SOUNDFORMAT *fmt = GetFormat();
-	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	int samplesToBytes = (fmt->bitsPerSample / 8) * fmt->channels;
+	IFloopySoundFilter::Reset();
+}
 
-	printf("%s (%s)\n", GetName(), GetDisplayName());
+int CPerformance::GetSourceSize()
+{
+	return IFloopySoundFilter::GetSourceSize();
+}
 
-	float avgFrameTimeMs  = (float)m_ReadTime / (float)m_nFrameCount;
-	float avgFrameBytes   = (float)m_nFrameSize / (float)m_nFrameCount;
-	float avgFrameSamples = avgFrameBytes / (float)samplesToBytes;
-	float avgFrameTimeSec = (float)avgFrameTimeMs / 1000.f;
+bool CPerformance::Open(char *filename)
+{
+	return IFloopySoundFilter::Open( filename );
+}
 
-	printf(" Average frame time: %f ms (%f sec)\n",
-		avgFrameTimeMs, avgFrameTimeSec);
-
-	char tmp[100] = {0};
-	formatBytes((int)avgFrameBytes, tmp);
-
-	printf(" Average frame size: %d samples (%s)\n",
-		(int)avgFrameSamples, tmp);
-
-	float readTimeBytes   = avgFrameBytes / avgFrameTimeSec;
-	float readTimeSamples = avgFrameSamples / avgFrameTimeSec;
-	memset(tmp, 0, sizeof(tmp));
-	formatBytes((int)readTimeBytes, tmp);
-	printf(" Average read time:  %.2f samples/sec (%s/sec)\n",
-		readTimeSamples, tmp);
-
-	m_nFrameSize = m_ReadTime = m_nFrameCount = 0;
+int CPerformance::GetSize()
+{
+	return IFloopySoundFilter::GetSize();
 }
 
 
@@ -89,43 +71,67 @@ int CPerformance::GetPropertyCount()
 	return 3;
 }
 
-bool CPerformance::GetPropertyIndex(char *name, int *index)
-{
-	return false;
-}
-
-bool CPerformance::GetPropertyVal(int index, float *value)
-{
-	switch(index)
-	{
-	case 0:
-		*value = (float)m_ReadTime;
-		return true;
-	case 1:
-		*value = (float)m_nFrameSize;
-		return true;
-	case 2:
-		*value = (float)m_nFrameCount;
-		return true;
-	}
-	return false;
-}
-
 char *CPerformance::GetPropertyName(int index)
 {
 	switch(index)
 	{
-	case 0:
-		return "ReadTime";
-	case 1:
-		return "FrameSize";
-	case 2:
-		return "FrameCount";
+	case 0: return "AvgFrmReadTime";
+	case 1: return "AvgFrmSize";
+	case 2: return "SamplesPerSecond";
 	}
 	return NULL;
 }
 
 char *CPerformance::GetPropertyDesc(int index)
 {
+	switch(index)
+	{
+	case 0: return "Average frame read time";
+	case 1: return "Average frame size";
+	case 2: return "Average read time";
+	}
 	return NULL;
+}
+
+char *CPerformance::GetPropertyUnit(int index)
+{
+	switch(index)
+	{
+	case 0: return "ms";
+	case 1: return "samples";
+	case 2: return "samples per second";
+	}
+	return NULL;
+}
+
+bool CPerformance::GetPropertyVal(int index, float *value)
+{
+	SOUNDFORMAT *fmt = GetFormat();
+	if(NULL==fmt || fmt->bitsPerSample==0 || fmt->channels==0 ||
+		m_ReadTime==0 || m_nFrameCount==0 || m_nFrameSize==0)
+	{
+		*value = 0.f;
+		return true;
+	}
+
+	float avgFrameTimeMs	= (float)m_ReadTime / (float)m_nFrameCount;
+	float avgFrameBytes		= (float)m_nFrameSize / (float)m_nFrameCount;
+	float samplesToBytes	= (fmt->bitsPerSample / 8.f) * fmt->channels;
+	float avgFrameSamples	= avgFrameBytes / samplesToBytes;
+	float avgFrameTimeSec	= avgFrameTimeMs / 1000.f;
+	float samplesPerSecond	= avgFrameSamples / avgFrameTimeSec;
+
+	switch(index)
+	{
+	case 0:
+		*value = avgFrameTimeMs;
+		return true;
+	case 1:
+		*value = avgFrameSamples;
+		return true;
+	case 2:
+		*value = samplesPerSecond;
+		return true;
+	}
+	return false;
 }

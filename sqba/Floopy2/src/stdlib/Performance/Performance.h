@@ -26,18 +26,18 @@ public:
 	char *GetAuthor()		{ return "sqba"; }
 
 	int Read(BYTE *data, int size);
-	//void MoveTo(int samples);
-	//void Reset();
-	//int GetSourceSize();
-	//bool Open(char *filename);
-	//int GetSize();
+	void MoveTo(int samples);
+	void Reset();
+	int GetSourceSize();
+	bool Open(char *filename);
+	int GetSize();
 	void Close();
 
 	bool ReadSourceIfDisabled()	{ return true; }
 
 
 	int   GetPropertyCount();
-	bool  GetPropertyIndex(char *name, int *index);
+	//bool  GetPropertyIndex(char *name, int *index);
 	bool  GetPropertyVal(int index, float *value);
 	//void  SetPropertyVal(int index, float value);
 	//float GetPropertyMin(int index);
@@ -45,11 +45,7 @@ public:
 	//float GetPropertyStep(int index);
 	char *GetPropertyName(int index);
 	char *GetPropertyDesc(int index);
-	//char *GetPropertyUnit(int index);
-
-private:
-	void formatBytes(int bytes, char *str);
-	void printResults();
+	char *GetPropertyUnit(int index);
 
 private:
 	clock_t	m_ReadTime;
