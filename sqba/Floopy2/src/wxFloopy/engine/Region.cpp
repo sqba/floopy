@@ -56,6 +56,7 @@ void CRegion::createMenu()
 	m_pMenu->Append(_T("&Copy"), NULL);
 	m_pMenu->Append(_T("&Remove"), remove);
 	m_pMenu->Append(_T("&Properties"), NULL);
+	m_pMenu->Append(_T("&Set track source"), NULL);
 }
 
 void CRegion::Remove()
