@@ -23,17 +23,6 @@ int CLoop::Read(BYTE *data, int size)
 		}
 		else
 		{
-			// Ako je izabrana varijanta 2 u CInput::Read onda
-			// sledece dve linije moraju da se odkomentarisu.
-			// Da li je taj nacin dobar nije najjasnije jer,
-			// sta se desava kada je len != chunkSize?
-			//if(len == 0)
-			//	len = chunkSize;
-
-			// Varijanta 3?:
-			//if(len!=chunkSize && !IFloopySoundFilter::IsEOF())
-			//	len = chunkSize;
-
 			m_nOffset	+= len;
 			result		+= len;
 			data		+= len;
