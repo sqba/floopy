@@ -214,16 +214,19 @@ void startElement(void *userData, const char *name, const char **atts)
 
 			IFloopySoundInput *input = si->gInput;
 			
-			for(int i=0; i<n-1; i+=2)
+			if(NULL != input)
 			{
-				if(atts[i])
+				for(int i=0; i<n-1; i+=2)
 				{
-					int index = 0;
-					char *name = (char*)atts[i];
-					if( input->GetPropertyIndex(name, &index) )
+					if(atts[i])
 					{
-						float value = (float)atof(atts[i+1]);
-						input->SetPropertyVal(index, value);
+						int index = 0;
+						char *name = (char*)atts[i];
+						if( input->GetPropertyIndex(name, &index) )
+						{
+							float value = (float)atof(atts[i+1]);
+							input->SetPropertyVal(index, value);
+						}
 					}
 				}
 			}

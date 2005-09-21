@@ -28,9 +28,8 @@
  * \date 02. May 2005.
  *
  * Input plug-in wrapper class.
- * Memorizes all parameter changes and the offsets
- * at which they occured. These parameters are then
- * set during execution.
+ * Memorizes all parameter changes and the offsets at which they occured.
+ * These parameters are then set during execution.
  */
 class CInput : public IFloopySoundMixer
 {
@@ -147,6 +146,9 @@ private:
 	void	recalcSourceVariables();
 	int		skipChunk(int);
 
+	void	getLibraryName(char *fullname, char *name);
+	void	getPluginName(char *fullname, char *name);
+
 private:
 	char m_szDisplayName[50];
 	char m_szLastError[100];
@@ -154,17 +156,26 @@ private:
 
 	UINT m_red, m_green, m_blue;
 
-	UpdateCallback		m_callback;	/** Pointer to the function called after every parameter change */
+	UpdateCallback		m_callback;	/** Pointer to the function called after every
+										parameter change during reading */
+
+	HINSTANCE			m_hinst;	/** Windows specific, handle to the DLL
+										containing the plugin */
 
 	int					m_offset;	/** Current position, in bytes */
-	HINSTANCE			m_hinst;	/** Windows specific, handle to the DLL containing plugin code */
-	IFloopySoundInput*	m_plugin;	/** Pointer to the plugin */
+	IFloopySoundInput*	m_plugin;	/** Pointer to the plugin component */
 	CTimeline			m_timeline;	/** Array of parameter changes and their offsets */
 
-	/// Optimization variables
-	int m_nStartOffset, m_nEndOffset, m_nSamplesToBytes;
+	bool m_bFadeEdges;				/** Fade edges when enabling/disabling plugin
+										to prevent clicks */
 
-	bool m_bFadeEdges;				/** Fade edges when enabling/disabling to prevent clicks */
+	/// Optimization variables
+	int m_nStartOffset;				/** Offset, in bytes, at which the track begins */
+	int m_nEndOffset;				/** Offset, in bytes, at which the track ends */
+	int m_nSamplesToBytes;			/** For converting samples to bytes (samples*m_nSamplesToBytes)
+										and vice versa (bytes/m_nSamplesToBytes) */
+
+	int m_nSkipBytes;				/** Optimization, to avoid calling MoveTo() in the loop */
 };
 
 #endif // !defined(AFX_INPUT_H__0D3139FE_D3F2_4CAF_A696_AB92E4A51331__INCLUDED_)

@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <stdlib.h>	// _MAX_FNAME, _MAX_PATH
 #include <stdio.h>
-#include <time.h>
 #include <assert.h>
 #include <string.h>
 #include "input.h"
@@ -14,33 +14,34 @@
 
 
 typedef IFloopySoundInput* (*CreateProc)(char *name);
-#define PROC_NAME "CreateInput"
-#define PLUG_EXT ".dll"
+#define PROC_NAME	"CreateInput"
+#define PLUG_EXT	".dll"
 
 
 CInput::CInput(UpdateCallback func)
 {
+	m_callback	= func;
 	m_hinst		= NULL;
 	m_plugin	= NULL;
-	m_callback	= func;
 
-	m_red = m_green = m_blue = 256;
+	m_red = m_green = m_blue = 256; /// Invalid value
 
 	memset(m_szDisplayName,	0, 50);
 	memset(m_szLastError,	0, sizeof(m_szLastError));
 	memset(m_szObjPath,		0, sizeof(m_szObjPath));
 	
-	m_offset = m_nStartOffset = m_nEndOffset = m_nSamplesToBytes = 0;
+	m_offset = m_nStartOffset = m_nEndOffset = 0;
+	m_nSkipBytes = m_nSamplesToBytes = 0;
 
 	m_bFadeEdges = true;
 }
 
 CInput::~CInput()
 {
-	if(m_plugin)
+	if(NULL != m_plugin)
 		delete m_plugin;
 
-	if(m_hinst)
+	if(NULL != m_hinst)
 		FreeLibrary(m_hinst);
 }
 
@@ -51,76 +52,46 @@ CInput::~CInput()
  */
 bool CInput::Create(char *name)
 {
-	bool result = false;
+	char plugin[_MAX_PATH]		= {0};
+	char library[_MAX_FNAME]	= {0};
 
-	/////////////////////////////////////////
-	// Split name: [library].[plugin]
-	/////////////////////////////////////////
-	char *plugin  = name;
-	char *library = name;
+	getLibraryName(name, library);
+	getPluginName(name, plugin);
 
-	char *sep = strrchr(plugin, '.');
-	if(sep)
-	{
-		char tmp[MAX_PATH] = {0};
-		strcpy(tmp, plugin);
-		char *sep = strrchr(tmp, '.');
-		plugin = sep+1;
-		*sep = 0;
-		library = tmp;
-	}
-	/////////////////////////////////////////
-
-	char *tmpstr = new char[strlen(library) + 5];
-	char *filename = tmpstr;
-	strcpy(filename, library);
-	strcat(filename, PLUG_EXT);
-
-	m_hinst = LoadLibraryA(filename);
-
+	m_hinst = LoadLibraryA( library );
 	if(NULL == m_hinst)
 	{
-		filename = plugin;
-		m_hinst = LoadLibraryA(filename);
+		sprintf(m_szLastError, "File '%s' not found.\n\0", library);
+		return false;
 	}
 
-	if (NULL != m_hinst)
+	CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
+	if(NULL == func)
 	{
-		strcpy(m_szObjPath, filename);
-
-		CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
-
-		if(func != NULL)
-		{
-			m_plugin = func( plugin );
-			if(m_plugin)
-			{
-				char *tmp = strrchr(plugin, '\\');
-				plugin = tmp ? ++tmp : plugin;
-				
-				SetDisplayName(plugin, strlen(plugin));
-
-				IFloopySoundFilter::SetSource(m_plugin);
-
-				Enable( m_plugin->IsEnabled() ); // Default
-
-				result = true;
-			}
-			else
-				sprintf(m_szLastError,
-						"Error: Plugin '%s' not created by %s.\n\0",
-						plugin, filename);
-		}
-		else
-			sprintf(m_szLastError,
-					"Error: Function %s not found in %s.\n\0",
-					PROC_NAME, filename);
+		sprintf(m_szLastError, "Function '%s' not found in library '%s'.\n\0",
+			PROC_NAME, library);
+		return false;
 	}
-	else
-		sprintf(m_szLastError, "Error: %s not found.\n\0", filename);
 
-	delete[] tmpstr;
-	return result;
+	m_plugin = func( plugin );
+	if(NULL == m_plugin)
+	{
+		sprintf(m_szLastError, "Plugin '%s' not created by function %s.%s.\n\0",
+			plugin, library, PROC_NAME);
+		return false;
+	}
+
+	IFloopySoundFilter::SetSource(m_plugin);
+
+	Enable( m_plugin->IsEnabled() ); // Default
+
+	strcpy(m_szObjPath, library);
+
+	char *tmp = strrchr(plugin, '\\');
+	tmp = tmp ? ++tmp : plugin;
+	SetDisplayName(plugin, strlen(tmp));
+
+	return true;
 }
 
 /**
@@ -133,19 +104,19 @@ bool CInput::Create(IFloopySoundEngine *src)
 	m_plugin = src;
 	
 	IFloopySoundFilter::SetSource(m_plugin);
+
+	Enable( false ); // Default
 	
 	char *name = src->GetDisplayName();
-	if(name)
+	if(NULL != name)
 		SetDisplayName(name, strlen(name));
-
-	Enable(false);
 
 	return true;
 }
 
 bool CInput::Open(char *filename)
 {
-	if(m_plugin && m_plugin->Open(filename))
+	if(NULL!=m_plugin && m_plugin->Open(filename))
 	{
 		char *tmp = strrchr(filename, '\\');
 		filename = tmp ? tmp+1 : filename;
@@ -166,12 +137,15 @@ bool CInput::SetSource(IFloopySoundInput *src)
 {
 	bool result = false;
 
-	if(m_plugin && isFilter())
+	if(NULL!=m_plugin && isFilter())
 	{
 		result = ((IFloopySoundFilter*)m_plugin)->SetSource(src);
 	
 		if(result)
+		{
+			recalcSourceVariables();
 			recalcVariables();
+		}
 	}
 
 	return result;
@@ -227,9 +201,6 @@ int CInput::Read(BYTE *data, int size)
 	}
 	else
 	{
-		// Varijanta 1:
-		// Ova varijanta vraca ukupan broj bajtova racunajuci
-		// i tisinu na kraju (skipChunk).
 		while(m_offset<endpos && result<size && len!=EOF)
 		{
 			applyParamsAt( m_offset );
@@ -253,79 +224,6 @@ int CInput::Read(BYTE *data, int size)
 
 			m_offset += chunkSize;
 		}
-
-/*
-		// Varijanta 2:
-		// Ova varijanta vraca broj bajtova ne racunajuci
-		// tisinu posle poslednjeg iscitanog bajta (skipChunk).
-		int bytesRead = 0;
-		while(m_offset<endpos && bytesRead<size && len!=EOF)
-		{
-			applyParamsAt( m_offset );
-
-			int chunkSize	= size - bytesRead;
-			int nextOffset	= m_timeline.GetNextOffset(m_offset);
-
-			if(nextOffset>0 && m_offset+chunkSize>nextOffset)
-				chunkSize = nextOffset - m_offset;
-
-			if( NULL != (src=getSource()) )
-			{
-				len = src->Read(data, chunkSize);
-				if(EOF != len)
-					result = bytesRead + len;
-			}
-			else
-				len = skipChunk( chunkSize );
-
-			if(EOF != len)
-			{
-				data		+= len;
-				bytesRead	+= len;
-			}
-
-			m_offset += chunkSize;
-		}
-*/
-/*
-		// Varijanta 3:
-		int bytesRead = 0;
-		while(m_offset<endpos && bytesRead<size && len!=EOF)
-		{
-			applyParamsAt( m_offset );
-
-			int chunkSize	= size - bytesRead;
-			int nextOffset	= m_timeline.GetNextOffset(m_offset);
-
-			if(nextOffset>0 && m_offset+chunkSize>nextOffset)
-				chunkSize = nextOffset - m_offset;
-
-			if( NULL != (src=getSource()) )
-			{
-				len = src->Read(data, chunkSize);
-				
-				if(EOF != len)
-				{
-					//assert( len == chunkSize );
-
-					if(len!=chunkSize && !src->IsEOF())
-						len = chunkSize;
-
-					result = bytesRead + len;
-				}
-			}
-			else
-				len = skipChunk( chunkSize );
-
-			if(EOF != len)
-			{
-				data		+= len;
-				bytesRead	+= len;
-			}
-
-			m_offset += chunkSize;
-		}
-*/
 	}
 
 	if(result==0 && len==EOF)
@@ -433,7 +331,7 @@ int CInput::GetSize()
 		IFloopySoundInput *src = this->GetSource();
 		size = src->GetSize();
 	}
-	else if(m_plugin)
+	else if(NULL != m_plugin)
 	{
 		size = m_plugin->GetSize();
 
@@ -460,7 +358,7 @@ int CInput::GetSize()
 
 int CInput::GetSourceSize()
 {
-	if(m_plugin && isFilter())
+	if(NULL!=m_plugin && isFilter())
 		return ((IFloopySoundFilter*)m_plugin)->GetSourceSize();
 	return 0;
 }
@@ -513,8 +411,9 @@ bool CInput::IsEnabled()
 	}
 	else
 	{
-		int prev = m_timeline.GetParamVal(m_offset, TIMELINE_PARAM_ENABLE, &value);
-		result = (PARAM_VALUE_DISABLED != value);
+		int prev = m_timeline.GetPrevOffset( m_offset );
+		if(m_timeline.GetParamVal(prev, TIMELINE_PARAM_ENABLE, &value))
+			result = (PARAM_VALUE_DISABLED != value);
 	}
 	return result;
 }
@@ -526,6 +425,9 @@ bool CInput::GetParamVal(int index, float *value)
 
 void CInput::SetParamVal(int index, float value)
 {
+	if(NULL == m_plugin)
+		return;
+
 	if(m_callback && m_nSamplesToBytes > 0)
 		m_callback(this, m_offset/m_nSamplesToBytes, index);
 
@@ -541,17 +443,20 @@ bool CInput::GetParamIndex(char *name, int *index)
 	if(NULL==name || NULL==index)
 		return false;
 
-	if(0==strcmpi(name, "Enable"))
+	if(0 == strcmpi(name, "Enable"))
 	{
 		*index = TIMELINE_PARAM_ENABLE;
 		return true;
 	}
 
-	if(0==strcmpi(name, "MoveTo"))
+	if(0 == strcmpi(name, "MoveTo"))
 	{
 		*index = TIMELINE_PARAM_MOVETO;
 		return true;
 	}
+
+	if(NULL == m_plugin)
+		return false;
 
 	if( m_plugin->GetParamIndex(name, index) )
 		return true;
@@ -559,7 +464,7 @@ bool CInput::GetParamIndex(char *name, int *index)
 	{
 		for(int i=0; i<m_plugin->GetParamCount(); i++)
 		{
-			if(0==strcmpi(m_plugin->GetParamName(i), name))
+			if(0 == strcmpi(m_plugin->GetParamName(i), name))
 			{
 				*index = i;
 				return true;
@@ -572,13 +477,16 @@ bool CInput::GetParamIndex(char *name, int *index)
 
 bool CInput::GetPropertyIndex(char *name, int *index)
 {
+	if(NULL == m_plugin)
+		return false;
+
 	if( m_plugin->GetPropertyIndex(name, index) )
 		return true;
 	else
 	{
 		for(int i=0; i<m_plugin->GetPropertyCount(); i++)
 		{
-			if(0==strcmpi(m_plugin->GetPropertyName(i), name))
+			if(0 == strcmpi(m_plugin->GetPropertyName(i), name))
 			{
 				*index = i;
 				return true;
@@ -781,6 +689,8 @@ void CInput::recalcSourceVariables()
 
 /**
  * Used to convert number of samples to number of bytes and vice versa.
+ * samples = bytes / samplesToBytes
+ * bytes = samples * samplesToBytes
  */
 int CInput::getSamplesToBytes()
 {
@@ -797,8 +707,8 @@ int CInput::getSamplesToBytes()
  */
 void CInput::applyParamsAt(int offset)
 {
-	int sample		= offset / m_nSamplesToBytes;
-	float value		= 0.f;
+	int sample	= offset / m_nSamplesToBytes;
+	float value	= 0.f;
 
 	bool bResult = m_timeline.GetParamVal(offset, TIMELINE_PARAM_ENABLE, &value);
 	if(bResult || offset==0)
@@ -806,6 +716,16 @@ void CInput::applyParamsAt(int offset)
 		bool bEnable = bResult ? PARAM_VALUE_DISABLED!=value : false;
 		IFloopy::Enable( bEnable );
 		m_plugin->Enable( bEnable );
+
+		// Optimization: skipChunk did not call MoveTo so
+		// we have to do it now.
+		if(bEnable && m_nSkipBytes>0)
+		{
+			int pos = m_plugin->GetPosition();
+			if(EOF != pos)
+				m_plugin->MoveTo( pos + m_nSkipBytes / m_nSamplesToBytes );
+			m_nSkipBytes = 0;
+		}
 
 		if(m_callback && sample>=0)
 			m_callback(this, sample, TIMELINE_PARAM_ENABLE);
@@ -913,15 +833,28 @@ int CInput::getEndOffset()
 	return offset;
 }
 
+/**
+ * Reads an empty buffer.
+ * @param size number of bytes to skip.
+ * @return number of bytes skipped.
+ */
 int CInput::skipChunk(int size)
 {
-	int pos = m_plugin->GetPosition();
+	// Optimization: MoveTo will be called in the first call
+	// to applyParamsAt in which the plugin is enabled.
+	m_nSkipBytes += size;
+
+	/*int pos = m_plugin->GetPosition();
 	if(EOF == pos)
 		return EOF;
-	m_plugin->MoveTo( pos + (size / m_nSamplesToBytes) );
+	m_plugin->MoveTo( pos + (size / m_nSamplesToBytes) );*/
+
 	return size;
 }
 
+/**
+ * @return the component scheduled for reading from or NULL if disabled.
+ */
 IFloopySoundInput *CInput::getSource()
 {
 	if( GetBypass() )
@@ -934,17 +867,26 @@ IFloopySoundInput *CInput::getSource()
 		return NULL;
 }
 
+/**
+ * @return true the plugin has it's own source.
+ */
 bool CInput::isFilter()
 {
 	int type = m_plugin->GetType();
 	return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
 }
 
+/**
+ * @return true if the plugin is another engine.
+ */
 bool CInput::isEngine()
 {
 	return(m_source?m_source->GetType()==TYPE_FLOOPY_SOUND_ENGINE:false);
 }
 
+/**
+ * @return true the plugin has several sources.
+ */
 bool CInput::isMixer()
 {
 	if(NULL != m_plugin)
@@ -952,7 +894,49 @@ bool CInput::isMixer()
 	return false;
 }
 
+/**
+ * Checks if the current offset (m_offset) is at the
+ * or past the end of the track.
+ * @return true if the current offset (m_offset) is at the
+ * or past the end of the track.
+ */
 bool CInput::isEndOfTrack()
 {
 	return(m_nEndOffset>0 && m_offset>=m_nEndOffset && !ReadSourceIfDisabled());
+}
+
+/**
+ * Extracts the library name from full plugin name (library.plugin).
+ * @param fullname pointer to buffer containing full plugin name.
+ * @param name pointer to the buffer to receive the library name.
+ * @return void.
+ */
+void CInput::getLibraryName(char *fullname, char *name)
+{
+	char *sep = strrchr(fullname, '.');
+	int len = sep ? sep-fullname : strlen(fullname);
+
+	int extlen = strlen(PLUG_EXT);
+	if( len >= _MAX_PATH-extlen-1 )
+		len = _MAX_PATH-extlen-1;
+
+	strncpy(name, fullname, len);
+	strcat(name, PLUG_EXT);
+}
+
+/**
+ * Extracts the plugin name from full plugin name (library.plugin).
+ * @param fullname pointer to buffer containing full plugin name.
+ * @param name pointer to the buffer to receive the plugin name.
+ * @return void.
+ */
+void CInput::getPluginName(char *fullname, char *name)
+{
+	char *sep = strrchr(fullname, '.');
+	char *tmp = sep ? sep+1 : fullname;
+
+	if( strlen(tmp) <= _MAX_FNAME )
+		strcpy(name, tmp);
+	else
+		strncpy(name, tmp, _MAX_FNAME);
 }
