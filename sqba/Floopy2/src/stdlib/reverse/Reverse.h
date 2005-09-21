@@ -14,7 +14,7 @@ public:
 	char *GetVersion()			{ return "0.1"; }
 	char *GetAuthor()			{ return "sqba"; }
 
-	bool ReadSourceIfDisabled()	{ return false; }
+	bool ReadSourceIfDisabled()	{ return true; }
 
 	int Read(BYTE*, int);
 	void MoveTo(int);

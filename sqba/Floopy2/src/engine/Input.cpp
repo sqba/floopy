@@ -227,6 +227,9 @@ int CInput::Read(BYTE *data, int size)
 	}
 	else
 	{
+		// Varijanta 1:
+		// Ova varijanta vraca ukupan broj bajtova racunajuci
+		// i tisinu na kraju (skipChunk).
 		while(m_offset<endpos && result<size && len!=EOF)
 		{
 			applyParamsAt( m_offset );
@@ -250,6 +253,79 @@ int CInput::Read(BYTE *data, int size)
 
 			m_offset += chunkSize;
 		}
+
+/*
+		// Varijanta 2:
+		// Ova varijanta vraca broj bajtova ne racunajuci
+		// tisinu posle poslednjeg iscitanog bajta (skipChunk).
+		int bytesRead = 0;
+		while(m_offset<endpos && bytesRead<size && len!=EOF)
+		{
+			applyParamsAt( m_offset );
+
+			int chunkSize	= size - bytesRead;
+			int nextOffset	= m_timeline.GetNextOffset(m_offset);
+
+			if(nextOffset>0 && m_offset+chunkSize>nextOffset)
+				chunkSize = nextOffset - m_offset;
+
+			if( NULL != (src=getSource()) )
+			{
+				len = src->Read(data, chunkSize);
+				if(EOF != len)
+					result = bytesRead + len;
+			}
+			else
+				len = skipChunk( chunkSize );
+
+			if(EOF != len)
+			{
+				data		+= len;
+				bytesRead	+= len;
+			}
+
+			m_offset += chunkSize;
+		}
+*/
+/*
+		// Varijanta 3:
+		int bytesRead = 0;
+		while(m_offset<endpos && bytesRead<size && len!=EOF)
+		{
+			applyParamsAt( m_offset );
+
+			int chunkSize	= size - bytesRead;
+			int nextOffset	= m_timeline.GetNextOffset(m_offset);
+
+			if(nextOffset>0 && m_offset+chunkSize>nextOffset)
+				chunkSize = nextOffset - m_offset;
+
+			if( NULL != (src=getSource()) )
+			{
+				len = src->Read(data, chunkSize);
+				
+				if(EOF != len)
+				{
+					//assert( len == chunkSize );
+
+					if(len!=chunkSize && !src->IsEOF())
+						len = chunkSize;
+
+					result = bytesRead + len;
+				}
+			}
+			else
+				len = skipChunk( chunkSize );
+
+			if(EOF != len)
+			{
+				data		+= len;
+				bytesRead	+= len;
+			}
+
+			m_offset += chunkSize;
+		}
+*/
 	}
 
 	if(result==0 && len==EOF)
@@ -264,8 +340,82 @@ int CInput::Read(BYTE *data, int size)
  */
 void CInput::MoveTo(int samples)
 {
-	moveTo1( samples );
-	//moveTo2( samples );
+
+	// Varijanta 1:
+	// Ova varijanta se vraca na prethodnu promenu svakog
+	// parametra, primeni je i, ako je to bio poziv MoveTo
+	// onda skache na razliku izmedju trazenog ofseta i ovog
+	// poziva, a ako ne onda samo skache na trazeni ofset.
+
+	assert(m_nSamplesToBytes > 0);
+
+	m_offset = samples * m_nSamplesToBytes;
+
+	int offset = applyPreviousParams( m_offset );
+
+	if( isEngine() && m_nStartOffset>0)
+	{
+		if( m_offset >= m_nStartOffset )
+			offset -= (m_nStartOffset / m_nSamplesToBytes);
+		else
+			offset = 0;
+	}
+
+	IFloopySoundInput *src = m_plugin;
+	if( GetBypass() )
+		src = ((IFloopySoundFilter*)m_plugin)->GetSource();
+	src->MoveTo( offset );
+
+/*
+	// Varijanta 2:
+	// Ova varijanta se vraca na pocetak i primenjuje
+	// redom sve parametre sve do novog ofseta.
+
+	char *name = GetName();
+
+	int endOffset = samples * m_nSamplesToBytes;
+	int chunkSize = endOffset;
+
+	m_offset = 0;
+
+	m_plugin->MoveTo( 0 );
+	applyParamsAt( 0 );
+
+	if(0 == samples)
+		return;
+
+	int srcPos = 0;
+	int prevOffset = 0;
+	int nextOffset = 1;
+	
+	while(m_offset<endOffset) {
+		nextOffset = m_timeline.GetNextOffset(m_offset);
+
+		if(0 == nextOffset)
+			break;
+
+		chunkSize = nextOffset - m_offset;
+		
+		if(m_offset+chunkSize > endOffset)
+			chunkSize = endOffset - m_offset;
+
+		prevOffset = m_offset;
+		m_offset += chunkSize;
+
+		IFloopySoundInput *src = getSource();
+		if(NULL != src)
+		{
+			srcPos = src->GetPosition();
+			//int diff = (m_offset - chunkSize) / m_nSamplesToBytes;
+			int diff = (m_offset - prevOffset) / m_nSamplesToBytes;
+			src->MoveTo( srcPos + diff);
+		}
+		else
+			skipChunk( chunkSize );
+
+		applyParamsAt( m_offset );
+	}
+*/
 }
 
 /**
@@ -805,69 +955,4 @@ bool CInput::isMixer()
 bool CInput::isEndOfTrack()
 {
 	return(m_nEndOffset>0 && m_offset>=m_nEndOffset && !ReadSourceIfDisabled());
-}
-
-
-
-
-// Ova funkcija se vraca na prethodnu promenu parametra,
-// primeni je i, ako je to bio poziv MoveTo onda
-// skache na razliku izmedju trazenog ofseta i ovog
-// poziva, a ako ne onda samo skache na trazeni ofset.
-void CInput::moveTo1(int samples)
-{
-	assert(m_nSamplesToBytes > 0);
-
-	m_offset = samples * m_nSamplesToBytes;
-
-	int offset = applyPreviousParams( m_offset );
-
-	if( isEngine() && m_nStartOffset>0)
-	{
-		if( m_offset >= m_nStartOffset )
-			offset -= (m_nStartOffset / m_nSamplesToBytes);
-		else
-			offset = 0;
-	}
-
-	IFloopySoundInput *src = m_plugin;
-	if( GetBypass() )
-		src = ((IFloopySoundFilter*)m_plugin)->GetSource();
-	src->MoveTo( offset );
-}
-
-// Ova funkcija se vraca na nulti sempl i odatle
-// primeni svaku promenu parametara.
-// Samo shto josh ne radi!
-void CInput::moveTo2(int samples)
-{
-	int endOffset = samples * m_nSamplesToBytes;
-	int chunkSize = endOffset;
-
-	m_offset = 0;
-
-	m_plugin->MoveTo( 0 );
-	applyParamsAt( 0 );
-
-	while(m_offset<endOffset)
-	{
-		int nextOffset = m_timeline.GetNextOffset(m_offset);
-
-		if(nextOffset>0 && m_offset+chunkSize>nextOffset)
-			chunkSize = nextOffset - m_offset;
-
-		if(m_offset+chunkSize>endOffset)
-			chunkSize = endOffset - m_offset;
-
-		IFloopySoundInput *src = getSource();
-		if(NULL != src)
-			src->MoveTo( src->GetPosition() + chunkSize);
-
-		m_offset += chunkSize;
-		
-		applyParamsAt( m_offset );
-	}
-
-	m_offset = endOffset;
-
 }

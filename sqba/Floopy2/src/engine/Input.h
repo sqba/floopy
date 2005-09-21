@@ -79,6 +79,8 @@ public:
 
 	void SetEngine(IFloopySoundEngine *pEngine)		{ m_plugin->SetEngine(pEngine); }
 
+	bool IsEOF()									{ return m_plugin->IsEOF(); }
+
 	bool GetColor(UINT *r, UINT *g, UINT *b);
 	void SetColor(UINT r, UINT g, UINT b);
 
@@ -144,9 +146,6 @@ private:
 	void	recalcVariables();
 	void	recalcSourceVariables();
 	int		skipChunk(int);
-
-	void	moveTo1(int);
-	void	moveTo2(int);
 
 private:
 	char m_szDisplayName[50];
