@@ -57,9 +57,6 @@ CFloopyFrame::CFloopyFrame() : wxFrame((wxFrame*)NULL,
 
 	m_pTracks = new CTracks();
 
-	m_pParamsDialog = new CControlDlg( m_pTracks );
-	m_pPropsDialog = new CControlDlg( m_pTracks );
-
 	m_pDropTarget = new CDropTarget( this );
 	SetDropTarget( m_pDropTarget );
 
@@ -74,8 +71,6 @@ CFloopyFrame::~CFloopyFrame()
 {
 	delete m_pSplitter;
 	delete m_pTracks;
-	delete m_pParamsDialog;
-	delete m_pPropsDialog;
 }
 
 void CFloopyFrame::OnFullScreen( wxCommandEvent &WXUNUSED(event) )
@@ -146,22 +141,12 @@ void CFloopyFrame::OnStop( wxCommandEvent &WXUNUSED(event) )
 
 void CFloopyFrame::OnShowParams( wxCommandEvent &WXUNUSED(event) )
 {
-	IFloopyObj *obj = m_pTracks->GetSelectedObj();
-	if(NULL == obj)
-		obj = m_pTracks;
-
-	m_pParamsDialog->InitParams( obj );
-	m_pParamsDialog->Show( true );
+	m_pTracksView->ShowParamsDlg();
 }
 
 void CFloopyFrame::OnShowProperties( wxCommandEvent &WXUNUSED(event) )
 {
-	IFloopyObj *obj = m_pTracks->GetSelectedObj();
-	if(NULL == obj)
-		obj = m_pTracks;
-
-	m_pPropsDialog->InitProps( obj );
-	m_pPropsDialog->Show( true );
+	m_pTracksView->ShowPropertiesDlg();
 }
 
 void CFloopyFrame::initMenus()

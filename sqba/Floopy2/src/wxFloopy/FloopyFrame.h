@@ -8,8 +8,6 @@
 #include "views/labelsview.h"
 #include "views/tracksview.h"
 
-#include "dialogs/controldlg.h"
-
 class CFloopyFrame : public wxFrame
 {
 //	DECLARE_DYNAMIC_CLASS(CFloopyFrame)
@@ -67,8 +65,6 @@ private:
 	CLabelsView			*m_pLabelsView;
 	CTracksView			*m_pTracksView;
 	CTracks				*m_pTracks;
-	CControlDlg			*m_pParamsDialog;
-	CControlDlg			*m_pPropsDialog;
 
 private:
     DECLARE_EVENT_TABLE()

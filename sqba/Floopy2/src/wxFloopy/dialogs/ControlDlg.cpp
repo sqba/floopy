@@ -222,13 +222,13 @@ void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 		sample = obj->GetCaretPos();
 		if( obj->IsKindOf(CLASSINFO(CRegion)) )
 		{
-			//CRegion *region = (CRegion*)obj;
-			//float val = 0.f;
-			//int end = region->GetEndOffset();
+			CRegion *region = (CRegion*)obj;
+			float val = 0.f;
+			int end = region->GetEndOffset();
 			//IFloopy *input = region->GetInput();
-			//m_pInput->GetParamAt(end, m_index, &val);
-			//m_pInput->SetParamAt(end, m_index, val);
+			m_pInput->GetParamAt(end, m_index, &val);
 			m_pInput->SetParamAt(sample, m_index, value);
+			m_pInput->SetParamAt(end, m_index, val);
 		}
 		else
 			m_pInput->SetParamAt(sample, m_index, value);

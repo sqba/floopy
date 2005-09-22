@@ -1103,7 +1103,7 @@ int CTrack::GetCaretPos()
 {
 	int pos = GetTracks()->GetCaretPos();
 
-	/*float value = 0;
+	float value = 0;
 	int offset = 0;
 	if(m_pInput->GetParamAt(pos, TIMELINE_PARAM_MOVETO, &value))
 		pos -= (int)value;
@@ -1114,7 +1114,7 @@ int CTrack::GetCaretPos()
 		{
 			pos -= prev + (int)value;
 		}
-	}*/
+	}
 		
 	return pos;
 }

@@ -728,11 +728,11 @@ int CRegion::GetCaretPos()
 {
 	int pos = getTrack()->GetCaretPos();
 
-	float value = 0;
+	/*float value = 0;
 	int offset = 0;
 	IFloopySoundInput *track = getTrack()->GetInput();
 	if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
-		pos -= m_iStartSample + (int)value;
+		pos -= m_iStartSample + (int)value;*/
 
 	/*if( GetReset() )
 	{
