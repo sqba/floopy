@@ -47,7 +47,7 @@ public:
 	//float GetPropertyStep(int index);
 	char *GetPropertyName(int index);
 	char *GetPropertyDesc(int index);
-	//char *GetPropertyUnit(int index);
+	char *GetPropertyUnit(int index){ return "%"; }
 
 	bool ReadSourceIfDisabled()		{ return true; }
 

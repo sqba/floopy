@@ -194,7 +194,9 @@ CControlDlg::CSliderCtrl::CSliderCtrl(CControlDlg* parent,
 	m_pInput	= input;
 	m_bProperty	= property;
 
-	setValue();
+	m_Unit = property ? input->GetPropertyUnit(index) : input->GetParamUnit(index);
+
+	init();
 }
 
 CControlDlg::CSliderCtrl::~CSliderCtrl()
@@ -237,14 +239,14 @@ void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 	}
 
 	wxString txt;
-	txt.Printf("%.4f", value);
+	txt.Printf("%.4f %s", value, m_Unit);
 	m_pLabel->SetLabel( txt );
 
 	obj->Invalidate();
 	obj->Refresh();
 }
 
-void CControlDlg::CSliderCtrl::setValue()
+void CControlDlg::CSliderCtrl::init()
 {
 	float min = 0.f;
 	float max = 0.f;
@@ -273,11 +275,11 @@ void CControlDlg::CSliderCtrl::setValue()
 	wxSlider::SetValue(val);
 
 	wxString txt;
-	txt.Printf("%.4f", val);
+	txt.Printf("%.4f %s", val, m_Unit);
 	m_pLabel->SetLabel( txt );
 }
 
 void CControlDlg::CSliderCtrl::Update()
 {
-	setValue();
+	init();
 }

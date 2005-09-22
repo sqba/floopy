@@ -33,13 +33,14 @@ private:
 		void Update();
 
 	private:
-		void setValue();
+		void init();
 
 	private:
 		int				m_index;
 		bool			m_bProperty;
 		wxStaticText	*m_pLabel;
 		IFloopy			*m_pInput;
+		wxString		m_Unit;
 
 	private:
 		DECLARE_EVENT_TABLE()

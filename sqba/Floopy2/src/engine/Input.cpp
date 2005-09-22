@@ -238,6 +238,7 @@ int CInput::Read(BYTE *data, int size)
  */
 void CInput::MoveTo(int samples)
 {
+	m_nSkipBytes = 0;
 
 	// Varijanta 1:
 	// Ova varijanta se vraca na prethodnu promenu svakog
@@ -366,6 +367,8 @@ int CInput::GetSourceSize()
 void CInput::Reset()
 {
 	m_offset = 0;
+
+	m_nSkipBytes = 0;
 
 	recalcVariables();
 

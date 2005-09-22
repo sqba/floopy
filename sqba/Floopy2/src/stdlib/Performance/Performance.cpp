@@ -99,7 +99,7 @@ char *CPerformance::GetPropertyUnit(int index)
 	{
 	case 0: return "ms";
 	case 1: return "samples";
-	case 2: return "samples per second";
+	//case 2: return "samples per second";
 	}
 	return NULL;
 }
