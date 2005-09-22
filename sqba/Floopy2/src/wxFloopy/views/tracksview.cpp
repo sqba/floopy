@@ -30,11 +30,17 @@ CTracksView::CTracksView(wxWindow* parent, wxScrolledWindow *labels, CTracks *tr
 	
 	SetCursor( wxCURSOR_PENCIL );
 
+	m_pParamsDialog = new CControlDlg( tracks );
+	m_pPropsDialog = new CControlDlg( tracks );
+
 	wxLog::AddTraceMask(_T("CTracksView"));
 }
 
 CTracksView::~CTracksView()
 {
+	delete m_pParamsDialog;
+	delete m_pPropsDialog;
+
 	/*if(m_pObjMenu) {
 		wxMenuBar *menubar = GetFrame()->GetMenuBar();
 		menubar->Remove(menubar->GetMenuCount()-1);
@@ -181,6 +187,9 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 				if( !obj->IsSelected() )
 					obj->Select();
 
+				m_pParamsDialog->Update();
+				m_pPropsDialog->Update();
+
 				return; // Don't move the caret
 			}
 		}
@@ -210,6 +219,9 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 				}
 				else
 					region->Update();
+
+				m_pParamsDialog->Update();
+				m_pPropsDialog->Update();
 
 				m_pSelectedObj = NULL;
 			}
@@ -261,4 +273,24 @@ void CTracksView::OnMouseWheel(wxMouseEvent& event)
 	// EVT_ENTER_WINDOW( CTracksView::OnEnterWindow )
 	// EVT_LEAVE_WINDOW( CTracksView::OnLeaveWindow )
 	// EVT_MOUSEWHEEL( CTracksView::OnMouseWheel )
+}
+
+void CTracksView::ShowParamsDlg()
+{
+	IFloopyObj *obj = m_pTracks->GetSelectedObj();
+	if(NULL == obj)
+		obj = m_pTracks;
+
+	m_pParamsDialog->InitParams( obj );
+	m_pParamsDialog->Show( true );
+}
+
+void CTracksView::ShowPropertiesDlg()
+{
+	IFloopyObj *obj = m_pTracks->GetSelectedObj();
+	if(NULL == obj)
+		obj = m_pTracks;
+
+	m_pPropsDialog->InitProps( obj );
+	m_pPropsDialog->Show( true );
 }

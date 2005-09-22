@@ -61,8 +61,10 @@ void CControlDlg::Clear()
 	{
 		assert( m_pSizer->Remove(index) );
 	}
-	m_count = 0;
 	m_pSizer->Layout();
+	m_count = 0;
+	//m_pSizer->RecalcSizes();
+	//wxDialog::Refresh();
 }
 
 void CControlDlg::InitParams(IFloopyObj *obj)

@@ -37,6 +37,8 @@
 #include "caretview.h"
 #include "../engine/tracks.h"
 
+#include "../dialogs/controldlg.h"
+
 class CTracksView : public CCaretView
 {
     DECLARE_EVENT_TABLE()
@@ -51,6 +53,13 @@ public:
     void OnMouseWheel(wxMouseEvent& event);
 	void OnKeyDown(wxKeyEvent& event);
 	//void OnKeyUp(wxKeyEvent& event);
+
+	void ShowParamsDlg();
+	void ShowPropertiesDlg();
+
+private:
+	CControlDlg			*m_pParamsDialog;
+	CControlDlg			*m_pPropsDialog;
 
 protected:
 	wxPoint				m_ptPrev;
