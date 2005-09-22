@@ -41,14 +41,14 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *par
 	if(tmp)
 		name = tmp + 1;
 
-	m_height  = MIN_HEIGHT*3;
+	/*m_height  = MIN_HEIGHT*3;
 	int index = 0;
 	if(m_pInput->GetPropertyIndex("height", &index))
 	{
 		float val = 0;
 		if(m_pInput->GetPropertyVal(index, &val))
 			m_height = (int)val;
-	}
+	}*/
 
 	m_name    = name;
 	m_top     = 0;
@@ -120,7 +120,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 		left   = m_nLevel*4+2;
 		top    = rc.GetTop()+1;
 		width  = rc.GetWidth()-left-3;
-		height = m_height-2;
+		height = GetHeight()-2;
 		dc.DrawRoundedRectangle(left, top, width, height, 4);
 	}
 	else
@@ -129,7 +129,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 		left   = 0;
 		top    = rc.GetTop();
 		width  = rc.GetWidth()-left;
-		height = m_height;
+		height = GetHeight();
 		dc.DrawRectangle(left, top, width, height);
 		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2));
 	}
@@ -137,7 +137,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	dc.SetTextForeground( GetForeColor() );
 	wxFont font = dc.GetFont();
 	font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
-	//font.SetPointSize(m_height / 4);
+	//font.SetPointSize(GetHeight() / 4);
 	font.SetPointSize( 9 );
 	dc.SetFont(font);
 	//wxFont font(12, wxDEFAULT, wxITALIC, (IsSelected() ? wxBOLD : wxNORMAL));
@@ -148,7 +148,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	wxCoord w=0, h=0;
 	dc.GetTextExtent(m_name, &w, &h);
 
-	/*int ptSize = m_height / 2;
+	/*int ptSize = GetHeight() / 2;
 	// Get text dimensions
 	wxCoord w=0, h=0;
 	do {
@@ -160,12 +160,12 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 
 	// Draw text
 	int x = left + 5;//width/2 - w/2;
-	int y = (rc.GetTop() + (m_height/4) - h/2);
+	int y = (rc.GetTop() + (GetHeight()/4) - h/2);
 	dc.DrawText( m_name, x, y );
-	m_rcLabel.SetHeight(m_height);
+	m_rcLabel.SetHeight(GetHeight());
 
 
-	int n = m_height/2-2;
+	int n = GetHeight()/2-2;
 	if(n > 20)
 		n = 20;
 	drawLoopSign(dc,  wxRect(5, top+height-n-2, n, n));
@@ -210,7 +210,7 @@ void CTrack::DrawBG(wxDC& dc, wxRect& rc)
 
 	dc.SetPen( *wxMEDIUM_GREY_PEN );
 
-	int y = m_top + m_height;
+	int y = m_top + GetHeight();
 	//dc.DrawLine(0, y, rc.GetWidth(), y);
 
 	wxRect rcBorder(0, y, rc.GetWidth(), m_pBorder->GetHeight());
@@ -367,10 +367,10 @@ IFloopyObj *CTrack::GetChildAt(int x, int y)
 		node = node->GetNext();
 	}
 
-	//if((y >= m_top) && (y < m_top+m_height) && (x < GetWidth()))
-	if((y >= m_top) && (y < m_top+m_height))
+	//if((y >= m_top) && (y < m_top+GetHeight()) && (x < GetWidth()))
+	if((y >= m_top) && (y < m_top+GetHeight()))
 		return this;
-	else if(y == m_top+m_height)
+	else if(y == m_top+GetHeight())
 		return m_pBorder;
 
 	return NULL;
@@ -416,7 +416,7 @@ void CTrack::Refresh()
 
 	if(panel) {
 		int width = panel->GetVirtualSize().GetWidth();
-		wxRect rc(0, m_top, width, m_height+2);
+		wxRect rc(0, m_top, width, GetHeight()+2);
 		panel->RefreshRect(rc);
 	}
 
@@ -424,7 +424,7 @@ void CTrack::Refresh()
 	if(panel)
 	{
 		wxSize size = panel->GetSize();
-		wxRect rc(0, m_top, size.GetWidth(), m_height);
+		wxRect rc(0, m_top, size.GetWidth(), GetHeight());
 		panel->RefreshRect(rc);
 	}
 }
@@ -486,6 +486,19 @@ void CTrack::RemoveSelectedObjects()
 	}
 }
 
+int CTrack::GetHeight()
+{
+	int index = 0;
+	if(m_pInput->GetPropertyIndex("height", &index))
+	{
+		float val = 0;
+		if(m_pInput->GetPropertyVal(index, &val))
+			return (int)val;
+	}
+
+	return MIN_HEIGHT*3;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // SetHeight
 //! Sets track height.
@@ -496,11 +509,9 @@ void CTrack::SetHeight(int height)
 {
 	if( MIN_HEIGHT <= height )
 	{
-		m_height = height - m_pBorder->GetHeight();
-
 		int index = 0;
 		if(m_pInput->GetPropertyIndex("height", &index))
-			m_pInput->SetPropertyVal(index, (float)m_height);
+			m_pInput->SetPropertyVal(index, (float)height);
 
 		Refresh();
 		GetTracks()->RefreshTracks(this);
@@ -1087,6 +1098,33 @@ void CTrack::Select(bool selected)
 	if(bPlaying)
 		pTracks->Play();
 }
+
+int CTrack::GetCaretPos()
+{
+	int pos = GetTracks()->GetCaretPos();
+
+	/*float value = 0;
+	int offset = 0;
+	if(m_pInput->GetParamAt(pos, TIMELINE_PARAM_MOVETO, &value))
+		pos -= (int)value;
+	else
+	{
+		int prev = m_pInput->GetPrevOffset( pos, TIMELINE_PARAM_MOVETO );
+		if(m_pInput->GetParamAt(prev, TIMELINE_PARAM_MOVETO, &value))
+		{
+			pos -= prev + (int)value;
+		}
+	}*/
+		
+	return pos;
+}
+
+
+
+
+
+
+
 
 
 /////////////////////////////////////////////////////////////////////

@@ -25,26 +25,32 @@ private:
 	class CSliderCtrl : public wxSlider  
 	{
 	public:
-		CSliderCtrl(CControlDlg*, IFloopy*, int, float, float, float, wxStaticText*);
+		CSliderCtrl(CControlDlg*, IFloopy*, int, bool, wxStaticText*);
 		virtual ~CSliderCtrl();
 
 		void OnScroll(wxScrollEvent &evt);
+	
+		void Update();
 
 	private:
-		int m_index;
-		wxStaticText *m_pLabel;
-		IFloopy *m_pObj;
+		void setValue();
+
+	private:
+		int				m_index;
+		bool			m_bProperty;
+		wxStaticText	*m_pLabel;
+		IFloopy			*m_pInput;
 
 	private:
 		DECLARE_EVENT_TABLE()
 	};
 
 public:
-	CControlDlg();
+	CControlDlg(CTracks *pTracks);
 	virtual ~CControlDlg();
 
-	void InitParams(CTrack *track, IFloopy *obj);
-	void InitProps(CTrack *track, IFloopy *obj);
+	void InitParams(IFloopyObj *obj);
+	void InitProps(IFloopyObj *obj);
 
 	bool Show(const bool show);
 
@@ -53,10 +59,22 @@ public:
 	void SetLabelValue(int index, float value);
 
 	void Clear();
+	void Update();
+
+	IFloopyObj *GetObject()	{ return m_pObject; }
+	CTracks *GetTracks();
+	CTrack *GetTrack();
+
+private:
+	void init(IFloopyObj *obj, bool property);
+	void load(IFloopy *obj);
 
 private:
 	wxFlexGridSizer	*m_pSizer;
-	int m_count;
+	int				m_count;
+	IFloopyObj		*m_pObject;
+	bool			m_bProperty;
+	CTracks			*m_pTracks;
 
 private:
     DECLARE_EVENT_TABLE()

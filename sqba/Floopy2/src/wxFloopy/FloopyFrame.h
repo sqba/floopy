@@ -67,7 +67,8 @@ private:
 	CLabelsView			*m_pLabelsView;
 	CTracksView			*m_pTracksView;
 	CTracks				*m_pTracks;
-	CControlDlg			m_ControlDialog;
+	CControlDlg			*m_pParamsDialog;
+	CControlDlg			*m_pPropsDialog;
 
 private:
     DECLARE_EVENT_TABLE()

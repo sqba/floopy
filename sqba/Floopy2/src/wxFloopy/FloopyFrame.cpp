@@ -57,6 +57,9 @@ CFloopyFrame::CFloopyFrame() : wxFrame((wxFrame*)NULL,
 
 	m_pTracks = new CTracks();
 
+	m_pParamsDialog = new CControlDlg( m_pTracks );
+	m_pPropsDialog = new CControlDlg( m_pTracks );
+
 	m_pDropTarget = new CDropTarget( this );
 	SetDropTarget( m_pDropTarget );
 
@@ -71,6 +74,8 @@ CFloopyFrame::~CFloopyFrame()
 {
 	delete m_pSplitter;
 	delete m_pTracks;
+	delete m_pParamsDialog;
+	delete m_pPropsDialog;
 }
 
 void CFloopyFrame::OnFullScreen( wxCommandEvent &WXUNUSED(event) )
@@ -141,32 +146,22 @@ void CFloopyFrame::OnStop( wxCommandEvent &WXUNUSED(event) )
 
 void CFloopyFrame::OnShowParams( wxCommandEvent &WXUNUSED(event) )
 {
-	CTrack *track = m_pTracks->GetSelectedTrack();
-	if(NULL == track)
-		return;
-	IFloopySoundInput *input = track->GetInput();
-	if(NULL == input)
-		return;
-	IFloopy *comp = CTracks::GetComponent(input, "volume");
-	if(NULL == comp)
-		return;
-	m_ControlDialog.InitParams( track, comp );
-	m_ControlDialog.Show( true );
+	IFloopyObj *obj = m_pTracks->GetSelectedObj();
+	if(NULL == obj)
+		obj = m_pTracks;
+
+	m_pParamsDialog->InitParams( obj );
+	m_pParamsDialog->Show( true );
 }
 
 void CFloopyFrame::OnShowProperties( wxCommandEvent &WXUNUSED(event) )
 {
-	CTrack *track = m_pTracks->GetSelectedTrack();
-	if(NULL == track)
-		return;
-	IFloopySoundInput *input = track->GetInput();
-	if(NULL == input)
-		return;
-	IFloopy *comp = CTracks::GetComponent(input, "volume");
-	if(NULL == comp)
-		return;
-	m_ControlDialog.InitProps( track, comp );
-	m_ControlDialog.Show( true );
+	IFloopyObj *obj = m_pTracks->GetSelectedObj();
+	if(NULL == obj)
+		obj = m_pTracks;
+
+	m_pPropsDialog->InitProps( obj );
+	m_pPropsDialog->Show( true );
 }
 
 void CFloopyFrame::initMenus()
@@ -190,7 +185,7 @@ void CFloopyFrame::initMenus()
 	wxMenu *view_menu = new wxMenu;
 	view_menu->Append(ID_FULL,		_T("&Full screen"),		_T("Full screen on/off"));
 	view_menu->Append(ID_PARAMS,	_T("Show &parameters..."),	_T("Show parameters dialog"));
-	view_menu->Append(ID_PROPS,		_T("&Show pr&operties..."),	_T("Show properties dialog"));
+	view_menu->Append(ID_PROPS,		_T("Show pr&operties..."),	_T("Show properties dialog"));
 
 	wxMenu *help_menu = new wxMenu;
 	help_menu->Append(ID_ABOUT,		_("&About...\tCtrl-A"),	_("Show about dialog"));
@@ -258,7 +253,7 @@ void CFloopyFrame::Open(char *filename)
 		m_pTracksView->SetFocus();
 
 		UINT r=0, g=0, b=0;
-		IFloopySoundEngine *engine = m_pTracks->GetInput();
+		IFloopySoundEngine *engine = (IFloopySoundEngine*)m_pTracks->GetInput();
 		if( engine->GetColor(&r, &g, &b) )
 		{
 			wxColor color = wxColor(r, g, b);

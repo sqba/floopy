@@ -193,7 +193,7 @@ public:
 	bool Save(char *filename);
 	void Clear();
 
-	IFloopySoundEngine *GetInput()				{ return m_pEngine; }
+	IFloopySoundInput *GetInput()				{ return m_pEngine; }
 
 	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
@@ -348,7 +348,7 @@ public:
 
 	bool GetName(wxString& name)	{ name = _T("Track"); return true; }
 	int GetWidth()					{ return GetTracks()->GetWidth(); }
-	int GetHeight()					{ return m_height + m_pBorder->GetHeight(); }
+	int GetHeight();//					{ return m_height + m_pBorder->GetHeight(); }
 	int GetTop()					{ return m_top; }
 	void SetHeight(int height);
 	wxString GetName()				{ return m_name; }
@@ -413,6 +413,8 @@ public:
 	wxColour GetColor();
 	void SetColor(wxColour color);
 
+	int GetCaretPos();//	{ return GetTracks()->GetCaretPos(); }
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();
@@ -425,7 +427,7 @@ private:
 	RegionList	m_regions;
 	wxRect		m_rcLabel;
 	int			m_top;
-	int			m_height;
+//	int			m_height;
 	wxString	m_name;
 	wxBitmap	*m_pBitmap;
 	CBorder		*m_pBorder;
@@ -521,6 +523,9 @@ public:
 	wxColour GetForeColor();
 
 	void Select(bool selected=true);
+
+	IFloopySoundInput *GetInput()				{ return getTrack()->GetInput(); }
+	int GetCaretPos();
 
 private:
 	static void remove(IFloopyObj *event);

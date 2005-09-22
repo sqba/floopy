@@ -37,6 +37,7 @@ public:
 	void Clear();
 	bool MoveParam(int offset, int index, float value, int newoffset);
 	int GetPrevOffset(int offset, int index);
+	int GetNextOffset(int offset, int index);
 	int GetStartOffset();
 
 	bool MoveAllParamsBetween(int start, int end, int offset);
@@ -51,6 +52,8 @@ private:
 	CTimeline::tParam *removeParam(CTimeline::tParam *param);
 	tParam *newParam(int offset, int index, float value);
 	bool moveParam(CTimeline::tParam *param, int newoffset);
+	tParam *getFirstParamAt(int offset);
+	tParam *getLastParamAt(int offset);
 
 	bool _checkSortOrder();
 

@@ -196,9 +196,14 @@ public:
 	 * @param offset current position, in samples.
 	 * @return next position (number of samples).
 	 */
-	virtual int GetNextOffset(int offset)			{ return 0; }
+	virtual int GetNextOffset(int offset)				{ return 0; }
 
-	virtual int GetPrevOffset(int offset)			{ return 0; }
+	virtual int GetPrevOffset(int offset)				{ return 0; }
+
+
+	virtual int GetNextOffset(int offset, int index)	{ return 0; }
+
+	virtual int GetPrevOffset(int offset, int index)	{ return 0; }
 
 	/**
 	 * Schedules particular parameter's value for change at specific offset.

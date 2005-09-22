@@ -387,6 +387,20 @@ int CInput::GetPrevOffset(int offset)
 	return (prev > 0 ? prev/m_nSamplesToBytes : 0);
 }
 
+int CInput::GetNextOffset(int offset, int index)
+{
+	offset *= m_nSamplesToBytes;
+	int next = m_timeline.GetNextOffset(offset, index);
+	return (next > 0 ? next/m_nSamplesToBytes : 0);
+}
+
+int CInput::GetPrevOffset(int offset, int index)
+{
+	offset *= m_nSamplesToBytes;
+	int prev = m_timeline.GetPrevOffset(offset, index);
+	return (prev > 0 ? prev/m_nSamplesToBytes : 0);
+}
+
 /**
  * Enable at the current offset.
  * @param bEnable enable/disable.
@@ -420,7 +434,20 @@ bool CInput::IsEnabled()
 
 bool CInput::GetParamVal(int index, float *value)
 {
-	return m_timeline.GetParamVal(m_offset, index, value);
+//	return m_timeline.GetParamVal(m_offset, index, value);
+
+	if(m_timeline.GetParamVal(m_offset, index, value))
+		return true;
+	else
+	{
+		int prev = m_timeline.GetPrevOffset( m_offset, index );
+		if(m_timeline.GetParamVal(prev, index, value))
+			return true;
+		else
+			return m_plugin->GetParamVal(index, value);
+	}
+
+	return false;
 }
 
 void CInput::SetParamVal(int index, float value)
@@ -498,7 +525,20 @@ bool CInput::GetPropertyIndex(char *name, int *index)
 
 bool CInput::GetParamAt(int offset, int index, float *value)
 {
-	return m_timeline.GetParamVal(offset*m_nSamplesToBytes, index, value);
+	offset *= m_nSamplesToBytes;
+
+	if(m_timeline.GetParamVal(offset, index, value))
+		return true;
+	else if(index != TIMELINE_PARAM_MOVETO)
+	{
+		int prev = m_timeline.GetPrevOffset( offset, index );
+		if(m_timeline.GetParamVal(prev, index, value))
+			return true;
+		else
+			return m_plugin->GetParamVal(index, value);
+	}
+
+	return false;
 }
 
 void CInput::SetParamAt(int offset, int index, float value)

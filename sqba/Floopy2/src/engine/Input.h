@@ -17,8 +17,6 @@
 #include "timeline.h"
 
 
-//#define _DEBUG_TIMER_
-
 
 /**
  * \class CInput
@@ -101,6 +99,9 @@ public:
 
 	int GetNextOffset(int);
 	int GetPrevOffset(int);
+
+	int GetNextOffset(int, int);
+	int GetPrevOffset(int, int);
 
 	bool GetParamAt(int, int, float*);
 	void SetParamAt(int, int, float);

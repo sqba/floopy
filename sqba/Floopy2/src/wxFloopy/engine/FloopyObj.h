@@ -4,6 +4,8 @@
 #include <wx/menu.h>
 #include <wx/list.h>
 
+#include "../../../ifloopy.h"
+
 
 class IFloopyObj;
 
@@ -102,6 +104,10 @@ public:
 		m_ptPrev.x = event.GetX();
 		m_ptPrev.y = event.GetY();
 	}
+
+	virtual IFloopySoundInput *GetInput() { return NULL; }
+
+	virtual int GetCaretPos() { return 0; }
 
 protected:
 	IFloopyObj	*m_pParent;

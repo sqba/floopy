@@ -49,6 +49,42 @@ bool CTimeline::MoveParam(int offset, int index, float value, int newoffset)
 		return false;
 }
 
+bool CTimeline::MoveAllParamsBetween(int start, int end, int offset)
+{
+	// Isto kao MoveParam samo shto se umesto param->next
+	// uzima lastParam->next
+
+	tParam *startParam	= getFirstParamAt(start);
+	tParam *endParam	= getLastParamAt(end);
+	tParam *nextParam	= getFirstParamAt(start+offset);
+
+	if(!startParam || !endParam)
+		return false;
+
+	tParam *tmp = startParam;
+	while(tmp != endParam->next)
+	{
+		tmp->offset += offset;
+		tmp = tmp->next;
+	}
+
+	if(startParam == nextParam)
+		return false;
+
+	if(startParam->prev)
+		startParam->prev->next = endParam->next;
+	if(endParam->next)
+		endParam->next->prev = startParam->prev->next;
+
+	tmp = nextParam->next;
+	startParam->prev = nextParam;
+	nextParam->next = startParam;
+	nextParam->prev = endParam;
+	endParam->next = tmp;
+
+	return true;
+}
+
 bool CTimeline::RemoveParam(int offset, int index, float value)
 {
 	tParam *tmp = getParam(offset, index, value);
@@ -94,6 +130,26 @@ int CTimeline::GetPrevOffset(int offset, int index)
 		tmp = tmp->next;
 	}
 	return max;
+}
+
+int CTimeline::GetNextOffset(int offset, int index)
+{
+	int min = 0;
+	tParam *tmp = m_pFirst;
+
+	if(m_pTemp && m_pTemp->offset<=offset && m_pTemp->index==index)
+		tmp = m_pTemp;
+
+	while(tmp)
+	{
+		if((index == tmp->index) && (tmp->offset > offset) && ((tmp->offset < min) || (min == 0)))
+		{
+			min = tmp->offset;
+			m_pTemp = tmp;
+		}
+		tmp = tmp->next;
+	}
+	return min;
 }
 
 int CTimeline::GetNextOffset(int offset)
@@ -164,13 +220,6 @@ void CTimeline::EnableAt(int offset, bool bEnable)
 {
 	float value = bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED;
 	SetParamVal(offset, TIMELINE_PARAM_ENABLE, value);
-}
-
-bool CTimeline::MoveAllParamsBetween(int start, int end, int offset)
-{
-	// Isto kao MoveParam samo shto se umesto param->next
-	// uzima lastParam->next
-	return false;
 }
 
 
@@ -335,6 +384,28 @@ bool CTimeline::moveParam(CTimeline::tParam *param, int newoffset)
 		return true;
 	}
 	return false;
+}
+
+CTimeline::tParam *CTimeline::getFirstParamAt(int offset)
+{
+	int o = 0;
+	CTimeline::tParam *tmp = m_pFirst;
+
+	while(tmp && tmp->offset<offset)
+		tmp = tmp->next;
+
+	return tmp ? tmp->prev : NULL;
+}
+
+CTimeline::tParam *CTimeline::getLastParamAt(int offset)
+{
+	int o = 0;
+	CTimeline::tParam *tmp = m_pLast;
+
+	while(tmp && tmp->offset>offset)
+		tmp = tmp->prev;
+
+	return tmp ? tmp->next : NULL;
 }
 
 bool CTimeline::_checkSortOrder()
