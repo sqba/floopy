@@ -43,8 +43,8 @@ public:
 	CControlDlg();
 	virtual ~CControlDlg();
 
-	void InitParams(IFloopy *obj);
-	void InitProps(IFloopy *obj);
+	void InitParams(CTrack *track, IFloopy *obj);
+	void InitProps(CTrack *track, IFloopy *obj);
 
 	bool Show(const bool show);
 

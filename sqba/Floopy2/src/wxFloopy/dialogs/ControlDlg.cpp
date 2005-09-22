@@ -23,7 +23,7 @@ END_EVENT_TABLE()
 
 
 static bool property;
-
+CTrack *pTrack;
 
 //CControlDlg::CControlDlg(CTracks *pTracks)
 CControlDlg::CControlDlg()
@@ -67,11 +67,12 @@ void CControlDlg::Clear()
 	m_count = 0;
 }
 
-void CControlDlg::InitParams(IFloopy *obj)
+void CControlDlg::InitParams(CTrack *track, IFloopy *obj)
 {
 	wxDialog::SetTitle(wxString(obj->GetDisplayName()));
 
 	property = false;
+	pTrack = track;
 
 	/*IFloopySoundInput *engine = m_pTracks->GetInput();
 	IFloopySoundMixer *mixer = (IFloopySoundMixer*)CTracks::GetComponent(engine, "mixer");
@@ -119,11 +120,12 @@ void CControlDlg::InitParams(IFloopy *obj)
 	}
 }
 
-void CControlDlg::InitProps(IFloopy *obj)
+void CControlDlg::InitProps(CTrack *track, IFloopy *obj)
 {
 	wxDialog::SetTitle(wxString(obj->GetDisplayName()));
 
 	property = true;
+	pTrack = track;
 
 	Clear();
 
@@ -197,4 +199,7 @@ void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 	wxString txt;
 	txt.Printf("%.4f", (float)pos);
 	m_pLabel->SetLabel( txt );
+
+	pTrack->Invalidate();
+	pTrack->Refresh();
 }
