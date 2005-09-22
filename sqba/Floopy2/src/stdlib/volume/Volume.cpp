@@ -161,6 +161,11 @@ int CVolume::getChannels()
 		return 0;
 }
 
+int CVolume::GetParamCount()
+{
+	//return getChannels() + 1;
+	return getChannels()==2 ? 3 : 1;
+}
 
 int CVolume::GetPropertyCount()
 {

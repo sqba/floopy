@@ -27,7 +27,7 @@ public:
 	char *GetVersion()				{ return "0.1"; }
 	char *GetAuthor()				{ return "sqba"; }
 
-	int   GetParamCount()			{ return 3; }
+	int   GetParamCount();//			{ return 3; }
 	float GetParamMin(int)			{ return 0.f; }
 	float GetParamMax(int)			{ return 1000.f; }
 	char *GetParamUnit(int)			{ return "%"; }
