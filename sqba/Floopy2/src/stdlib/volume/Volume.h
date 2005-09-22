@@ -41,8 +41,8 @@ public:
 	//bool  GetPropertyIndex(char *name, int *index);
 	bool  GetPropertyVal(int index, float *value);
 	void  SetPropertyVal(int index, float value);
-	//float GetPropertyMin(int index);
-	//float GetPropertyMax(int index);
+	float GetPropertyMin(int index)	{ return 0.0f; }
+	float GetPropertyMax(int index)	{ return 1000.0f; }
 	//float GetPropertyStep(int index);
 	char *GetPropertyName(int index);
 	char *GetPropertyDesc(int index);

@@ -207,12 +207,9 @@ char *CVolume::GetPropertyName(int index)
 {
 	switch(index)
 	{
-	case 0:
-		return "Master";
-	case 1:
-		return "MasterLeft";
-	case 2:
-		return "MasterRight";
+	case 0: return "Master";
+	case 1: return "MasterLeft";
+	case 2: return "MasterRight";
 	}
 	return NULL;
 }
@@ -221,12 +218,9 @@ char *CVolume::GetPropertyDesc(int index)
 {
 	switch(index)
 	{
-	case 0:
-		return "Master volume";
-	case 1:
-		return "Master  volume left";
-	case 2:
-		return "Master  volume right";
+	case 0: return "Master volume";
+	case 1: return "Master  volume left";
+	case 2: return "Master  volume right";
 	}
 	return NULL;
 }

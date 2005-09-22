@@ -8,6 +8,7 @@
 #include "views/labelsview.h"
 #include "views/tracksview.h"
 
+#include "dialogs/controldlg.h"
 
 class CFloopyFrame : public wxFrame
 {
@@ -53,6 +54,8 @@ private:
 	void OnPlay( wxCommandEvent &WXUNUSED(event) );
 	void OnPause( wxCommandEvent &WXUNUSED(event) );
 	void OnStop( wxCommandEvent &WXUNUSED(event) );
+	void OnShowParams( wxCommandEvent &WXUNUSED(event) );
+	void OnShowProperties( wxCommandEvent &WXUNUSED(event) );
 
 	void initMenus();
 	void initViews();
@@ -64,6 +67,7 @@ private:
 	CLabelsView			*m_pLabelsView;
 	CTracksView			*m_pTracksView;
 	CTracks				*m_pTracks;
+	CControlDlg			m_ControlDialog;
 
 private:
     DECLARE_EVENT_TABLE()

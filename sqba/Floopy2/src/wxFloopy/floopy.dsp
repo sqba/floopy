@@ -100,6 +100,10 @@ SOURCE=.\views\caretview.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\dialogs\ControlDlg.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Floopy.rc
 # End Source File
 # Begin Source File
@@ -165,6 +169,10 @@ SOURCE=.\views\tracksview.cpp
 # Begin Source File
 
 SOURCE=.\views\caretview.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialogs\ControlDlg.h
 # End Source File
 # Begin Source File
 

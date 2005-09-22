@@ -19,7 +19,9 @@ enum // menu items
 	ID_ABOUT,
 	ID_PLAY,
 	ID_PAUSE,
-	ID_STOP
+	ID_STOP,
+	ID_PARAMS,
+	ID_PROPS
 };
 
 //IMPLEMENT_DYNAMIC_CLASS(CFloopyFrame, wxFrame)
@@ -35,6 +37,8 @@ BEGIN_EVENT_TABLE(CFloopyFrame, wxFrame)
 	EVT_MENU(ID_PLAY,		CFloopyFrame::OnPlay)
 	EVT_MENU(ID_PAUSE,		CFloopyFrame::OnPause)
 	EVT_MENU(ID_STOP,		CFloopyFrame::OnStop)
+	EVT_MENU(ID_PARAMS,		CFloopyFrame::OnShowParams)
+	EVT_MENU(ID_PROPS,		CFloopyFrame::OnShowProperties)
 END_EVENT_TABLE()
 
 
@@ -135,6 +139,36 @@ void CFloopyFrame::OnStop( wxCommandEvent &WXUNUSED(event) )
 	m_pTracks->Stop();
 }
 
+void CFloopyFrame::OnShowParams( wxCommandEvent &WXUNUSED(event) )
+{
+	CTrack *track = m_pTracks->GetSelectedTrack();
+	if(NULL == track)
+		return;
+	IFloopySoundInput *input = track->GetInput();
+	if(NULL == input)
+		return;
+	IFloopy *comp = CTracks::GetComponent(input, "volume");
+	if(NULL == comp)
+		return;
+	m_ControlDialog.InitParams( track, comp );
+	m_ControlDialog.Show( true );
+}
+
+void CFloopyFrame::OnShowProperties( wxCommandEvent &WXUNUSED(event) )
+{
+	CTrack *track = m_pTracks->GetSelectedTrack();
+	if(NULL == track)
+		return;
+	IFloopySoundInput *input = track->GetInput();
+	if(NULL == input)
+		return;
+	IFloopy *comp = CTracks::GetComponent(input, "volume");
+	if(NULL == comp)
+		return;
+	m_ControlDialog.InitProps( track, comp );
+	m_ControlDialog.Show( true );
+}
+
 void CFloopyFrame::initMenus()
 {
 	//// Make a menubar
@@ -155,6 +189,8 @@ void CFloopyFrame::initMenus()
 
 	wxMenu *view_menu = new wxMenu;
 	view_menu->Append(ID_FULL,		_T("&Full screen"),		_T("Full screen on/off"));
+	view_menu->Append(ID_PARAMS,	_T("Show &parameters..."),	_T("Show parameters dialog"));
+	view_menu->Append(ID_PROPS,		_T("&Show pr&operties..."),	_T("Show properties dialog"));
 
 	wxMenu *help_menu = new wxMenu;
 	help_menu->Append(ID_ABOUT,		_("&About...\tCtrl-A"),	_("Show about dialog"));
