@@ -88,6 +88,11 @@ int CVolume::Read(BYTE *data, int size)
 		return 0;
 }
 
+/*void CVolume::Reset()
+{
+	m_masterLeft = m_masterRight = m_left = m_right = 100;
+}*/
+
 bool CVolume::GetParamVal(int index, float *value)
 {
 	switch(index)
