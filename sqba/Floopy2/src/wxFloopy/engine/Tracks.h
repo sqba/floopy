@@ -57,7 +57,7 @@ WX_DECLARE_OBJARRAY(Peak, PeaksArray);
 
 
 // Utility function
-void DrawAquaRect(wxDC& dc, wxRect& rc);
+void DrawAquaRect(wxDC& dc, wxRect& rc, int radius);
 
 
 

@@ -131,7 +131,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 		width  = rc.GetWidth()-left;
 		height = GetHeight();
 		dc.DrawRectangle(left, top, width, height);
-		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2));
+		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2), 4);
 	}
 
 	dc.SetTextForeground( GetForeColor() );
