@@ -32,6 +32,16 @@
 #define MIN_DISTANCE	96
 
 
+#define FLOOPY_TRACKS			FLOOPY_OBJ+1
+#define FLOOPY_TRACK			FLOOPY_OBJ+2
+#define FLOOPY_REGION			FLOOPY_OBJ+3
+#define FLOOPY_PARAMETER		FLOOPY_OBJ+4
+#define FLOOPY_REGION_DISP		FLOOPY_OBJ+5
+#define FLOOPY_REGION_BORDER	FLOOPY_OBJ+6
+#define FLOOPY_TRACKS_BORDER	FLOOPY_OBJ+7
+#define FLOOPY_TRACK_BORDER		FLOOPY_OBJ+8
+
+
 class CTrack;
 class CRegion;
 class CRegionBorder;
@@ -74,7 +84,7 @@ void DrawAquaRect(wxDC& dc, wxRect& rc, int radius);
  */
 class CTracks : public IFloopyObj
 {
-    DECLARE_DYNAMIC_CLASS(CTracks)
+//	DECLARE_DYNAMIC_CLASS(CTracks)
 
 	/*! \class CTimer
 	 *  \brief timer
@@ -111,6 +121,8 @@ class CTracks : public IFloopyObj
 		CBorder(CTracks *tracks) : IFloopyObj(tracks) {}
 		virtual ~CBorder() {}
 
+		int GetType()	{ return FLOOPY_TRACKS_BORDER; }
+
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZEWE); }
 		void Move(int dx, int WXUNUSED(dy));
 		void OnMouseEvent(wxMouseEvent& event);
@@ -145,6 +157,8 @@ public:
 	CTracks();
 	virtual ~CTracks();
 
+	int GetType()	{ return FLOOPY_TRACKS; }
+
 	void SetTracksView(wxScrolledWindow *panel);
 	void SetLabelsView(wxScrolledWindow *panel) { m_pLabelsView = panel; }
 	
@@ -163,6 +177,11 @@ public:
 	int GetWidth();
 	void SetWidth(int width);
 	int GetHeight();
+
+	int GetTrackCount()								{ return m_tracks.GetCount(); }
+
+	int GetChildCount()								{ return GetTrackCount(); }
+	IFloopyObj *GetChild(int index)					{ return (IFloopyObj*)GetTrack(index); }
 
 	void DrawBG  (wxDC& dc);
 	void DrawFore(wxDC& dc);
@@ -270,7 +289,7 @@ private:
 
 class CTrack : public IFloopyObj  
 {
-    DECLARE_DYNAMIC_CLASS(CTrack)
+//	DECLARE_DYNAMIC_CLASS(CTrack)
 
 	/*! \class CBorder
 	 *  \brief 
@@ -285,6 +304,8 @@ class CTrack : public IFloopyObj
 	public:
 		CBorder(CTrack *track) : IFloopyObj(track) {}
 		virtual ~CBorder() {}
+
+		int GetType()	{ return FLOOPY_TRACK_BORDER; }
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZENS); }
 		void Move(int WXUNUSED(dx), int dy);
@@ -341,6 +362,8 @@ public:
 	CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *parent, int level);
 	virtual ~CTrack();
 
+	int GetType()	{ return FLOOPY_TRACK; }
+
 	void DrawLabel(wxDC& dc, wxRect& rc);
 	void DrawBG   (wxDC& dc, wxRect& rc);
 	void DrawFore (wxDC& dc, wxRect& rc);
@@ -351,7 +374,7 @@ public:
 	int GetHeight();//					{ return m_height + m_pBorder->GetHeight(); }
 	int GetTop()					{ return m_top; }
 	void SetHeight(int height);
-	wxString GetName()				{ return m_name; }
+//	wxString GetName()				{ return m_name; }
 	wxBitmap *GetBitmap()			{ return m_pBitmap; }
 	wxCursor GetCursor()			{ return wxCursor(wxCURSOR_PENCIL); }
 
@@ -386,6 +409,11 @@ public:
 	void OnMouseEvent(wxMouseEvent& event);
 
 	int GetRegionCount()			{ return m_regions.GetCount(); }
+
+	CRegion *GetRegion(int index);
+
+	int GetChildCount()						{ return GetRegionCount(); }
+	IFloopyObj *GetChild(int index)			{ return (IFloopyObj*)GetRegion(index); }
 
 	void CheckIntersections(CRegion *pRegion1, int &left, int &right, bool bResize);
 
@@ -443,7 +471,7 @@ private:
 
 class CRegion : public IFloopyObj
 {
-    DECLARE_DYNAMIC_CLASS(CRegion)
+//	DECLARE_DYNAMIC_CLASS(CRegion)
 
 public:
 	/*! \class CBorder
@@ -451,8 +479,6 @@ public:
 	 *  \author sqba
 	 *  \version 0.0
 	 *  \date 2005
-	 *  \bug Too many bugs at this point.
-	 *  \warning Requires a lot of work.
 	 *
 	 *  Class represents event's left or right border...
 	 */
@@ -462,15 +488,15 @@ public:
 		CBorder(CRegion *event, bool left) : IFloopyObj(event) { m_bLeft = left;}
 		virtual ~CBorder() {}
 
+		int GetType()	{ return FLOOPY_REGION_BORDER; }
+
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZEWE); }
 
 		void Move(int dx, int WXUNUSED(dy));
-		void DrawBG(wxDC&, wxRect&);
-		void DrawFore(wxDC&, wxRect&);
 
 	private:
 		inline CRegion  *getRegion()	{ return (CRegion*)GetParent(); }
-		bool m_bLeft; // Left or right, start or end
+		bool m_bLeft; // Left or right, start or end of region
 		CRegion *m_pRegion;
 	};
 
@@ -478,6 +504,11 @@ public:
 	CRegion() {}
 	CRegion(CTrack *track, UINT startSample, UINT endSample);
 	virtual ~CRegion();
+
+	int GetType()	{ return FLOOPY_REGION; }
+
+	int GetChildCount()						{ return 1; }
+	IFloopyObj *GetChild(int index)			{ return (IFloopyObj*)m_pDisplay; }
 
 	void DrawBG  (wxDC& dc, wxRect& rc);
 	void DrawFore(wxDC& dc, wxRect& rc);
@@ -550,7 +581,7 @@ private:
 
 class CParameter : public IFloopyObj
 {
-    DECLARE_DYNAMIC_CLASS(CParameter)
+//	DECLARE_DYNAMIC_CLASS(CParameter)
 
 public:
 	class CPoint : public IFloopyObj
@@ -571,15 +602,11 @@ public:
 	CParameter(CRegion *region, IFloopySoundInput *obj, int index);
 	virtual ~CParameter();
 
-//	IFloopyObj *GetSelectedObj();
+	int GetType()	{ return FLOOPY_PARAMETER; }
+
 	IFloopyObj *GetChildAt(int x, int y);
-
 	float GetValueAt(int x);
-
-	//void DrawBG  (wxDC& dc, wxRect& rc);
 	void DrawFore(wxDC& dc, wxRect& rc);
-	//void DrawPreview(wxDC& dc, wxRect& rc);
-
 	bool HitTest(int x, int y);
 
 private:
@@ -593,7 +620,6 @@ private:
 	int		m_iSamplePos, m_iPrevSamplePos;
 	CPoint	*m_pPoint;
 	IFloopySoundInput *m_pObj;
-//	OffsetArrays m_Offsets;
 };
 
 
@@ -628,56 +654,29 @@ private:
 	int m_iPosition; // In samples
 };
 
-/*
-class CWaveDisplay : public IFloopyObj  
+
+class CRegionDisplay : public IFloopyObj
 {
-public:
-	CWaveDisplay(CTrack *track);
-	virtual ~CWaveDisplay();
-
-	void DrawBG(wxDC& dc, wxRect& rc);
-	void DrawFore(wxDC& dc, wxRect& rc);
-
-	void LoadPeaks();
-
-	void DrawRegion(CRegion *region, wxDC& dc, wxRect& rc);
-
-private:
-	void drawDBLines(wxDC& dc, wxRect& rc);
-	void drawWaveform(wxDC& dc, wxRect& rc, int start);
-	IFloopySoundInput *getInput();
-
-private:
-	float m_fdB;
-//	PointList m_points;
-	PeaksArray m_peaks;
-	IFloopySoundInput *m_pInput;
-};
-*/
-
-class CRegionDisplay// : public wxThread  
-{
-	/*class CLoadThread : public wxThread
-	{
-	public:
-		CLoadThread(CRegionDisplay *display) { m_pDisplay = display; }
-		//virtual ~CLoadThread();
-	
-		void *Entry() { m_pDisplay->loadPeaks(); return NULL; }
-
-		CRegionDisplay *m_pDisplay;
-	};*/
-
 public:
 	CRegionDisplay(CRegion *region);
 	virtual ~CRegionDisplay();
 
+	int GetType()	{ return FLOOPY_REGION_DISP; }
+
 	void DrawBG(wxDC& dc, wxRect& rc);
 	void DrawFore(wxDC& dc, wxRect& rc);
 
 	void LoadPeaks();
 
-//	void *Entry();
+	int   GetPropertyCount();
+	bool  GetPropertyVal(int index, float *value);
+	void  SetPropertyVal(int index, float value);
+	char *GetPropertyName(int index);
+	char *GetPropertyDesc(int index);
+	float GetPropertyMax(int index);
+	float GetPropertyMin(int index);
+	char *GetPropertyUnit(int index);
+	float GetPropertyStep(int index);
 
 private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
@@ -686,15 +685,13 @@ private:
 	void loadPeaks();
 	void loadPeaksChunked();
 	int getLengthNotLooped();
-//	IFloopySoundInput *getInput(CTrack *track);
+	int getMaxSampleValue();
 
 private:
-	float				m_fdB;
 	IFloopySoundInput	*m_pInput;
 	CRegion				*m_pRegion;
 	bool				m_bLoaded;
 	PeaksArray			m_peaks;
-	bool				m_bDrawDBLines;
 
 	CTrack				*m_pTrack;
 	CTracks				*m_pTracks;
@@ -705,10 +702,10 @@ private:
 	wxBitmap			m_tempBitmap;
 	bool				m_bRepaint;
 
-//	PointList			m_points;
-//	PeaksArray			m_peaks;
-//	wxMutex				*m_pMutex;
-//	CLoadThread			*m_pLoadThread;
+	// Properties
+	float				m_fdB;
+	bool				m_bDrawDBLines;
+	bool				m_bDrawContour;
 };
 
 

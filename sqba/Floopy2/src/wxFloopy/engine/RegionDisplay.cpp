@@ -17,17 +17,18 @@
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(PeaksArray);
 
-CRegionDisplay::CRegionDisplay(CRegion *region)
+CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
 {
 	m_pRegion		= region;
 	m_pTrack		= (CTrack*)m_pRegion->GetParent();
 	m_pTracks		= (CTracks*)m_pTrack->GetParent();
 	m_pInput		= m_pTrack->GetInput();
-	m_fdB			= -6.0;
+	m_fdB			= -6.f;
 	m_bDrawDBLines	= true;
 	m_bLoaded		= false;
 	m_bDrawVertical = false;
 	m_bRepaint		= false;
+	m_bDrawContour	= false;
 
 	LoadPeaks();
 
@@ -233,14 +234,14 @@ void CRegionDisplay::loadPeaks()
 
 					if(!m_bDrawVertical)
 					{
-						if(max[ch] == 0 && min[ch] != 0)
+						if(max[ch]==0 && min[ch]!=0)
 							max[ch] = min[ch];
-						else if(min[ch] == 0 && max[ch] != 0)
+						else if(min[ch]==0 && max[ch]!=0)
 							min[ch] = max[ch];
 
 						peak.prev = prev[ch];
-						//peak.value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
-						peak.value = ( (peakcount & 1) == 0 ? max[ch] : min[ch] );
+						//peak.value = ( (peakcount%2) == 0 ? max[ch] : min[ch] );
+						peak.value = ( (peakcount&1) == 0 ? max[ch] : min[ch] );
 
 						prev[ch] = peak.value;
 					}
@@ -287,7 +288,7 @@ void CRegionDisplay::loadPeaksChunked()
 	if(interval < 0)
 		return;
 
-	m_bDrawVertical = (interval > 10);
+	m_bDrawVertical = (interval > 85);
 
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 	if(NULL == fmt)
@@ -416,17 +417,23 @@ void CRegionDisplay::loadPeaksChunked()
  */
 void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
 {
+	if(0.f == m_fdB)
+		return;
+
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 
+	int top		= rc.GetTop();
 	int left	= rc.GetX();
 	int width	= rc.GetWidth();
 	int height	= rc.GetHeight();
-	int dby		= (pow(2, (m_fdB/20.0)) * height) / 3.0;
-	int middle	= rc.GetY() + (height / 2);
+	int middle	= rc.GetY() + height/2;
+	int max		= getMaxSampleValue();
+	int amp		= pow(10, (m_fdB/20.f + log10(max)));	/// Amplitude at m_fdB Db
+	int yscale	= max / height * 2;
 	int x1		= left;
 	int x2		= left + width;
-	int y1		= middle - dby;
-	int y2		= middle + dby;
+	int y1		= middle - amp / yscale;
+	int y2		= middle + amp / yscale;
 
 	dc.DrawLine(x1, y1, x2, y1);
 	dc.DrawLine(x1, y2, x2, y2);
@@ -456,35 +463,21 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 	int left	= rc.GetX();
 	int width	= rc.GetWidth();
 	int height	= rc.GetHeight();
-	int mid		= rc.GetY() + height/2;
-	int max		= (int)pow(2, fmt->bitsPerSample);
-	int yscale	= max / height;
+	int middle	= rc.GetY() + height/2;
+	int max		= getMaxSampleValue();
+	int yscale	= max / height * 2;
 	int count	= m_peaks.GetCount();
 	int i		= start;
 	int right	= left + width;
 
-
-
-	// Mozda je bolje da se krajevi lupova crtajy u CRegion-u?
-	int top		= rc.GetTop();
-	int bottom	= rc.GetBottom();
-	int origLen	= getLengthNotLooped();
-
-	// Pen for drawing those little lines at the end of the loop
-	wxPen oldpen = dc.GetPen();
-	wxPen pen( wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), 2, wxSOLID );
-
-	// Length of those little lines at the end of the loop
-	int t = height / 8;
-
-
+	int prevMin	= middle, prevMax = middle;
 
 	for(int x=left; x<right && i<count; x++)
 	{
 		Peak peak = m_peaks.Item(i);
 
-		int y1 = mid - peak.prev  / yscale;
-		int y2 = mid - peak.value / yscale;
+		int y1 = middle - peak.prev  / yscale;
+		int y2 = middle - peak.value / yscale;
 
 		if(!m_bDrawVertical)
 		{
@@ -493,21 +486,23 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 		else
 		{
 			if(y1 != y2)
-				dc.DrawLine(x, y1, x, y2);
+			{
+				if( m_bDrawContour )
+				{
+					dc.DrawLine(x-1, prevMax, x, y1);
+					dc.DrawLine(x-1, prevMin, x, y2);
+
+					prevMax = y1;
+					prevMin = y2;
+				}
+				else
+					dc.DrawLine(x, y1, x, y2);
+			}
 			else
 				dc.DrawPoint(x, y1);
 		}
 
 		i += channels;
-
-		// Draw the end of the loop
-		if((origLen>0) && (x>left+1) && ((peak.pos%origLen)==0))
-		{
-			dc.SetPen(pen);
-			dc.DrawLine(x, top, x, top+t);
-			dc.DrawLine(x, bottom-t, x, bottom);
-			dc.SetPen(oldpen);
-		}
 	}
 }
 
@@ -526,3 +521,126 @@ int CRegionDisplay::getLengthNotLooped()
 	}
 	return len;
 }
+
+int CRegionDisplay::getMaxSampleValue()
+{
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
+
+	if(!fmt || fmt->bitsPerSample<=0)
+		return 0;
+
+	int max = (int)pow(2, fmt->bitsPerSample);
+	if(fmt->bitsPerSample == 16)
+	{
+		max /= 2;
+		max -= 1;
+	}
+
+	return max;
+}
+
+
+int CRegionDisplay::GetPropertyCount()
+{
+	return 3;
+}
+
+bool CRegionDisplay::GetPropertyVal(int index, float *value)
+{
+	switch(index)
+	{
+	case 0:
+		*value = m_fdB;
+		return true;
+	case 1:
+		*value = (float)m_bDrawDBLines;
+		return true;
+	case 2:
+		*value = (float)m_bDrawContour;
+		return true;
+	}
+	return false;
+}
+
+void CRegionDisplay::SetPropertyVal(int index, float value)
+{
+	switch(index)
+	{
+	case 0:
+		m_fdB = value;
+		return;
+	case 1:
+		m_bDrawDBLines = (value==0.f ? false : true);
+		return;
+	case 2:
+		m_bDrawContour = (value==0.f ? false : true);
+		return;
+	}
+}
+
+char *CRegionDisplay::GetPropertyName(int index)
+{
+	switch(index)
+	{
+	case 0: return "DbLines";
+	case 1: return "DrawDbLines";
+	case 2: return "DrawContour";
+	}
+	return NULL;
+}
+
+char *CRegionDisplay::GetPropertyDesc(int index)
+{
+	switch(index)
+	{
+	case 0: return "Decibell Lines";
+	case 1: return "Draw Decibell Lines";
+	case 2: return "Draw Contour";
+	}
+	return NULL;
+}
+
+float CRegionDisplay::GetPropertyMin(int index)
+{
+	switch(index)
+	{
+	case 0: return -24.f;
+	case 1: return 0.f;
+	case 2: return 0.f;
+	}
+	return 0.f;
+}
+
+float CRegionDisplay::GetPropertyMax(int index)
+{
+	switch(index)
+	{
+	case 0: return 0.f;
+	case 1: return 1.f;
+	case 2: return 1.f;
+	}
+	return 0.f;
+}
+
+char *CRegionDisplay::GetPropertyUnit(int index)
+{
+	switch(index)
+	{
+	case 0: return "Db";
+	case 1: return "On/Off";
+	case 2: return "On/Off";
+	}
+	return NULL;
+}
+
+float CRegionDisplay::GetPropertyStep(int index)
+{
+	switch(index)
+	{
+	case 0: return 0.1f;
+	case 1: return 1.f;
+	case 2: return 1.f;
+	}
+	return 0.f;
+}
+

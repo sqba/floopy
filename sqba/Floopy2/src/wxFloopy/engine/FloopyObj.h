@@ -25,6 +25,7 @@ public:
 	void (*func)(IFloopyObj*);
 };
 
+
 WX_DECLARE_LIST(CMenuItem, MenuItems);
 
 class CMenu : public wxMenu  
@@ -43,20 +44,23 @@ private:
 };
 
 
+#define FLOOPY_OBJ	0
 
-
-//////////////////////////////////////////////////////////////////////
-// IFloopyObj interface
-//////////////////////////////////////////////////////////////////////
-class IFloopyObj : public wxObject
+/*********************************************************************
+ *! \class IFloopyObj
+ *  \brief Interface implemented by all GUI objects.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *********************************************************************/
+class IFloopyObj : public IFloopy
 {
 public:
 	IFloopyObj(IFloopyObj *parent = NULL)
 	{
-		m_bSelected = false;
-		m_pParent = parent;
-		m_pMenu = NULL;
-		m_ptPrev.x = m_ptPrev.y = 0;
+		m_bSelected	= false;
+		m_pParent	= parent;
+		m_pMenu		= NULL;
+		m_ptPrev.x	= m_ptPrev.y = 0;
 	}
 
 	virtual ~IFloopyObj()
@@ -65,49 +69,45 @@ public:
 			delete m_pMenu;
 	}
 
-	virtual bool GetName(wxString& WXUNUSED(name))			{ return false; };
-	virtual bool GetDescription(wxString& WXUNUSED(desc))	{ return false; };
+	virtual int GetType()							{ return FLOOPY_OBJ; }
 
-	//////////////////////////////////////////////////////////////////
-	// IFloopyObj::Update
-	// Called when some of the parameters have been changed
-	//////////////////////////////////////////////////////////////////
-	//virtual void Update()								{}
+//	virtual bool GetName(wxString &name)			{ return false; };
+//	virtual bool GetDescription(wxString &desc)		{ return false; };
 
-	virtual void Select(bool selected=true)	{ m_bSelected = selected; }
-	virtual bool IsSelected()				{ return m_bSelected; }
+	virtual void Select(bool select=true)			{ m_bSelected = select; }
+	virtual bool IsSelected()						{ return m_bSelected; }
 
-	virtual IFloopyObj *GetParent()			{ return m_pParent; }
+	virtual wxCursor GetCursor()					{ return *wxSTANDARD_CURSOR; }
+	virtual wxMenu *GetMenu()						{ return m_pMenu; }
 
+	wxColour GetColor()								{ return m_color; }
+	void SetColor(wxColour color)					{ m_color = color; }
 
-	virtual void DrawBG  (wxDC& WXUNUSED(dc), wxRect& WXUNUSED(rc)) {};
-	virtual void DrawFore(wxDC& WXUNUSED(dc), wxRect& WXUNUSED(rc)) {};
+	virtual int GetCaretPos()						{ return 0; }
 
-	virtual void Refresh() {}
-	virtual void Invalidate() {}
+	virtual IFloopyObj *GetParent()					{ return m_pParent; }
+	virtual IFloopyObj *GetChildAt(int x, int y)	{ return NULL; }
+	virtual int GetChildCount()						{ return 0; }
+	virtual IFloopyObj *GetChild(int index)			{ return NULL; }
 
-	virtual IFloopyObj *GetChildAt(int WXUNUSED(x), int WXUNUSED(y)) { return NULL; }
+	virtual IFloopySoundInput *GetInput()			{ return NULL; }
 
-	virtual wxCursor GetCursor()	{ return *wxSTANDARD_CURSOR; }
-	virtual wxMenu *GetMenu()		{ return m_pMenu; }
+	virtual void DrawBG  (wxDC &dc, wxRect &rc)		{};
+	virtual void DrawFore(wxDC &dc, wxRect &rc)		{};
 
-	wxColour GetColor()				{ return m_color; }
-	void SetColor(wxColour color)	{ m_color = color; }
+	virtual void Refresh()							{}
+	virtual void Invalidate()						{}
 
-	virtual void Move(int WXUNUSED(dx), int WXUNUSED(dy)) {}
+	virtual void Move(int dx, int dy)				{}
 
-	virtual IFloopyObj *GetSelectedObj() { return NULL; }
+	virtual IFloopyObj *GetSelectedObj()			{ return NULL; }
 
-	virtual bool OnKeyDown(wxKeyEvent& event) { return false; }
+	virtual bool OnKeyDown(wxKeyEvent& event)		{ return false; }
 	virtual void OnMouseEvent(wxMouseEvent& event)
 	{
 		m_ptPrev.x = event.GetX();
 		m_ptPrev.y = event.GetY();
 	}
-
-	virtual IFloopySoundInput *GetInput() { return NULL; }
-
-	virtual int GetCaretPos() { return 0; }
 
 protected:
 	IFloopyObj	*m_pParent;

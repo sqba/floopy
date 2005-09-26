@@ -9,7 +9,7 @@
 
 #define MIN_HEIGHT	15
 
-IMPLEMENT_DYNAMIC_CLASS(CTrack, IFloopyObj)
+//IMPLEMENT_DYNAMIC_CLASS(CTrack, IFloopyObj)
 
 WX_DEFINE_LIST(RegionList);
 
@@ -120,7 +120,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 		left   = m_nLevel*4+2;
 		top    = rc.GetTop()+1;
 		width  = rc.GetWidth()-left-3;
-		height = GetHeight()-2;
+		height = rc.GetHeight()-2;
 		dc.DrawRoundedRectangle(left, top, width, height, 4);
 	}
 	else
@@ -129,7 +129,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 		left   = 0;
 		top    = rc.GetTop();
 		width  = rc.GetWidth()-left;
-		height = GetHeight();
+		height = rc.GetHeight();
 		dc.DrawRectangle(left, top, width, height);
 		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2), 4);
 	}
@@ -160,12 +160,12 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 
 	// Draw text
 	int x = left + 5;//width/2 - w/2;
-	int y = (rc.GetTop() + (GetHeight()/4) - h/2);
+	int y = (rc.GetTop() + (rc.GetHeight()/4) - h/2);
 	dc.DrawText( m_name, x, y );
-	m_rcLabel.SetHeight(GetHeight());
+	m_rcLabel.SetHeight(rc.GetHeight());
 
 
-	int n = GetHeight()/2-2;
+	int n = rc.GetHeight()/2-2;
 	if(n > 20)
 		n = 20;
 	drawLoopSign(dc,  wxRect(5, top+height-n-2, n, n));
@@ -210,7 +210,7 @@ void CTrack::DrawBG(wxDC& dc, wxRect& rc)
 
 	dc.SetPen( *wxMEDIUM_GREY_PEN );
 
-	int y = m_top + GetHeight();
+	int y = m_top + GetHeight() - m_pBorder->GetHeight();
 	//dc.DrawLine(0, y, rc.GetWidth(), y);
 
 	wxRect rcBorder(0, y, rc.GetWidth(), m_pBorder->GetHeight());
@@ -355,6 +355,11 @@ bool CTrack::RemoveRegion(CRegion *region)
 
 IFloopyObj *CTrack::GetChildAt(int x, int y)
 {
+	int bottom = m_top + GetHeight();
+
+	if(y<m_top || y>bottom)
+		return NULL;
+
 	if(x > GetWidth())
 		return NULL;
 
@@ -367,10 +372,9 @@ IFloopyObj *CTrack::GetChildAt(int x, int y)
 		node = node->GetNext();
 	}
 
-	//if((y >= m_top) && (y < m_top+GetHeight()) && (x < GetWidth()))
-	if((y >= m_top) && (y < m_top+GetHeight()))
+	if(y>=m_top && y<bottom)
 		return this;
-	else if(y == m_top+GetHeight())
+	else if(y == bottom)
 		return m_pBorder;
 
 	return NULL;
@@ -392,6 +396,22 @@ void CTrack::DeselectAllRegions()
 		region->Select(false);
 		node = node->GetNext();
 	}
+}
+
+
+CRegion *CTrack::GetRegion(int index)
+{
+	int count = 0;
+	RegionList::Node *node = m_regions.GetFirst();
+	while (node)
+	{
+		CRegion *region = (CRegion*)node->GetData();
+		if(count == index)
+			return region;
+		node = node->GetNext();
+		count++;
+	}
+	return NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -488,15 +508,16 @@ void CTrack::RemoveSelectedObjects()
 
 int CTrack::GetHeight()
 {
+	int height = MIN_HEIGHT*3;
 	int index = 0;
 	if(m_pInput->GetPropertyIndex("height", &index))
 	{
 		float val = 0;
 		if(m_pInput->GetPropertyVal(index, &val))
-			return (int)val;
+			height = (int)val;
 	}
 
-	return MIN_HEIGHT*3;
+	return height + m_pBorder->GetHeight();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -507,16 +528,20 @@ int CTrack::GetHeight()
 /////////////////////////////////////////////////////////////////////////////
 void CTrack::SetHeight(int height)
 {
+	height -= m_pBorder->GetHeight();
 	if( MIN_HEIGHT <= height )
 	{
 		int index = 0;
 		if(m_pInput->GetPropertyIndex("height", &index))
+		{
 			m_pInput->SetPropertyVal(index, (float)height);
 
-		Refresh();
-		GetTracks()->RefreshTracks(this);
+			Refresh();
+			
+			GetTracks()->RefreshTracks(this);
 
-		GetTracks()->SetCaretPos(GetTracks()->GetCaretPos());
+			GetTracks()->SetCaretPos(GetTracks()->GetCaretPos());
+		}
 	}
 }
 
@@ -1156,7 +1181,7 @@ void CTrack::CBorder::DrawFore(wxDC& dc, wxRect& rc)
 	int height = rc.GetHeight();
 
 	int y = top + height;
-	dc.DrawLine(0, y, rc.GetWidth(), y);
+	dc.DrawRectangle(0, y, rc.GetWidth(), height);
 
 	dc.SetPen( oldpen );
 }

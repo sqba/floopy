@@ -41,6 +41,7 @@ private:
 		wxStaticText	*m_pLabel;
 		IFloopy			*m_pInput;
 		wxString		m_Unit;
+		int				m_coeff;
 
 	private:
 		DECLARE_EVENT_TABLE()
@@ -69,6 +70,7 @@ public:
 private:
 	void init(IFloopyObj *obj, bool property);
 	void load(IFloopy *obj);
+	void load2(IFloopyObj *obj);
 
 private:
 	wxFlexGridSizer	*m_pSizer;

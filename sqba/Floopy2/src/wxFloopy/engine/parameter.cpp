@@ -4,7 +4,7 @@
 
 #include "tracks.h"
 
-IMPLEMENT_DYNAMIC_CLASS(CParameter, IFloopyObj)
+//IMPLEMENT_DYNAMIC_CLASS(CParameter, IFloopyObj)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

@@ -102,7 +102,8 @@ void CControlDlg::init(IFloopyObj *obj, bool property)
 
 	Clear();
 
-	load( input );
+	//load( input );
+	load2( obj );
 }
 
 void CControlDlg::load(IFloopy *obj)
@@ -136,6 +137,46 @@ void CControlDlg::load(IFloopy *obj)
 	}
 }
 
+void CControlDlg::load2(IFloopyObj *obj)
+{
+	if(NULL == obj)
+		return;
+
+	int count = m_bProperty ? obj->GetPropertyCount() : obj->GetParamCount();
+
+	for(int index=0; index<count; index++)
+	{
+		wxString txt(m_bProperty ? obj->GetPropertyName(index) : obj->GetParamName(index));
+
+		wxStaticText	*name	= new wxStaticText(this, -1, txt);
+		wxStaticText	*value	= new wxStaticText(this, -1, "value");
+		wxSlider		*slider	= new CSliderCtrl(this, obj, index, m_bProperty, value);
+
+		m_pSizer->Add( name,	0, wxALIGN_RIGHT );
+		m_pSizer->Add( slider,	1, wxEXPAND|wxALL );
+		m_pSizer->Add( value,	0, wxALIGN_LEFT );
+
+		m_pSizer->AddGrowableRow(index, 1);
+
+		//m_count += 3;
+		m_count++;
+	}
+
+	int type = obj->GetType();
+	if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
+	{
+		IFloopy *src = ((IFloopySoundFilter*)obj)->GetSource();
+		if(NULL != src)
+			load(src);
+	}
+
+	for(int i=0; i<obj->GetChildCount(); i++)
+	{
+		IFloopyObj *child = obj->GetChild(i);
+		load2( child );
+	}
+}
+
 bool CControlDlg::Show(const bool show)
 {
 	return wxDialog::Show( show );
@@ -165,7 +206,7 @@ CTrack *CControlDlg::GetTrack()
 	IFloopyObj *obj = m_pObject;
 	while(obj)
 	{
-		if( obj->IsKindOf(CLASSINFO(CTrack)) )
+		if( obj->GetType() == FLOOPY_TRACK )
 			return (CTrack*)obj;
 		obj = obj->GetParent();
 	}
@@ -193,6 +234,7 @@ CControlDlg::CSliderCtrl::CSliderCtrl(CControlDlg* parent,
 	m_pLabel	= label;
 	m_pInput	= input;
 	m_bProperty	= property;
+	m_coeff		= 1;
 
 	m_Unit = property ? input->GetPropertyUnit(index) : input->GetParamUnit(index);
 
@@ -206,7 +248,7 @@ CControlDlg::CSliderCtrl::~CSliderCtrl()
 
 void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 {
-	float value = (float)evt.GetPosition();
+	float value = (float)evt.GetPosition() / (float)m_coeff;
 
 	CTracks *tracks = ((CControlDlg*)GetParent())->GetTracks();
 	IFloopyObj *obj = ((CControlDlg*)GetParent())->GetObject();
@@ -224,7 +266,7 @@ void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 		//if(NULL != tracks)
 		//	sample = tracks->GetCaretPos();
 		sample = obj->GetCaretPos();
-		if( obj->IsKindOf(CLASSINFO(CRegion)) )
+		if( obj->GetType() == FLOOPY_REGION )
 		{
 			CRegion *region = (CRegion*)obj;
 			float val = 0.f;
@@ -251,12 +293,14 @@ void CControlDlg::CSliderCtrl::init()
 	float min = 0.f;
 	float max = 0.f;
 	float val = 0.f;
+	float step = 0.f;
 
 	if(m_bProperty)
 	{
 		m_pInput->GetPropertyVal(m_index, &val);
 		min = m_pInput->GetPropertyMin(m_index);
 		max = m_pInput->GetPropertyMax(m_index);
+		step = m_pInput->GetPropertyStep(m_index);
 	}
 	else
 	{
@@ -269,14 +313,26 @@ void CControlDlg::CSliderCtrl::init()
 		m_pInput->GetParamAt(sample, m_index, &val);
 		min = m_pInput->GetParamMin(m_index);
 		max = m_pInput->GetParamMax(m_index);
+		step = m_pInput->GetParamStep(m_index);
 	}
 
-	wxSlider::SetRange(min, max);
-	wxSlider::SetValue(val);
+	if(min < 0.f)
+		m_coeff = 1000;
+	else
+		m_coeff = 1;
 
 	wxString txt;
 	txt.Printf("%.4f %s", val, m_Unit);
 	m_pLabel->SetLabel( txt );
+
+	min *= m_coeff;
+	max *= m_coeff;
+	step *= m_coeff;
+	val *= m_coeff;
+
+	wxSlider::SetRange(min, max);
+	wxSlider::SetValue(val);
+	wxSlider::SetLineSize(step);
 }
 
 void CControlDlg::CSliderCtrl::Update()

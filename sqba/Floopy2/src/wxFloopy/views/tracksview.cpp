@@ -121,7 +121,7 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 		if(!rc.Inside(event.GetX(), event.GetY()))
 			return;
 
-		if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion)))
+		if(m_pSelectedObj->GetType() == FLOOPY_REGION)
 		{
 			if(0 != m_ptPrev.x)
 			{
@@ -154,43 +154,48 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 		{
 			m_pSelectedObj = obj;
 
-			if(obj->IsKindOf(CLASSINFO(CTrack)))
+			switch( obj->GetType() )
 			{
-				CTrack *track = (CTrack*)obj;
-			
-				if( !track->IsSelected() )
-					m_pTracks->DeselectAllTracks();
+			case FLOOPY_TRACK:
+				{
+					CTrack *track = (CTrack*)obj;
 				
-				m_pTracks->DeselectAllRegions();
-
-				m_pTracks->SetCaretPos(m_pTracks->GetCaretPos());
-
-				int xScrollUnits=0, yScrollUnits=0;
-				GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-				int xOrig=0, yOrig=0;
-				GetViewStart(&xOrig, &yOrig);
-				xOrig *= xScrollUnits;
-				yOrig *= yScrollUnits;
-
-				///////////////////////////////////////////
-				// Add new region
-				int x1 = event.GetX() + xOrig;
-				CRegion *region = track->AddNewRegionAt(x1);
-				m_pSelectedObj = region->GetBorder(false);
-				//region->Refresh();
-				///////////////////////////////////////////
-			}
-			else if(obj->IsKindOf(CLASSINFO(CRegion)))
-			{
-				if( !event.ShiftDown() && !obj->IsSelected())
+					if( !track->IsSelected() )
+						m_pTracks->DeselectAllTracks();
+					
 					m_pTracks->DeselectAllRegions();
-				if( !obj->IsSelected() )
-					obj->Select();
 
-				m_pParamsDialog->Update();
-				m_pPropsDialog->Update();
+					m_pTracks->SetCaretPos(m_pTracks->GetCaretPos());
 
-				return; // Don't move the caret
+					int xScrollUnits=0, yScrollUnits=0;
+					GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+					int xOrig=0, yOrig=0;
+					GetViewStart(&xOrig, &yOrig);
+					xOrig *= xScrollUnits;
+					yOrig *= yScrollUnits;
+
+					///////////////////////////////////////////
+					// Add new region
+					int x1 = event.GetX() + xOrig;
+					CRegion *region = track->AddNewRegionAt(x1);
+					m_pSelectedObj = region->GetBorder(false);
+					//region->Refresh();
+					///////////////////////////////////////////
+
+					break;
+				}
+			case FLOOPY_REGION:
+				{
+					if( !event.ShiftDown() && !obj->IsSelected())
+						m_pTracks->DeselectAllRegions();
+					if( !obj->IsSelected() )
+						obj->Select();
+
+					m_pParamsDialog->Update();
+					m_pPropsDialog->Update();
+
+					return; // Don't move the caret
+				}
 			}
 		}
 		else if(event.RightUp())
@@ -204,26 +209,31 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 		}
 		else if( event.LeftUp() && m_pSelectedObj )
 		{
-			if(m_pSelectedObj->IsKindOf(CLASSINFO(CTrack)))
-				m_bDrag = false;
-			else if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion)))
-				m_pTracks->UpdateSelectedRegions();
-			else if(m_pSelectedObj->IsKindOf(CLASSINFO(CRegion::CBorder)))
+			switch( m_pSelectedObj->GetType() )
 			{
-				CRegion *region = (CRegion*)m_pSelectedObj->GetParent();
-				
-				if(region->GetWidth() <= 2)
+			case FLOOPY_TRACK:
+				m_bDrag = false;
+				break;
+			case FLOOPY_REGION:
+				m_pTracks->UpdateSelectedRegions();
+				break;
+			case FLOOPY_REGION_BORDER:
 				{
-					CTrack *track = (CTrack*)region->GetParent();
-					track->RemoveRegion( region );
+					CRegion *region = (CRegion*)m_pSelectedObj->GetParent();
+					
+					if(region->GetWidth() <= 2)
+					{
+						CTrack *track = (CTrack*)region->GetParent();
+						track->RemoveRegion( region );
+					}
+					else
+						region->Update();
+
+					m_pParamsDialog->Update();
+					m_pPropsDialog->Update();
+
+					m_pSelectedObj = NULL;
 				}
-				else
-					region->Update();
-
-				m_pParamsDialog->Update();
-				m_pPropsDialog->Update();
-
-				m_pSelectedObj = NULL;
 			}
 		}
 	}

@@ -4,7 +4,7 @@
 
 #include "tracks.h"
 
-IMPLEMENT_DYNAMIC_CLASS(CRegion, IFloopyObj)
+//IMPLEMENT_DYNAMIC_CLASS(CRegion, IFloopyObj)
 
 WX_DEFINE_LIST(ParameterList);
 
@@ -133,10 +133,11 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 #endif
 
-	int top    = GetTop();
-	int height = GetHeight();
+	int top    = rc.GetTop()+1;
+	int height = rc.GetHeight()-2;
 
 	dc.DrawRoundedRectangle(left, top, width, height, 3);
+	//DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2), 3);
 
 	dc.SetPen(oldpen);
 	dc.SetBrush(oldbrush);
@@ -164,8 +165,8 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	calcPos(&left, &right);
 	int width = right - left;
 	int border = (IsSelected() ? 2 : 1);
-	int top    = GetTop();
-	int height = GetHeight();
+	int top    = rc.GetTop();
+	int height = rc.GetHeight();
 	wxRect rce(left, top, width, height);
 
 	///////////////////////////////////////////////////////
@@ -339,6 +340,9 @@ IFloopyObj *CRegion::GetChildAt(int x, int y)
 	int left=0, right=0;
 	calcPos(&left, &right);
 
+	if(x<left || x>right)
+		return NULL;
+
 	if( HitTest(x, y) )
 	{
 		if(left == x)
@@ -367,12 +371,7 @@ IFloopyObj *CRegion::GetChildAt(int x, int y)
 
 IFloopyObj *CRegion::GetSelectedObj()
 {
-	if( IsSelected() )
-		return this;
-	else
-	{
-		return NULL;
-	}
+	return ( IsSelected() ? this : NULL);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -425,8 +424,8 @@ void CRegion::Update()
 		m_iStartSample = 0;
 
 	/////////////////////////////////////////////////////////////////////////////////////////
-//	if((m_iPrevStart != m_iStartSample) && (m_iPrevEnd != m_iEndSample))
-//		track->MoveAllParamsBetween(m_iStartSample, m_iEndSample, m_iStartSample-m_iPrevStart);
+	//if((m_iPrevStart != m_iStartSample) && (m_iPrevEnd != m_iEndSample))
+	//	track->MoveAllParamsBetween(m_iStartSample, m_iEndSample, m_iStartSample-m_iPrevStart);
 	/////////////////////////////////////////////////////////////////////////////////////////
 
 	if((m_iPrevStart >= 0) && (m_iPrevStart != m_iStartSample))
@@ -440,8 +439,6 @@ void CRegion::Update()
 		float value = 0;
 		if(getTrack()->GetInput()->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
 		{
-			bRefresh = false;
-
 			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, value, m_iStartSample) )
 			{
 				assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, value) );
@@ -461,11 +458,8 @@ void CRegion::Update()
 		}
 	}
 
-	if( bRefresh )
-	{
-		Invalidate();
-		Refresh();
-	}
+	Invalidate();
+	Refresh();
 
 	m_iPrevStart = m_iPrevEnd = -1;
 
@@ -477,27 +471,7 @@ void CRegion::Update()
 
 	getTracks()->SetViewUpdatedWhilePlaying(true);
 }
-/*
-void CRegion::ddump()
-{
-	IFloopySoundInput *track = getTrack()->GetInput();
-	int offset = 0;
-	do
-	{
-		float value = 0.f;
-		if(track->GetParamAt(offset, TIMELINE_PARAM_ENABLE, &value))
-			wxLogTrace(_T("CRegion"), _T("%d\t%s"), offset, value==PARAM_VALUE_ENABLED?"ON":"OFF");
 
-		//for(int index=0; index<track->GetParamCount(); index++)
-		//{
-		//	float value = 0;
-		//	if(track->GetParamAt(offset, index, &value))
-		//		wxLogTrace(_T("CRegion"), _T("%d\t%d:%.3f"), offset, index, value);
-		//}
-		offset = track->GetNextOffset(offset);
-	} while(offset > 0);
-}
-*/
 void CRegion::CancelUpdate()
 {
 	m_iStartSample = m_iPrevStart;
@@ -753,22 +727,8 @@ int CRegion::GetCaretPos()
 /////////////////////////////////////////////////////////////////////
 void CRegion::CBorder::Move(int dx, int WXUNUSED(dy))
 {
-	if(m_bLeft) {
+	if(m_bLeft)
 		getRegion()->Resize(dx, 0);
-	} else {
+	else
 		getRegion()->Resize(0, dx);
-	}
-	// Too slow
-	//getRegion()->Invalidate();
-	//getRegion()->Refresh();
-}
-
-void CRegion::CBorder::DrawBG(wxDC& dc, wxRect& rc)
-{
-
-}
-
-void CRegion::CBorder::DrawFore(wxDC& dc, wxRect& rc)
-{
-
 }

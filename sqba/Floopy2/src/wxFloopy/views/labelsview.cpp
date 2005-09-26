@@ -79,7 +79,7 @@ void CLabelsView::OnKeyDown(wxKeyEvent& event)
 
 	if(obj)
 	{
-		if(obj->IsKindOf(CLASSINFO(CTrack)))
+		if(obj->GetType() == FLOOPY_TRACK)
 		{
 			CTrack *track = (CTrack*)obj;
 			if(track)
