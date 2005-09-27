@@ -9,17 +9,20 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#define _DEBUG_TIMER_
-
 #include <time.h>
 #include <stdio.h>
 #include <assert.h>
 #include "../../ifloopy.h"
 
-#define MAX_INPUTS	12
-
 class CMixer : public IFloopySoundMixer
 {
+private:
+	struct inputChannel
+	{
+		IFloopySoundInput	*input;
+		inputChannel		*next;
+	};
+
 public:
 	CMixer();
 	virtual ~CMixer();
@@ -33,7 +36,6 @@ public:
 	void Reset();
 	void Close();
 	int GetSize();
-	//SOUNDFORMAT *GetFormat();
 
 	int Read(BYTE *data, int size);
 
@@ -45,34 +47,17 @@ public:
 
 	bool ReadSourceIfDisabled()	{ return false; }
 
-#ifdef _DEBUG_TIMER_
-	int   GetParamCount()			{ return 0; }
-	void  SetParamVal(int index, float value);
-	bool  GetParamVal(int index, float *value);
-	char *GetParamName(int index);
-	char *GetParamDesc(int index);
-#endif // _DEBUG_TIMER_
-
 private:
 	int sampleSize();
-	//int samplesToBytes();
 	void mixBuffers(BYTE *buffers, int count, BYTE *output, int size);
 
-	int	*m_nLengths;
-	int		m_nLengthsSize;
-
-	BYTE	*m_pBuffers;
-	int		m_nBuffSize;
-
-	IFloopySoundInput *m_pInputs[MAX_INPUTS];
-	int		m_nInputCount;
-
-#ifdef _DEBUG_TIMER_
-	bool	m_bDebugTimer;
-	DWORD	m_dwSpeed;
-	int		m_nFrameCount;
-	int		m_nFrameSize;
-#endif // _DEBUG_TIMER_
+private:
+	int				*m_nLengths;	/// Array of buffer lengths
+	int				m_nLengthsSize;	/// Length of m_nLengths array
+	BYTE			*m_pBuffers;	/// Array of buffers
+	int				m_nBuffSize;	/// Total size of m_pBuffers, in bytes
+	inputChannel	*m_pFirst;		/// Pointer to the first input channel
+	int				m_nInputCount;	/// Number of input channels
 };
 
 #endif // !defined(AFX_MIXER_H__571408E7_BE83_4237_BA26_0C5306E32472__INCLUDED_)

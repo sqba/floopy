@@ -6,37 +6,30 @@
 #include <math.h>
 #include <assert.h>
 
+#define SAMPLE	short int
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
 CMixer::CMixer()
 {
-	m_nInputCount = 0;
-
-	m_nBuffSize = 0;
-	m_pBuffers = NULL;
-
-	m_nLengths = NULL;
-	m_nLengthsSize = 0;
-
-	for(int i=0; i<MAX_INPUTS; i++)
-	{
-		m_pInputs[i] = NULL;
-	}
-
-#ifdef _DEBUG_TIMER_
-	m_bDebugTimer = true;
-	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
-#endif // _DEBUG_TIMER_
+	m_nInputCount	= 0;
+	m_nBuffSize		= 0;
+	m_pBuffers		= NULL;
+	m_nLengths		= NULL;
+	m_nLengthsSize	= 0;
+	m_pFirst		= NULL;
 }
 
 CMixer::~CMixer()
 {
-	for(int i=0; i<m_nInputCount; i++)
+	inputChannel *channel = m_pFirst;
+	while(channel)
 	{
-		if(m_pInputs[i])
-			delete m_pInputs[i];
+		inputChannel *tmp = channel;
+		channel = channel->next;
+		delete tmp;
 	}
 
 	if(NULL != m_pBuffers)
@@ -48,42 +41,70 @@ CMixer::~CMixer()
 
 int CMixer::AddSource(IFloopySoundInput *src)
 {
-	if(m_nInputCount < MAX_INPUTS)
+	inputChannel *tmp = m_pFirst;
+	inputChannel *prev = NULL;
+
+	while(tmp)
 	{
-		if(0==m_nInputCount)
-			m_source = src;
-		//m_pInputs[m_nInputCount++] = src;
-		for(int i=0; i<MAX_INPUTS; i++)
-		{
-			if(NULL == m_pInputs[i])
-			{
-				m_pInputs[i] = src;
-				m_nInputCount++;
-				return m_nInputCount;
-			}
-		}
+		prev = tmp;
+		tmp = tmp->next;
 	}
-	return -1;
+
+	tmp = new inputChannel();
+	tmp->input = src;
+	tmp->next = NULL;
+
+	if(prev)
+		prev->next = tmp;
+
+	if(NULL == m_pFirst)
+	{
+		m_pFirst = tmp;
+		m_source = src;
+	}
+
+	m_nInputCount++;
+
+	return m_nInputCount-1;
 }
 
 bool CMixer::RemoveSource(IFloopySoundInput *src)
 {
-	for(int i=0; i<m_nInputCount; i++)
+	inputChannel *tmp = m_pFirst;
+	inputChannel *prev = NULL;
+
+	while(tmp && tmp->input!=src)
 	{
-		if(src == m_pInputs[i])
-		{
-			m_pInputs[i] = NULL;
-			m_nInputCount--;
-			return true;
-		}
+		prev = tmp;
+		tmp = tmp->next;
 	}
+
+	if(tmp)
+	{
+		if(prev)
+			prev->next = tmp->next;
+		if(m_pFirst == tmp)
+			m_pFirst = tmp->next;
+		delete tmp;
+		m_nInputCount--;
+		return true;
+	}
+
 	return false;
 }
 
 IFloopySoundInput *CMixer::GetSource(int index)
 {
-	if(index < m_nInputCount)
-		return m_pInputs[index];
+	inputChannel *tmp = m_pFirst;
+	int count = 0;
+	while(tmp)
+	{
+		if(index == count)
+			return tmp->input;
+		tmp = tmp->next;
+		count++;
+	}
+
 	return NULL;
 }
 
@@ -115,17 +136,17 @@ int CMixer::Read(BYTE *data, int size)
 			m_pBuffers = new BYTE[m_nBuffSize];
 		}
 		assert(m_nBuffSize > 0);
-		memset(m_pBuffers, 0, m_nBuffSize);
-		BYTE *pBuffers = m_pBuffers;
+		memset(m_pBuffers, 0, m_nBuffSize);	// Fill with silence instead!
+		BYTE *pBuffer = m_pBuffers;
 
 		// Fill source m_pBuffers;
-		for(int i=0; i<m_nInputCount; i++)
+		inputChannel *channel = m_pFirst;
+		int i=0;
+		while(channel)
 		{
-			if(m_pInputs[i])
-			{
-				m_nLengths[i] = m_pInputs[i]->Read(pBuffers, size);
-				pBuffers += size;
-			}
+			m_nLengths[i++] = channel->input->Read(pBuffer, size);
+			pBuffer += size;
+			channel = channel->next;
 		}
 
 		mixBuffers(m_pBuffers, m_nInputCount, data, size);
@@ -143,12 +164,6 @@ int CMixer::Read(BYTE *data, int size)
 
 void CMixer::mixBuffers(BYTE *pBuffers, int buffCount, BYTE *output, int size)
 {
-#ifdef _DEBUG_TIMER_
-	clock_t start = 0;
-	if(m_bDebugTimer)
-		start = clock();
-#endif // _DEBUG_TIMER_
-
 	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	
@@ -158,8 +173,8 @@ void CMixer::mixBuffers(BYTE *pBuffers, int buffCount, BYTE *output, int size)
 	int maxSample = (int)pow(2, fmt->bitsPerSample) / 2 - 1;
 
 	// For 16 bit samples only!!!
-	short int *in  = (short int*)pBuffers;
-	short int *out = (short int*)output;
+	SAMPLE *in  = (SAMPLE*)pBuffers;
+	SAMPLE *out = (SAMPLE*)output;
 
 	// For each sample
 	for(int i=0; i<numsamples; i++)
@@ -167,109 +182,57 @@ void CMixer::mixBuffers(BYTE *pBuffers, int buffCount, BYTE *output, int size)
 		// For each source
 		for(int n=0; n<buffCount*numsamples; n+=numsamples)
 		{
-			short int sample = *(in+n+i);
+			SAMPLE sample = *(in+n+i);
 			
-			//if(abs(sample) > buffCount)
 			if(sample != 0)
 			{
-				//int tmp = (int)*out + (int)((float)sample / (float)buffCount);
 				int tmp = (int)*out + (int)sample;
 
-				if(tmp > maxSample || tmp < -maxSample)
-					tmp = (short int)(sample > 0 ? +1 : -1) * maxSample;
+				if(tmp>maxSample || tmp<-maxSample)
+					tmp = (SAMPLE)(sample > 0 ? +1 : -1) * maxSample;
 
-				*out = (short int)tmp;
+				*out = (SAMPLE)tmp;
 			}
-
-			//*out += *(in+n+i) / buffCount;
 		}
 		out++; // Move to next sample
 	}
-
-#ifdef _DEBUG_TIMER_
-	if(m_bDebugTimer)
-	{
-		m_dwSpeed += clock() - start;
-		m_nFrameSize += numsamples;
-		m_nFrameCount++;
-	}
-#endif // _DEBUG_TIMER_
 }
 
-/*
-// Maybe this one is faster? Check out...
-void CMixer::mixBuffers(BYTE *m_pBuffers, int buffm_nInputCount, BYTE *output, int size)
-{
-	SOUNDFORMAT *fmt = GetFormat();
-	assert((fmt->size > 0) && (fmt->channels > 0));
-	
-	int step = fmt->size / 8;
-	int numsamples = size/step;
-
-	// For 16 bit samples only!!!
-	short int *in  = (short int*)m_pBuffers;
-	short int *out = (short int*)output;
-
-	// For each channel
-	for(int i=0; i<buffm_nInputCount*numsamples; i+=numsamples)
-	{
-		short int *channel = in+i;
-		out = (short int*)output;
-
-		for(int n=0; n<numsamples; n++)
-		{
-			*(out++) += *(channel++) / buffm_nInputCount;
-		}
-	}
-}
-*/
 void CMixer::Close()
 {
-	for(int i=0; i<m_nInputCount; i++)
+	inputChannel *channel = m_pFirst;
+	while(channel)
 	{
-		if(m_pInputs[i])
-			m_pInputs[i]->Close();
+		inputChannel *tmp = channel;
+		channel->input->Close();
+		channel = tmp->next;
+		delete tmp;
 	}
-	m_nInputCount = 0;
 
-#ifdef _DEBUG_TIMER_
-	if(m_bDebugTimer)
-	{
-		if(m_dwSpeed>0 && m_nFrameCount>0)
-		{
-			float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
-			float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
-			float amr = afsz * (float)sampleSize() / (afmt / 1000.f);
-			if(amr < 1024.f)
-				printf("Mixing rate:\t%.2f b/sec\n", amr);
-			else if(amr > 1024.f*1024.f)
-				printf("Mixing rate:\t%.2f Mb/sec\n", amr / (1024.f*1024.f));
-			else
-				printf("Mixing rate:\t%.2f Kb/sec\n", amr / 1024.f);
-			printf("Average frame mixing time:\t%f ms\n", afmt);
-			printf("Average frame size:\t\t%.2f samples\n", afsz);
-		}
-	}
-	m_nFrameSize=m_dwSpeed=m_nFrameCount=0;
-#endif // _DEBUG_TIMER_
+	m_pFirst = NULL;
+
+	m_nInputCount = 0;
 }
 
 void CMixer::MoveTo(int samples)
 {
-	for(int i=0; i<m_nInputCount; i++)
+	inputChannel *channel = m_pFirst;
+	while(channel)
 	{
-		if(m_pInputs[i])
-			m_pInputs[i]->MoveTo(samples);
+		channel->input->MoveTo(samples);
+		channel = channel->next;
 	}
 }
 
 void CMixer::Reset()
 {
-	for(int i=0; i<m_nInputCount; i++)
+	inputChannel *channel = m_pFirst;
+	while(channel)
 	{
-		if(m_pInputs[i])
-			m_pInputs[i]->Reset();
+		channel->input->Reset();
+		channel = channel->next;
 	}
+
 	if(m_nBuffSize > 0)
 		memset(m_pBuffers, 0, m_nBuffSize);
 }
@@ -277,113 +240,15 @@ void CMixer::Reset()
 int CMixer::GetSize()
 {
 	int size = 0;
-	for(int i=0; i<m_nInputCount; i++)
+	
+	inputChannel *channel = m_pFirst;
+	while(channel)
 	{
-		if(m_pInputs[i])
-		{
-			int tmp = m_pInputs[i]->GetSize();
-			if(tmp > size)
-				size = tmp;
-		}
+		int s = channel->input->GetSize();
+		if(s > size)
+			size = s;
+		channel = channel->next;
 	}
+
 	return size;
 }
-
-#ifdef _DEBUG_TIMER_
-void CMixer::SetParamVal(int index, float value)
-{
-	if(index == 0)
-		m_bDebugTimer = (value==1.f);
-}
-
-bool CMixer::GetParamVal(int index, float *value)
-{
-	float afmt = (float)m_dwSpeed / (float)m_nFrameCount;
-	float afsz = (float)m_nFrameSize / (float)m_nFrameCount;
-	float amr = afsz * sampleSize() / (afmt / 1000.f);
-
-	switch(index)
-	{
-	case -333:
-		*value = (m_bDebugTimer ? 1.f : 0.f);
-		return true;
-	case -334:
-		*value = afmt;
-		return true;
-	case -335:
-		*value = afsz;
-		return true;
-	case -336:
-		*value = amr;
-		return true;
-	}
-
-	return false;
-}
-
-char *CMixer::GetParamName(int index)
-{
-	switch(index)
-	{
-	case -333:
-		return "timer";
-	case -334:
-		return "mixtime";
-	case -335:
-		return "m_nFrameSize";
-	case -336:
-		return "mixrate";
-	}
-	return NULL;
-}
-
-char *CMixer::GetParamDesc(int index)
-{
-	switch(index)
-	{
-	case -333:
-		return "Debug Timer On/Off (1/0)";
-	case -334:
-		return "Average frame mixing time (in ms)";
-	case -335:
-		return "Average frame size (in bytes)";
-	case -336:
-		return "Average mixing rate (in bytes)";
-	}
-	return NULL;
-}
-#endif // _DEBUG_TIMER_
-/*
-SOUNDFORMAT *CMixer::GetFormat()
-{
-	SOUNDFORMAT *fmt = IFloopySoundInput::GetFormat();
-	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	if(fmt->frequency > 0)
-		return fmt;
-	for(int i=0; i<m_nInputCount; i++)
-	{
-		SOUNDFORMAT *tmp = m_pInputs[i]->GetFormat();
-		if(tmp->frequency > 0)
-		{
-			fmt = tmp;
-			break;
-		}
-	}
-	return fmt;
-}
-*/
-
-int CMixer::sampleSize()
-{
-	SOUNDFORMAT *fmt = GetFormat();
-	assert(fmt->bitsPerSample > 0);
-	return fmt->bitsPerSample / 8;
-}
-/*
-int CMixer::samplesToBytes()
-{
-	SOUNDFORMAT *fmt = GetFormat();
-	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	return (fmt->bitsPerSample / 8) * fmt->channels;
-}
-*/
