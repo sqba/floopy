@@ -121,7 +121,7 @@ void CCaretView::OnMouseEvent(wxMouseEvent& event)
 
 void CCaretView::OnSize(wxSizeEvent& event)
 {
-	CGridView::OnSize( event );
+//	CGridView::OnSize( event );
 
 
 	wxCaret *caret = GetCaret();
