@@ -122,13 +122,6 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 	}
 }
 /*
-void CParameter::DrawPreview(wxDC& dc, wxRect& rc)
-{
-
-}
-*/
-
-/*
 IFloopyObj *CParameter::GetSelectedObj()
 {
 	return IsSelected() ? this : NULL;

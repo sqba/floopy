@@ -680,7 +680,7 @@ public:
 
 private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
-	void drawMiddleLine(wxDC& dc, wxRect& rc);
+	void drawCenterLine(wxDC& dc, wxRect& rc);
 	void drawPeaks(wxDC& dc, wxRect& rc, int start);
 	void loadPeaks();
 	void loadPeaksChunked();

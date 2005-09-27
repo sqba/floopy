@@ -217,26 +217,6 @@ wxColour CRegion::GetForeColor()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// DrawPreview
-//! Draws region preview (in the preview bar).
-//! \param dc [in] reference to the device context
-//! \param rc [in] track's preview rectangle
-//! \return void
-/////////////////////////////////////////////////////////////////////////////
-void CRegion::DrawPreview(wxDC& dc, wxRect& rc)
-{
-	/*SOUNDFORMAT *fmt = getTrack()->GetInput()->GetFormat();
-	float freq = fmt->frequency;//44100.f;
-	float fStart = (float)m_iStartSample / freq;
-	float fEnd   = (float)m_iEndSample   / freq;
-
-	int left  = fStart * (float)pps;
-	int right = fEnd * (float)pps;
-	int width = right - left;
-	dc.DrawRectangle(left, rc.GetTop(), width, rc.GetHeight());*/
-}
-
-/////////////////////////////////////////////////////////////////////////////
 // HitTest
 //! Returns true if the coordinates are in the region's rectangle.
 //! \param x [in] horizontal coordinate

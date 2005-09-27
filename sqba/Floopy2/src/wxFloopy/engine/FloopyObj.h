@@ -61,6 +61,8 @@ public:
 		m_pParent	= parent;
 		m_pMenu		= NULL;
 		m_ptPrev.x	= m_ptPrev.y = 0;
+		m_bChanged	= false;
+		m_iWidth	= m_iHeight = 0;
 	}
 
 	virtual ~IFloopyObj()
@@ -109,12 +111,23 @@ public:
 		m_ptPrev.y = event.GetY();
 	}
 
+	virtual void SetChanged(bool bChanged)			{ m_bChanged = bChanged; }
+	virtual bool IsChanged()						{ return m_bChanged; }
+
+	virtual int GetWidth()							{ return m_iWidth; }
+	virtual void SetWidth(int width)				{ m_iWidth = width; }
+	virtual int GetHeight()							{ return m_iHeight; }
+	virtual void SetHeight(int height)				{ m_iHeight = height; }
+
 protected:
 	IFloopyObj	*m_pParent;
 	CMenu		*m_pMenu;
 	bool		m_bSelected;
 	wxColour	m_color;
 	wxPoint		m_ptPrev;
+	bool		m_bChanged;
+	int			m_iWidth;
+	int			m_iHeight;
 };
 
 

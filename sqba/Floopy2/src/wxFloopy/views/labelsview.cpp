@@ -46,10 +46,7 @@ void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 		m_pTracks->DeselectAllTracks();
 
 		if(track)
-		{
 			track->Select();
-			//track->Refresh();
-		}
 
 		m_pTracksView->SetFocus();
 	}
@@ -57,10 +54,7 @@ void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 	if( event.LeftDClick() )
 	{
 		if(track)
-		{
-			track->Hide( !track->IsHidden() );
-			m_pTracks->Refresh();
-		}
+			track->Select();
 
 		m_pTracksView->SetFocus();
 	}

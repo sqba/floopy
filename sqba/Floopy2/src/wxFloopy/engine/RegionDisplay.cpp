@@ -31,15 +31,10 @@ CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
 	m_bDrawContour	= false;
 
 	LoadPeaks();
-
-//	m_pMutex = new wxMutex();
-//	Create();
-//	m_pLoadThread = NULL;
 }
 
 CRegionDisplay::~CRegionDisplay()
 {
-//	WX_CLEAR_LIST(PointList, m_points);
 	//WX_CLEAR_ARRAY(m_peaks);
 }
 
@@ -59,7 +54,7 @@ void CRegionDisplay::DrawBG(wxDC& dc, wxRect& rc)
 	{
 		rcChannel.Offset(0, height*i);
 		drawDBLines(dc, rcChannel);
-		drawMiddleLine(dc, rcChannel);
+		drawCenterLine(dc, rcChannel);
 	}
 }
 
@@ -118,9 +113,6 @@ void CRegionDisplay::DrawFore(wxDC& dc, wxRect& rc)
 
 void CRegionDisplay::LoadPeaks()
 {
-//	Create();
-//	Run();
-
 	if(NULL == m_pRegion)
 		return;
 
@@ -135,25 +127,14 @@ void CRegionDisplay::LoadPeaks()
 
 	//loadPeaks();
 	loadPeaksChunked();
-
-/*
-	if(m_pLoadThread)
-		delete m_pLoadThread;
-
-	m_pLoadThread = new CLoadThread(this);
-	m_pLoadThread->Create();
-	m_pLoadThread->Run();
-*/
 }
 
 
-// Do this in another thread!!!
+/**
+ * Loads peaks in one big chunk.
+ */
 void CRegionDisplay::loadPeaks()
 {
-//	m_pMutex->Lock();
-
-//	int maxSample		= (int)pow(2, fmt->bitsPerSample) / 2;
-
 	m_bLoaded = false;
 
 	m_peaks.Empty();
@@ -177,8 +158,6 @@ void CRegionDisplay::loadPeaks()
 		return;
 
 	int samples	= (end - start) * channels;
-
-	// Mozda bi bilo bolje kada bi se uchitavalo u chankovima
 
 	short int *buffer = new short int[samples];
 	int bytes = samples * sizeof(short int);
@@ -268,18 +247,13 @@ void CRegionDisplay::loadPeaks()
 	delete buffer;
 
 	m_bRepaint = true;
-
-//	m_pMutex->Unlock();
-
 }
 
+/**
+ * Loads peaks in small chunks.
+ */
 void CRegionDisplay::loadPeaksChunked()
 {
-//	m_pMutex->Lock();
-
-//	int maxSample = (int)pow(2, fmt->bitsPerSample) / 2;
-
-
 	m_bLoaded = false;
 
 	m_peaks.Empty();
@@ -309,8 +283,7 @@ void CRegionDisplay::loadPeaksChunked()
 	int peakcount	= 0;					// Number of peaks loaded
 	int ch			= 0;					// Channel counter
 	int totalSamples = (end - start) * channels;
-	//int buffSize	= srcLen > 0 ? srcLen : interval * 2;
-	int buffSize	= 128;//interval * 2;
+	int buffSize	= 128;
 	int buffPos		= 0;					// Buffer position
 
 	SAMPLE min[2]={0}, max[2]={0};			// Largest and smallest sample values
@@ -408,12 +381,10 @@ void CRegionDisplay::loadPeaksChunked()
 
 	m_bRepaint = true;
 	m_bLoaded = true;
-
-//	m_pMutex->Unlock();
 }
 
 /**
- * Draws dB line(s) for a single channel.
+ * Draws dB lines for a single channel.
  */
 void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
 {
@@ -439,7 +410,10 @@ void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
 	dc.DrawLine(x1, y2, x2, y2);
 }
 
-void CRegionDisplay::drawMiddleLine(wxDC& dc, wxRect& rc)
+/**
+ * Draws a center line.
+ */
+void CRegionDisplay::drawCenterLine(wxDC& dc, wxRect& rc)
 {
 	int x1	= rc.GetX();
 	int x2	= x1 + rc.GetWidth();
@@ -454,8 +428,6 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 {
 	if(!m_bLoaded)
 		return;
-
-//	wxMutexLocker lock(*m_pMutex);
 
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 
@@ -506,6 +478,9 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 	}
 }
 
+/**
+ * Returns the original source length, before the looping component.
+ */
 int CRegionDisplay::getLengthNotLooped()
 {
 	int len = 0;
@@ -522,6 +497,9 @@ int CRegionDisplay::getLengthNotLooped()
 	return len;
 }
 
+/**
+ * Returns maximum sample value.
+ */
 int CRegionDisplay::getMaxSampleValue()
 {
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
@@ -643,4 +621,3 @@ float CRegionDisplay::GetPropertyStep(int index)
 	}
 	return 0.f;
 }
-
