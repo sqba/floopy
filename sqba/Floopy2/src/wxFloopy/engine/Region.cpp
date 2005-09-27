@@ -31,20 +31,14 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 
 	wxLog::AddTraceMask(_T("CRegion"));
 
-	//loadParameters( getTrack()->GetInput() );
-//	loadParameters( getTrack()->GetComponent("volume") );
-
-//	m_bReset = false;
-
 	m_pDisplay = new CRegionDisplay(this);
-//	m_pDisplay->Run();
 }
 
 CRegion::~CRegion()
 {
 	delete m_pLeftBorder;
 	delete m_pRightBorder;
-//	delete m_pMenu; // Deleted in ~IFloopyObj()
+	//delete m_pMenu; // !Deleted in ~IFloopyObj()
 	WX_CLEAR_LIST(ParameterList, m_Parameters);
 	if(m_pDisplay)
 		delete m_pDisplay;

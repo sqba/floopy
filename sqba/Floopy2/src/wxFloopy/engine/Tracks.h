@@ -157,7 +157,37 @@ public:
 	CTracks();
 	virtual ~CTracks();
 
+	////////////////////////////////////////////////////////////////////////////////
+	// IFloopyObj interface
+	////////////////////////////////////////////////////////////////////////////////
 	int GetType()	{ return FLOOPY_TRACKS; }
+
+	//int GetChildCount()							{ return GetTrackCount(); }
+	//IFloopyObj *GetChild(int index)				{ return (IFloopyObj*)GetTrack(index); }
+
+	void DrawBG  (wxDC& dc);
+	void DrawFore(wxDC& dc);
+
+	int   GetPropertyCount();
+	bool  GetPropertyVal(int, float*);
+	void  SetPropertyVal(int, float);
+	char *GetPropertyName(int);
+	char *GetPropertyDesc(int);
+	float GetPropertyMax(int);
+	float GetPropertyMin(int);
+	char *GetPropertyUnit(int);
+	float GetPropertyStep(int);
+
+	int  GetWidth();
+	void SetWidth(int width);
+	int  GetHeight();
+
+
+	void DeselectAllTracks();
+	void DeselectAllRegions();
+	void RemoveSelectedObjects();
+	void UpdateSelectedRegions();
+
 
 	void SetTracksView(wxScrolledWindow *panel);
 	void SetLabelsView(wxScrolledWindow *panel) { m_pLabelsView = panel; }
@@ -168,35 +198,19 @@ public:
 	void SetCaretPos(int samples);
 	int  GetCaretPos();
 
-	int GetSamplesPerPixel();
+	int  GetSamplesPerPixel();
 	void SetSamplesPerPixel(int);
 
 	float GetLength()							{ return m_length; }
-	void SetLength(float len)					{ m_length = len; }
-
-	int GetWidth();
-	void SetWidth(int width);
-	int GetHeight();
+	void  SetLength(float len)					{ m_length = len; }
 
 	int GetTrackCount()								{ return m_tracks.GetCount(); }
 
-	int GetChildCount()								{ return GetTrackCount(); }
-	IFloopyObj *GetChild(int index)					{ return (IFloopyObj*)GetTrack(index); }
-
-	void DrawBG  (wxDC& dc);
-	void DrawFore(wxDC& dc);
 	void DrawLabels(wxDC& dc, wxSize size);
-	void DrawPreview(wxDC& dc, wxSize size);
 
-	CTrack *AddTrack(IFloopySoundInput *input, IFloopySoundInput *parent, int level);
 	bool RemoveTrack(CTrack *track);
 
-	void DeselectAllTracks();
-	void DeselectAllRegions();
-
 	void MoveSelectedRegions(int dx);
-	void RemoveSelectedObjects();
-	void UpdateSelectedRegions();
 
 	CTrack *GetTrackAt(int y);
 	CTrack *GetTrack(int index);
@@ -213,6 +227,7 @@ public:
 	void Clear();
 
 	IFloopySoundInput *GetInput()				{ return m_pEngine; }
+	IFloopySoundEngine *GetEngine()				{ return m_pEngine; }
 
 	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
@@ -220,8 +235,6 @@ public:
 	CTrack *GetSelectedTrack();
 
 	void RefreshTracks(CTrack *track);
-
-	IFloopySoundEngine *GetEngine()				{ return m_pEngine; }
 
 	int GetClosestGridPos(int pos);
 	int CalcStep(int mindist);
@@ -234,13 +247,11 @@ public:
 
 	int GetCursorPosition();
 	void SetCursorPosition(int pos);
+
 	void SetStatusText(int pos);
 
 	wxStatusBar *GetStatusBar()					{ return m_pFrame->GetStatusBar(); }
 	void SetFrame(wxFrame *pFrame)				{ m_pFrame = pFrame; }
-
-	void SetChanged(bool bChanged)				{ m_bChanged = bChanged; }
-	bool IsChanged()							{ return m_bChanged; }
 
 	char *GetFilename()							{ return m_filename; }
 
@@ -249,42 +260,36 @@ public:
 
 	void CenterView(int sample);
 
-	static IFloopySoundInput *GetComponent(IFloopySoundInput *src, char *name);
+	static IFloopySoundInput *FindComponentByName(IFloopySoundInput*, char*);
 
 private:
+	CTrack *addTrack(IFloopySoundInput*, IFloopySoundInput*, int);
 	IFloopySoundMixer *getMixer();
 	bool createEngine(char *plugin);
-	void loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, int level);
+	void loadTracks(IFloopySoundInput*, IFloopySoundInput*, int);
 	void changeHeight(int dy);
 	void init();
 
 private:
-	int					m_iPixelsPerSecond;
-	bool				m_bInit;
-	float				m_length;	// In seconds
 	TracksList			m_tracks;
 	wxScrolledWindow	*m_pTracksView, *m_pLabelsView;
 	CBorder				*m_pBorder;
-
 	IFloopySoundEngine	*m_pEngine;
 	IFloopySoundMixer	*m_pMixer;
 	wxDynamicLibrary	m_libEngine;
-
-	bool m_bSnapTo;
-
 	CPlayThread			*m_pPlayThread;
-
 	int					m_iCursorPosition;
 	wxStatusBar			*m_pStatusBar;
 	wxFrame				*m_pFrame;
-	bool				m_bChanged;
-
 	CTimer				m_Timer;
 	int					m_iStartSample;
-
 	char				m_filename[MAX_PATH];
-
 	bool				m_bViewUpdatedWhilePlaying;
+
+	// Properties
+	bool	m_bSnapTo;
+	int		m_iPixelsPerSecond;
+	float	m_length;	// In seconds
 };
 
 class CTrack : public IFloopyObj  
@@ -367,7 +372,6 @@ public:
 	void DrawLabel(wxDC& dc, wxRect& rc);
 	void DrawBG   (wxDC& dc, wxRect& rc);
 	void DrawFore (wxDC& dc, wxRect& rc);
-	void DrawPreview(wxDC& dc, wxRect& rc);
 
 	bool GetName(wxString& name)	{ name = _T("Track"); return true; }
 	int GetWidth()					{ return GetTracks()->GetWidth(); }
@@ -417,9 +421,6 @@ public:
 
 	void CheckIntersections(CRegion *pRegion1, int &left, int &right, bool bResize);
 
-	bool IsHidden()					{ return m_bHide; } // ->Collapse/expand
-	void Hide(bool bHide)			{ m_bHide = bHide; }
-
 	bool IsLooped();
 	void SetLooped(bool bLooped);
 
@@ -434,7 +435,7 @@ public:
 	wxColour GetBGColor();
 	wxColour GetForeColor();
 
-	IFloopySoundInput *GetComponent(char *name);
+	IFloopySoundInput *FindComponentByName(char *name);
 
 	void Select(bool selected=true);
 
@@ -451,7 +452,6 @@ private:
 
 private:
 	int			m_nLevel;
-	bool		m_bHide;
 	RegionList	m_regions;
 	wxRect		m_rcLabel;
 	int			m_top;
@@ -512,7 +512,6 @@ public:
 
 	void DrawBG  (wxDC& dc, wxRect& rc);
 	void DrawFore(wxDC& dc, wxRect& rc);
-	void DrawPreview(wxDC& dc, wxRect& rc);
 
 	int GetLeft();
 	int GetRight();

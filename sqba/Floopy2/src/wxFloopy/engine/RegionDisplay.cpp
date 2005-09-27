@@ -486,7 +486,7 @@ int CRegionDisplay::getLengthNotLooped()
 	int len = 0;
 	if( m_pTrack->IsLooped() )
 	{
-		IFloopySoundFilter *loop = (IFloopySoundFilter*)m_pTrack->GetComponent("loop");
+		IFloopySoundFilter *loop = (IFloopySoundFilter*)m_pTrack->FindComponentByName("loop");
 		if(loop)
 		{
 			IFloopySoundInput *src = loop->GetSource();

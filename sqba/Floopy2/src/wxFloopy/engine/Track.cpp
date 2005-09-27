@@ -24,13 +24,11 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *par
 
 	m_nLevel = level;
 
-	m_pInput = CTracks::GetComponent(input, "track");
+	m_pInput = CTracks::FindComponentByName(input, "track");
 
 	m_pSource = parent;
 
 	assert(NULL != m_pInput);
-
-	m_bHide = false;
 
 
 	char *name = input->GetDisplayName();
@@ -248,32 +246,6 @@ void CTrack::DrawFore(wxDC& dc, wxRect& rc)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// DrawPreview
-//! Draws track preview (in the preview bar).
-//! \param dc [in] reference to the device context
-//! \param rc [in] track's preview rectangle
-//! \return void
-/////////////////////////////////////////////////////////////////////////////
-void CTrack::DrawPreview(wxDC& dc, wxRect& rc)
-{
-	wxBrush oldBrush = dc.GetBrush();
-	wxPen oldpen = dc.GetPen();
-	dc.SetBrush( wxBrush(m_color) );
-	dc.SetPen( wxPen(m_color) );
-
-	RegionList::Node *node = m_regions.GetFirst();
-	while (node)
-	{
-		CRegion *region = (CRegion*)node->GetData();
-		region->DrawPreview(dc, rc);
-		node = node->GetNext();
-	}
-
-	dc.SetBrush( oldBrush );
-	dc.SetPen(oldpen);
-}
-
-/////////////////////////////////////////////////////////////////////////////
 // HitTest
 //! Returns true if the vertical coordinate y is in the track.
 //! \param y [in] vertical coordinate
@@ -281,8 +253,6 @@ void CTrack::DrawPreview(wxDC& dc, wxRect& rc)
 /////////////////////////////////////////////////////////////////////////////
 bool CTrack::HitTest(int y)
 {
-	if(m_bHide)
-		return false;
 	return m_rcLabel.Inside(1, y);
 }
 
@@ -873,7 +843,7 @@ void CTrack::drawCacheSign(wxDC& dc, wxRect& rc)
 
 bool CTrack::IsLooped()
 {
-	IFloopySoundFilter *loop = (IFloopySoundFilter*)GetComponent("loop");
+	IFloopySoundFilter *loop = (IFloopySoundFilter*)FindComponentByName("loop");
 	if(loop)
 		return !loop->GetBypass();
 	return false;
@@ -881,7 +851,7 @@ bool CTrack::IsLooped()
 
 void CTrack::SetLooped(bool bLooped)
 {
-	IFloopySoundFilter *loop = (IFloopySoundFilter*)GetComponent("loop");
+	IFloopySoundFilter *loop = (IFloopySoundFilter*)FindComponentByName("loop");
 	if(loop)
 	{
 		//loop->ClearAllParams();
@@ -917,7 +887,7 @@ void CTrack::SetLooped(bool bLooped)
 
 bool CTrack::IsReverse()
 {
-	IFloopySoundFilter *reverse = (IFloopySoundFilter*)GetComponent("reverse");
+	IFloopySoundFilter *reverse = (IFloopySoundFilter*)FindComponentByName("reverse");
 	if(reverse)
 		return !reverse->GetBypass();
 	return false;
@@ -925,7 +895,7 @@ bool CTrack::IsReverse()
 
 void CTrack::SetReverse(bool bReverse)
 {
-	IFloopySoundFilter *reverse = (IFloopySoundFilter*)GetComponent("reverse");
+	IFloopySoundFilter *reverse = (IFloopySoundFilter*)FindComponentByName("reverse");
 	if(reverse)
 	{
 		//loop->ClearAllParams();
@@ -999,36 +969,9 @@ void CTrack::SetReset(bool bReset)
 	}
 }
 
-IFloopySoundInput *CTrack::GetComponent(char *name)
+IFloopySoundInput *CTrack::FindComponentByName(char *name)
 {
-	return CTracks::GetComponent(m_pInput, name);
-
-	/*IFloopySoundInput *src = m_pInput;
-	while(src)
-	{
-		char *tmp = strrchr(src->GetName(), '.');
-		if(NULL == tmp)
-			tmp = src->GetName();
-		else
-			tmp++;
-		if(0==strcmpi(tmp, name))
-			return src;
-
-		int type = src->GetType();
-		switch(type)
-		{
-		case TYPE_FLOOPY_SOUND_FILTER:
-		case TYPE_FLOOPY_SOUND_MIXER:
-		case TYPE_FLOOPY_SOUND_TRACK:
-		{
-			src = ((IFloopySoundFilter*)src)->GetSource();
-			break;
-		}
-		default:
-			src = NULL;
-		}
-	}
-	return NULL;*/
+	return CTracks::FindComponentByName(m_pInput, name);
 }
 
 void CTrack::InvalidateRegions(CRegion *start)

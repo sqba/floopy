@@ -81,13 +81,10 @@ void CTracks::DrawBG(wxDC& dc)
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
-		if( !track->IsHidden() )
-		{
-			int height = track->GetHeight();
-			rc.SetHeight( height );
-			track->DrawBG(dc, rc);
-			rc.Offset(0, height);
-		}
+		int height = track->GetHeight();
+		rc.SetHeight( height );
+		track->DrawBG(dc, rc);
+		rc.Offset(0, height);
 		node = node->GetNext();
 	}
 }
@@ -106,13 +103,10 @@ void CTracks::DrawFore(wxDC& dc)
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
-		if( !track->IsHidden() )
-		{
-			int height = track->GetHeight();
-			rc.SetHeight( height );
-			track->DrawFore(dc, rc);
-			rc.Offset(0, height);
-		}
+		int height = track->GetHeight();
+		rc.SetHeight( height );
+		track->DrawFore(dc, rc);
+		rc.Offset(0, height);
 		node = node->GetNext();
 	}
 }
@@ -137,68 +131,17 @@ void CTracks::DrawLabels(wxDC& dc, wxSize size)
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
-		if( !track->IsHidden() )
-		{
-			int height = track->GetHeight();
-			rc.SetHeight( height );
-			track->DrawLabel(dc, rc);
-			rc.Offset(0, height);
-		}
+		int height = track->GetHeight();
+		rc.SetHeight( height );
+		track->DrawLabel(dc, rc);
+		rc.Offset(0, height);
 		node = node->GetNext();
 	}
 
 	dc.SetFont(oldFont);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// DrawPreview
-//! Draws tracks preview (in the preview bar).
-//! \param dc [in] reference to the device context
-//! \param size [in] preview window dimensions
-//! \return void
-/////////////////////////////////////////////////////////////////////////////
-void CTracks::DrawPreview(wxDC& dc, wxSize size)
-{
-/*	//int n = m_tracks.GetCount();
-
-	int n = 0;
-	TracksList::Node *node = m_tracks.GetFirst();
-	while (node)
-	{
-		CTrack *track = (CTrack*)node->GetData();
-		if(track->GetRegionCount() > 0 && !track->IsHidden())
-			n++;
-		node = node->GetNext();
-	}
-
-	if(n == 0)
-		return;
-
-
-	int h = size.GetHeight() / n;
-	int w = size.GetWidth();
-	int t = 0;//(size.GetHeight() - (h * n)) / 2;
-	int y = t > 0 ? t : 0;
-	int trackwidth = m_pTracksView->GetVirtualSize().GetWidth();
-
-	if(h < 1)
-		h = 1;
-
-	node = m_tracks.GetFirst();
-	while (node)
-	{
-		wxRect rc(0, y, w, h);
-		CTrack *track = (CTrack*)node->GetData();
-		if(track->GetRegionCount() > 0 && !track->IsHidden())
-		{
-			track->DrawPreview(dc, rc, pps);
-			y += h;
-		}
-		node = node->GetNext();
-	}*/
-}
-
-CTrack *CTracks::AddTrack(IFloopySoundInput *input, IFloopySoundInput *parent, int level)
+CTrack *CTracks::addTrack(IFloopySoundInput *input, IFloopySoundInput *parent, int level)
 {
 	wxLogTrace(_T("CTracks"), _T("Adding new track"));
 
@@ -228,7 +171,7 @@ CTrack *CTracks::AddTrack(IFloopySoundInput *input, IFloopySoundInput *parent, i
 		m_tracks.Append( track );
 	}
 	catch(...) {
-		wxLogTrace(_T("CTracks"), _T("AddTrack exception"));
+		wxLogTrace(_T("CTracks"), _T("addTrack exception"));
 		return NULL;
 	}
 	Refresh();
@@ -775,7 +718,7 @@ bool CTracks::Open(char *filename)
 				track->SetSource(input);
 				track->SetDisplayName(filename, strlen(filename));
 				m_pMixer->AddSource(track);
-				AddTrack(track, 0);
+				addTrack(track, 0);
 				Refresh();
 				return true;
 			}*/
@@ -791,7 +734,7 @@ bool CTracks::Open(char *filename)
 				track->SetDisplayName(filename, strlen(filename));
 				if( m_pMixer->AddSource(track) > -1 )
 				{
-					AddTrack(track, track, 0);
+					addTrack(track, track, 0);
 					Refresh();
 					return true;
 				}
@@ -856,9 +799,9 @@ void CTracks::loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, in
 	}
 	
 	if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
-		AddTrack(input, parent, 0);
+		addTrack(input, parent, 0);
 
-	//IFloopySoundInput *track = CTracks::GetComponent(input, "track");
+	//IFloopySoundInput *track = CTracks::FindComponentByName(input, "track");
 	//if(track)
 	//	loadTracks(input, 0);
 
@@ -1304,7 +1247,7 @@ void CTracks::SetViewUpdatedWhilePlaying(bool bUpdate)
 }
 
 
-IFloopySoundInput *CTracks::GetComponent(IFloopySoundInput *src, char *name)
+IFloopySoundInput *CTracks::FindComponentByName(IFloopySoundInput *src, char *name)
 {
 	while(src)
 	{
@@ -1336,6 +1279,127 @@ IFloopySoundInput *CTracks::GetComponent(IFloopySoundInput *src, char *name)
 	}
 	return NULL;
 }
+
+
+
+
+
+int CTracks::GetPropertyCount()
+{
+	return 3;
+}
+
+bool CTracks::GetPropertyVal(int index, float *value)
+{
+	switch(index)
+	{
+	case 0:
+		*value = (float)GetSamplesPerPixel();
+		return true;
+	case 1:
+		*value = (float)GetLength();
+		return true;
+	case 2:
+		*value = (float)m_bSnapTo;
+		return true;
+	case 3:
+		*value = (float)GetCaretPos();
+		return true;
+	}
+	return false;
+}
+
+void CTracks::SetPropertyVal(int index, float value)
+{
+	switch(index)
+	{
+	case 0:
+		SetSamplesPerPixel((int)value);
+		return;
+	case 1:
+		SetLength((int)value);
+		return;
+	case 2:
+		m_bSnapTo = (value==0.f ? false : true);
+		return;
+	case 3:
+		SetCaretPos((int)value);
+		return;
+	}
+}
+
+char *CTracks::GetPropertyName(int index)
+{
+	switch(index)
+	{
+	case 0: return "SamplesPerPixel";
+	case 1: return "Length";
+	case 2: return "SnapToGrid";
+	case 3: return "CaretPos";
+	}
+	return NULL;
+}
+
+char *CTracks::GetPropertyDesc(int index)
+{
+	switch(index)
+	{
+	case 0: return "Samples per pixel";
+	case 1: return "Project length";
+	case 2: return "Snap to grid";
+	case 3: return "Caret position";
+	}
+	return NULL;
+}
+
+float CTracks::GetPropertyMin(int index)
+{
+	switch(index)
+	{
+	case 0: return 1.f;
+	case 1: return 1.f;
+	case 2: return 0.f;
+	case 3: return 0.f;
+	}
+	return 0.f;
+}
+
+float CTracks::GetPropertyMax(int index)
+{
+	switch(index)
+	{
+	case 0: return 65535.f; //?
+	case 1: return 3600.f;
+	case 2: return 1.f;
+	case 3: return 65535.f; //?
+	}
+	return 0.f;
+}
+
+char *CTracks::GetPropertyUnit(int index)
+{
+	switch(index)
+	{
+	//case 0: return "Db";
+	case 1: return "sec";
+	case 2: return "On/Off";
+	}
+	return NULL;
+}
+
+float CTracks::GetPropertyStep(int index)
+{
+	switch(index)
+	{
+	case 0: return 1.f;
+	case 1: return 1.f;
+	case 2: return 1.f;
+	case 3: return 1.f;
+	}
+	return 0.f;
+}
+
+
 
 
 /////////////////////////////////////////////////////////////////////
