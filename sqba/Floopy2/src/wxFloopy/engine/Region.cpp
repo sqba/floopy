@@ -185,7 +185,7 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 //	drawParametersFore(dc, rce);
 }
 
-wxColour CRegion::GetBGColor()
+wxColor CRegion::GetBGColor()
 {
 	//wxColor color(255, 255, 255);
 
@@ -197,7 +197,7 @@ wxColour CRegion::GetBGColor()
 	return color;
 }
 
-wxColour CRegion::GetForeColor()
+wxColor CRegion::GetForeColor()
 {
 	//wxColor color = getTrack()->GetColor();
 

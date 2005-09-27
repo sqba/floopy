@@ -23,7 +23,7 @@ void DrawAquaRect(wxDC& dc, wxRect& rc, int radius = 3)
 	{
 		r -= rstep;
 		g -= gstep;
-		dc.SetPen( wxPen(wxColour(r, g, b), border) );
+		dc.SetPen( wxPen(wxColor(r, g, b), border) );
 		if(y<endEdge)
 		{
 			dc.DrawLine(left+edge, y, right-edge*2, y);
@@ -42,7 +42,7 @@ void DrawAquaRect(wxDC& dc, wxRect& rc, int radius = 3)
 	{
 		r += rstep;
 		g += gstep;
-		dc.SetPen( wxPen(wxColour(r, g, b), border) );
+		dc.SetPen( wxPen(wxColor(r, g, b), border) );
 		if(y>=startEdge)
 		{
 			dc.DrawLine(left+edge, y, right-edge*2, y);

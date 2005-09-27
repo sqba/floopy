@@ -106,7 +106,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	pen.SetWidth(1);
 	dc.SetPen( pen );
 
-	//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
+	//wxBrush brush(m_color, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
 	wxBrush brush(GetBGColor(), wxSOLID);
 	dc.SetBrush(brush);
 
@@ -1007,7 +1007,7 @@ void CTrack::InvalidateRegions(CRegion *start)
 	}*/
 }
 
-wxColour CTrack::GetColor()
+wxColor CTrack::GetColor()
 {
 	/*UINT r, g, b;
 	if( m_pInput->GetColor(&r, &g, &b) )
@@ -1016,14 +1016,14 @@ wxColour CTrack::GetColor()
 		return m_color;
 }
 
-void CTrack::SetColor(wxColour color)
+void CTrack::SetColor(wxColor color)
 {
 	m_color = color;
 	if(m_pInput)
 		m_pInput->SetColor(color.Red(), color.Green(), color.Blue());
 }
 
-wxColour CTrack::GetBGColor()
+wxColor CTrack::GetBGColor()
 {
 	wxColor color = GetColor();
 	if( IsSelected() )
@@ -1031,7 +1031,7 @@ wxColour CTrack::GetBGColor()
 	return color;
 }
 
-wxColour CTrack::GetForeColor()
+wxColor CTrack::GetForeColor()
 {
 	wxColor color = GetColor();
 	if( !IsSelected() )
@@ -1172,7 +1172,7 @@ void CTrack::CCacheButton::DrawFore(wxDC& dc, wxRect& rc)
 	pen.SetWidth(1);
 	dc.SetPen( pen );
 
-	//wxBrush brush(m_colour, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
+	//wxBrush brush(m_color, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
 	wxBrush brush(getTrack()->GetColor(), wxSOLID);
 	dc.SetBrush(brush);
 

@@ -35,6 +35,7 @@ public:
 //	void CalcScrolledPosition( int x, int y, int *xx, int *yy) const;
 //	void GetViewStart(int* x, int* y) const;
 	void GetViewStart2(int* x, int* y) const;
+	void SetBackgroundColour(wxColour& color);
 
 private:
 	wxWindow *m_pView;
@@ -48,7 +49,7 @@ class CHorizontalRuler : public wxWindow
     DECLARE_EVENT_TABLE()
 
 public:
-	CHorizontalRuler(CRulerView* parent);
+	CHorizontalRuler(CRulerView* parent, long style=wxDOUBLE_BORDER);
 	virtual ~CHorizontalRuler();
 
 	virtual void OnDraw(wxDC& dc) {}

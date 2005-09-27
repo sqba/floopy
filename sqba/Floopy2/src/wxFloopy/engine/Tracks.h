@@ -435,15 +435,15 @@ public:
 
 	void InvalidateRegions(CRegion *start);
 
-	wxColour GetBGColor();
-	wxColour GetForeColor();
+	wxColor GetBGColor();
+	wxColor GetForeColor();
 
 	IFloopySoundInput *FindComponentByName(char *name);
 
 	void Select(bool selected=true);
 
-	wxColour GetColor();
-	void SetColor(wxColour color);
+	wxColor GetColor();
+	void SetColor(wxColor color);
 
 	int GetCaretPos();//	{ return GetTracks()->GetCaretPos(); }
 
@@ -523,7 +523,7 @@ public:
 	void GetRect(wxRect& rc);
 
 	wxCursor GetCursor() { return wxCursor(wxCURSOR_HAND); }
-	wxColour GetColor()	 { return getTrack()->GetColor(); }
+	wxColor GetColor()	 { return getTrack()->GetColor(); }
 
 	IFloopyObj *GetBorder(bool left) { return(left ? m_pLeftBorder : m_pRightBorder); }
 	IFloopyObj *GetSelectedObj();// { return IsSelected() ? this : NULL; }
@@ -552,8 +552,8 @@ public:
 
 	void SetStartOffset(int sample);
 
-	wxColour GetBGColor();
-	wxColour GetForeColor();
+	wxColor GetBGColor();
+	wxColor GetForeColor();
 
 	void Select(bool selected=true);
 

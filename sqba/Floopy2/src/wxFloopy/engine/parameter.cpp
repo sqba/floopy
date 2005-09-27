@@ -81,7 +81,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 
 		//wxBrush oldBrush = dc.GetBrush();
 		wxPen oldpen = dc.GetPen();
-		//dc.SetBrush( wxBrush(m_colour) );
+		//dc.SetBrush( wxBrush(m_color) );
 		dc.SetPen( wxPen(m_color) );
 
 		bool bDrawCircle = true;

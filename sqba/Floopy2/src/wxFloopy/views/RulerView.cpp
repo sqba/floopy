@@ -71,13 +71,13 @@ void CRulerView::OnSize( wxSizeEvent& event )
 	GetClientSize( &cw, &ch );
 	
 	if ( m_pTopRuler && m_pTopRuler->IsShown() )
-		m_pTopRuler->SetSize( 0, 0, cw, 20);
+		m_pTopRuler->SetSize( 0, 0, cw, m_pTopRuler->GetSize().GetHeight());
 
 	if (m_pBottomRuler && m_pBottomRuler->IsShown() )
 		m_pBottomRuler->SetSize( 0, ch-20, cw, 20);
 
 	if (m_pView && m_pView->IsShown() )
-		m_pView->SetSize( 0, 20, cw, ch-20);
+		m_pView->SetSize( 0, m_pTopRuler->GetSize().GetHeight(), cw, ch-m_pTopRuler->GetSize().GetHeight());
 
     event.Skip();
 }
@@ -107,6 +107,14 @@ void CRulerView::GetViewStart2(int* x, int* y) const
 //	wxScrolledWindow::GetViewStart(x, y);
 //	if(m_pTopRuler)
 //		*y += m_pTopRuler->GetSize().GetHeight();
+}
+
+void CRulerView::SetBackgroundColour(wxColour& color)
+{
+	if(m_pView)
+		m_pView->SetBackgroundColour(color);
+	else
+		wxScrolledWindow::SetBackgroundColour(color);
 }
 
 /*
@@ -156,8 +164,8 @@ BEGIN_EVENT_TABLE( CHorizontalRuler, wxWindow )
 //	EVT_ERASE_BACKGROUND( CRulerView::OnEraseBackground )
 END_EVENT_TABLE()
 
-CHorizontalRuler::CHorizontalRuler(CRulerView* parent)
- : wxWindow(parent, -1)//, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER)
+CHorizontalRuler::CHorizontalRuler(CRulerView* parent, long style)
+ : wxWindow(parent, -1, wxDefaultPosition, wxSize(100, 25), style)
 {
 	m_owner = parent;
 

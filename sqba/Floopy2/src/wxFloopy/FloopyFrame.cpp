@@ -196,7 +196,7 @@ void CFloopyFrame::initViews()
 	//m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400), wxSP_3DSASH | wxSP_LIVE_UPDATE, _T("TrackView"));
 
 	//m_pSplitter->SetBackgroundColour( *wxWHITE );
-	//m_pSplitter->SetForegroundColour( *wxWHITE );
+	//m_pSplitter->SetBackgroundColour( *wxWHITE );
 
 	m_pLabelsView = new CRulerView(m_pSplitter);
 	CLabelsView *pLabelsView = new CLabelsView(m_pLabelsView, m_pTracks);
