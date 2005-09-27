@@ -15,7 +15,7 @@ END_EVENT_TABLE()
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CCaretView::CCaretView(wxWindow* parent, CTracks *tracks)
+CCaretView::CCaretView(CRulerView* parent, CTracks *tracks)
  : CGridView(parent, tracks)
 {
 	wxLog::AddTraceMask(_T("CCaretView"));

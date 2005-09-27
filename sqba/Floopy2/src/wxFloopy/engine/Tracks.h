@@ -18,6 +18,7 @@
 #include "../../../ifloopy.h"
 #include "../FloopyControl.h"
 #include "floopyobj.h"
+#include "../views/rulerview.h"
 
 
 #ifdef __BORLANDC__
@@ -189,11 +190,11 @@ public:
 	void UpdateSelectedRegions();
 
 
-	void SetTracksView(wxScrolledWindow *panel);
-	void SetLabelsView(wxScrolledWindow *panel) { m_pLabelsView = panel; }
+	void SetTracksView(CRulerView *panel);
+	void SetLabelsView(CRulerView *panel) { m_pLabelsView = panel; }
 	
-	wxScrolledWindow *GetTracksView()			{ return m_pTracksView; };
-	wxScrolledWindow *GetLabelsView()			{ return m_pLabelsView; };
+	CRulerView *GetTracksView()			{ return m_pTracksView; };
+	CRulerView *GetLabelsView()			{ return m_pLabelsView; };
 
 	void SetCaretPos(int samples);
 	int  GetCaretPos();
@@ -260,6 +261,8 @@ public:
 
 	void CenterView(int sample);
 
+	int GetPixelsPerSecond() { return m_iPixelsPerSecond; }
+
 	static IFloopySoundInput *FindComponentByName(IFloopySoundInput*, char*);
 
 private:
@@ -272,7 +275,7 @@ private:
 
 private:
 	TracksList			m_tracks;
-	wxScrolledWindow	*m_pTracksView, *m_pLabelsView;
+	CRulerView			*m_pTracksView, *m_pLabelsView;
 	CBorder				*m_pBorder;
 	IFloopySoundEngine	*m_pEngine;
 	IFloopySoundMixer	*m_pMixer;

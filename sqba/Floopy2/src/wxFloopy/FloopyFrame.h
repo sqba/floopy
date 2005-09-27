@@ -5,8 +5,10 @@
 #include <wx/dnd.h>
 #include <wx/splitter.h>
 
-#include "views/labelsview.h"
-#include "views/tracksview.h"
+//#include "views/labelsview.h"
+//#include "views/tracksview.h"
+//#include "views/rulerview.h"
+#include "views/floopyview.h"
 
 class CFloopyFrame : public wxFrame
 {
@@ -61,9 +63,10 @@ private:
 
 private:
 	CDropTarget			*m_pDropTarget;
-	wxSplitterWindow	*m_pSplitter;
-	CLabelsView			*m_pLabelsView;
-	CTracksView			*m_pTracksView;
+//	wxSplitterWindow	*m_pSplitter;
+//	CRulerView			*m_pLabelsView;
+//	CRulerView			*m_pTracksView;
+	CFloopyView			*m_pView;
 	CTracks				*m_pTracks;
 
 private:

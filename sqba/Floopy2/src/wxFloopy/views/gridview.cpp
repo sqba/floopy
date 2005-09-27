@@ -8,7 +8,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CGridView::CGridView(wxWindow* parent, CTracks *tracks) : CMainView(parent, tracks)
+CGridView::CGridView(CRulerView* parent, CTracks *tracks) : CMainView(parent, tracks)
 {
 	m_bDrawVGrid = true;
 }
@@ -20,7 +20,7 @@ CGridView::~CGridView()
 
 void CGridView::OnDraw(wxDC &dc)
 {
-	CMainView::OnDraw(dc);
+//	CMainView::OnDraw(dc);
 
 	if(m_bDrawVGrid)
 	{

@@ -44,7 +44,7 @@ class CTracksView : public CCaretView
     DECLARE_EVENT_TABLE()
 
 public:
-	CTracksView(wxWindow *parent, wxScrolledWindow *labels, CTracks *tracks);
+	CTracksView(CRulerView *parent, wxScrolledWindow *labels, CTracks *tracks);
 	virtual ~CTracksView();
 
 	void OnDraw(wxDC& dc);

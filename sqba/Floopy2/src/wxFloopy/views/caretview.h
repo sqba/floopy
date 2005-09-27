@@ -12,7 +12,7 @@
 class CCaretView : public CGridView  
 {
 public:
-	CCaretView(wxWindow* parent, CTracks *tracks);
+	CCaretView(CRulerView* parent, CTracks *tracks);
 	virtual ~CCaretView();
 
 //	void OnDraw(wxDC& dc);

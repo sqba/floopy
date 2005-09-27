@@ -584,7 +584,7 @@ void CTracks::SetSamplesPerPixel(int spp)
 //! \param panel [in] Pointer to the tracks display panel (wxScrolledWindow)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CTracks::SetTracksView(wxScrolledWindow *panel)
+void CTracks::SetTracksView(CRulerView *panel)
 {
 	m_pTracksView = panel;
 	Refresh();

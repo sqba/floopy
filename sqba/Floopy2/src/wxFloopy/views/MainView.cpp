@@ -8,7 +8,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CMainView::CMainView(wxWindow* parent, CTracks *tracks) : wxScrolledWindow(parent)
+CMainView::CMainView(CRulerView* parent, CTracks *tracks) : CView(parent)
 {
 	m_pTracks = tracks;
 

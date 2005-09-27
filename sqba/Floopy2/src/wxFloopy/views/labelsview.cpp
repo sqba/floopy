@@ -15,9 +15,9 @@ END_EVENT_TABLE()
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-CLabelsView::CLabelsView(wxWindow* parent, CTracks *tracks) : CMainView(parent, tracks)
+CLabelsView::CLabelsView(CRulerView* parent, CTracks *tracks) : CMainView(parent, tracks)
 {
-	m_pTracks->SetLabelsView(this);
+//	m_pTracks->SetLabelsView(this);
 
 	//wxLog::AddTraceMask(_T("CLabelsView"));
 }

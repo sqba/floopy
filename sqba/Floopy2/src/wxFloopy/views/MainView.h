@@ -29,11 +29,12 @@
 #include <wx/log.h>
 
 #include "../engine/tracks.h"
+#include "rulerview.h"
 
-class CMainView : public wxScrolledWindow  
+class CMainView : public CView  
 {
 public:
-	CMainView(wxWindow*, CTracks*);
+	CMainView(CRulerView*, CTracks*);
 	virtual ~CMainView();
 
 protected:

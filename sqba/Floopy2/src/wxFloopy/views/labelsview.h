@@ -37,7 +37,7 @@
 class CLabelsView : public CMainView
 {
 public:
-	CLabelsView(wxWindow*, CTracks*);
+	CLabelsView(CRulerView*, CTracks*);
 
 	void OnDraw(wxDC& dc);
 	void OnMouseEvent(wxMouseEvent& event);

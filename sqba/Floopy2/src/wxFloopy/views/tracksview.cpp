@@ -4,6 +4,7 @@
 
 #include "TracksView.h"
 //#include "../FloopyDoc.h"
+#include "rulers/timeruler.h"
 
 
 BEGIN_EVENT_TABLE(CTracksView, CCaretView)
@@ -18,7 +19,7 @@ END_EVENT_TABLE()
 //////////////////////////////////////////////////////////////////////
 
 
-CTracksView::CTracksView(wxWindow* parent, wxScrolledWindow *labels, CTracks *tracks)
+CTracksView::CTracksView(CRulerView* parent, wxScrolledWindow *labels, CTracks *tracks)
  : CCaretView(parent, tracks)
 {
 	m_pObjMenu		= NULL;
@@ -26,12 +27,14 @@ CTracksView::CTracksView(wxWindow* parent, wxScrolledWindow *labels, CTracks *tr
 	m_pLabelsView	= labels;
 	m_pSelectedObj	= NULL;
 	m_ptPrev.x = m_ptPrev.y = 0;
-	m_pTracks->SetTracksView(this);
+//	m_pTracks->SetTracksView(this);
 	
 	SetCursor( wxCURSOR_PENCIL );
 
 	m_pParamsDialog = new CControlDlg( tracks );
 	m_pPropsDialog = new CControlDlg( tracks );
+
+	SetTopRuler( new CTimeRuler(parent, tracks) );
 
 	wxLog::AddTraceMask(_T("CTracksView"));
 }

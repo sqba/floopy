@@ -7,7 +7,7 @@
 class CGridView : public CMainView
 {
 public:
-	CGridView(wxWindow* parent, CTracks *tracks);
+	CGridView(CRulerView* parent, CTracks *tracks);
 	virtual ~CGridView();
 
 	void OnDraw(wxDC& dc);

@@ -107,6 +107,8 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	int width = right - left;
 
 	m_rcRegion = rc;
+	m_rcRegion.SetX(left);
+	m_rcRegion.SetWidth(width);
 
 	wxPen oldpen = dc.GetPen();
 	wxBrush oldbrush = dc.GetBrush();
@@ -292,19 +294,28 @@ void CRegion::Invalidate()
 /////////////////////////////////////////////////////////////////////////////
 void CRegion::GetRect(wxRect& rc)
 {
+//	rc = m_rcRegion;
+//	rc.Inflate(2, 0);
+
 	int left=0, right=0;
 	calcPos(&left, &right);
 
 	int width = right - left;
 	rc = wxRect(left, GetTop(), width, GetHeight());
 
-	wxScrolledWindow *panel = getTracks()->GetTracksView();
+	CRulerView *panel = getTracks()->GetTracksView();
 	if(panel)
 	{
-		int x, y, xScrollUnits, yScrollUnits;
+		/*int x, y, xScrollUnits, yScrollUnits;
 		panel->GetViewStart(&x, &y);
 		panel->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-		rc.Offset(-x*xScrollUnits, -y*yScrollUnits);
+		rc.Offset(-x*xScrollUnits, -y*yScrollUnits);*/
+
+		int x, y;
+		//panel->CalcUnscrolledPosition( 0, 0, &x, &y );
+		panel->GetViewStart2(&x, &y);
+		rc.Offset( -x, -y );
+
 		rc.Inflate(2, 0);
 	}
 }
