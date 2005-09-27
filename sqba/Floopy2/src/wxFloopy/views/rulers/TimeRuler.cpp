@@ -27,8 +27,8 @@ CTimeRuler::~CTimeRuler()
 void CTimeRuler::OnDraw(wxDC &dc)
 {
 	//dc.SetFont(wxGetApp().m_canvasFont);
-	wxFont font(9,wxMODERN,wxNORMAL,wxNORMAL);
-	dc.SetFont(font);
+	//wxFont font(8,wxDEFAULT,wxNORMAL,wxNORMAL);
+	dc.SetFont(*wxSWISS_FONT);
 	//dc.SetPen(*wxBLACK_PEN);
 	//wxCoord nCharHeight = dc.GetCharHeight();
 	//wxCoord nCharWidth  = dc.GetCharWidth();
