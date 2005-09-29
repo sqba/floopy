@@ -49,8 +49,8 @@ void CRulerView::SetView(wxWindow* view)
 
 void CRulerView::ScrollWindow( int dx, int dy, const wxRect *rect )
 {
-	if(m_pView)
-		m_pView->ScrollWindow( dx, dy, rect );
+	if(m_pTopRuler)
+		m_pTopRuler->ScrollWindow( dx, 0, rect );
 /*
 	if(m_pLeftRuler)
 		m_pLeftRuler->ScrollWindow( 0, dy, rect );
@@ -58,11 +58,11 @@ void CRulerView::ScrollWindow( int dx, int dy, const wxRect *rect )
 	if(m_pRightRuler)
 		m_pRightRuler->ScrollWindow( 0, dy, rect );
 */
-	if(m_pTopRuler)
-		m_pTopRuler->ScrollWindow( dx, 0, rect );
-
 	if(m_pBottomRuler)
 		m_pBottomRuler->ScrollWindow( dx, 0, rect );
+
+	if(m_pView)
+		m_pView->ScrollWindow( dx, dy, rect );
 }
 
 void CRulerView::OnSize( wxSizeEvent& event )
