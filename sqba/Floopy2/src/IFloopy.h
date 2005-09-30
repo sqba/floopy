@@ -56,6 +56,18 @@ typedef unsigned long			DWORD;	/// 32-bit unsigned integer.
 */
 
 
+class IFloopy;
+
+
+/**
+ * Callback function, called on parameter change.
+ * @param src Pointer to object whose parameter was changed.
+ * @param offset Sample position at which the change occurred.
+ * @param param Parameter index.
+ */
+typedef void (*UpdateCallback)(IFloopy *src, int offset, int param);
+
+
 /*********************************************************************
  *! \struct SoundFormat
  *  \brief Sound format information.
@@ -250,6 +262,13 @@ public:
 	virtual bool MoveAllParamsBetween(int start, int end, int offset)			{ return false; }
 
 	virtual bool MoveParam(int offset, int index, float value, int newoffset)	{ return false; }
+
+	/**
+	 * Sets the callback function that is called on parameter changes.
+	 * @param func Pointer to the callback function.
+	 */
+	virtual void RegisterUpdateCallback(UpdateCallback func) {}
+	virtual void UnRegisterUpdateCallback(UpdateCallback func) {}
 };
 
 
@@ -645,9 +664,6 @@ protected:
 };
 
 
-typedef void (*UpdateCallback)(IFloopy *src, int offset, int param);
-
-
 /*********************************************************************
  *! \class IFloopyEngine
  *  \brief Floopy engine interface.
@@ -704,7 +720,7 @@ public:
 	 * Sets the callback function that is called on parameter changes.
 	 * @param func Pointer to the callback function.
 	 */
-	virtual void RegisterUpdateCallback(UpdateCallback func) {}
+//	virtual void RegisterUpdateCallback(UpdateCallback func) {}
 
 	/**
 	 * Fills given buffer with silence.

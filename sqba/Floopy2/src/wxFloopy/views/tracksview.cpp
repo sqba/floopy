@@ -63,6 +63,24 @@ bool CTracksView::Open(char *filename)
 	return false;
 }
 
+bool CTracksView::Save()
+{
+	char *filename = m_pTracks->GetFilename();
+	if(strlen(filename) > 0)
+		return m_pTracks->Save(filename);
+	return false;
+}
+
+void CTracksView::ShowParamsDlg()
+{
+	((CRegionsView*)m_pRegionsView->GetView())->ShowParamsDlg();
+}
+
+void CTracksView::ShowPropertiesDlg()
+{
+	((CRegionsView*)m_pRegionsView->GetView())->ShowPropertiesDlg();
+}
+
 /*
 void CTracksView::OnKeyDown(wxKeyEvent& event)
 {

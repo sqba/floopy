@@ -3,12 +3,9 @@
 
 
 #include <wx/dnd.h>
-#include <wx/splitter.h>
 
-//#include "views/labelsview.h"
-//#include "views/regionsview.h"
-//#include "views/rulerview.h"
 #include "views/tracksview.h"
+
 
 class CFloopyFrame : public wxFrame
 {
@@ -58,16 +55,12 @@ private:
 	void OnShowProperties( wxCommandEvent &WXUNUSED(event) );
 
 	void initMenus();
-	void initViews();
 	void initToolbar();
 
 private:
-	CDropTarget			*m_pDropTarget;
-//	wxSplitterWindow	*m_pSplitter;
-//	CRulerView			*m_pLabelsView;
-//	CRulerView			*m_pRegionsView;
-	CTracksView			*m_pView;
-	CTracks				*m_pTracks;
+	CDropTarget	*m_pDropTarget;
+	CTracksView	*m_pView;
+	CTracks		*m_pTracks;
 
 private:
     DECLARE_EVENT_TABLE()

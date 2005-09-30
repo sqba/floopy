@@ -56,13 +56,14 @@ CFloopyFrame::CFloopyFrame() : wxFrame((wxFrame*)NULL,
 #endif
 
 	m_pTracks = new CTracks();
+	m_pTracks->SetFrame( this );
+
 	m_pView = new CTracksView(this, m_pTracks);
 
 	m_pDropTarget = new CDropTarget( this );
 	SetDropTarget( m_pDropTarget );
 
 	initMenus();
-	initViews();
 	initToolbar();
 
 	wxFrame::Centre();
@@ -70,14 +71,12 @@ CFloopyFrame::CFloopyFrame() : wxFrame((wxFrame*)NULL,
 
 CFloopyFrame::~CFloopyFrame()
 {
-//	delete m_pSplitter;
 	delete m_pView;
 	delete m_pTracks;
 }
 
 void CFloopyFrame::OnFullScreen( wxCommandEvent &WXUNUSED(event) )
 {
-   //wxFrame::ShowFullScreen( !IsFullScreen(), wxFULLSCREEN_ALL );
    wxFrame::ShowFullScreen( !IsFullScreen(), wxFULLSCREEN_NOBORDER|wxFULLSCREEN_NOCAPTION );
 }
 
@@ -143,12 +142,12 @@ void CFloopyFrame::OnStop( wxCommandEvent &WXUNUSED(event) )
 
 void CFloopyFrame::OnShowParams( wxCommandEvent &WXUNUSED(event) )
 {
-//	m_pRegionsView->ShowParamsDlg();
+	m_pView->ShowParamsDlg();
 }
 
 void CFloopyFrame::OnShowProperties( wxCommandEvent &WXUNUSED(event) )
 {
-//	m_pRegionsView->ShowPropertiesDlg();
+	m_pView->ShowPropertiesDlg();
 }
 
 void CFloopyFrame::initMenus()
@@ -187,35 +186,6 @@ void CFloopyFrame::initMenus()
 	this->SetMenuBar(menu_bar);
 }
 
-void CFloopyFrame::initViews()
-{
-/*
-	m_pSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxSize(600, 400), wxSP_LIVE_UPDATE);
-	//m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400));
-	//m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400), wxSP_NOBORDER | wxSP_LIVE_UPDATE, _T("TrackView"));
-	//m_pSplitter = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(600, 400), wxSP_3DSASH | wxSP_LIVE_UPDATE, _T("TrackView"));
-
-	//m_pSplitter->SetBackgroundColour( *wxWHITE );
-	//m_pSplitter->SetBackgroundColour( *wxWHITE );
-
-	m_pLabelsView = new CRulerView(m_pSplitter);
-	CLabelsView *pLabelsView = new CLabelsView(m_pLabelsView, m_pTracks);
-	m_pLabelsView->SetView( pLabelsView );
-
-	m_pRegionsView = new CRulerView(m_pSplitter);
-	CRegionsView *pRegionsView = new CRegionsView(m_pRegionsView, m_pLabelsView, m_pTracks);
-	m_pRegionsView->SetView( pRegionsView );
-
-	pLabelsView->SetRegionsView(m_pRegionsView);
-
-	m_pTracks->SetRegionsView( m_pRegionsView );
-	m_pTracks->SetLabelsView( m_pLabelsView );
-
-    m_pSplitter->SplitVertically(m_pLabelsView, m_pRegionsView, 100);
-*/
-	m_pTracks->SetFrame( this );
-}
-
 void CFloopyFrame::initToolbar()
 {
 	wxToolBar *toolbar = CreateToolBar();
@@ -238,34 +208,11 @@ void CFloopyFrame::initToolbar()
 void CFloopyFrame::Open(char *filename)
 {
 	m_pView->Open(filename);
-/*
-	if( m_pTracks->Open(filename) )
-	{
-		wxString str;
-		str.Printf("Floopy! - %s", filename);
-		SetTitle( str );
-		//m_pRegionsView->RefreshRulers();
-//		m_pRegionsView->SetFocus();
-
-		UINT r=0, g=0, b=0;
-		IFloopySoundEngine *engine = (IFloopySoundEngine*)m_pTracks->GetInput();
-		if( engine->GetColor(&r, &g, &b) )
-		{
-			wxColor color = wxColor(r, g, b);
-
-//			m_pLabelsView->SetBackgroundColour( color );
-//			m_pRegionsView->SetBackgroundColour( color );
-		}
-	}
-*/
 }
 
 bool CFloopyFrame::Save()
 {
-	char *filename = m_pTracks->GetFilename();
-	if(strlen(filename) > 0)
-		return m_pTracks->Save(filename);
-	return false;
+	return m_pView->Save();
 }
 
 void CFloopyFrame::SaveAs()
@@ -275,10 +222,9 @@ void CFloopyFrame::SaveAs()
 		wxSAVE, wxDefaultPosition);
 	if ( dlg->ShowModal() == wxID_OK )
 	{
-		//m_pTextCtrl->LoadFile(dlg->GetFilename());
 		SetStatusText(dlg->GetFilename(), 0);
 		char *filename = (char*)dlg->GetPath().c_str();
-		m_pTracks->Save(filename);
+		m_pView->Open(filename);
 	}
 	dlg->Destroy();
 	//delete dlg;

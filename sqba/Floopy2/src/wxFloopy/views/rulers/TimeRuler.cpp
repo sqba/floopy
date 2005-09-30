@@ -80,12 +80,12 @@ void CTimeRuler::drawFrame(wxDC &dc)
 	int height = size.GetHeight();
 
 	dc.SetPen(*wxWHITE_PEN);
-	dc.DrawLine(0, 0, 0, size.GetHeight());
-	dc.DrawLine(0, 0, width, 0);
+	dc.DrawLine(0, 0, width, 0);				// top
+	dc.DrawLine(0, 0, 0, size.GetHeight());		// left
 
 	dc.SetPen(*wxMEDIUM_GREY_PEN);
-	dc.DrawLine(width-1, 0, width-1, height);
-	dc.DrawLine(0, height-1, width, height-1);
+	dc.DrawLine(width-1, 0, width-1, height);	// right
+	dc.DrawLine(0, height-1, width, height-1);	// bottom
 }
 
 /////////////////////////////////////////////////////////////////////////////

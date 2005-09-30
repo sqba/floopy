@@ -1,4 +1,4 @@
-// FloopyView.h: interface for the CFloopyView class.
+// TracksView.h: interface for the CTracksView class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -12,25 +12,29 @@
 #include <wx/splitter.h>
 
 #include "labelsview.h"
-#include "tracksview.h"
+#include "regionsview.h"
 #include "rulerview.h"
 
-class CFloopyView : public wxSplitterWindow  
+class CTracksView : public wxSplitterWindow  
 {
     DECLARE_EVENT_TABLE()
 
 public:
-	CFloopyView(wxWindow* parent, CTracks *tracks);
-	virtual ~CFloopyView();
+	CTracksView(wxWindow* parent, CTracks *tracks);
+	virtual ~CTracksView();
 
 //	void OnKeyDown(wxKeyEvent& event);
 
 	bool Open(char *filename);
+	bool Save();
+
+	void ShowParamsDlg();
+	void ShowPropertiesDlg();
 
 private:
 	CTracks		*m_pTracks;
 	CRulerView	*m_pLabelsView;
-	CRulerView	*m_pTracksView;
+	CRulerView	*m_pRegionsView;
 };
 
 #endif // !defined(AFX_FLOOPYVIEW_H__7E793800_358E_41AA_B7DB_B3F81FBB2B02__INCLUDED_)

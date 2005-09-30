@@ -25,6 +25,7 @@ public:
 	virtual ~CRulerView();
 
 	void SetView(wxWindow* view);
+	wxWindow *GetView() { return m_pView; }
 	void SetTopRuler(CHorizontalRuler *ruler);
 
 	void OnSize( wxSizeEvent& event );
