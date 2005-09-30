@@ -1,4 +1,4 @@
-// TracksView.h: interface for the CTracksView class.
+// regionsview.h: interface for the CRegionsView class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -39,13 +39,13 @@
 
 #include "../dialogs/controldlg.h"
 
-class CTracksView : public CCaretView
+class CRegionsView : public CCaretView
 {
     DECLARE_EVENT_TABLE()
 
 public:
-	CTracksView(CRulerView *parent, wxScrolledWindow *labels, CTracks *tracks);
-	virtual ~CTracksView();
+	CRegionsView(CRulerView *parent, wxScrolledWindow *labels, CTracks *tracks);
+	virtual ~CRegionsView();
 
 	void OnDraw(wxDC& dc);
 	void ScrollWindow( int dx, int dy, const wxRect *rect );

@@ -1,16 +1,16 @@
-// TracksView.cpp: implementation of the CTracksView class.
+// RegionsView.cpp: implementation of the CRegionsView class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "TracksView.h"
+#include "regionsview.h"
 //#include "../FloopyDoc.h"
 #include "rulers/timeruler.h"
 
 
-BEGIN_EVENT_TABLE(CTracksView, CCaretView)
-	EVT_MOUSE_EVENTS(CTracksView::OnMouseEvent)
-	EVT_MOUSEWHEEL(CTracksView::OnMouseWheel)
-	EVT_KEY_DOWN( CTracksView::OnKeyDown )
+BEGIN_EVENT_TABLE(CRegionsView, CCaretView)
+	EVT_MOUSE_EVENTS(CRegionsView::OnMouseEvent)
+	EVT_MOUSEWHEEL(CRegionsView::OnMouseWheel)
+	EVT_KEY_DOWN( CRegionsView::OnKeyDown )
 END_EVENT_TABLE()
 
 
@@ -19,7 +19,7 @@ END_EVENT_TABLE()
 //////////////////////////////////////////////////////////////////////
 
 
-CTracksView::CTracksView(CRulerView* parent, wxScrolledWindow *labels, CTracks *tracks)
+CRegionsView::CRegionsView(CRulerView* parent, wxScrolledWindow *labels, CTracks *tracks)
  : CCaretView(parent, tracks)
 {
 	m_pObjMenu		= NULL;
@@ -27,7 +27,7 @@ CTracksView::CTracksView(CRulerView* parent, wxScrolledWindow *labels, CTracks *
 	m_pLabelsView	= labels;
 	m_pSelectedObj	= NULL;
 	m_ptPrev.x = m_ptPrev.y = 0;
-//	m_pTracks->SetTracksView(this);
+//	m_pTracks->SetRegionsView(this);
 	
 	SetCursor( wxCURSOR_PENCIL );
 
@@ -36,10 +36,10 @@ CTracksView::CTracksView(CRulerView* parent, wxScrolledWindow *labels, CTracks *
 
 	SetTopRuler( new CTimeRuler(parent, tracks) );
 
-	wxLog::AddTraceMask(_T("CTracksView"));
+	wxLog::AddTraceMask(_T("CRegionsView"));
 }
 
-CTracksView::~CTracksView()
+CRegionsView::~CRegionsView()
 {
 	delete m_pParamsDialog;
 	delete m_pPropsDialog;
@@ -50,7 +50,7 @@ CTracksView::~CTracksView()
 	}*/
 }
 
-void CTracksView::OnDraw(wxDC &dc)
+void CRegionsView::OnDraw(wxDC &dc)
 {
 	m_pTracks->DrawBG(dc);		// Draw track backgrounds
 	CCaretView::OnDraw(dc);		// Draw grid
@@ -73,7 +73,7 @@ void CTracksView::OnDraw(wxDC &dc)
 */
 }
 
-void CTracksView::ScrollWindow( int dx, int dy, const wxRect *rect )
+void CRegionsView::ScrollWindow( int dx, int dy, const wxRect *rect )
 {
 	CCaretView::ScrollWindow( dx, dy, rect );
 /*
@@ -96,14 +96,14 @@ void CTracksView::ScrollWindow( int dx, int dy, const wxRect *rect )
 		m_pLabelsView->ScrollWindow( 0, dy, NULL );
 }
 
-void CTracksView::OnKeyDown(wxKeyEvent& event)
+void CRegionsView::OnKeyDown(wxKeyEvent& event)
 {
 	IFloopyObj *obj = m_pTracks->GetSelectedObj();
 	if(NULL==obj || !obj->OnKeyDown(event))
 		m_pTracks->OnKeyDown(event);
 }
 
-void CTracksView::OnMouseEvent(wxMouseEvent& event)
+void CRegionsView::OnMouseEvent(wxMouseEvent& event)
 {
 	try {
 
@@ -258,7 +258,7 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 	}
 	catch(...)
 	{
-		wxLogTrace(_T("CTracksView"), _T("OnMouseEvent exception"));
+		wxLogTrace(_T("CRegionsView"), _T("OnMouseEvent exception"));
 	}
 
 	CCaretView::OnMouseEvent(event);
@@ -267,28 +267,28 @@ void CTracksView::OnMouseEvent(wxMouseEvent& event)
 		m_pTracks->SetCursorPosition(m_pTracks->GetCaretPos());
 }
 
-void CTracksView::OnMouseWheel(wxMouseEvent& event)
+void CRegionsView::OnMouseWheel(wxMouseEvent& event)
 {
-	// EVT_MOUSE_EVENTS( CTracksView::OnMouseEvent )
+	// EVT_MOUSE_EVENTS( CRegionsView::OnMouseEvent )
 	
 	// Zameniti OnMouseEvent pojedinacnim eventima
 
-	// EVT_LEFT_DOWN( CTracksView::OnLeftDown )
-	// EVT_LEFT_UP( CTracksView::OnLeftUp )
-	// EVT_LEFT_DCLICK( CTracksView::OnLeftDClick )
-	// EVT_MIDDLE_DOWN( CTracksView::OnMiddleDown )
-	// EVT_MIDDLE_UP( CTracksView::OnMiddleUp )
-	// EVT_MIDDLE_DCLICK( CTracksView::OnMiddleDClick )
-	// EVT_RIGHT_DOWN( CTracksView::OnRightDown )
-	// EVT_RIGHT_UP( CTracksView::OnRightUp )
-	// EVT_RIGHT_DCLICK( CTracksView::OnRightDClick )
-	// EVT_MOTION( CTracksView::OnMouseMove )
-	// EVT_ENTER_WINDOW( CTracksView::OnEnterWindow )
-	// EVT_LEAVE_WINDOW( CTracksView::OnLeaveWindow )
-	// EVT_MOUSEWHEEL( CTracksView::OnMouseWheel )
+	// EVT_LEFT_DOWN( CRegionsView::OnLeftDown )
+	// EVT_LEFT_UP( CRegionsView::OnLeftUp )
+	// EVT_LEFT_DCLICK( CRegionsView::OnLeftDClick )
+	// EVT_MIDDLE_DOWN( CRegionsView::OnMiddleDown )
+	// EVT_MIDDLE_UP( CRegionsView::OnMiddleUp )
+	// EVT_MIDDLE_DCLICK( CRegionsView::OnMiddleDClick )
+	// EVT_RIGHT_DOWN( CRegionsView::OnRightDown )
+	// EVT_RIGHT_UP( CRegionsView::OnRightUp )
+	// EVT_RIGHT_DCLICK( CRegionsView::OnRightDClick )
+	// EVT_MOTION( CRegionsView::OnMouseMove )
+	// EVT_ENTER_WINDOW( CRegionsView::OnEnterWindow )
+	// EVT_LEAVE_WINDOW( CRegionsView::OnLeaveWindow )
+	// EVT_MOUSEWHEEL( CRegionsView::OnMouseWheel )
 }
 
-void CTracksView::ShowParamsDlg()
+void CRegionsView::ShowParamsDlg()
 {
 	IFloopyObj *obj = m_pTracks->GetSelectedObj();
 	if(NULL == obj)
@@ -298,7 +298,7 @@ void CTracksView::ShowParamsDlg()
 	m_pParamsDialog->Show( true );
 }
 
-void CTracksView::ShowPropertiesDlg()
+void CRegionsView::ShowPropertiesDlg()
 {
 	IFloopyObj *obj = m_pTracks->GetSelectedObj();
 	if(NULL == obj)

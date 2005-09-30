@@ -165,7 +165,7 @@ BEGIN_EVENT_TABLE( CHorizontalRuler, wxWindow )
 END_EVENT_TABLE()
 
 CHorizontalRuler::CHorizontalRuler(CRulerView* parent, long style)
- : wxWindow(parent, -1, wxDefaultPosition, wxSize(100, 25), style)
+ : wxWindow(parent, -1, wxDefaultPosition, wxSize(100, 20), style)
 {
 	m_owner = parent;
 
