@@ -164,8 +164,8 @@ BEGIN_EVENT_TABLE( CHorizontalRuler, wxWindow )
 //	EVT_ERASE_BACKGROUND( CRulerView::OnEraseBackground )
 END_EVENT_TABLE()
 
-CHorizontalRuler::CHorizontalRuler(CRulerView* parent, long style)
- : wxWindow(parent, -1, wxDefaultPosition, wxSize(100, 20), style)
+CHorizontalRuler::CHorizontalRuler(CRulerView* parent)
+ : wxWindow(parent, -1, wxDefaultPosition, wxSize(100, 20), wxNO_BORDER)
 {
 	m_owner = parent;
 

@@ -13,7 +13,8 @@ public:
 	void OnDraw(wxDC &dc);
 
 private:
-	void FormatTime(float fSec, wxString &csTime);
+	void formatTime(float fSec, wxString &csTime);
+	void drawFrame(wxDC &dc);
 
 private:
 	CTracks *m_pTracks;

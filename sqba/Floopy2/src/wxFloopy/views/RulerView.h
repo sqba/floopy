@@ -49,7 +49,7 @@ class CHorizontalRuler : public wxWindow
     DECLARE_EVENT_TABLE()
 
 public:
-	CHorizontalRuler(CRulerView* parent, long style=wxDOUBLE_BORDER);
+	CHorizontalRuler(CRulerView* parent);
 	virtual ~CHorizontalRuler();
 
 	virtual void OnDraw(wxDC& dc) {}
