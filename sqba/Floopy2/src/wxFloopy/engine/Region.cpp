@@ -2,6 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <math.h>
 #include "tracks.h"
 
 //IMPLEMENT_DYNAMIC_CLASS(CRegion, IFloopyObj)
@@ -26,6 +27,8 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 	m_iPrevStart = m_iPrevEnd = -1;
 
 	m_bEdit = false;
+
+	m_bDrawPreview = true;
 
 	createMenu();
 
@@ -92,6 +95,38 @@ void CRegion::remove(IFloopyObj *evt)
 	track->RemoveRegion( region );
 }
 
+/**
+ * Returns the original source length, before the looping component.
+ */
+int CRegion::getLengthNotLooped()
+{
+	int len = getTrack()->GetSource()->GetSize();
+	if( getTrack()->IsLooped() )
+	{
+		IFloopySoundFilter *loop = (IFloopySoundFilter*)getTrack()->FindComponentByName("loop");
+		if(loop)
+		{
+			IFloopySoundInput *src = loop->GetSource();
+			if(src)
+				len = src->GetSize();
+		}
+	}
+	return len;
+}
+
+void CRegion::drawFrame(wxDC& dc, wxRect& rc)
+{
+	int start = getStartOffset();
+	if(start == -1)
+		start = 0;
+	int nSamplesPerPixel = getTracks()->GetSamplesPerPixel();
+	start /= nSamplesPerPixel;
+
+	dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
+	
+	//for(int x=rc.GetLeft(); x<rc.GetLeft()+rc.GetWidth(); x++)
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // DrawBG
 //! Draws region's background.
@@ -132,7 +167,9 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	int top    = rc.GetTop()+1;
 	int height = rc.GetHeight()-2;
 
-	dc.DrawRoundedRectangle(left, top, width, height, 3);
+	wxRect rcFrame(left, top, width, height);
+	drawFrame(dc, rcFrame);
+	//dc.DrawRoundedRectangle(left, top, width, height, 3);
 	//DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2), 3);
 
 	dc.SetPen(oldpen);
@@ -142,7 +179,7 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	dc.SetPen(wxPen(*wxLIGHT_GREY));
 	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
 	CRegionDisplay *disp = m_pDisplay;
-	if(disp)
+	if(disp && m_bDrawPreview)
 		disp->DrawBG(dc, wxRect(left+border, top+border, width-border*2, height-border*2));
 	dc.SetPen(oldpen);
 	///////////////////////////////////////////////////////
@@ -176,7 +213,7 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	dc.SetPen(wxPen(color, 1));
 	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
 	CRegionDisplay *disp = m_pDisplay;
-	if(disp)
+	if(disp && m_bDrawPreview)
 		//disp->DrawRegion(this, dc, rce);
 		disp->DrawFore(dc, rce);
 	dc.SetPen(oldpen);
@@ -280,7 +317,7 @@ void CRegion::Invalidate()
 {
 	///////////////////////////////////////////////////////
 	CRegionDisplay *disp = m_pDisplay;
-	if(disp)
+	if(disp && m_bDrawPreview)
 		//m_pDisplay->Run();
 		disp->LoadPeaks();
 	///////////////////////////////////////////////////////
@@ -567,8 +604,11 @@ void CRegion::calcPos(int *left, int *right)
 {
 	int nSamplesPerPixel = getTracks()->GetSamplesPerPixel();
 
-	*left  = m_iStartSample / nSamplesPerPixel;
-	*right = m_iEndSample   / nSamplesPerPixel;
+	float fLeft  = (float)m_iStartSample / (float)nSamplesPerPixel;
+	float fRight = (float)m_iEndSample   / (float)nSamplesPerPixel;
+
+	*left  = floor( fLeft );
+	*right = floor( fRight );
 
 	/*if(*left > *right)
 	{
@@ -637,6 +677,15 @@ bool CRegion::getReset(int sample)
 		return value==0.f;
 	else
 		return false;
+}
+
+int CRegion::getStartOffset()
+{
+	float value = 0;
+	IFloopySoundInput *track = getTrack()->GetInput();
+	if(track->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
+		return (int)value;
+	return -1;
 }
 
 void CRegion::SetReset(bool bReset)

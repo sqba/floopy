@@ -1,23 +1,22 @@
-// SampleRuler.h: interface for the CSampleRuler class.
-//
-//////////////////////////////////////////////////////////////////////
+#ifndef SAMPLE_RULER_H
+#define SAMPLE_RULER_H
 
-#if !defined(AFX_SAMPLERULER_H__4F488596_8BF5_4F2B_A751_ABD08B80E049__INCLUDED_)
-#define AFX_SAMPLERULER_H__4F488596_8BF5_4F2B_A751_ABD08B80E049__INCLUDED_
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
-#include "..\RulerView.h"
-#include "..\VIEWS\RulerView.h"
+#include "../rulerview.h"
+#include "../../engine/tracks.h"
 
 class CSampleRuler : public CHorizontalRuler  
 {
 public:
-	CSampleRuler();
+	CSampleRuler(CRulerView *parent, CTracks *tracks);
 	virtual ~CSampleRuler();
 
+	void OnDraw(wxDC &dc);
+
+private:
+	void drawFrame(wxDC &dc);
+
+private:
+	CTracks *m_pTracks;
 };
 
-#endif // !defined(AFX_SAMPLERULER_H__4F488596_8BF5_4F2B_A751_ABD08B80E049__INCLUDED_)
+#endif // #ifndef SAMPLE_RULER_H

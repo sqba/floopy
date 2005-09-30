@@ -27,16 +27,21 @@ CRulerView::CRulerView(wxWindow* parent) : wxScrolledWindow(parent, -1)
 	m_pTopRuler = m_pBottomRuler = NULL;
 
 	m_pTopRuler		= new CHorizontalRuler( this );
-//	m_pBottomRuler	= new CHorizontalRuler( this );
+	m_pBottomRuler	= new CHorizontalRuler( this );
 }
 
 CRulerView::~CRulerView()
 {
 	if(m_pTopRuler)
 		delete m_pTopRuler;
+//	if(m_pLeftRuler)
+//		delete m_pLeftRuler;
+//	if(m_pRightRuler)
+//		delete m_pRightRuler;
 	if(m_pBottomRuler)
 		delete m_pBottomRuler;
-	delete m_pView;
+	if(m_pView)
+		delete m_pView;
 }
 
 
@@ -51,16 +56,12 @@ void CRulerView::ScrollWindow( int dx, int dy, const wxRect *rect )
 {
 	if(m_pTopRuler)
 		m_pTopRuler->ScrollWindow( dx, 0, rect );
-/*
-	if(m_pLeftRuler)
-		m_pLeftRuler->ScrollWindow( 0, dy, rect );
-	
-	if(m_pRightRuler)
-		m_pRightRuler->ScrollWindow( 0, dy, rect );
-*/
+//	if(m_pLeftRuler)
+//		m_pLeftRuler->ScrollWindow( 0, dy, rect );
+//	if(m_pRightRuler)
+//		m_pRightRuler->ScrollWindow( 0, dy, rect );
 	if(m_pBottomRuler)
 		m_pBottomRuler->ScrollWindow( dx, 0, rect );
-
 	if(m_pView)
 		m_pView->ScrollWindow( dx, dy, rect );
 }
@@ -69,15 +70,27 @@ void CRulerView::OnSize( wxSizeEvent& event )
 {
 	int cw, ch;
 	GetClientSize( &cw, &ch );
+
+	int viewTop = 0;
+	int viewBottom = ch;
 	
 	if ( m_pTopRuler && m_pTopRuler->IsShown() )
-		m_pTopRuler->SetSize( 0, 0, cw, m_pTopRuler->GetSize().GetHeight());
+	{
+		int height = m_pTopRuler->GetSize().GetHeight();
+		m_pTopRuler->SetSize( 0, 0, cw, height);
+		viewTop = height;
+		viewBottom -= height;
+	}
 
 	if (m_pBottomRuler && m_pBottomRuler->IsShown() )
-		m_pBottomRuler->SetSize( 0, ch-20, cw, 20);
+	{
+		int height = m_pBottomRuler->GetSize().GetHeight();
+		m_pBottomRuler->SetSize( 0, ch-height, cw, height);
+		viewBottom -= height;
+	}
 
 	if (m_pView && m_pView->IsShown() )
-		m_pView->SetSize( 0, m_pTopRuler->GetSize().GetHeight(), cw, ch-m_pTopRuler->GetSize().GetHeight());
+		m_pView->SetSize( 0, viewTop, cw, viewBottom);
 
     event.Skip();
 }
@@ -96,6 +109,14 @@ void CRulerView::SetTopRuler(CHorizontalRuler *ruler)
 		delete m_pTopRuler;
 	m_pTopRuler = ruler;
 	m_pTopRuler->Reparent( this );
+}
+
+void CRulerView::SetBottomRuler(CHorizontalRuler *ruler)
+{
+	if(m_pBottomRuler)
+		delete m_pBottomRuler;
+	m_pBottomRuler = ruler;
+	m_pBottomRuler->Reparent( this );
 }
 
 void CRulerView::GetViewStart2(int* x, int* y) const
@@ -191,7 +212,6 @@ void CHorizontalRuler::OnPaint( wxPaintEvent& WXUNUSED(event) )
     m_owner->CalcUnscrolledPosition( 0, 0, &x, &y );
     dc.SetDeviceOrigin( -x, 0 );
 
-	//CHorizontalRuler::OnDraw( dc );
 	this->OnDraw( dc );
 }
 /*
@@ -276,15 +296,9 @@ void CView::OnPaint( wxPaintEvent& WXUNUSED(event) )
     m_owner->CalcUnscrolledPosition( 0, 0, &x, &y );
     dc.SetDeviceOrigin( -x, -y );
 
-	//CView::OnDraw( dc );
 	this->OnDraw( dc );
 }
-/*
-void CView::OnDraw(wxDC& dc)
-{
-	dc.DrawRectangle(100, 100, 50, 20);
-}
-*/
+
 void CView::GetViewStart(int* x, int* y) const
 {
 	m_owner->GetViewStart(x, y);
@@ -298,6 +312,11 @@ void CView::GetScrollPixelsPerUnit(int* xUnit, int* yUnit) const
 void CView::SetTopRuler(CHorizontalRuler *ruler)
 {
 	m_owner->SetTopRuler( ruler );
+}
+
+void CView::SetBottomRuler(CHorizontalRuler *ruler)
+{
+	m_owner->SetBottomRuler( ruler );
 }
 /*
 void CView::OnKeyDown(wxKeyEvent& event)

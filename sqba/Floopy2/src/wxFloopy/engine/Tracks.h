@@ -571,6 +571,10 @@ private:
 	void drawParametersFore(wxDC& dc, wxRect& rc);
 	bool getReset(int sample);
 
+	int getStartOffset();
+	void drawFrame(wxDC& dc, wxRect& rc);
+	int getLengthNotLooped();
+
 private:
 	bool			m_bEdit;
 	int				m_iStartSample, m_iEndSample, m_iPrevStart, m_iPrevEnd;
@@ -578,6 +582,7 @@ private:
 	CBorder			*m_pLeftBorder, *m_pRightBorder;
 	ParameterList	m_Parameters;
 	CRegionDisplay	*m_pDisplay;
+	bool			m_bDrawPreview;
 };
 
 

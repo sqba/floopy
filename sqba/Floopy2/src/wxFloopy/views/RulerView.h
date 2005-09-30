@@ -26,7 +26,9 @@ public:
 
 	void SetView(wxWindow* view);
 	wxWindow *GetView() { return m_pView; }
+
 	void SetTopRuler(CHorizontalRuler *ruler);
+	void SetBottomRuler(CHorizontalRuler *ruler);
 
 	void OnSize( wxSizeEvent& event );
 //	void OnKeyDown(wxKeyEvent& event);
@@ -41,6 +43,8 @@ public:
 private:
 	wxWindow *m_pView;
 	CHorizontalRuler *m_pTopRuler;
+//	CHorizontalRuler *m_pLeftRuler;
+//	CHorizontalRuler *m_pRightRuler;
 	CHorizontalRuler *m_pBottomRuler;
 };
 
@@ -77,6 +81,7 @@ public:
 	virtual ~CView();
 
 	void SetTopRuler(CHorizontalRuler *ruler);
+	void SetBottomRuler(CHorizontalRuler *ruler);
 
 	virtual void OnDraw(wxDC& dc) {}
 //	void OnKeyDown(wxKeyEvent& event);

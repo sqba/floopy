@@ -5,6 +5,7 @@
 #include "regionsview.h"
 //#include "../FloopyDoc.h"
 #include "rulers/timeruler.h"
+#include "rulers/sampleruler.h"
 
 
 BEGIN_EVENT_TABLE(CRegionsView, CCaretView)
@@ -35,6 +36,7 @@ CRegionsView::CRegionsView(CRulerView* parent, wxScrolledWindow *labels, CTracks
 	m_pPropsDialog = new CControlDlg( tracks );
 
 	SetTopRuler( new CTimeRuler(parent, tracks) );
+	SetBottomRuler( new CSampleRuler(parent, tracks) );
 
 	wxLog::AddTraceMask(_T("CRegionsView"));
 }

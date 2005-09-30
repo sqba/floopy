@@ -160,6 +160,10 @@ SOURCE=.\views\RulerView.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\views\rulers\SampleRuler.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\views\rulers\TimeRuler.cpp
 # End Source File
 # Begin Source File
@@ -225,6 +229,10 @@ SOURCE=.\resource.h
 # Begin Source File
 
 SOURCE=.\views\RulerView.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\views\rulers\SampleRuler.h
 # End Source File
 # Begin Source File
 
