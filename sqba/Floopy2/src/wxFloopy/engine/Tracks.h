@@ -190,10 +190,10 @@ public:
 	void UpdateSelectedRegions();
 
 
-	void SetTracksView(CRulerView *panel);
+	void SetRegionsView(CRulerView *panel);
 	void SetLabelsView(CRulerView *panel) { m_pLabelsView = panel; }
 	
-	CRulerView *GetTracksView()			{ return m_pTracksView; };
+	CRulerView *GetRegionsView()			{ return m_pRegionsView; };
 	CRulerView *GetLabelsView()			{ return m_pLabelsView; };
 
 	void SetCaretPos(int samples);
@@ -275,7 +275,7 @@ private:
 
 private:
 	TracksList			m_tracks;
-	CRulerView			*m_pTracksView, *m_pLabelsView;
+	CRulerView			*m_pRegionsView, *m_pLabelsView;
 	CBorder				*m_pBorder;
 	IFloopySoundEngine	*m_pEngine;
 	IFloopySoundMixer	*m_pMixer;

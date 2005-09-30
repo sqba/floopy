@@ -391,7 +391,7 @@ CRegion *CTrack::GetRegion(int index)
 /////////////////////////////////////////////////////////////////////////////
 void CTrack::Refresh()
 {
-	wxScrolledWindow *panel = GetTracks()->GetTracksView();
+	wxScrolledWindow *panel = GetTracks()->GetRegionsView();
 
 	int xOrig=0, yOrig=0;
 	panel->GetViewStart(&xOrig, &yOrig);

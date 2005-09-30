@@ -21,7 +21,7 @@ CTracks::CTracks() : IFloopyObj(NULL)
 {
 	wxLog::AddTraceMask(_T("CTracks"));
 
-	m_pTracksView		= NULL;
+	m_pRegionsView		= NULL;
 	m_pLabelsView		= NULL;
 //	m_hres				= 2756; // samples per pixel
 //	m_pps				= 16;	// pixels per second
@@ -382,10 +382,10 @@ void CTracks::Refresh()
 	int noUnitsX = GetWidth()  / ppu;
 	int noUnitsY = GetHeight() / ppu;
 
-	if( m_pTracksView )
+	if( m_pRegionsView )
 	{
-		m_pTracksView->SetScrollbars(ppu, ppu, noUnitsX+1, noUnitsY+1);
-		m_pTracksView->Refresh();
+		m_pRegionsView->SetScrollbars(ppu, ppu, noUnitsX+1, noUnitsY+1);
+		m_pRegionsView->Refresh();
 	}
 
 	if( m_pLabelsView )
@@ -424,19 +424,19 @@ void CTracks::Invalidate()
 		int x=0, y=0;
 		
 		int width1=0, height1=0;
-		m_pTracksView->GetVirtualSize(&width1, &height1);
+		m_pRegionsView->GetVirtualSize(&width1, &height1);
 
 		// Get previous caret position
 		int xc1=0, yc1=0;
-		wxCaret *caret = m_pTracksView->GetCaret();
+		wxCaret *caret = m_pRegionsView->GetCaret();
 		caret->GetPosition(&x, &y);
-		m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+		m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 
 		// Get previous view position
-		int xs1 = m_pTracksView->GetScrollPos(wxHORIZONTAL);
-		int ys1 = m_pTracksView->GetScrollPos(wxVERTICAL);
+		int xs1 = m_pRegionsView->GetScrollPos(wxHORIZONTAL);
+		int ys1 = m_pRegionsView->GetScrollPos(wxVERTICAL);
 		int xScrollUnits, yScrollUnits;
-		m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+		m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 
 
 		m_pps = pps;
@@ -446,19 +446,19 @@ void CTracks::Invalidate()
 
 
 		int width2=0, height2=0;
-		m_pTracksView->GetVirtualSize(&width2, &height2);
+		m_pRegionsView->GetVirtualSize(&width2, &height2);
 
 		// Move caret
 		x = (int)(((float)width2  / (float)width1)  * (float)xc1);
 		y = (int)(((float)height2 / (float)height1) * (float)yc1);
 		int xxc2=0, yyc2=0;
-		m_pTracksView->CalcScrolledPosition(x, y, &xxc2, &yyc2);
+		m_pRegionsView->CalcScrolledPosition(x, y, &xxc2, &yyc2);
 		caret->Move(xxc2, yyc2);
 
 		// Move view
 		x = (int)(((float)width2  / (float)width1)  * (float)xs1);
 		y = (int)(((float)height2 / (float)height1) * (float)ys1);
-		m_pTracksView->Scroll(x, y);
+		m_pRegionsView->Scroll(x, y);
 	}
 }*/
 /*
@@ -521,19 +521,19 @@ void CTracks::SetSamplesPerPixel(int spp)
 	/*int x=0, y=0;
 	
 	int width1=0, height1=0;
-	m_pTracksView->GetVirtualSize(&width1, &height1);
+	m_pRegionsView->GetVirtualSize(&width1, &height1);
 
 	// Get previous caret position
 	int xc1=0, yc1=0;
-	wxCaret *caret = m_pTracksView->GetCaret();
+	wxCaret *caret = m_pRegionsView->GetCaret();
 	caret->GetPosition(&x, &y);
-	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+	m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 
 	// Get previous view position
-	int xs1 = m_pTracksView->GetScrollPos(wxHORIZONTAL);
-	int ys1 = m_pTracksView->GetScrollPos(wxVERTICAL);
+	int xs1 = m_pRegionsView->GetScrollPos(wxHORIZONTAL);
+	int ys1 = m_pRegionsView->GetScrollPos(wxVERTICAL);
 	int xScrollUnits, yScrollUnits;
-	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );*/
+	m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );*/
 
 	int pos = GetCaretPos();
 
@@ -552,19 +552,19 @@ void CTracks::SetSamplesPerPixel(int spp)
 
 
 	/*int width2=0, height2=0;
-	m_pTracksView->GetVirtualSize(&width2, &height2);
+	m_pRegionsView->GetVirtualSize(&width2, &height2);
 
 	// Move caret
 	x = (int)(((float)width2  / (float)width1)  * (float)xc1);
 	y = (int)(((float)height2 / (float)height1) * (float)yc1);
 	int xxc2=0, yyc2=0;
-	m_pTracksView->CalcScrolledPosition(x, y, &xxc2, &yyc2);
+	m_pRegionsView->CalcScrolledPosition(x, y, &xxc2, &yyc2);
 	caret->Move(xxc2, yyc2);
 
 	// Move view
 	x = (int)(((float)width2  / (float)width1)  * (float)xs1);
 	y = (int)(((float)height2 / (float)height1) * (float)ys1);
-	m_pTracksView->Scroll(x, y);*/
+	m_pRegionsView->Scroll(x, y);*/
 
 
 	CenterView( pos );
@@ -579,14 +579,14 @@ void CTracks::SetSamplesPerPixel(int spp)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// SetTracksView
+// SetRegionsView
 //! Sets the tracks display panel.
 //! \param panel [in] Pointer to the tracks display panel (wxScrolledWindow)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CTracks::SetTracksView(CRulerView *panel)
+void CTracks::SetRegionsView(CRulerView *panel)
 {
-	m_pTracksView = panel;
+	m_pRegionsView = panel;
 	Refresh();
 }
 
@@ -1071,7 +1071,7 @@ void CTracks::Stop()
 
 void CTracks::SetCaretPos(int samples)
 {
-	wxCaret *caret = m_pTracksView->GetCaret();
+	wxCaret *caret = m_pRegionsView->GetCaret();
 	if(NULL == caret)
 		return;
 
@@ -1089,9 +1089,9 @@ void CTracks::SetCaretPos(int samples)
 	int xc1, yc1;
 
 	/*int xScrollUnits=0, yScrollUnits=0;
-	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 	int xOrig=0, yOrig=0;
-	m_pTracksView->GetViewStart(&xOrig, &yOrig);
+	m_pRegionsView->GetViewStart(&xOrig, &yOrig);
 	xOrig *= xScrollUnits;
 	yOrig *= yScrollUnits;*/
 
@@ -1107,8 +1107,8 @@ void CTracks::SetCaretPos(int samples)
 		y = pTrack->GetTop();
 	}
 
-	m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
-	//m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+	m_pRegionsView->CalcScrolledPosition(x, y, &xc1, &yc1);
+	//m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 
 	//x -= xOrig;
 	//y -= yOrig;
@@ -1126,13 +1126,13 @@ void CTracks::SetCaretPos(int samples)
 
 int CTracks::GetCaretPos()
 {
-	wxCaret *caret = m_pTracksView->GetCaret();
+	wxCaret *caret = m_pRegionsView->GetCaret();
 	if(NULL == caret)
 		return 0;
 
 	int x=0, y=0, xc1=0, yc1=0;
 	caret->GetPosition(&x, &y);
-	m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+	m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 	return xc1 * GetSamplesPerPixel();
 }
 
@@ -1140,14 +1140,14 @@ int CTracks::GetCaretPos()
 void CTracks::CenterView(int sample)
 {
 	int xScrollUnits=0, yScrollUnits=0;
-	m_pTracksView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 
 	int width=0, height=0;
-	m_pTracksView->GetClientSize(&width, &height);
+	m_pRegionsView->GetClientSize(&width, &height);
 
 	int x = sample/GetSamplesPerPixel() - width/2;
 
-	m_pTracksView->Scroll(x/xScrollUnits, 0);
+	m_pRegionsView->Scroll(x/xScrollUnits, 0);
 }
 
 IFloopySoundMixer *CTracks::getMixer()
@@ -1210,20 +1210,20 @@ void CTracks::SetCursorPosition(int samples)
 		SetViewUpdatedWhilePlaying(true);
 	}
 
-	//m_pTracksView->SetFocus();
+	//m_pRegionsView->SetFocus();
 //	SetCaretPos( samples );
 
 /*
-	wxCaret *caret = m_pTracksView->GetCaret();
+	wxCaret *caret = m_pRegionsView->GetCaret();
 	if(NULL != caret)
 	{
 		int x=0, y=0;
 		//int xc1=0, yc1=0;
 		caret->GetPosition(&x, &y);
-		//m_pTracksView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+		//m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 
 		x = samples / GetSamplesPerPixel();
-		//m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+		//m_pRegionsView->CalcScrolledPosition(x, y, &xc1, &yc1);
 		caret->Move(x, y);
 	}
 */

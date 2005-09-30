@@ -120,10 +120,6 @@ SOURCE=.\FloopyFrame.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\views\FloopyView.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\views\gridview.cpp
 # End Source File
 # Begin Source File
@@ -153,6 +149,10 @@ SOURCE=.\engine\Region.cpp
 # Begin Source File
 
 SOURCE=.\engine\RegionDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\views\regionsview.cpp
 # End Source File
 # Begin Source File
 
@@ -204,10 +204,6 @@ SOURCE=.\engine\FloopyObj.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\views\FloopyView.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\views\gridview.h
 # End Source File
 # Begin Source File
@@ -217,6 +213,10 @@ SOURCE=.\views\labelsview.h
 # Begin Source File
 
 SOURCE=.\views\MainView.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\views\regionsview.h
 # End Source File
 # Begin Source File
 

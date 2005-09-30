@@ -267,7 +267,7 @@ void CRegion::Move(int dx, int WXUNUSED(dy))
 /////////////////////////////////////////////////////////////////////////////
 void CRegion::Refresh()
 {
-	wxScrolledWindow *panel = getTracks()->GetTracksView();
+	wxScrolledWindow *panel = getTracks()->GetRegionsView();
 	if(panel)
 	{
 		wxRect rc;
@@ -303,7 +303,7 @@ void CRegion::GetRect(wxRect& rc)
 	int width = right - left;
 	rc = wxRect(left, GetTop(), width, GetHeight());
 
-	CRulerView *panel = getTracks()->GetTracksView();
+	CRulerView *panel = getTracks()->GetRegionsView();
 	if(panel)
 	{
 		/*int x, y, xScrollUnits, yScrollUnits;

@@ -178,7 +178,7 @@ void CCaretView::SetCaretPos(int samples)
 
 	caret->Show(false);
 
-	//m_pTracksView->CalcScrolledPosition(x, y, &xc1, &yc1);
+	//m_pRegionsView->CalcScrolledPosition(x, y, &xc1, &yc1);
 
 	int xScrollUnits=0, yScrollUnits=0;
 	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
