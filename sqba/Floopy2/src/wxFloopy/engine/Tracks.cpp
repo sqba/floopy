@@ -1190,9 +1190,16 @@ void CTracks::SetStatusText(int samples)
 	if(fmt && fmt->frequency>0)
 		seconds = (float)samples / (float)fmt->frequency;
 
+	wxString csTime;
+	float min = seconds>60.f ? seconds/60.f : 0.f;
+	float sec = min>1.f ? seconds-min*60.f : seconds;
+	float ms  = sec*1000.f - (int)sec*1000;
+	csTime.Printf("%2.2d:%2.2d:%3.3d", (int)min, (int)sec, (int)ms);
+
 	wxString str;
 	//str.Printf("%d samples - %.4f seconds %d%%", samples, seconds, percent);
-	str.Printf("%d samples / %.4f seconds", samples, seconds);
+	//str.Printf("%d samples / %.4f seconds", samples, seconds);
+	str.Printf("%d samples / %s", samples, csTime);
 
 	GetStatusBar()->SetStatusText(str, 1);
 }
