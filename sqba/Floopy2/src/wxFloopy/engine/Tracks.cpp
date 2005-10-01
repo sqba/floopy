@@ -1099,7 +1099,10 @@ void CTracks::SetCaretPos(int samples)
 	int height = this->GetHeight();
 	//int y = 0;
 
-	m_pRegionsView->GetClientSize(NULL, &height);
+	///////////////////////////////////////////////
+	// Mora da se popravi horizontalno skrolovanje
+	//m_pRegionsView->GetClientSize(NULL, &height);
+	///////////////////////////////////////////////
 
 	IFloopyObj *obj = GetSelectedTrack();
 	if( obj )
