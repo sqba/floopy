@@ -138,6 +138,15 @@ void CRulerView::SetBackgroundColour(wxColour& color)
 		wxScrolledWindow::SetBackgroundColour(color);
 }
 
+void CRulerView::SetScrollbars(int pixelsPerUnitX, int pixelsPerUnitY, int noUnitsX, int noUnitsY, int xPos, int yPos, bool noRefresh)
+{
+	if(m_pTopRuler)
+		noUnitsY += m_pTopRuler->GetSize().GetHeight() / pixelsPerUnitY;
+	if(m_pBottomRuler)
+		noUnitsY += m_pBottomRuler->GetSize().GetHeight() / pixelsPerUnitY;
+	wxScrolledWindow::SetScrollbars(pixelsPerUnitX, pixelsPerUnitY, noUnitsX, noUnitsY, xPos, yPos, noRefresh);
+}
+
 /*
 void CRulerView::CalcScrolledPosition( int x, int y, int *xx, int *yy) const
 {

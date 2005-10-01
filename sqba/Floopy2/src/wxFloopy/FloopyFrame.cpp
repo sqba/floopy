@@ -224,7 +224,7 @@ void CFloopyFrame::SaveAs()
 	{
 		SetStatusText(dlg->GetFilename(), 0);
 		char *filename = (char*)dlg->GetPath().c_str();
-		m_pView->Open(filename);
+		m_pTracks->Save(filename);
 	}
 	dlg->Destroy();
 	//delete dlg;

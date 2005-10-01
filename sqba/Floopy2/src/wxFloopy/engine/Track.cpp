@@ -391,8 +391,8 @@ CRegion *CTrack::GetRegion(int index)
 /////////////////////////////////////////////////////////////////////////////
 void CTrack::Refresh()
 {
-	wxScrolledWindow *panel = GetTracks()->GetRegionsView();
-
+	CRulerView *panel = GetTracks()->GetRegionsView();
+/*
 	int xOrig=0, yOrig=0;
 	panel->GetViewStart(&xOrig, &yOrig);
 
@@ -403,10 +403,15 @@ void CTrack::Refresh()
 	yOrig *= yScrollUnits;
 
 	m_top -= yOrig;
+*/
+	int x, y;
+	panel->GetViewStart2(&x, &y);
+	int top = m_top - y;
 
-	if(panel) {
+	if(panel)
+	{
 		int width = panel->GetVirtualSize().GetWidth();
-		wxRect rc(0, m_top, width, GetHeight()+2);
+		wxRect rc(0, top, width, GetHeight()+2);
 		panel->RefreshRect(rc);
 	}
 
@@ -414,7 +419,7 @@ void CTrack::Refresh()
 	if(panel)
 	{
 		wxSize size = panel->GetSize();
-		wxRect rc(0, m_top, size.GetWidth(), GetHeight());
+		wxRect rc(0, top, size.GetWidth(), GetHeight());
 		panel->RefreshRect(rc);
 	}
 }

@@ -39,6 +39,7 @@ public:
 //	void GetViewStart(int* x, int* y) const;
 	void GetViewStart2(int* x, int* y) const;
 	void SetBackgroundColour(wxColour& color);
+	void SetScrollbars(int pixelsPerUnitX, int pixelsPerUnitY, int noUnitsX, int noUnitsY, int xPos = 0, int yPos = 0, bool noRefresh = false);
 
 private:
 	wxWindow *m_pView;
