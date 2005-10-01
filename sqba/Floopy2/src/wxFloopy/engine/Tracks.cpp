@@ -1100,7 +1100,7 @@ void CTracks::SetCaretPos(int samples)
 	//int y = 0;
 
 	///////////////////////////////////////////////
-	// Mora da se popravi horizontalno skrolovanje
+	// Mora da se popravi vertikalno skrolovanje
 	//m_pRegionsView->GetClientSize(NULL, &height);
 	///////////////////////////////////////////////
 
