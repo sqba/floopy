@@ -113,7 +113,7 @@ int CRegion::getLengthNotLooped()
 	}
 	return len;
 }
-
+/*
 void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 {
 	int start = getStartOffset();
@@ -122,9 +122,142 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	int nSamplesPerPixel = getTracks()->GetSamplesPerPixel();
 	start /= nSamplesPerPixel;
 
-	dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
+	int origLen = getLengthNotLooped() / nSamplesPerPixel;
+
+	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
+
+//	dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
 	
-	//for(int x=rc.GetLeft(); x<rc.GetLeft()+rc.GetWidth(); x++)
+	int left = rc.GetLeft();
+	int right = left + rc.GetWidth();
+
+	int y1 = rc.GetTop();
+	int y2 = rc.GetBottom();
+
+	dc.DrawLine(left, y1, left, y2);	// Vertical left
+
+	int prev = rc.GetLeft();
+	for(int i=0; i<=loopCount; i++)
+	{
+		int l = origLen;
+
+		if(i==0 && start!=0)
+			l = origLen-start;
+		
+		int x1 = prev;
+		int x2 = prev + l;
+
+		if(prev+origLen < right)
+		{
+			dc.DrawLine(x1, y1, x2-3, y1);	// Horizontal top
+			dc.DrawLine(x2-3, y1, x2, y1+6);// Diagonal down
+			dc.DrawLine(x2, y1+6, x2, y1);	// Vertical up
+
+			dc.DrawLine(x1, y2, x2-3, y2);	// Horizontal bottom
+			dc.DrawLine(x2-3, y2, x2, y2-6);// Diagonal up
+			dc.DrawLine(x2, y2-6, x2, y2);	// Vertical down
+
+			prev += l;
+		}
+		else
+		{
+			dc.DrawLine(x1, y1, right, y1);	// Horizontal top
+			dc.DrawLine(x1, y2, right, y2);	// Horizontal bottom
+		}
+
+	}
+
+	dc.DrawLine(right, y1, right, y2);	// Vertical right
+}
+*/
+void CRegion::drawFrame(wxDC& dc, wxRect& rc)
+{
+	int start = getStartOffset();
+	if(start == -1)
+		start = 0;
+	int nSamplesPerPixel = getTracks()->GetSamplesPerPixel();
+	start /= nSamplesPerPixel;
+
+	int origLen = getLengthNotLooped() / nSamplesPerPixel;
+
+	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
+
+//	dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
+	
+	int left = rc.GetLeft();
+	int right = left + rc.GetWidth();
+
+	int y1 = rc.GetTop();
+	int y2 = rc.GetBottom();
+
+	int n=0;
+	wxPoint *points = new wxPoint[(loopCount+1)*6*2+4];
+	wxPoint *pointsBottom = new wxPoint[(loopCount+1)*6];
+	int b=0;
+
+	// Vertical left
+	points[n++] = wxPoint(left, y2);
+	points[n++] = wxPoint(left, y1);
+
+	int prev = rc.GetLeft();
+	for(int i=0; i<=loopCount; i++)
+	{
+		int l = origLen;
+
+		if(i==0 && start!=0)
+			l = origLen-start;
+		
+		int x1 = prev;
+		int x2 = prev + l;
+
+		if(prev+origLen < right)
+		{
+			// Horizontal top
+			points[n++] = wxPoint(x1, y1);
+			points[n++] = wxPoint(x2-3, y1);
+			// Diagonal down
+			points[n++] = wxPoint(x2-3, y1);
+			points[n++] = wxPoint(x2, y1+6);
+			// Vertical up
+			points[n++] = wxPoint(x2, y1+6);
+			points[n++] = wxPoint(x2, y1);
+
+			// Horizontal bottom
+			pointsBottom[b++] = wxPoint(x1, y2);
+			pointsBottom[b++] = wxPoint(x2-3, y2);
+			// Diagonal up
+			pointsBottom[b++] = wxPoint(x2-3, y2);
+			pointsBottom[b++] = wxPoint(x2, y2-6);
+			// Vertical down
+			pointsBottom[b++] = wxPoint(x2, y2-6);
+			pointsBottom[b++] = wxPoint(x2, y2);
+
+			prev += l;
+		}
+		else
+		{
+			// Horizontal top
+			points[n++] = wxPoint(x1, y1);
+			points[n++] = wxPoint(right, y1);
+
+			// Horizontal bottom
+			pointsBottom[b++] = wxPoint(x1, y2);
+			pointsBottom[b++] = wxPoint(right, y2);
+		}
+
+	}
+
+	// Vertical right
+	points[n++] = wxPoint(right, y1);
+	points[n++] = wxPoint(right, y2);
+
+	for(i=b; i>0; i--)
+		points[n++] = pointsBottom[i-1];
+
+	dc.DrawPolygon(n, points);
+
+	delete points;
+	delete pointsBottom;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -683,7 +816,7 @@ int CRegion::getStartOffset()
 {
 	float value = 0;
 	IFloopySoundInput *track = getTrack()->GetInput();
-	if(track->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
+	if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 		return (int)value;
 	return -1;
 }

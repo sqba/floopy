@@ -41,7 +41,7 @@ void CSampleRuler::OnDraw(wxDC &dc)
 	int w=0, h=0;
 	wxString csLabel("Sample");
 	dc.GetTextExtent(csLabel, &w, &h);
-	int iTextTop = iLineBottom - (h - h/3);
+	int iTextTop = iLineBottom - h/3;
 
 	for(int x=0; x<m_pTracks->GetWidth(); x+=iStep)
 	{
