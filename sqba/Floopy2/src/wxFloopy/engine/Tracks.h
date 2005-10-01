@@ -583,6 +583,8 @@ private:
 	ParameterList	m_Parameters;
 	CRegionDisplay	*m_pDisplay;
 	bool			m_bDrawPreview;
+	int				m_iStartOffset;
+	int				m_iLengthNotLooped;
 };
 
 

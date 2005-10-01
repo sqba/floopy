@@ -28,6 +28,9 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 
 	m_bEdit = false;
 
+	m_iStartOffset = 0;
+	m_iLengthNotLooped = 0;
+
 	m_bDrawPreview = true;
 
 	createMenu();
@@ -35,6 +38,8 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 	wxLog::AddTraceMask(_T("CRegion"));
 
 	m_pDisplay = new CRegionDisplay(this);
+
+	Invalidate();
 }
 
 CRegion::~CRegion()
@@ -172,7 +177,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 */
 void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 {
-	int start = getStartOffset();
+	int start = m_iStartOffset;
 	if(start == -1)
 	{
 		dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
@@ -182,7 +187,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	int nSamplesPerPixel = getTracks()->GetSamplesPerPixel();
 	start /= nSamplesPerPixel;
 
-	int origLen = getLengthNotLooped() / nSamplesPerPixel;
+	int origLen = m_iLengthNotLooped / nSamplesPerPixel;
 
 	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
 	
@@ -450,6 +455,9 @@ void CRegion::Refresh()
 
 void CRegion::Invalidate()
 {
+	m_iStartOffset = getStartOffset();
+	m_iLengthNotLooped = getLengthNotLooped();
+
 	///////////////////////////////////////////////////////
 	CRegionDisplay *disp = m_pDisplay;
 	if(disp && m_bDrawPreview)
