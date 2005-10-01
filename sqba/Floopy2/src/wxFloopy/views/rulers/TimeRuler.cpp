@@ -36,23 +36,29 @@ void CTimeRuler::OnDraw(wxDC &dc)
 	int iLineTop = 0;
 	int iLineBottom = size.GetHeight();
 
+	int right = m_pTracks->GetWidth();
+
 	dc.SetFont( *wxSWISS_FONT );
 
 	int w=0, h=0;
-	wxString csLabel("Time");
+	wxString csLabel("00:00:000");
 	dc.GetTextExtent(csLabel, &w, &h);
 	int iTextTop = iLineTop1 - (h - h/3);
 
-	for(int x=0; x<m_pTracks->GetWidth(); x+=iStep)
+	for(int x=0; x<right; x+=iStep)
 	{
 		//if((x/iStep)%4 == 0)
 		//Optimization: x%a == x&(a-1) for binary numbers
 		if(((x/iStep)&3) == 0)
 		{
-			float fSeconds = (float)x / (float)pix;
-			formatTime(fSeconds, csLabel);
 			iLineTop = iLineTop1;
-			dc.DrawText(csLabel, x+4, iTextTop);
+
+			if(x+4+w < right)
+			{
+				float fSeconds = (float)x / (float)pix;
+				formatTime(fSeconds, csLabel);
+				dc.DrawText(csLabel, x+4, iTextTop);
+			}
 		}
 		else
 		{

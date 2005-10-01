@@ -36,23 +36,29 @@ void CSampleRuler::OnDraw(wxDC &dc)
 	int iLineBottom2 = iMiddle - (iMiddle/3)*2;
 	int iLineBottom = iLineBottom1;
 
+	int right = m_pTracks->GetWidth();
+
 	dc.SetFont( *wxSWISS_FONT );
 
 	int w=0, h=0;
-	wxString csLabel("Sample");
+	wxString csLabel("000000");
 	dc.GetTextExtent(csLabel, &w, &h);
 	int iTextTop = iLineBottom - h/3;
 
-	for(int x=0; x<m_pTracks->GetWidth(); x+=iStep)
+	for(int x=0; x<right; x+=iStep)
 	{
 		//if((x/iStep)%4 == 0)
 		//Optimization: x%a == x&(a-1) for binary numbers
 		if(((x/iStep)&3) == 0)
 		{
-			int sample = x * spp;
-			csLabel.Printf("%d", sample);
 			iLineBottom = iLineBottom1;
-			dc.DrawText(csLabel, x+4, iTextTop);
+
+			if(x+4+w < right)
+			{
+				int sample = x * spp;
+				csLabel.Printf("%d", sample);
+				dc.DrawText(csLabel, x+4, iTextTop);
+			}
 		}
 		else
 		{

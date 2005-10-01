@@ -175,6 +175,104 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	dc.DrawLine(right, y1, right, y2);	// Vertical right
 }
 */
+/*
+void CRegion::drawFrame(wxDC& dc, wxRect& rc)
+{
+	int start = m_iStartOffset;
+	if(start == -1)
+	{
+		dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
+		return;
+	}
+
+	int nSamplesPerPixel = getTracks()->GetSamplesPerPixel();
+	start /= nSamplesPerPixel;
+
+	// Ovo nije dovoljno precizno!!!
+	int origLen = ceil((float)m_iLengthNotLooped / (float)nSamplesPerPixel);
+
+	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
+	
+	int left  = rc.GetLeft();
+	int right = left + rc.GetWidth();
+
+	int y1 = rc.GetTop();
+	int y2 = rc.GetBottom();
+
+	int n=0;
+	wxPoint *points = new wxPoint[(loopCount+1)*6*2+4];
+	wxPoint *pointsBottom = new wxPoint[(loopCount+1)*6];
+	int b=0;
+
+	// Vertical left
+	points[n++] = wxPoint(left, y2);
+	points[n++] = wxPoint(left, y1);
+
+	int prev = rc.GetLeft();
+
+	int width = rc.GetWidth();
+	int end = start+width;
+	//int pos = left-start;
+	
+	for(int x=left; x<=right; x++)
+	{
+		int l=3;
+
+		int x1 = prev;
+		int x2 = prev + l;
+
+		if(x>left && (x+start)%origLen==0)
+		// Trick: x % a = x & (a - 1) for binary numbers
+		//if((i & (origLen-1)) == 0)
+		{
+			// Horizontal top
+			points[n++] = wxPoint(x1, y1);
+			points[n++] = wxPoint(x2-3, y1);
+			// Diagonal down
+			points[n++] = wxPoint(x2-3, y1);
+			points[n++] = wxPoint(x2, y1+6);
+			// Vertical up
+			points[n++] = wxPoint(x2, y1+6);
+			points[n++] = wxPoint(x2, y1);
+
+			// Horizontal bottom
+			pointsBottom[b++] = wxPoint(x1, y2);
+			pointsBottom[b++] = wxPoint(x2-3, y2);
+			// Diagonal up
+			pointsBottom[b++] = wxPoint(x2-3, y2);
+			pointsBottom[b++] = wxPoint(x2, y2-6);
+			// Vertical down
+			pointsBottom[b++] = wxPoint(x2, y2-6);
+			pointsBottom[b++] = wxPoint(x2, y2);
+
+			prev = x2;
+		}
+		else if(x == right-1)
+		{
+			// Horizontal top
+			points[n++] = wxPoint(x1, y1);
+			points[n++] = wxPoint(right, y1);
+
+			// Horizontal bottom
+			pointsBottom[b++] = wxPoint(x1, y2);
+			pointsBottom[b++] = wxPoint(right, y2);
+		}
+	}
+
+	// Vertical right
+	points[n++] = wxPoint(right, y1);
+	points[n++] = wxPoint(right, y2);
+
+	for(int i=b; i>0; i--)
+		points[n++] = pointsBottom[i-1];
+
+	dc.DrawPolygon(n, points);
+
+	delete points;
+	delete pointsBottom;
+}
+*/
+
 void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 {
 	int start = m_iStartOffset;
@@ -216,7 +314,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 			l = origLen-start;
 		
 		int x1 = prev;
-		int x2 = prev + l;
+		int x2 = prev+l;
 
 		if(prev+origLen < right)
 		{
@@ -240,7 +338,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 			pointsBottom[b++] = wxPoint(x2, y2-6);
 			pointsBottom[b++] = wxPoint(x2, y2);
 
-			prev += l;
+			prev = x2-1;
 		}
 		else
 		{
