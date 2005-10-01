@@ -187,7 +187,8 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	int nSamplesPerPixel = getTracks()->GetSamplesPerPixel();
 	start /= nSamplesPerPixel;
 
-	int origLen = m_iLengthNotLooped / nSamplesPerPixel;
+	// Ovo nije dovoljno precizno!!!
+	int origLen = floor((float)m_iLengthNotLooped / (float)nSamplesPerPixel);
 
 	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
 	
