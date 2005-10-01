@@ -188,11 +188,11 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	start /= nSamplesPerPixel;
 
 	// Ovo nije dovoljno precizno!!!
-	int origLen = floor((float)m_iLengthNotLooped / (float)nSamplesPerPixel);
+	int origLen = ceil((float)m_iLengthNotLooped / (float)nSamplesPerPixel);
 
 	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
 	
-	int left = rc.GetLeft();
+	int left  = rc.GetLeft();
 	int right = left + rc.GetWidth();
 
 	int y1 = rc.GetTop();
