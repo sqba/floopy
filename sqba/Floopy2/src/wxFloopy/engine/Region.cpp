@@ -174,15 +174,17 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 {
 	int start = getStartOffset();
 	if(start == -1)
-		start = 0;
+	{
+		dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
+		return;
+	}
+
 	int nSamplesPerPixel = getTracks()->GetSamplesPerPixel();
 	start /= nSamplesPerPixel;
 
 	int origLen = getLengthNotLooped() / nSamplesPerPixel;
 
 	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
-
-//	dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
 	
 	int left = rc.GetLeft();
 	int right = left + rc.GetWidth();

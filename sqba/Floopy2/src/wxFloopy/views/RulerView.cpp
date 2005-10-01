@@ -27,7 +27,7 @@ CRulerView::CRulerView(wxWindow* parent) : wxScrolledWindow(parent, -1)
 	m_pTopRuler = m_pBottomRuler = NULL;
 
 	m_pTopRuler		= new CHorizontalRuler( this );
-	m_pBottomRuler	= new CHorizontalRuler( this );
+	//m_pBottomRuler	= new CHorizontalRuler( this );
 }
 
 CRulerView::~CRulerView()
