@@ -683,6 +683,10 @@ bool CTracks::createEngine(char *plugin)
 
 bool CTracks::Open(char *filename)
 {
+	bool result = false;
+
+	::wxSetCursor( *wxHOURGLASS_CURSOR );
+
 	if(m_pEngine)
 	{
 		if(m_pEngine->Open(filename))
@@ -701,7 +705,7 @@ bool CTracks::Open(char *filename)
 //			m_pPlayThread = new CPlayThread(this);
 			Refresh();
 			m_pMixer = getMixer();
-			return true;
+			result = true;
 		}
 		else
 		{
@@ -736,19 +740,22 @@ bool CTracks::Open(char *filename)
 				{
 					addTrack(track, track, 0);
 					Refresh();
-					return true;
+					result = true;
 				}
 				else
 				{
 					wxString err;
 					err.Printf("Mixer supports maximum %d tracks!", m_tracks.GetCount());
 					(void)wxMessageBox(err, _T("Mixer error"), wxICON_EXCLAMATION);
-					return true;
+					result = true;
 				}
 			}
 		}
 	}
-	return false;
+
+	::wxSetCursor( *wxSTANDARD_CURSOR );
+
+	return result;
 }
 
 bool CTracks::Save(char *filename)
