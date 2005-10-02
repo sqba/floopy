@@ -901,7 +901,7 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 				if(track->IsSelected())
 				{
 					int index = GetTrackIndex(track);
-					if(index < m_tracks.GetCount())
+					if(index < (int)m_tracks.GetCount())
 					{
 						track = GetTrack(index+1);
 						if(track)

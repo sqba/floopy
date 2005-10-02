@@ -252,39 +252,7 @@ SOURCE=.\views\tracksview.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=.\wx\msw\blank.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\bullseye.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\cdrom.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\colours.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\computer.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\csquery.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\disable.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\drive.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\file1.ico
+SOURCE=.\res\csquery.bmp
 # End Source File
 # Begin Source File
 
@@ -292,71 +260,15 @@ SOURCE=.\res\Floopy.ico
 # End Source File
 # Begin Source File
 
-SOURCE=.\wx\msw\floppy.ico
+SOURCE=.\res\pause.bmp
 # End Source File
 # Begin Source File
 
-SOURCE=.\wx\msw\folder1.ico
+SOURCE=.\res\play.bmp
 # End Source File
 # Begin Source File
 
-SOURCE=.\wx\msw\folder2.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\magnif1.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\noentry.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\pause.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\pbrush.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\pencil.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\play.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\pntleft.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\pntright.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\query.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\removble.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\rightarr.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\roller.cur
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\stop.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\wx\msw\watch1.cur
+SOURCE=.\res\stop.bmp
 # End Source File
 # End Group
 # Begin Source File
