@@ -73,8 +73,8 @@ public:
 
 	virtual int GetType()							{ return FLOOPY_OBJ; }
 
-//	virtual bool GetName(wxString &name)			{ return false; };
-//	virtual bool GetDescription(wxString &desc)		{ return false; };
+	virtual bool GetName(wxString &str)				{ return false; }
+	virtual bool GetDescription(wxString &str)		{ return false; }
 
 	virtual void Select(bool select=true)			{ m_bSelected = select; }
 	virtual bool IsSelected()						{ return m_bSelected; }

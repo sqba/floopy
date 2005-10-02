@@ -517,7 +517,7 @@ public:
 		void DrawBG  (wxDC &dc, wxRect &rc);
 		void DrawFore(wxDC &dc, wxRect &rc);
 
-		int GetHeight() { return 20; }
+		int GetHeight();// { return 20; }
 
 	private:
 		inline void formatTime(float fSec, wxString &csTime);
