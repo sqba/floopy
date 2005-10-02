@@ -981,6 +981,15 @@ void CRegion::SetReset(bool bReset)
 
 void CRegion::SetStartOffset(int sample)
 {
+/*
+	int spp = getTrack()->GetTracks()->GetSamplesPerPixel();
+	int pps = getTrack()->GetTracks()->GetPixelsPerSecond();
+	int pix = sample / spp;
+	int sec = pix / pps;
+	//wxString csLabel("00:00:000");
+	//formatTime(sec, csLabel);
+*/
+
 	IFloopySoundInput *track = getTrack()->GetInput();
 
 	float value = 0;
@@ -1058,8 +1067,8 @@ void CRegion::COffsetBar::Move(int dx, int WXUNUSED(dy))
 	if(newOffset >= 0)
 	{
 		pRegion->SetStartOffset( newOffset );
-		pRegion->Invalidate();
-		pRegion->Refresh();
+		//pRegion->Invalidate();
+		//pRegion->Refresh();
 	}
 }
 
@@ -1146,7 +1155,7 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 			iLineTop = iLineTop2;
 		}
 
-		pos++;
+		pos += pix;
 
 
 		dc.SetPen(*wxBLACK_PEN);
