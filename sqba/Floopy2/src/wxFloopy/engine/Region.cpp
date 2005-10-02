@@ -18,17 +18,20 @@ WX_DEFINE_LIST(ParameterList);
 CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
  : IFloopyObj(track)
 {
-	m_iStartSample = startSample;
-	m_iEndSample   = endSample;
+	m_iStartSample	= startSample;
+	m_iEndSample	= endSample;
 
-	m_pLeftBorder  = new CBorder(this, true);
-	m_pRightBorder = new CBorder(this, false);
+	m_pLeftBorder	= new CBorder(this, true);
+	m_pRightBorder	= new CBorder(this, false);
 
-	m_iPrevStart = m_iPrevEnd = -1;
+	m_pOffsetBar	= new COffsetBar(this);
+	m_bShowOffsetBar = true;
 
-	m_bEdit = false;
+	m_iPrevStart	= m_iPrevEnd = -1;
 
-	m_iStartOffset = 0;
+	m_bEdit			= false;
+
+	m_iStartOffset	= 0;
 	m_iLengthNotLooped = 0;
 
 	m_bDrawPreview = true;
@@ -46,6 +49,7 @@ CRegion::~CRegion()
 {
 	delete m_pLeftBorder;
 	delete m_pRightBorder;
+	delete m_pOffsetBar;
 	//delete m_pMenu; // !Deleted in ~IFloopyObj()
 	WX_CLEAR_LIST(ParameterList, m_Parameters);
 	if(m_pDisplay)
@@ -403,8 +407,18 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 #endif
 
-	int top    = rc.GetTop()+1;
-	int height = rc.GetHeight()-2;
+	int top    = rc.GetTop() + 1;
+	int height = rc.GetHeight() - 2;
+
+	if(m_bShowOffsetBar && this->GetHeight()>2*m_pOffsetBar->GetHeight())
+	{
+		int offsetBarHeight = m_pOffsetBar->GetHeight();
+		wxRect rcOffsetBar(left, rc.GetTop(), width, offsetBarHeight);
+		m_pOffsetBar->DrawBG(dc, rcOffsetBar);
+
+		top += offsetBarHeight;
+		height -= offsetBarHeight;
+	}
 
 	wxRect rcFrame(left, top, width, height);
 	drawFrame(dc, rcFrame);
@@ -439,6 +453,16 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	int border = (IsSelected() ? 2 : 1);
 	int top    = rc.GetTop();
 	int height = rc.GetHeight();
+
+	if(m_bShowOffsetBar && this->GetHeight()>2*m_pOffsetBar->GetHeight())
+	{
+		int offsetBarHeight = m_pOffsetBar->GetHeight();
+		wxRect rcOffsetBar(left, top, width, offsetBarHeight);
+		m_pOffsetBar->DrawFore(dc, rcOffsetBar);
+		top += offsetBarHeight;
+		height -= offsetBarHeight;
+	}
+
 	wxRect rce(left, top, width, height);
 
 	///////////////////////////////////////////////////////
@@ -609,6 +633,11 @@ IFloopyObj *CRegion::GetChildAt(int x, int y)
 
 	if( HitTest(x, y) )
 	{
+		if( m_bShowOffsetBar && 
+			this->GetHeight()>2*m_pOffsetBar->GetHeight() && 
+			y>=GetTop() && 
+			y<GetTop() + m_pOffsetBar->GetHeight())
+			return m_pOffsetBar;
 		if(left == x)
 			return m_pLeftBorder;
 		else if(right == x+1)
@@ -1007,4 +1036,132 @@ void CRegion::CBorder::Move(int dx, int WXUNUSED(dy))
 		getRegion()->Resize(dx, 0);
 	else
 		getRegion()->Resize(0, dx);
+}
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+// COffsetBar functions
+/////////////////////////////////////////////////////////////////////
+void CRegion::COffsetBar::Move(int dx, int WXUNUSED(dy))
+{
+	// Move start offset
+	CRegion *pRegion = getRegion();
+	CTracks *pTracks = (CTracks*)pRegion->GetParent()->GetParent();
+	int start = pRegion->GetStartOffset();
+	int spp = pTracks->GetSamplesPerPixel();
+	int newOffset = start - dx*spp;
+	if(newOffset >= 0)
+	{
+		pRegion->SetStartOffset( newOffset );
+		pRegion->Invalidate();
+		pRegion->Refresh();
+	}
+}
+
+void CRegion::COffsetBar::DrawBG(wxDC &dc, wxRect &rc)
+{
+	wxBrush oldbrush = dc.GetBrush();
+	wxPen oldpen = dc.GetPen();
+
+	dc.SetBrush( wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), wxSOLID) );
+
+	int left = rc.GetLeft();
+	int top = rc.GetTop()+1;
+	int width = rc.GetWidth();
+	int height = rc.GetHeight();
+	int right = left + width;
+	int bottom = rc.GetBottom();
+
+	dc.SetPen( *wxTRANSPARENT_PEN );
+	dc.DrawRectangle(left, top, width, this->GetHeight());
+
+	dc.SetPen(*wxWHITE_PEN);
+	dc.DrawLine(left, top, right, top);			// top
+	dc.DrawLine(left, top, left, bottom);		// left
+
+	dc.SetPen(*wxMEDIUM_GREY_PEN);
+	dc.DrawLine(right-1, top, right-1, bottom);	// right
+	dc.DrawLine(left, bottom-1, right, bottom-1);	// bottom
+
+	dc.SetBrush( oldbrush );
+	dc.SetPen( oldpen );
+}
+
+void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
+{
+	CRegion *pRegion = getRegion();
+	CTracks *pTracks = (CTracks*)pRegion->GetParent()->GetParent();
+
+	int pix      = pTracks->GetPixelsPerSecond();
+	int iStep    = pTracks->CalcStep( MIN_DISTANCE );
+
+	int left = rc.GetLeft();
+	int top = rc.GetTop();
+	int right = left + rc.GetWidth();
+	int bottom = top + this->GetHeight();
+	int height = this->GetHeight();
+	int iMiddle  = top + height/2;
+
+	int iLineTop1 = iMiddle + 1;
+	int iLineTop2 = iMiddle + (height/3);
+
+	int iLineTop = top;
+	int iLineBottom = top + height;
+
+	dc.SetFont( *wxSWISS_FONT );
+
+	int w=0, h=0;
+	wxString csLabel("00:00:000");
+	dc.GetTextExtent(csLabel, &w, &h);
+	int iTextTop = iLineTop1 - (h - h/3);
+
+	int start = pRegion->GetStartOffset();
+	int spp = pTracks->GetSamplesPerPixel();
+	start /= spp;
+
+	int pos = start;
+
+	for(int x=left; x<right; x+=iStep)
+	{
+		//if((x/iStep)%4 == 0)
+		//Optimization: x%a == x&(a-1) for binary numbers
+		if((((x-left)/iStep)&3) == 0)
+		{
+			iLineTop = iLineTop1;
+
+			if(x+4+w < right)
+			{
+				float fSeconds = (float)pos / (float)pix;
+				formatTime(fSeconds, csLabel);
+				dc.DrawText(csLabel, x+4, iTextTop);
+			}
+		}
+		else
+		{
+			iLineTop = iLineTop2;
+		}
+
+		pos++;
+
+
+		dc.SetPen(*wxBLACK_PEN);
+		dc.DrawLine(x, iLineTop, x, iLineBottom);
+
+		dc.SetPen(*wxWHITE_PEN);
+		dc.DrawLine(x+1, iLineTop, x+1, iLineBottom);
+	}
+}
+
+void CRegion::COffsetBar::formatTime(float fSec, wxString &csTime)
+{
+	float min = fSec>60.f ? fSec/60.f : 0.f;
+	float sec = min>1.f ? fSec-(int)min*60 : fSec;
+	float ms  = sec*1000.f - (int)sec*1000;
+
+	csTime.Printf("%2.2d:%2.2d:%3.3d", (int)min, (int)sec, (int)ms);
 }

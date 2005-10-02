@@ -104,7 +104,7 @@ void CTimeRuler::drawFrame(wxDC &dc)
 void CTimeRuler::formatTime(float fSec, wxString &csTime)
 {
 	float min = fSec>60.f ? fSec/60.f : 0.f;
-	float sec = min>1.f ? fSec-min*60.f : fSec;
+	float sec = min>1.f ? fSec-(int)min*60 : fSec;
 	float ms  = sec*1000.f - (int)sec*1000;
 
 	csTime.Printf("%2.2d:%2.2d:%3.3d", (int)min, (int)sec, (int)ms);

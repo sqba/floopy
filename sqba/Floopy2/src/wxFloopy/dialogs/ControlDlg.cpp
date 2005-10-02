@@ -270,7 +270,7 @@ void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 		{
 			CRegion *region = (CRegion*)obj;
 			float val = 0.f;
-			int end = region->GetEndOffset();
+			int end = region->GetEndPos();
 			//IFloopy *input = region->GetInput();
 			m_pInput->GetParamAt(end, m_index, &val);
 			m_pInput->SetParamAt(sample, m_index, value);

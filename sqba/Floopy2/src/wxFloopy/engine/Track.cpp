@@ -312,7 +312,7 @@ bool CTrack::RemoveRegion(CRegion *region)
 	try {
 		//region->Refresh();
 		region->Remove();
-		if(region->GetEndOffset() - region->GetStartOffset() > GetTracks()->GetSamplesPerPixel())
+		if(region->GetEndPos() - region->GetStartPos() > GetTracks()->GetSamplesPerPixel())
 			InvalidateRegions( region );
 		if(m_regions.DeleteObject( region ))
 			delete region;
@@ -982,7 +982,7 @@ IFloopySoundInput *CTrack::FindComponentByName(char *name)
 void CTrack::InvalidateRegions(CRegion *start)
 {
 //	bool bStart = false;
-	int startOffset = start->GetStartOffset();
+	int startOffset = start->GetStartPos();
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
 	{
@@ -990,7 +990,7 @@ void CTrack::InvalidateRegions(CRegion *start)
 //		if(start == region)
 //			bStart = true;
 //		else if( bStart && !region->GetReset() )
-		if( (region->GetStartOffset() > startOffset) && (!region->GetReset()) )
+		if( (region->GetStartPos() > startOffset) && (!region->GetReset()) )
 		{
 			// Skip if there was a reset in between
 			region->Invalidate();

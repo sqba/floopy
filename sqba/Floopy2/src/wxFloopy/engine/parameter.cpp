@@ -68,8 +68,8 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 	if(max > 0)
 	{
 		int hres	= getTracks()->GetSamplesPerPixel();
-		int offset	= getRegion()->GetStartOffset();
-		int end		= getRegion()->GetEndOffset();
+		int offset	= getRegion()->GetStartPos();
+		int end		= getRegion()->GetEndPos();
 		int bottom	= rc.GetTop() + rc.GetHeight();
 		int min		= input->GetParamMin(m_index);
 		int left	= rc.GetX();
@@ -95,7 +95,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 		do {
 			if(input->GetParamAt(offset, m_index, &value))
 			{
-				int x = bDrawCircle ? offset / hres : getRegion()->GetStartOffset() / hres;
+				int x = bDrawCircle ? offset / hres : getRegion()->GetStartPos() / hres;
 				int y = (int)((float)bottom - (value * scale));
 				
 				if( bDrawCircle )

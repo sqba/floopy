@@ -33,14 +33,15 @@
 #define MIN_DISTANCE	96
 
 
-#define FLOOPY_TRACKS			FLOOPY_OBJ+1
-#define FLOOPY_TRACK			FLOOPY_OBJ+2
-#define FLOOPY_REGION			FLOOPY_OBJ+3
-#define FLOOPY_PARAMETER		FLOOPY_OBJ+4
-#define FLOOPY_REGION_DISP		FLOOPY_OBJ+5
-#define FLOOPY_REGION_BORDER	FLOOPY_OBJ+6
-#define FLOOPY_TRACKS_BORDER	FLOOPY_OBJ+7
-#define FLOOPY_TRACK_BORDER		FLOOPY_OBJ+8
+#define FLOOPY_TRACKS				FLOOPY_OBJ+1
+#define FLOOPY_TRACK				FLOOPY_OBJ+2
+#define FLOOPY_REGION				FLOOPY_OBJ+3
+#define FLOOPY_PARAMETER			FLOOPY_OBJ+4
+#define FLOOPY_REGION_DISP			FLOOPY_OBJ+5
+#define FLOOPY_REGION_BORDER		FLOOPY_OBJ+6
+#define  FLOOPY_REGION_OFFSET_BAR	FLOOPY_OBJ+7
+#define FLOOPY_TRACKS_BORDER		FLOOPY_OBJ+8
+#define FLOOPY_TRACK_BORDER			FLOOPY_OBJ+9
 
 
 class CTrack;
@@ -387,7 +388,7 @@ public:
 
 	CRegion *AddRegion(int start, int end);
 	CRegion *AddNewRegionAt(int left);
-	bool RemoveRegion(CRegion *event);
+	bool RemoveRegion(CRegion *region);
 
 	CTracks *GetTracks()			{ return (CTracks*)GetParent(); }
 
@@ -488,7 +489,7 @@ public:
 	class CBorder : public IFloopyObj
 	{
 	public:
-		CBorder(CRegion *event, bool left) : IFloopyObj(event) { m_bLeft = left;}
+		CBorder(CRegion *region, bool left) : IFloopyObj(region) { m_bLeft = left;}
 		virtual ~CBorder() {}
 
 		int GetType()	{ return FLOOPY_REGION_BORDER; }
@@ -500,7 +501,27 @@ public:
 	private:
 		inline CRegion  *getRegion()	{ return (CRegion*)GetParent(); }
 		bool m_bLeft; // Left or right, start or end of region
-		CRegion *m_pRegion;
+	};
+
+	class COffsetBar : public IFloopyObj
+	{
+	public:
+		COffsetBar(CRegion *region) : IFloopyObj(region) {}
+		virtual ~COffsetBar() {}
+
+		int GetType()	{ return FLOOPY_REGION_OFFSET_BAR; }
+
+		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZEWE); }
+
+		void Move(int dx, int WXUNUSED(dy));
+		void DrawBG  (wxDC &dc, wxRect &rc);
+		void DrawFore(wxDC &dc, wxRect &rc);
+
+		int GetHeight() { return 20; }
+
+	private:
+		inline void formatTime(float fSec, wxString &csTime);
+		inline CRegion  *getRegion()	{ return (CRegion*)GetParent(); }
 	};
 
 public:
@@ -541,8 +562,8 @@ public:
 	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 
-	int GetStartOffset()	{ return m_iStartSample; }
-	int GetEndOffset()		{ return m_iEndSample; }
+	int GetStartPos()	{ return m_iStartSample; }
+	int GetEndPos()		{ return m_iEndSample; }
 
 	int GetHeight()	{ return getTrack()->GetHeight() - 2; }
 	int GetTop()	{ return getTrack()->GetTop() + 1; }
@@ -560,8 +581,10 @@ public:
 	IFloopySoundInput *GetInput()				{ return getTrack()->GetInput(); }
 	int GetCaretPos();
 
+	int GetStartOffset() { return m_iStartOffset; }
+
 private:
-	static void remove(IFloopyObj *event);
+	static void remove(IFloopyObj *region);
 	void createMenu();
 	void startEdit();
 	void calcPos(int *left, int *right);
@@ -585,6 +608,8 @@ private:
 	bool			m_bDrawPreview;
 	int				m_iStartOffset;
 	int				m_iLengthNotLooped;
+	COffsetBar		*m_pOffsetBar;
+	bool			m_bShowOffsetBar;
 };
 
 

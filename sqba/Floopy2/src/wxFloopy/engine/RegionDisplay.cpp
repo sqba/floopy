@@ -152,8 +152,8 @@ void CRegionDisplay::loadPeaks()
 	if(0 == channels)
 		return;
 
-	int start	= m_pRegion->GetStartOffset();
-	int end		= m_pRegion->GetEndOffset();
+	int start	= m_pRegion->GetStartPos();
+	int end		= m_pRegion->GetEndPos();
 	if(end<=0 || start<0)
 		return;
 
@@ -271,8 +271,8 @@ void CRegionDisplay::loadPeaksChunked()
 	if(0 == channels)
 		return;
 
-	int start = m_pRegion->GetStartOffset();
-	int end   = m_pRegion->GetEndOffset();
+	int start = m_pRegion->GetStartPos();
+	int end   = m_pRegion->GetEndPos();
 	if(end<=0 || start<0)
 		return;
 	
