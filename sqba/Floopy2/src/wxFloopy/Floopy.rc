@@ -30,6 +30,13 @@ LANGUAGE LANG_CROATIAN, 0x3
 
 STOP                    BITMAP  DISCARDABLE     "res/stop.bmp"
 WXBITMAP_STD_COLOURS    BITMAP  MOVEABLE PURE   "wx/msw/colours.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+wxCURSOR_PENCIL         CURSOR  DISCARDABLE     "wx\\msw\\pencil.cur"
 #endif    // Croatian (unknown sub-lang: 0x3) resources
 /////////////////////////////////////////////////////////////////////////////
 
