@@ -260,6 +260,10 @@ SOURCE=.\res\Floopy.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\wx\msw\hand.cur
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\pause.bmp
 # End Source File
 # Begin Source File

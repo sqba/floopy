@@ -37,6 +37,7 @@ WXBITMAP_STD_COLOURS    BITMAP  MOVEABLE PURE   "wx/msw/colours.bmp"
 //
 
 wxCURSOR_PENCIL         CURSOR  DISCARDABLE     "wx\\msw\\pencil.cur"
+wxCURSOR_HAND           CURSOR  DISCARDABLE     "wx\\msw\\hand.cur"
 #endif    // Croatian (unknown sub-lang: 0x3) resources
 /////////////////////////////////////////////////////////////////////////////
 

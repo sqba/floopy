@@ -1058,7 +1058,7 @@ void CRegion::CBorder::Move(int dx, int WXUNUSED(dy))
 /////////////////////////////////////////////////////////////////////
 int CRegion::COffsetBar::GetHeight()
 {
-	return 20;
+	return 15;
 }
 
 void CRegion::COffsetBar::Move(int dx, int WXUNUSED(dy))
@@ -1132,7 +1132,9 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 	int iLineTop = top;
 	int iLineBottom = top + height;
 
-	dc.SetFont( *wxSWISS_FONT );
+	//dc.SetFont( *wxSWISS_FONT );
+	wxFont font(7, wxSWISS, wxNORMAL, wxLIGHT);
+	dc.SetFont( font );
 
 	int w=0, h=0;
 	wxString csLabel("00:00:000");
