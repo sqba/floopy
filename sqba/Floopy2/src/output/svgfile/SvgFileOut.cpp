@@ -134,6 +134,7 @@ CSvgFileOut::CSvgFileOut(SOUNDFORMAT fmt) : IFloopySoundOutput(fmt)
 	channels		= fmt.channels;
 	headerLen		= 0;
 	mid				= height/2.f;
+	m_bDrawVertical	= true;
 }
 
 CSvgFileOut::~CSvgFileOut()
@@ -192,21 +193,38 @@ int CSvgFileOut::Write(BYTE *data, int size)
 			{
 				short int sample = buffer[pos-channels+ch];
 
-				if(max[ch] == 0 && min[ch] != 0)
-					max[ch] = min[ch];
-				else if(min[ch] == 0 && max[ch] != 0)
-					min[ch] = max[ch];
+				int x1=0, x2=0;
+				float y1=0.f, y2=0.f;
 
-				peak[ch].value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
-				peak[ch].value /= scale;
+				if(!m_bDrawVertical)
+					{
+					if(max[ch] == 0 && min[ch] != 0)
+						max[ch] = min[ch];
+					else if(min[ch] == 0 && max[ch] != 0)
+						min[ch] = max[ch];
 
-				peak[ch].x = peakcount;
+					peak[ch].value = ( (peakcount % 2) == 0 ? max[ch] : min[ch] );
+					peak[ch].value /= scale;
+
+					peak[ch].x = peakcount;
+
+					x1 = prev[ch].x;
+					x2 = peak[ch].x;
+					y1 = mid - prev[ch].value;
+					y2 = mid - peak[ch].value;
+						
+					prev[ch].x = peak[ch].x;
+					prev[ch].value = peak[ch].value;
+				}
+				else
+				{
+					x1 = x2 = peakcount;
+					y1 = mid - max[ch]/scale;	// Top point
+					y2 = mid - min[ch]/scale;	// Bottom point
+				}
 				
-				fprintf(m_pFile, "M %d,%.5f ", prev[ch].x,	mid-prev[ch].value);
-				fprintf(m_pFile, "L %d,%.5f ", peak[ch].x,	mid-peak[ch].value);
-					
-				prev[ch].x = peak[ch].x;
-				prev[ch].value = peak[ch].value;
+				fprintf(m_pFile, "M %d,%.5f ", x1,	y1);
+				fprintf(m_pFile, "L %d,%.5f ", x2,	y2);
 
 				max[ch] = min[ch] = sample;
 			}

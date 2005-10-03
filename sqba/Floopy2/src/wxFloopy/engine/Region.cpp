@@ -1088,27 +1088,29 @@ void CRegion::COffsetBar::DrawBG(wxDC &dc, wxRect &rc)
 	int right	= left + width;
 	int bottom	= rc.GetBottom();
 
-//	DrawAquaRect(dc, wxRect(left, top, width, height), 2);
-//	return;
+	if(true)
+		DrawAquaRect(dc, wxRect(left, top, width, height), 2);
+	else
+	{
+		wxBrush oldbrush = dc.GetBrush();
+		wxPen oldpen = dc.GetPen();
 
-	wxBrush oldbrush = dc.GetBrush();
-	wxPen oldpen = dc.GetPen();
+		dc.SetBrush( wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), wxSOLID) );
 
-	dc.SetBrush( wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), wxSOLID) );
+		dc.SetPen( *wxTRANSPARENT_PEN );
+		dc.DrawRectangle(left, top, width, height);
 
-	dc.SetPen( *wxTRANSPARENT_PEN );
-	dc.DrawRectangle(left, top, width, height);
+		dc.SetPen(*wxWHITE_PEN);
+		dc.DrawLine(left, top, right, top);			// top
+		dc.DrawLine(left, top, left, bottom);		// left
 
-	dc.SetPen(*wxWHITE_PEN);
-	dc.DrawLine(left, top, right, top);			// top
-	dc.DrawLine(left, top, left, bottom);		// left
+		dc.SetPen(*wxMEDIUM_GREY_PEN);
+		dc.DrawLine(right-1, top, right-1, bottom);	// right
+		dc.DrawLine(left, bottom-1, right, bottom-1);	// bottom
 
-	dc.SetPen(*wxMEDIUM_GREY_PEN);
-	dc.DrawLine(right-1, top, right-1, bottom);	// right
-	dc.DrawLine(left, bottom-1, right, bottom-1);	// bottom
-
-	dc.SetBrush( oldbrush );
-	dc.SetPen( oldpen );
+		dc.SetBrush( oldbrush );
+		dc.SetPen( oldpen );
+	}
 }
 
 void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)

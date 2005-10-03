@@ -42,6 +42,7 @@ private:
 	int peakcount;
 	int headerLen;
 	int interval;
+	bool m_bDrawVertical;
 };
 
 #endif // !defined(AFX_SVGFILEOUT_H__7DC319B2_8648_4313_A148_75D4D6CCF502__INCLUDED_)
