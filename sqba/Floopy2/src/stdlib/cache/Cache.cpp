@@ -27,7 +27,7 @@ CCache::~CCache()
 int CCache::Read(BYTE *data, int size)
 {
 	if( (bufferIsEmpty() && !createBuffer()) || passedTheEnd() || sourceParameterChanged() )
-		return 0;
+		return EOF;
 
 	// Last chunk
 	if( (m_nPosition + size) > m_nSize )
@@ -62,11 +62,19 @@ void CCache::Close()
 
 int CCache::GetSize()
 {
+	int size = IFloopySoundFilter::GetSize();
 	int stb = samplesToBytes();
 	if(stb>0 && m_nSize>0)
 		return m_nSize / samplesToBytes();
-	else
-		return IFloopySoundFilter::GetSize();
+	else if(stb>0 && size==SIZE_VARIABLE)
+	{
+		if( createBuffer() )
+			return m_nSize / samplesToBytes();
+		else
+			return 0;
+	}
+
+	return size;
 }
 
 int CCache::samplesToBytes()
@@ -118,6 +126,61 @@ bool CCache::createBuffer()
 					pbuff += read;
 					len += read;
 				}
+				m_nSize = len;
+			}
+			else
+				return false;
+		}
+		else if(size == SIZE_VARIABLE)
+		{
+			int buffsize = 10240;
+			int type = src->GetType();
+			if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
+				size = ((IFloopySoundFilter*)src)->GetSource()->GetSize();
+			// Allocate the memory
+			m_nSize = size *= samplesToBytes();
+
+			buffsize = m_nSize;
+			
+			m_pBuffer = new BYTE[m_nSize];
+			
+			if(m_pBuffer)
+			{
+				memset(m_pBuffer, 0, buffsize);
+
+				// Fill the buffer
+				src->Reset();
+				//size = (1024 < m_nSize ? 1024 : m_nSize);
+				BYTE *pbuff = m_pBuffer;
+				int len = 0;
+				
+				int read = 0;
+				int n=0;
+				do
+				{
+					if(buffsize==0 || len+buffsize > m_nSize)
+					{
+						m_nSize *= 2;
+						BYTE *tmp = new BYTE[m_nSize];
+						assert(NULL != tmp);
+						memset(tmp, 0, m_nSize);
+						memcpy(tmp, m_pBuffer, len);
+						delete m_pBuffer;
+						m_pBuffer = tmp;
+						pbuff = m_pBuffer+len;
+						buffsize = m_nSize - len;
+					}
+
+					read = src->Read(pbuff, buffsize);
+					if(read != EOF)
+					{
+						buffsize -= read;
+						pbuff += read;
+						len += read;
+					}
+					n++;
+				} while(read > 0);
+
 				m_nSize = len;
 			}
 			else

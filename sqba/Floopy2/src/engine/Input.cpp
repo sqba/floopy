@@ -352,7 +352,7 @@ int CInput::GetSize()
 		}
 	}
 
-	size = size > 0 ? size : -1;
+	//size = size > 0 ? size : -1;
 
 	return size;
 }

@@ -12,6 +12,8 @@
 
 #define SIZE_INFINITE				-1	/// Value returned by GetSize() if the source
 										/// is a generator or is looped
+#define SIZE_VARIABLE				-2	/// Value returned by GetSize() if the source
+										/// length is determined during play time
 
 #define WAVE_FORMAT_PCM				 1	/// Pulse Code Modulation
 

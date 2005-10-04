@@ -50,3 +50,10 @@ void CLoop::Reset()
 	m_nOffset = 0;
 	IFloopySoundFilter::Reset();
 }
+
+bool CLoop::SetSource(IFloopySoundInput *src)
+{
+	if(src->GetSize() == SIZE_INFINITE)
+		return false;
+	return IFloopySoundFilter::SetSource(src);
+}

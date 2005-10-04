@@ -19,6 +19,7 @@ public:
 	int Read(BYTE*, int);
 	void MoveTo(int);
 	void Reset();
+	bool SetSource(IFloopySoundInput *src);
 
 private:
 	int m_nOffset;	/** In bytes */
