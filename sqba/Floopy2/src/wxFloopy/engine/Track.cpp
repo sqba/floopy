@@ -3,8 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 //#include "Track.h"
-#include "tracks.h"
 #include <stdio.h>
+#include "tracks.h"
+#include "../util/util.h"
 #include <wx/caret.h>
 
 #define MIN_HEIGHT	15
@@ -115,11 +116,13 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 	if(true)
 	{
 		// Draw background
-		left   = m_nLevel*4+2;
+		left   = 1;//m_nLevel*4+2;
 		top    = rc.GetTop()+1;
-		width  = rc.GetWidth()-left-3;
+		width  = rc.GetWidth()-1;//left-3;
 		height = rc.GetHeight()-2;
-		dc.DrawRoundedRectangle(left, top, width, height, 4);
+		//dc.DrawRoundedRectangle(left, top, width, height, 4);
+		//DrawRect3D(dc, wxRect(left, top, width, height));
+		DrawRect3D(dc, rc);
 	}
 	else
 	{
@@ -128,7 +131,7 @@ void CTrack::DrawLabel(wxDC& dc, wxRect& rc)
 		top    = rc.GetTop();
 		width  = rc.GetWidth()-left;
 		height = rc.GetHeight();
-		dc.DrawRectangle(left, top, width, height);
+		//dc.DrawRectangle(left, top, width, height);
 		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2), 4);
 	}
 

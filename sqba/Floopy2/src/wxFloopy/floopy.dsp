@@ -92,7 +92,7 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\aqua.cpp
+SOURCE=.\util\aqua.cpp
 # End Source File
 # Begin Source File
 
@@ -120,6 +120,14 @@ SOURCE=.\FloopyFrame.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\views\rulers\FloopyHRuler.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\util\format.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\views\gridview.cpp
 # End Source File
 # Begin Source File
@@ -141,6 +149,10 @@ SOURCE=.\engine\parameter.cpp
 # Begin Source File
 
 SOURCE=.\engine\PlayThread.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\util\rect3d.cpp
 # End Source File
 # Begin Source File
 
@@ -204,6 +216,10 @@ SOURCE=.\FloopyFrame.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\views\rulers\FloopyHRuler.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\engine\FloopyObj.h
 # End Source File
 # Begin Source File
@@ -245,6 +261,10 @@ SOURCE=.\engine\Tracks.h
 # Begin Source File
 
 SOURCE=.\views\tracksview.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\util\util.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

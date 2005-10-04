@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include "tracks.h"
+#include "../util/util.h"
 
 //IMPLEMENT_DYNAMIC_CLASS(CRegion, IFloopyObj)
 
@@ -1088,11 +1089,11 @@ void CRegion::COffsetBar::DrawBG(wxDC &dc, wxRect &rc)
 	int right	= left + width;
 	int bottom	= rc.GetBottom();
 
-	if(true)
+	if(false)
 		DrawAquaRect(dc, wxRect(left, top, width, height), 2);
 	else
 	{
-		wxBrush oldbrush = dc.GetBrush();
+		/*wxBrush oldbrush = dc.GetBrush();
 		wxPen oldpen = dc.GetPen();
 
 		dc.SetBrush( wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), wxSOLID) );
@@ -1109,7 +1110,9 @@ void CRegion::COffsetBar::DrawBG(wxDC &dc, wxRect &rc)
 		dc.DrawLine(left, bottom-1, right, bottom-1);	// bottom
 
 		dc.SetBrush( oldbrush );
-		dc.SetPen( oldpen );
+		dc.SetPen( oldpen );*/
+
+		DrawRect3D(dc, wxRect(left, top, width, height));
 	}
 }
 
@@ -1160,7 +1163,7 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 			if(x+4+w < right)
 			{
 				float fSeconds = (float)pos / (float)pix;
-				formatTime(fSeconds, csLabel);
+				FormatTime(fSeconds, csLabel);
 				dc.DrawText(csLabel, x+4, iTextTop);
 			}
 		}
@@ -1178,13 +1181,4 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 		dc.SetPen(*wxWHITE_PEN);
 		dc.DrawLine(x+1, iLineTop, x+1, iLineBottom);
 	}
-}
-
-void CRegion::COffsetBar::formatTime(float fSec, wxString &csTime)
-{
-	float min = fSec>60.f ? fSec/60.f : 0.f;
-	float sec = min>1.f ? fSec-(int)min*60 : fSec;
-	float ms  = sec*1000.f - (int)sec*1000;
-
-	csTime.Printf("%2.2d:%2.2d:%3.3d", (int)min, (int)sec, (int)ms);
 }

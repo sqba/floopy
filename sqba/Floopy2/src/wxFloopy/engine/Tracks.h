@@ -68,12 +68,6 @@ WX_DECLARE_OBJARRAY(Peak, PeaksArray);
 
 
 
-// Utility function
-void DrawAquaRect(wxDC& dc, wxRect& rc, int radius);
-
-
-
-
 /*! \class CTracks
  *  \brief Main class
  *  \author sqba
@@ -520,7 +514,6 @@ public:
 		int GetHeight();// { return 20; }
 
 	private:
-		inline void formatTime(float fSec, wxString &csTime);
 		inline CRegion  *getRegion()	{ return (CRegion*)GetParent(); }
 	};
 
