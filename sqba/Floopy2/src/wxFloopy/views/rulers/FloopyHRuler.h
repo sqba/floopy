@@ -9,14 +9,20 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "..\RulerView.h"
+#include "../rulerview.h"
+#include "../../engine/tracks.h"
+#include "../../util/util.h"
 
 class CFloopyHRuler : public CHorizontalRuler  
 {
 public:
-	CFloopyHRuler();
+	CFloopyHRuler(CRulerView *parent, CTracks *tracks);
 	virtual ~CFloopyHRuler();
 
+	void OnDraw(wxDC &dc);
+
+protected:
+	CTracks *m_pTracks;
 };
 
 #endif // !defined(AFX_FLOOPYHRULER_H__4778C646_CA6A_4FD2_8B07_C077DD680589__INCLUDED_)

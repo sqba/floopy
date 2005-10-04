@@ -67,7 +67,6 @@ WX_DECLARE_OBJARRAY(Peak, PeaksArray);
 
 
 
-
 /*! \class CTracks
  *  \brief Main class
  *  \author sqba
@@ -320,44 +319,68 @@ class CTrack : public IFloopyObj
 		CTrack *getTrack() { return (CTrack*)GetParent(); }
 	};
 
-	/*! \class CLoopButton
-	 *  \brief 
-	 *  \author sqba
-	 *  \version 0.0
-	 *  \date 2005
-	 *
-	 *  
-	 */
-	class CLoopButton : public CFloopyControl
+public:
+	class CTrackLabel : public IFloopyObj
 	{
 	public:
-		CLoopButton(CTrack *track) : CFloopyControl(track) {}
-		virtual ~CLoopButton() {}
+		/*! \class CLoopButton
+		 *  \brief 
+		 *  \author sqba
+		 *  \version 0.0
+		 *  \date 2005
+		 *
+		 *  
+		 */
+		class CLoopButton : public CFloopyControl
+		{
+		public:
+			CLoopButton(CTrack *track) : CFloopyControl(track) {}
+			virtual ~CLoopButton() {}
 
-		void DrawFore(wxDC& dc, wxRect& rc);
+			void DrawFore(wxDC& dc, wxRect& rc);
 
-	private:
-		CTrack *getTrack() { return (CTrack*)GetParent(); }
-	};
+		private:
+			CTrack *getTrack() { return (CTrack*)GetParent(); }
+		};
 
-	/*! \class CCacheButton
-	 *  \brief 
-	 *  \author sqba
-	 *  \version 0.0
-	 *  \date 2005
-	 *
-	 *  
-	 */
-	class CCacheButton : public CFloopyControl
-	{
+		/*! \class CCacheButton
+		 *  \brief 
+		 *  \author sqba
+		 *  \version 0.0
+		 *  \date 2005
+		 *
+		 *  
+		 */
+		class CCacheButton : public CFloopyControl
+		{
+		public:
+			CCacheButton(CTrack *track) : CFloopyControl(track) {}
+			virtual ~CCacheButton() {}
+
+			void DrawFore(wxDC& dc, wxRect& rc);
+
+		private:
+			CTrack *getTrack() { return (CTrack*)GetParent(); }
+		};
+
 	public:
-		CCacheButton(CTrack *track) : CFloopyControl(track) {}
-		virtual ~CCacheButton() {}
+		CTrackLabel(CTrack *track);
+		virtual ~CTrackLabel();
 
-		void DrawFore(wxDC& dc, wxRect& rc);
+		void DrawBG   (wxDC& dc, wxRect& rc);
+		void DrawFore (wxDC& dc, wxRect& rc);
+
+		bool HitTest(int y);
 
 	private:
-		CTrack *getTrack() { return (CTrack*)GetParent(); }
+		inline CTrack  *getTrack()	{ return (CTrack*)GetParent(); }
+		void drawLoopSign(wxDC& dc, wxRect& rc);
+		void drawCacheSign(wxDC& dc, wxRect& rc);
+
+	private:
+		wxRect m_rcLabel;
+		CLoopButton		*m_pButtonLoop;
+		CCacheButton	*m_pButtonCache;
 	};
 
 public:
@@ -367,7 +390,6 @@ public:
 
 	int GetType()	{ return FLOOPY_TRACK; }
 
-	void DrawLabel(wxDC& dc, wxRect& rc);
 	void DrawBG   (wxDC& dc, wxRect& rc);
 	void DrawFore (wxDC& dc, wxRect& rc);
 
@@ -442,16 +464,15 @@ public:
 
 	int GetCaretPos();//	{ return GetTracks()->GetCaretPos(); }
 
+	CTrackLabel	*GetLabel() { return m_pLabel; }
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();
-	void drawLoopSign(wxDC& dc, wxRect& rc);
-	void drawCacheSign(wxDC& dc, wxRect& rc);
 
 private:
 	int			m_nLevel;
 	RegionList	m_regions;
-	wxRect		m_rcLabel;
 	int			m_top;
 //	int			m_height;
 	wxString	m_name;
@@ -459,12 +480,10 @@ private:
 	CBorder		*m_pBorder;
 	IFloopySoundInput *m_pInput;
 
-	CLoopButton		*m_pButtonLoop;
-	CCacheButton	*m_pButtonCache;
-
 	bool		m_bReset;
 
 	IFloopySoundInput *m_pSource;
+	CTrackLabel	*m_pLabel;
 };
 
 class CRegion : public IFloopyObj

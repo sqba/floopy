@@ -8,11 +8,10 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CSampleRuler::CSampleRuler(CRulerView *parent, CTracks *tracks) : CHorizontalRuler( parent )
+CSampleRuler::CSampleRuler(CRulerView *parent, CTracks *tracks)
+ : CFloopyHRuler( parent, tracks )
 {
-	m_pTracks = tracks;
 
-	SetWindowStyle(wxNO_BORDER);
 }
 
 CSampleRuler::~CSampleRuler()
@@ -22,9 +21,12 @@ CSampleRuler::~CSampleRuler()
 
 void CSampleRuler::OnDraw(wxDC &dc)
 {
-	drawFrame( dc );
-
+	// Background and frame
 	wxSize size = this->GetClientSize();
+	//int width = m_pTracks->GetWidth();
+	//int height = size.GetHeight();
+	//DrawRect3D(dc, wxRect(0, 0, width, height));
+	CFloopyHRuler::OnDraw(dc);
 
 	int spp      = m_pTracks->GetSamplesPerPixel();
 	int iMiddle  = size.GetHeight()/2;
@@ -72,24 +74,4 @@ void CSampleRuler::OnDraw(wxDC &dc)
 		dc.SetPen(*wxWHITE_PEN);
 		dc.DrawLine(x+1, iLineTop, x+1, iLineBottom);
 	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// drawFrame
-//! Draws top and left white lines and bottom and right grey lines.
-/////////////////////////////////////////////////////////////////////////////
-void CSampleRuler::drawFrame(wxDC &dc)
-{
-	wxSize size = this->GetClientSize();
-
-	int width = m_pTracks->GetWidth();
-	int height = size.GetHeight();
-
-	dc.SetPen(*wxWHITE_PEN);
-	dc.DrawLine(0, 0, width, 0);				// top
-	dc.DrawLine(0, 0, 0, size.GetHeight());		// left
-
-	dc.SetPen(*wxMEDIUM_GREY_PEN);
-	dc.DrawLine(width-1, 0, width-1, height);	// right
-	dc.DrawLine(0, height-1, width, height-1);	// bottom
 }

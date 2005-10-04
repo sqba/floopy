@@ -1,7 +1,8 @@
 
-#include "engine/tracks.h"
+//#include "engine/tracks.h"
+#include "util.h"
 
-void DrawAquaRect(wxDC& dc, wxRect& rc, int radius = 3)
+void DrawAquaRect(wxDC& dc, wxRect& rc, int radius)
 {
 	int left	= rc.GetX();
 	int top		= rc.GetTop();

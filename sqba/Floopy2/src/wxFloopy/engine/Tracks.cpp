@@ -131,9 +131,10 @@ void CTracks::DrawLabels(wxDC& dc, wxSize size)
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
+		CTrack::CTrackLabel *label = track->GetLabel();
 		int height = track->GetHeight();
 		rc.SetHeight( height );
-		track->DrawLabel(dc, rc);
+		label->DrawBG(dc, rc);
 		rc.Offset(0, height);
 		node = node->GetNext();
 	}
