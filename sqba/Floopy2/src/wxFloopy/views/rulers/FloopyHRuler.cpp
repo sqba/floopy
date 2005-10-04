@@ -34,7 +34,8 @@ void CFloopyHRuler::OnDrawBG(wxDC &dc)
 	left *= xScrollUnits;
 	int width = m_owner->GetClientSize().GetWidth();
 */
-	int width = size.GetWidth();
+	//int width = size.GetWidth();
+	int width = m_pTracks->GetWidth();
 	int height = size.GetHeight();
 
 	DrawRect3D(dc, wxRect(left, 0, width, height));

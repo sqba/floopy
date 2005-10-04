@@ -37,6 +37,8 @@ public:
 	void Reset()				{ m_nPosition = 0; }
 	void Close();
 
+	int GetSize();
+
 	bool ReadSourceIfDisabled()	{ return false; }
 
 private:

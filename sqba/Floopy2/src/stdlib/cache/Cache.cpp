@@ -60,11 +60,22 @@ void CCache::Close()
 	IFloopySoundFilter::Close();
 }
 
+int CCache::GetSize()
+{
+	int stb = samplesToBytes();
+	if(stb>0 && m_nSize>0)
+		return m_nSize / samplesToBytes();
+	else
+		return IFloopySoundFilter::GetSize();
+}
+
 int CCache::samplesToBytes()
 {
 	SOUNDFORMAT *fmt = GetFormat();
-	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	return (fmt->bitsPerSample / 8) * fmt->channels;
+	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+		return (fmt->bitsPerSample / 8) * fmt->channels;
+	else
+		return 0;
 }
 
 void CCache::clearBuffer()
