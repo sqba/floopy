@@ -19,7 +19,7 @@ public:
 	CFloopyHRuler(CRulerView *parent, CTracks *tracks);
 	virtual ~CFloopyHRuler();
 
-	void OnDraw(wxDC &dc);
+	void OnDrawBG(wxDC &dc);
 
 protected:
 	CTracks *m_pTracks;

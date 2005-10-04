@@ -22,12 +22,21 @@ CFloopyHRuler::~CFloopyHRuler()
 }
 
 
-void CFloopyHRuler::OnDraw(wxDC &dc)
+void CFloopyHRuler::OnDrawBG(wxDC &dc)
 {
 	// Background and frame
 	wxSize size = this->GetClientSize();
-	int width = m_pTracks->GetWidth();
+	int left=0, top=0;
+/*
+	int xScrollUnits=0, yScrollUnits=0;
+	m_owner->GetViewStart(&left, &top);
+	m_owner->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	left *= xScrollUnits;
+	int width = m_owner->GetClientSize().GetWidth();
+*/
+	int width = size.GetWidth();
 	int height = size.GetHeight();
-	DrawRect3D(dc, wxRect(0, 0, width, height));
+
+	DrawRect3D(dc, wxRect(left, 0, width, height));
 	//DrawAquaRect(dc, wxRect(0, 0, width, height), 0);
 }

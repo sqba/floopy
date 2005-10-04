@@ -29,6 +29,8 @@ public:
 
 	void SetTopRuler(CHorizontalRuler *ruler);
 	void SetBottomRuler(CHorizontalRuler *ruler);
+	CHorizontalRuler *GetTopRuler()		{ return m_pTopRuler; }
+	CHorizontalRuler *GetBottomRuler()	{ return m_pBottomRuler; }
 
 	void OnSize( wxSizeEvent& event );
 //	void OnKeyDown(wxKeyEvent& event);
@@ -59,6 +61,7 @@ public:
 	virtual ~CHorizontalRuler();
 
 	virtual void OnDraw(wxDC& dc) {}
+	virtual void OnDrawBG(wxDC& dc) {}
 
 private:
 	void OnPaint( wxPaintEvent& WXUNUSED(event) );
@@ -68,7 +71,7 @@ private:
 //	void OnKeyUp( wxKeyEvent& event );
 //	void OnSize( wxSizeEvent& event );
 
-private:
+protected:
 	CRulerView *m_owner;
 };
 
@@ -83,6 +86,8 @@ public:
 
 	void SetTopRuler(CHorizontalRuler *ruler);
 	void SetBottomRuler(CHorizontalRuler *ruler);
+	CHorizontalRuler *GetTopRuler()		{ return m_owner->GetTopRuler(); }
+	CHorizontalRuler *GetBottomRuler()	{ return m_owner->GetBottomRuler(); }
 
 	virtual void OnDraw(wxDC& dc) {}
 //	void OnKeyDown(wxKeyEvent& event);

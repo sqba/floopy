@@ -69,7 +69,9 @@ void CRulerView::ScrollWindow( int dx, int dy, const wxRect *rect )
 void CRulerView::OnSize( wxSizeEvent& event )
 {
 	int cw, ch;
-	GetClientSize( &cw, &ch );
+	//GetClientSize( &cw, &ch );
+	GetVirtualSize( &cw, &ch );
+	//cw = GetSize().GetWidth();
 
 	int viewTop = 0;
 	int viewBottom = ch;
@@ -209,17 +211,19 @@ CHorizontalRuler::~CHorizontalRuler()
 
 void CHorizontalRuler::OnPaint( wxPaintEvent& WXUNUSED(event) )
 {
-    wxPaintDC dc(this);
+	wxPaintDC dc(this);
 
-    // NO - don't do this because it will set both the x and y origin
-    // coords to match the parent scrolled window and we just want to
-    // set the x coord  - MB
-    //
-    // m_owner->PrepareDC( dc );
+	// NO - don't do this because it will set both the x and y origin
+	// coords to match the parent scrolled window and we just want to
+	// set the x coord  - MB
+	//
+	// m_owner->PrepareDC( dc );
 
-    int x, y;
-    m_owner->CalcUnscrolledPosition( 0, 0, &x, &y );
-    dc.SetDeviceOrigin( -x, 0 );
+	int x, y;
+	m_owner->CalcUnscrolledPosition( 0, 0, &x, &y );
+	dc.SetDeviceOrigin( -x, 0 );
+
+	this->OnDrawBG( dc );
 
 	this->OnDraw( dc );
 }
@@ -293,17 +297,17 @@ CView::~CView()
 
 void CView::OnPaint( wxPaintEvent& WXUNUSED(event) )
 {
-    wxPaintDC dc(this);
+	wxPaintDC dc(this);
 
-    // NO - don't do this because it will set both the x and y origin
-    // coords to match the parent scrolled window and we just want to
-    // set the x coord  - MB
-    //
-    // m_owner->PrepareDC( dc );
+	// NO - don't do this because it will set both the x and y origin
+	// coords to match the parent scrolled window and we just want to
+	// set the x coord  - MB
+	//
+	// m_owner->PrepareDC( dc );
 
-    int x, y;
-    m_owner->CalcUnscrolledPosition( 0, 0, &x, &y );
-    dc.SetDeviceOrigin( -x, -y );
+	int x, y;
+	m_owner->CalcUnscrolledPosition( 0, 0, &x, &y );
+	dc.SetDeviceOrigin( -x, -y );
 
 	this->OnDraw( dc );
 }

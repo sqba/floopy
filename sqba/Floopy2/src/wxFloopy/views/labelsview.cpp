@@ -20,6 +20,9 @@ CLabelsView::CLabelsView(CRulerView* parent, CTracks *tracks) : CMainView(parent
 //	m_pTracks->SetLabelsView(this);
 
 	//wxLog::AddTraceMask(_T("CLabelsView"));
+
+	//SetTopRuler(new CFloopyHRuler(parent, tracks));
+	GetTopRuler()->SetWindowStyle( wxRAISED_BORDER );
 }
 
 void CLabelsView::OnDraw(wxDC& dc)

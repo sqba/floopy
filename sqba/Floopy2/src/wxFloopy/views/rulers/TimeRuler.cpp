@@ -21,6 +21,13 @@ CTimeRuler::~CTimeRuler()
 
 void CTimeRuler::OnDraw(wxDC &dc)
 {
+//	int left=0, top=0;
+//	int xScrollUnits=0, yScrollUnits=0;
+//	m_owner->GetViewStart(&left, &top);
+//	m_owner->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+//	left *= xScrollUnits;
+
+
 	// Background and frame
 	wxSize size = this->GetClientSize();
 	//int width = m_pTracks->GetWidth();
@@ -51,6 +58,7 @@ void CTimeRuler::OnDraw(wxDC &dc)
 	{
 		//if((x/iStep)%4 == 0)
 		//Optimization: x%a == x&(a-1) for binary numbers
+		//if(x>=left && ((x/iStep)&3) == 0)
 		if(((x/iStep)&3) == 0)
 		{
 			iLineTop = iLineTop1;
