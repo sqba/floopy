@@ -15,6 +15,7 @@ CCache::CCache()
 {
 	m_pBuffer = NULL;
 	m_nPosition = m_nSize = 0;
+	m_pSourceParams = NULL;
 }
 
 CCache::~CCache()
@@ -25,7 +26,7 @@ CCache::~CCache()
 
 int CCache::Read(BYTE *data, int size)
 {
-	if( (bufferIsEmpty() && !createBuffer()) || passedTheEnd() )
+	if( (bufferIsEmpty() && !createBuffer()) || passedTheEnd() || sourceParameterChanged() )
 		return 0;
 
 	// Last chunk
@@ -43,6 +44,8 @@ bool CCache::SetSource(IFloopySoundInput *src)
 {
 	if(	createBuffer() )
 		return false;
+
+	loadSourceParams( src );
 
 	return IFloopySoundFilter::SetSource(src);
 }
@@ -112,4 +115,42 @@ bool CCache::createBuffer()
 	}
 
 	return (m_nSize > 0);
+}
+
+bool CCache::sourceParameterChanged()
+{
+	if(bufferIsEmpty())
+		return false;
+	//if(NULL == m_pSourceParams)
+	//	return true;
+
+	IFloopySoundInput *src = GetSource();
+
+	sourceParam *tmp = m_pSourceParams;
+	float value = 0.f;
+	for(int i=0; i<src->GetParamCount(); i++)
+	{
+		if(tmp && src->GetParamVal(i, &value) && tmp->value!=value )
+			return true;
+		tmp = tmp->next;
+	}
+	return false;
+}
+
+void CCache::loadSourceParams(IFloopySoundInput *src)
+{
+	sourceParam *prev = NULL;
+	sourceParam *tmp = m_pSourceParams;
+	float value = 0.f;
+	for(int i=0; i<src->GetParamCount(); i++)
+	{
+		if( src->GetParamVal(i, &value) )
+		{
+			if(NULL == tmp)
+				tmp = new sourceParam;
+			tmp->value = value;
+			prev->next = tmp;
+		}
+		tmp = tmp->next;
+	}
 }

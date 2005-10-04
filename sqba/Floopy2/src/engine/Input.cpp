@@ -441,7 +441,7 @@ bool CInput::GetParamVal(int index, float *value)
 
 	if(m_timeline.GetParamVal(m_offset, index, value))
 		return true;
-	else
+	else if(index != TIMELINE_PARAM_MOVETO)
 	{
 		int prev = m_timeline.GetPrevOffset( m_offset, index );
 		if(m_timeline.GetParamVal(prev, index, value))

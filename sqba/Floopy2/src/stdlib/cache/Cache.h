@@ -13,6 +13,13 @@
 
 class CCache : public IFloopySoundFilter
 {
+private:
+	struct sourceParam
+	{
+		float value;
+		sourceParam *next;
+	};
+
 public:
 	CCache();
 	virtual ~CCache();
@@ -37,12 +44,15 @@ private:
 	bool createBuffer();
 	inline bool passedTheEnd()	{ return (m_nPosition > m_nSize); }
 	inline bool bufferIsEmpty()	{ return (m_nSize == 0); }
+	bool sourceParameterChanged();
 	void clearBuffer();
+	void loadSourceParams(IFloopySoundInput *src);
 
 private:
 	BYTE *m_pBuffer;
 	int m_nSize;
 	int m_nPosition;
+	sourceParam *m_pSourceParams;
 };
 
 #endif // !defined(AFX_CACHE_H__935D07E1_D3E6_461F_8BBA_006E633A56C8__INCLUDED_)
