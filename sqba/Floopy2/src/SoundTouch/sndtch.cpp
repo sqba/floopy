@@ -30,16 +30,8 @@ bool CSoundTouch::SetSource(IFloopySoundInput *src)
 	{
 		SOUNDFORMAT *fmt = GetFormat();
 
-
 		m_SoundTouch.setSampleRate(fmt->frequency);
 		m_SoundTouch.setChannels(fmt->channels);
-
-		m_SoundTouch.setTempoChange(m_fTempo);
-		m_SoundTouch.setPitchSemiTones(m_fPitch);
-		m_SoundTouch.setRateChange(m_fRate);
-
-		m_SoundTouch.setSetting(SETTING_USE_QUICKSEEK, m_bQuickSeek);
-		m_SoundTouch.setSetting(SETTING_USE_AA_FILTER, m_bUseAAFilter);
 	}
 	return false;
 }
@@ -54,12 +46,12 @@ int CSoundTouch::Read(BYTE *data, int size)
 	int nSamples = 0;
 
 	SOUNDFORMAT *fmt = GetFormat();
-	int bytesPerSample = fmt->bitsPerSample / 8;
+	int bytesPerSample = (fmt->bitsPerSample / 8) * fmt->channels;
 
 	do {
 		len = IFloopySoundFilter::Read(buffer, size);
 
-		if(len >0)
+		if(len > 0)
 		{
 			nSamples = len / bytesPerSample;
 			m_SoundTouch.putSamples((const short*)buffer, nSamples);
@@ -160,18 +152,23 @@ void CSoundTouch::SetPropertyVal(int index, float value)
 	{
 	case 0:
 		m_fTempo = value;
+		m_SoundTouch.setTempoChange(m_fTempo);
 		break;
 	case 1:
 		m_fPitch = value;
+		m_SoundTouch.setPitchSemiTones(m_fPitch);
 		break;
 	case 2:
 		m_fRate = value;
+		m_SoundTouch.setRateChange(m_fRate);
 		break;
 	case 3:
 		m_bQuickSeek = (value == 0.f);
+		m_SoundTouch.setSetting(SETTING_USE_QUICKSEEK, m_bQuickSeek);
 		break;
 	case 4:
 		m_bUseAAFilter = (value == 0.f);
+		m_SoundTouch.setSetting(SETTING_USE_AA_FILTER, m_bUseAAFilter);
 		break;
 	}
 }

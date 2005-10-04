@@ -133,14 +133,14 @@ bool CCache::createBuffer()
 		}
 		else if(size == SIZE_VARIABLE)
 		{
-			int buffsize = 10240;
-			int type = src->GetType();
-			if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
-				size = ((IFloopySoundFilter*)src)->GetSource()->GetSize();
+			size = 1024; //samples
+			//int type = src->GetType();
+			//if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
+			//	size = ((IFloopySoundFilter*)src)->GetSource()->GetSize();
 			// Allocate the memory
-			m_nSize = size *= samplesToBytes();
+			m_nSize = 1024;//size * samplesToBytes();
 
-			buffsize = m_nSize;
+			int buffsize = m_nSize;
 			
 			m_pBuffer = new BYTE[m_nSize];
 			

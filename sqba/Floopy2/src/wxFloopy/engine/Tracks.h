@@ -393,7 +393,7 @@ public:
 	void DrawBG   (wxDC& dc, wxRect& rc);
 	void DrawFore (wxDC& dc, wxRect& rc);
 
-	bool GetName(wxString& name)	{ name = _T("Track"); return true; }
+	bool GetName(wxString& name)	{ name = m_name; return true; }
 	int GetWidth()					{ return GetTracks()->GetWidth(); }
 	int GetHeight();//					{ return m_height + m_pBorder->GetHeight(); }
 	int GetTop()					{ return m_top; }
