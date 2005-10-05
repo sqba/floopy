@@ -40,13 +40,15 @@ int CSoundTouch::Read(BYTE *data, int size)
 {
 	int nBytes = 0;
 
-	BYTE *buffer = new BYTE[size];
-
 	int len = 0;
 	int nSamples = 0;
 
+	BYTE *buffer = new BYTE[size];
+
 	SOUNDFORMAT *fmt = GetFormat();
 	int bytesPerSample = (fmt->bitsPerSample / 8) * fmt->channels;
+
+	static bool bFinished = false;
 
 	do {
 		len = IFloopySoundFilter::Read(buffer, size);
@@ -63,17 +65,20 @@ int CSoundTouch::Read(BYTE *data, int size)
 			nBytes += nSamples * bytesPerSample;
 		} while (nSamples!=0 && nBytes<size);
 		
-	} while (nSamples>0 && nBytes<size);
+	} while (len>0 && nBytes<size);
 
-	if(len<size && nBytes<size)
+	if(len<size && nBytes<size && !bFinished)
 	{
-		//m_SoundTouch.flush();
+		m_SoundTouch.flush();
 		do {
 			nSamples = (size-nBytes) / bytesPerSample;
 			nSamples = m_SoundTouch.receiveSamples((short*)(data+nBytes), nSamples);
 			nBytes += nSamples * bytesPerSample;
 		} while (nSamples!=0 && nBytes<size);
+		bFinished = true;
 	}
+
+	//assert(size == nBytes);
 
 	if(len!=size && nBytes==0)
 		nBytes = EOF;

@@ -69,7 +69,7 @@ void *CPlayThread::Entry()
 	m_pOutput->Reset();
 
 	int totalLength = m_pTracks->GetLength() * fmt->frequency;
-
+/*
 	// Play till the end of the track
 	while((len=m_pInput->Read(buff, bufflen)) != EOF)
 	{
@@ -90,7 +90,7 @@ void *CPlayThread::Entry()
 		if ( TestDestroy() )
 			break;
 	}
-/*
+*/
 	// Play till the end of the project
 	while(m_iPosition<totalLength)
 	{
@@ -120,7 +120,7 @@ void *CPlayThread::Entry()
 		if ( TestDestroy() )
 			break;
 	}
-*/
+
 	// Wait for output to finish!!!
 	if( !TestDestroy() )
 	{
