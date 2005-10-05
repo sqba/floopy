@@ -122,10 +122,6 @@ SOURCE=.\mono2stereo\Mono2Stereo.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\mp3file\Mp3File.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Performance\Performance.cpp
 # End Source File
 # Begin Source File
@@ -199,10 +195,6 @@ SOURCE=.\mixer\Mixer.h
 # Begin Source File
 
 SOURCE=.\mono2stereo\Mono2Stereo.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\mp3file\Mp3File.h
 # End Source File
 # Begin Source File
 

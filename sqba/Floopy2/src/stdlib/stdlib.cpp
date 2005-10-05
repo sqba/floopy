@@ -12,7 +12,6 @@
 #include "loop/loop.h"
 #include "mixer/mixer.h"
 #include "mono2stereo/mono2stereo.h"
-#include "mp3file/mp3file.h"
 #include "playrgn/playregion.h"
 #include "tonegen/tonegen.h"
 #include "volume/volume.h"
@@ -47,8 +46,6 @@ __declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 		return new CMixer();
 	if( 0 == stricmp(name, "mono2stereo") )
 		return new CMono2Stereo();
-	if( 0 == stricmp(name, "mp3file") )
-		return new CMp3File();
 	if( 0 == stricmp(name, "playrgn") )
 		return new CPlayRegion();
 	if( 0 == stricmp(name, "tonegen") )
@@ -90,7 +87,7 @@ __declspec( dllexport ) IFloopySoundOutput *CreateOutput(char *name, SOUNDFORMAT
 
 __declspec( dllexport ) int GetPluginCount()
 {
-	return 17;
+	return 16;
 }
 
 __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
@@ -118,50 +115,46 @@ __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
 	case 5:
-		name = "mp3file";
-		*type = TYPE_FLOOPY_SOUND_INPUT;
-		break;
-	case 6:
 		name = "playrgn";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
-	case 7:
+	case 6:
 		name = "tonegen";
 		*type = TYPE_FLOOPY_SOUND_INPUT;
 		break;
-	case 8:
+	case 7:
 		name = "volume";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
-	case 9:
+	case 8:
 		name = "wavfile";
 		*type = TYPE_FLOOPY_SOUND_INPUT;
 		break;
-	case 10:
+	case 9:
 		name = "track";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
-	case 11:
+	case 10:
 		name = "waveout";
 		*type = TYPE_FLOOPY_SOUND_OUTPUT;
 		break;
-	case 12:
+	case 11:
 		name = "wavfile";
 		*type = TYPE_FLOOPY_SOUND_OUTPUT;
 		break;
-	case 13:
+	case 12:
 		name = "reverse";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
-	case 14:
+	case 13:
 		name = "invert";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
-	case 15:
+	case 14:
 		name = "8to16bit";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
-	case 16:
+	case 15:
 		name = "performance";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
 		break;
