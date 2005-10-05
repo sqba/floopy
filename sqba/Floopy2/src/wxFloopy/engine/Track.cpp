@@ -871,35 +871,18 @@ IFloopySoundInput *CTrack::FindComponentByName(char *name)
 
 void CTrack::InvalidateRegions(CRegion *start)
 {
-//	bool bStart = false;
 	int startOffset = start->GetStartPos();
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
 	{
 		CRegion *region = (CRegion*)node->GetData();
-//		if(start == region)
-//			bStart = true;
-//		else if( bStart && !region->GetReset() )
-		if( (region->GetStartPos() > startOffset) && (!region->GetReset()) )
+		if(region && (region->GetStartPos()>startOffset) && !region->HasStartOffset() )
 		{
-			// Skip if there was a reset in between
 			region->Invalidate();
 			region->Refresh();
 		}
 		node = node->GetNext();
 	}
-
-	/*RegionList::Node *node = m_regions.GetFirst();
-	while (node)
-	{
-		CRegion *region = (CRegion*)node->GetData();
-		if( start != region && !region->GetReset() )
-		{
-			region->Invalidate();
-			region->Refresh();
-		}
-		node = node->GetNext();
-	}*/
 }
 
 wxColor CTrack::GetColor()

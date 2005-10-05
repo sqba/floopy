@@ -952,10 +952,18 @@ bool CRegion::GetReset()
 		return false;*/
 }
 
+bool CRegion::HasStartOffset()
+{
+	float value = 0.f;
+	IFloopySoundInput *input = getTrack()->GetInput();
+	return(input->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value));
+}
+
 bool CRegion::getReset(int sample)
 {
 	float value = 0.f;
-	if(getTrack()->GetInput()->GetParamAt(sample, TIMELINE_PARAM_MOVETO, &value))
+	IFloopySoundInput *input = getTrack()->GetInput();
+	if(input->GetParamAt(sample, TIMELINE_PARAM_MOVETO, &value))
 		return value==0.f;
 	else
 		return false;
@@ -964,8 +972,8 @@ bool CRegion::getReset(int sample)
 int CRegion::getStartOffset()
 {
 	float value = 0;
-	IFloopySoundInput *track = getTrack()->GetInput();
-	if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
+	IFloopySoundInput *input = getTrack()->GetInput();
+	if(input->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 		return (int)value;
 	return -1;
 }

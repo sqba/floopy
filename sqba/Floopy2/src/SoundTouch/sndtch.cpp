@@ -38,6 +38,9 @@ bool CSoundTouch::SetSource(IFloopySoundInput *src)
 
 int CSoundTouch::Read(BYTE *data, int size)
 {
+	if(m_fTempo==0.f && m_fPitch==0.f && m_fRate==0.f)
+		return IFloopySoundFilter::Read(data, size);
+
 	int nBytes = 0;
 
 	int len = 0;
@@ -96,7 +99,8 @@ void CSoundTouch::MoveTo(int samples)
 
 
 	m_SoundTouch.clear();
-	samples = (int)((float)samples / (1.f - m_fTempo/100.f));
+	if(m_fTempo!=0.f || m_fPitch!=0.f || m_fRate!=0.f)
+		samples = (int)((float)samples / (1.f - m_fTempo/100.f));
 	IFloopySoundFilter::MoveTo(samples);
 }
 
@@ -106,15 +110,16 @@ int CSoundTouch::GetSize()
 
 
 
-	float size = (float)IFloopySoundFilter::GetSize();
+	int size = IFloopySoundFilter::GetSize();
 
 //	float f = fabs(m_fTempo)>fabs(m_fRate) ? m_fTempo : m_fRate;
 //	int result = (int)floor((float)(size - ((size * f*2.f) / 100.f)));
 //	return result;
 
 	//float f = m_fTempo*2.f + m_fPitch*2.f + m_fRate*2.f;
-	int result = (int)floor(size - size*m_fTempo/100.f);
-	return result;
+	if(m_fTempo!=0.f || m_fPitch!=0.f || m_fRate!=0.f)
+		size = (int)floor((float)size - (float)size*m_fTempo/100.f);
+	return size;
 }
 
 void CSoundTouch::Reset()

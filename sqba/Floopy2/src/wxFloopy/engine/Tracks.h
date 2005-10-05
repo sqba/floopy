@@ -582,6 +582,7 @@ public:
 
 	bool GetReset();
 	void SetReset(bool bReset);
+	bool HasStartOffset();
 
 	void SetStartOffset(int sample);
 
