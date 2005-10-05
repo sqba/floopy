@@ -717,6 +717,11 @@ void CRegion::Update()
 	if(m_iStartSample < 0)
 		m_iStartSample = 0;
 
+	bool bOffset = true;
+	int len1 = m_iPrevEnd - m_iPrevStart;
+	int len2 = m_iEndSample - m_iStartSample;
+	bool bResize = (len2 > len1);
+
 	/////////////////////////////////////////////////////////////////////////////////////////
 	//if((m_iPrevStart != m_iStartSample) && (m_iPrevEnd != m_iEndSample))
 	//	track->MoveAllParamsBetween(m_iStartSample, m_iEndSample, m_iStartSample-m_iPrevStart);
@@ -741,6 +746,8 @@ void CRegion::Update()
 
 			//assert( getReset( m_iStartSample ) );
 		}
+		else
+			bOffset = false;
 	}
 
 	if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))
@@ -752,8 +759,11 @@ void CRegion::Update()
 		}
 	}
 
-	Invalidate();
-	Refresh();
+	if(!bOffset || bResize)
+	{
+		Invalidate();
+		Refresh();
+	}
 
 	m_iPrevStart = m_iPrevEnd = -1;
 
