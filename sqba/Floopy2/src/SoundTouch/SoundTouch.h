@@ -45,12 +45,17 @@ public:
 	//char *GetPropertyUnit(int index);
 
 private:
+	void detectBPM();
+
+private:
 	SoundTouch m_SoundTouch;
-	float m_fTempo;
+	float m_fTempoDelta;
 	float m_fPitch;
 	float m_fRate;
 	bool m_bQuickSeek;
 	bool m_bUseAAFilter;
+	float m_fNewBPM;
+	float m_fOrigBPM;
 };
 
 #endif // !defined(AFX_SNDTCH_H__E6C9AEA1_124C_4511_84A1_97E620527EC6__INCLUDED_)

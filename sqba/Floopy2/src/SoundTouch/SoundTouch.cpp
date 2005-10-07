@@ -4,7 +4,8 @@
 
 #include <math.h>
 
-#include "sndtch.h"
+#include "SoundTouch.h"
+#include "BPMDetect.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -12,11 +13,13 @@
 
 CSoundTouch::CSoundTouch()
 {
-	m_fTempo	= 0.f;
-	m_fPitch	= 0.f;
-	m_fRate		= 0.f;
+	m_fTempoDelta	= 0.f;	// percents
+	m_fPitch		= 0.f;	// percents
+	m_fRate			= 0.f;	// percents
 	m_bQuickSeek	= false;
 	m_bUseAAFilter	= true;
+	m_fNewBPM		= 0.f;
+	m_fOrigBPM		= 0.f;
 }
 
 CSoundTouch::~CSoundTouch()
@@ -32,13 +35,15 @@ bool CSoundTouch::SetSource(IFloopySoundInput *src)
 
 		m_SoundTouch.setSampleRate(fmt->frequency);
 		m_SoundTouch.setChannels(fmt->channels);
+
+		detectBPM();
 	}
 	return false;
 }
 
 int CSoundTouch::Read(BYTE *data, int size)
 {
-	if(m_fTempo==0.f && m_fPitch==0.f && m_fRate==0.f)
+	if(m_fTempoDelta==0.f && m_fPitch==0.f && m_fRate==0.f)
 		return IFloopySoundFilter::Read(data, size);
 
 	int nBytes = 0;
@@ -99,8 +104,8 @@ void CSoundTouch::MoveTo(int samples)
 
 
 	m_SoundTouch.clear();
-	if(m_fTempo!=0.f || m_fPitch!=0.f || m_fRate!=0.f)
-		samples = (int)((float)samples / (1.f - m_fTempo/100.f));
+	if(m_fTempoDelta!=0.f || m_fPitch!=0.f || m_fRate!=0.f)
+		samples = (int)((float)samples / (1.f - m_fTempoDelta/100.f));
 	IFloopySoundFilter::MoveTo(samples);
 }
 
@@ -112,13 +117,13 @@ int CSoundTouch::GetSize()
 
 	int size = IFloopySoundFilter::GetSize();
 
-//	float f = fabs(m_fTempo)>fabs(m_fRate) ? m_fTempo : m_fRate;
+//	float f = fabs(m_fTempoDelta)>fabs(m_fRate) ? m_fTempoDelta : m_fRate;
 //	int result = (int)floor((float)(size - ((size * f*2.f) / 100.f)));
 //	return result;
 
-	//float f = m_fTempo*2.f + m_fPitch*2.f + m_fRate*2.f;
-	if(m_fTempo!=0.f || m_fPitch!=0.f || m_fRate!=0.f)
-		size = (int)floor((float)size - (float)size*m_fTempo/100.f);
+	//float f = m_fTempoDelta*2.f + m_fPitch*2.f + m_fRate*2.f;
+	if(m_fTempoDelta!=0.f || m_fPitch!=0.f || m_fRate!=0.f)
+		size = (int)floor((float)size - (float)size*m_fTempoDelta/100.f);
 	return size;
 }
 
@@ -133,10 +138,27 @@ void CSoundTouch::Close()
 	IFloopySoundFilter::Close();
 }
 
+void CSoundTouch::detectBPM()
+{
+	if(NULL == m_source)
+		return;
+
+	BPMDetect bpm;
+	float m_fOrigBPM;
+
+	m_fOrigBPM = bpm.detectBpm( m_source );
+	m_source->MoveTo( 0 );
+
+	if (m_fNewBPM>0.f && m_fOrigBPM > 0.f)
+	{
+		// adjust tempo to given bpm
+		m_fTempoDelta = (m_fNewBPM / m_fOrigBPM - 1.0f) * 100.0f;
+	}
+}
 
 int CSoundTouch::GetPropertyCount()
 {
-	return 5;
+	return 7;
 }
 
 //bool  GetPropertyIndex(char *name, int *index);
@@ -146,7 +168,7 @@ bool CSoundTouch::GetPropertyVal(int index, float *value)
 	switch(index)
 	{
 	case 0:
-		*value = m_fTempo;
+		*value = m_fTempoDelta;
 		return true;
 	case 1:
 		*value = m_fPitch;
@@ -160,6 +182,12 @@ bool CSoundTouch::GetPropertyVal(int index, float *value)
 	case 4:
 		*value = (float)m_bUseAAFilter;
 		return true;
+	case 5:
+		*value = m_fNewBPM;
+		return true;
+	case 6:
+		*value = m_fOrigBPM;
+		return true;
 	}
 	return false;
 }
@@ -169,8 +197,8 @@ void CSoundTouch::SetPropertyVal(int index, float value)
 	switch(index)
 	{
 	case 0:
-		m_fTempo = value;
-		m_SoundTouch.setTempoChange(m_fTempo);
+		m_fTempoDelta = value;
+		m_SoundTouch.setTempoChange(m_fTempoDelta);
 		break;
 	case 1:
 		m_fPitch = value;
@@ -188,6 +216,10 @@ void CSoundTouch::SetPropertyVal(int index, float value)
 		m_bUseAAFilter = (value == 0.f);
 		m_SoundTouch.setSetting(SETTING_USE_AA_FILTER, m_bUseAAFilter);
 		break;
+	case 5:
+		m_fNewBPM = value;
+		detectBPM();
+		break;
 	}
 }
 
@@ -200,6 +232,8 @@ float CSoundTouch::GetPropertyMin(int index)
 	case 2: return -95.f;
 	case 3: return 0.f;
 	case 4: return 0.f;
+	case 5: return 0.f; // 70.f
+	case 6: return 0.f; // 70.f
 	}
 	return 0.f;
 }
@@ -213,6 +247,8 @@ float CSoundTouch::GetPropertyMax(int index)
 	case 2: return 5000.f;
 	case 3: return 1.f;
 	case 4: return 1.f;
+	case 5: return 200.f;
+	case 6: return 200.f;
 	}
 	return 0.f;
 }
@@ -224,10 +260,13 @@ float CSoundTouch::GetPropertyStep(int index)
 	case 0:
 	case 1:
 	case 2:
+	case 5:
 		return 0.1f;
 	case 3:
 	case 4:
 		return 1.f;
+	case 6:
+		return 0.f;
 	}
 	return 0.f;
 }
@@ -241,6 +280,8 @@ char *CSoundTouch::GetPropertyName(int index)
 	case 2: return "Rate";
 	case 3: return "Quick";
 	case 4: return "AntiAliasing";
+	case 5: return "BPM";
+	case 6: return "SrcBPM";
 	}
 	return NULL;
 }
@@ -254,6 +295,8 @@ char *CSoundTouch::GetPropertyDesc(int index)
 	case 2: return "Rate";
 	case 3: return "Quick tempo change algorithm";
 	case 4: return "Use anti alias filtering";
+	case 5: return "Beats Per Minute";
+	case 6: return "Source Tempo";
 	}
 	return NULL;
 }

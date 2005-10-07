@@ -5,7 +5,7 @@
 
 #include "../ifloopy.h"
 
-#include "sndtch.h"
+#include "SoundTouch.h"
 
 
 #ifdef __cplusplus

@@ -191,7 +191,7 @@ int BPMDetect::inputSamples(IFloopySoundInput *source, short *outBuffer)
     // read a block of samples
     numBytes = source->Read((unsigned char*)samples, INPUT_BLOCK_SAMPLES * sizeof(short));
 	if(numBytes <= 0)
-		return 0;
+		return EOF;
 	SOUNDFORMAT *fmt = source->GetFormat();
     numChannels = fmt->channels;
     numSamples = numBytes / (numChannels * sizeof(short));
@@ -276,13 +276,16 @@ float BPMDetect::detectBpm(IFloopySoundInput *source)
     init(source);
 
     // process the file
-    //while (wavInFile->eof() == 0)
+    //while (source->GetPosition() != EOF) {
     do {
         // input a block of samples
         dsamples = inputSamples(source, decimated);
-        assert(dsamples <= DECIMATED_BLOCK_SAMPLES);
-        // process block
-        processBlock(decimated, dsamples);
+		if(dsamples > 0)
+		{
+			assert(dsamples <= DECIMATED_BLOCK_SAMPLES);
+			// process block
+			processBlock(decimated, dsamples);
+		}
     } while (dsamples > 0);
 
     // find peak position
@@ -293,6 +296,9 @@ float BPMDetect::detectBpm(IFloopySoundInput *source)
     // delete xcorr array
     delete[] xcorr;
     xcorr = NULL;
+
+	if(0 == peakPos)
+		return 0.f;
 
     // calculate BPM
 	SOUNDFORMAT *fmt = source->GetFormat();
