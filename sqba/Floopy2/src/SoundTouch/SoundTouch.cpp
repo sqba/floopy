@@ -144,15 +144,15 @@ void CSoundTouch::detectBPM()
 		return;
 
 	BPMDetect bpm;
-	float m_fOrigBPM;
 
 	m_fOrigBPM = bpm.detectBpm( m_source );
 	m_source->MoveTo( 0 );
 
-	if (m_fNewBPM>0.f && m_fOrigBPM > 0.f)
+	if (m_fNewBPM>0.f && m_fOrigBPM>0.f)
 	{
 		// adjust tempo to given bpm
 		m_fTempoDelta = (m_fNewBPM / m_fOrigBPM - 1.0f) * 100.0f;
+		m_SoundTouch.setTempoChange( m_fTempoDelta );
 	}
 }
 
