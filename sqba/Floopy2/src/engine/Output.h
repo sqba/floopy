@@ -33,28 +33,38 @@ public:
 
 	bool Create(char *plugin, SOUNDFORMAT fmt);
 
-	char *GetName()			{ return m_plugin->GetName(); }
-	char *GetDescription()	{ return m_plugin->GetDescription(); }
-	char *GetVersion()		{ return m_plugin->GetVersion(); }
-	char *GetAuthor()		{ return m_plugin->GetAuthor(); }
+	void Reset();
 
-	int   GetParamCount()					{ return m_plugin->GetParamCount(); }
-	bool  GetParamVal(int index, float *value);
-	void  SetParamVal(int index, float value);//	{ m_plugin->SetParam(index, value); }
-	char *GetParamName(int index)			{ return m_plugin->GetParamName(index); }
-	char *GetParamDesc(int index)			{ return m_plugin->GetParamDesc(index); }
+	bool Open(char *filename);
+	//void Close();
 
 	int Write(BYTE *data, int size);
 
-	void SetDest(IFloopySoundOutput *dst)
-	{
-		m_plugin->SetDest(dst);
-	}
+	char *GetName();
+	char *GetDescription();
+	char *GetVersion();
+	char *GetAuthor();
 
-	char *GetLastErrorDesc() { return m_szLastError; }
+	int   GetParamCount();
+	bool  GetParamVal(int index, float *value);
+	void  SetParamVal(int index, float value);
+	char *GetParamName(int index);
+	char *GetParamDesc(int index);
+
+	int   GetPropertyCount();
+	bool  GetPropertyVal(int index, float *value);
+	void  SetPropertyVal(int index, float value);
+	char *GetPropertyName(int index);
+	char *GetPropertyDesc(int index);
+
+	void SetDest(IFloopySoundOutput *dst);
+
+	char *GetLastErrorDesc();
 
 	int GetPosition();
-	void Reset();
+
+private:
+	void copyErrorDesc();
 
 private:
 	char m_name[50];
