@@ -49,6 +49,7 @@ private:
 
 private:
 	SoundTouch m_SoundTouch;
+	float m_fTempo;
 	float m_fTempoDelta;
 	float m_fPitch;
 	float m_fRate;

@@ -13,6 +13,7 @@
 
 CSoundTouch::CSoundTouch()
 {
+	m_fTempo		= 0.f;	// percents
 	m_fTempoDelta	= 0.f;	// percents
 	m_fPitch		= 0.f;	// percents
 	m_fRate			= 0.f;	// percents
@@ -168,7 +169,7 @@ bool CSoundTouch::GetPropertyVal(int index, float *value)
 	switch(index)
 	{
 	case 0:
-		*value = m_fTempoDelta;
+		*value = m_fTempo;
 		return true;
 	case 1:
 		*value = m_fPitch;
@@ -198,6 +199,7 @@ void CSoundTouch::SetPropertyVal(int index, float value)
 	{
 	case 0:
 		m_fTempoDelta = value;
+		m_fTempo = value;
 		m_SoundTouch.setTempoChange(m_fTempoDelta);
 		break;
 	case 1:
