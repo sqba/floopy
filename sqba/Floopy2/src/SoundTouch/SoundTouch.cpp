@@ -7,6 +7,9 @@
 #include "SoundTouch.h"
 #include "BPMDetect.h"
 
+
+//#define VARIABLE_SIZE	/// If this is defined then the cache must be used!
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -20,7 +23,11 @@ CSoundTouch::CSoundTouch()
 	m_bQuickSeek	= false;
 	m_bUseAAFilter	= true;
 	m_fNewBPM		= 0.f;
-	m_fOrigBPM		= 0.f;
+	m_fOrigBPM		= 0.f;	// Original BPM
+	m_bFinished		= false;
+	m_iSize			= 0;
+	m_fScale		= 1.f;
+	m_iSamplesToBytes = 0;
 }
 
 CSoundTouch::~CSoundTouch()
@@ -33,11 +40,16 @@ bool CSoundTouch::SetSource(IFloopySoundInput *src)
 	if( IFloopySoundFilter::SetSource(src) )
 	{
 		SOUNDFORMAT *fmt = GetFormat();
+		if(NULL != fmt)
+		{
+			m_SoundTouch.setSampleRate(fmt->frequency);
+			m_SoundTouch.setChannels(fmt->channels);
 
-		m_SoundTouch.setSampleRate(fmt->frequency);
-		m_SoundTouch.setChannels(fmt->channels);
+			m_iSamplesToBytes = ((fmt->bitsPerSample/8) * fmt->channels);
 
-		detectBPM();
+			detectBPM();
+		}
+		getNewSize();
 	}
 	return false;
 }
@@ -57,39 +69,41 @@ int CSoundTouch::Read(BYTE *data, int size)
 	SOUNDFORMAT *fmt = GetFormat();
 	int bytesPerSample = (fmt->bitsPerSample / 8) * fmt->channels;
 
-	static bool bFinished = false;
-
-	do {
-		len = IFloopySoundFilter::Read(buffer, size);
-
-		if(len > 0)
-		{
-			nSamples = len / bytesPerSample;
-			m_SoundTouch.putSamples((const short*)buffer, nSamples);
-		}
-
-		do {
-			nSamples = (size-nBytes) / bytesPerSample;
-			nSamples = m_SoundTouch.receiveSamples((short*)(data+nBytes), nSamples);
-			nBytes += nSamples * bytesPerSample;
-		} while (nSamples!=0 && nBytes<size);
-		
-	} while (len>0 && nBytes<size);
-
-	if(len<size && nBytes<size && !bFinished)
+	if( !m_bFinished )
 	{
-		m_SoundTouch.flush();
 		do {
-			nSamples = (size-nBytes) / bytesPerSample;
-			nSamples = m_SoundTouch.receiveSamples((short*)(data+nBytes), nSamples);
-			nBytes += nSamples * bytesPerSample;
-		} while (nSamples!=0 && nBytes<size);
-		bFinished = true;
+			len = IFloopySoundFilter::Read(buffer, size);
+
+			if(EOF != len)
+			{
+				nSamples = len / bytesPerSample;
+				m_SoundTouch.putSamples((const short*)buffer, nSamples);
+
+				do {
+					nSamples = (size-nBytes) / bytesPerSample;
+					nSamples = m_SoundTouch.receiveSamples((short*)(data+nBytes), nSamples);
+					nBytes += nSamples * bytesPerSample;
+				} while (nSamples!=0 && nBytes<size);
+			}
+			else
+			{
+				m_SoundTouch.flush();
+				m_bFinished = true;
+			}
+			
+		} while (len>0 && nBytes<size);
 	}
 
-	//assert(size == nBytes);
+	if(m_bFinished && nBytes<size)
+	{
+		do {
+			nSamples = (size-nBytes) / bytesPerSample;
+			nSamples = m_SoundTouch.receiveSamples((short*)(data+nBytes), nSamples);
+			nBytes += nSamples * bytesPerSample;
+		} while (nSamples!=0 && nBytes<size);
+	}
 
-	if(len!=size && nBytes==0)
+	if(m_bFinished && nBytes==0)
 		nBytes = EOF;
 
 	delete buffer;
@@ -100,38 +114,40 @@ int CSoundTouch::Read(BYTE *data, int size)
 
 void CSoundTouch::MoveTo(int samples)
 {
-//	IFloopySoundFilter::MoveTo(samples);
-
-
-
 	m_SoundTouch.clear();
-	if(m_fTempoDelta!=0.f || m_fPitch!=0.f || m_fRate!=0.f)
-		samples = (int)((float)samples / (1.f - m_fTempoDelta/100.f));
+	m_bFinished = false;
+
+#ifndef VARIABLE_SIZE
+//	if(m_fTempoDelta != 0.f)
+//		samples = (int)((float)samples / (1.f - m_fTempoDelta/100.f));
+	samples = (int)ceil((float)samples / m_fScale);
+#endif
+
 	IFloopySoundFilter::MoveTo(samples);
 }
 
 int CSoundTouch::GetSize()
 {
-//	return SIZE_VARIABLE;
 
-
-
-	int size = IFloopySoundFilter::GetSize();
-
-//	float f = fabs(m_fTempoDelta)>fabs(m_fRate) ? m_fTempoDelta : m_fRate;
-//	int result = (int)floor((float)(size - ((size * f*2.f) / 100.f)));
-//	return result;
-
-	//float f = m_fTempoDelta*2.f + m_fPitch*2.f + m_fRate*2.f;
-	if(m_fTempoDelta!=0.f || m_fPitch!=0.f || m_fRate!=0.f)
-		size = (int)floor((float)size - (float)size*m_fTempoDelta/100.f);
-	return size;
+#ifdef VARIABLE_SIZE
+	if(m_fTempoDelta==0.f && m_fPitch==0.f && m_fRate==0.f)
+		return IFloopySoundFilter::GetSize();
+	else
+		return SIZE_VARIABLE;
+#else
+//	if(m_fTempoDelta != 0.f)
+//		return (int)ceil((float)size - (float)size*m_fTempoDelta/100.f);
+//	else
+//		return IFloopySoundFilter::GetSize();
+	return m_iSize;
+#endif
 }
 
 void CSoundTouch::Reset()
 {
 	m_SoundTouch.clear();
 	IFloopySoundFilter::Reset();
+	m_bFinished = false;
 }
 
 void CSoundTouch::Close()
@@ -156,6 +172,29 @@ void CSoundTouch::detectBPM()
 		m_SoundTouch.setTempoChange( m_fTempoDelta );
 	}
 }
+
+void CSoundTouch::getNewSize()
+{
+	m_iSize = 0;
+	m_fScale = 1;
+	if(m_fTempoDelta != 0.f)
+	{
+		int len;
+		BYTE buff[512];
+		while(EOF != (len=Read(buff, 512)))
+		{
+			m_iSize += len;
+		}
+		m_iSize /= m_iSamplesToBytes;
+		int origSize = IFloopySoundFilter::GetSize();
+		m_fScale = (float)m_iSize / (float)origSize;
+	}
+	else
+		m_iSize = IFloopySoundFilter::GetSize();
+}
+
+
+
 
 int CSoundTouch::GetPropertyCount()
 {
@@ -201,6 +240,7 @@ void CSoundTouch::SetPropertyVal(int index, float value)
 		m_fTempoDelta = value;
 		m_fTempo = value;
 		m_SoundTouch.setTempoChange(m_fTempoDelta);
+		getNewSize();
 		break;
 	case 1:
 		m_fPitch = value;
@@ -209,6 +249,7 @@ void CSoundTouch::SetPropertyVal(int index, float value)
 	case 2:
 		m_fRate = value;
 		m_SoundTouch.setRateChange(m_fRate);
+		getNewSize();
 		break;
 	case 3:
 		m_bQuickSeek = (value == 0.f);
@@ -221,6 +262,7 @@ void CSoundTouch::SetPropertyVal(int index, float value)
 	case 5:
 		m_fNewBPM = value;
 		detectBPM();
+		getNewSize();
 		break;
 	}
 }

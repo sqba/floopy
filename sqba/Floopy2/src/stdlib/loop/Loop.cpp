@@ -36,7 +36,7 @@ void CLoop::MoveTo(int samples)
 {
 	int size = IFloopySoundFilter::GetSize();
 
-	if(samples > size)
+	if(size>0 && samples>size)
 	{
 		samples = samples % size;
 		IFloopySoundFilter::Reset();

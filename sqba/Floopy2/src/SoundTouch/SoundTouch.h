@@ -46,6 +46,7 @@ public:
 
 private:
 	void detectBPM();
+	void getNewSize();
 
 private:
 	SoundTouch m_SoundTouch;
@@ -57,6 +58,10 @@ private:
 	bool m_bUseAAFilter;
 	float m_fNewBPM;
 	float m_fOrigBPM;
+	bool m_bFinished;
+	int m_iSize;
+	float m_fScale;
+	int m_iSamplesToBytes;
 };
 
 #endif // !defined(AFX_SNDTCH_H__E6C9AEA1_124C_4511_84A1_97E620527EC6__INCLUDED_)

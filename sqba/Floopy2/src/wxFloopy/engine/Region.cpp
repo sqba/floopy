@@ -281,7 +281,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 {
 	int start = m_iStartOffset;
-	if(start == -1)
+	if(start==-1 || SIZE_VARIABLE==m_iLengthNotLooped)
 	{
 		dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
 		return;
