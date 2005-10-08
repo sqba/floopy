@@ -59,6 +59,10 @@ int CSoundTouch::Read(BYTE *data, int size)
 	if(m_fTempoDelta==0.f && m_fPitch==0.f && m_fRate==0.f)
 		return IFloopySoundFilter::Read(data, size);
 
+	SOUNDFORMAT *fmt = GetFormat();
+	if(fmt->bitsPerSample==0 || fmt->channels==0)
+		return EOF;
+
 	int nBytes = 0;
 
 	int len = 0;
@@ -66,7 +70,6 @@ int CSoundTouch::Read(BYTE *data, int size)
 
 	BYTE *buffer = new BYTE[size];
 
-	SOUNDFORMAT *fmt = GetFormat();
 	int bytesPerSample = (fmt->bitsPerSample / 8) * fmt->channels;
 
 	if( !m_bFinished )
@@ -177,7 +180,7 @@ void CSoundTouch::getNewSize()
 {
 	m_iSize = 0;
 	m_fScale = 1;
-	if(m_fTempoDelta != 0.f)
+	if(m_fTempoDelta!=0.f && m_iSamplesToBytes!=0.f)
 	{
 		int len;
 		BYTE buff[512];
@@ -185,9 +188,13 @@ void CSoundTouch::getNewSize()
 		{
 			m_iSize += len;
 		}
-		m_iSize /= m_iSamplesToBytes;
-		int origSize = IFloopySoundFilter::GetSize();
-		m_fScale = (float)m_iSize / (float)origSize;
+		if(m_iSize > 0)
+		{
+			m_iSize /= m_iSamplesToBytes;
+			int origSize = IFloopySoundFilter::GetSize();
+			if(origSize > 0)
+				m_fScale = (float)m_iSize / (float)origSize;
+		}
 	}
 	else
 		m_iSize = IFloopySoundFilter::GetSize();
