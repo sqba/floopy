@@ -130,11 +130,15 @@ bool CPlayThread::Play(int sample)
 bool CPlayThread::Pause()
 {
 	if( wxThread::IsPaused() )
+	{
 		wxThread::Resume();
+		m_bPaused = false;
+	}
 	else if( wxThread::IsRunning() )
 	{
-		m_bPaused = true;
+		m_pOutput->Pause();
 		wxThread::Pause();
+		m_bPaused = true;
 	}
 
 	return true;
@@ -142,6 +146,9 @@ bool CPlayThread::Pause()
 
 void CPlayThread::Stop()
 {
+	if(NULL != m_pOutput)
+		m_pOutput->Reset();
+
 	if( wxThread::IsRunning() )
 		wxThread::Delete();
 		//wxThread::Exit();
@@ -171,4 +178,14 @@ void CPlayThread::SetStartPos(int pos)
 	m_iPosition = m_iStartPos;
 //	if(m_pInput)
 //		m_pInput->MoveTo( m_iPosition );
+}
+
+bool CPlayThread::IsPlaying()
+{
+	return m_bPlaying;
+}
+
+bool CPlayThread::IsPaused()
+{
+	return m_bPaused;
 }

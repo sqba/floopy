@@ -238,6 +238,7 @@ public:
 	void Stop();
 	void OnExitThread();
 	bool IsPlaying();
+	bool IsPaused();
 
 	int GetCursorPosition();
 	void SetCursorPosition(int pos);
@@ -682,8 +683,8 @@ public:
 
 	void OnExit();
 
-	bool IsPlaying()	{ return m_bPlaying; }
-	bool IsPaused()		{ return m_bPaused; }
+	bool IsPlaying();
+	bool IsPaused();
 
 	int GetPosition();
 

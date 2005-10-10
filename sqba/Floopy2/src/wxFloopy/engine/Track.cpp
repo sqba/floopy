@@ -934,7 +934,7 @@ void CTrack::Select(bool selected)
 
 	if(pTracks->IsPlaying())
 	{
-		bPlaying = true;
+		bPlaying = !pTracks->IsPaused();
 		pTracks->Stop();
 	}
 

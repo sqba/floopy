@@ -658,10 +658,7 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		return true;
 	case WXK_F5:
 	case WXK_SPACE:
-		if(IsPlaying())
-			Stop();
-		else
-			Play();
+		Play();
 		return true;
 	case WXK_PRIOR:
 	case WXK_PAGEUP:
@@ -804,27 +801,6 @@ int CTracks::CalcStep(int mindist)
 	return iStep;
 }
 
-void CTracks::Play()
-{
-	if(NULL == m_pPlayThread)
-	{
-		GetStatusBar()->SetStatusText("Failed to create play thread", 0);
-		return;
-	}
-
-	if(m_pPlayThread->IsPlaying())
-		Stop();
-
-	if(m_pPlayThread->IsPaused() || (wxTHREAD_NO_ERROR == m_pPlayThread->Create()))
-	{
-		GetStatusBar()->SetStatusText("Playing", 0);
-		m_iStartSample = GetCaretPos();
-		m_pPlayThread->Play( m_iStartSample );
-	}
-
-	m_Timer.Start();
-}
-
 void CTracks::OnExitThread()
 {
 	m_Timer.Stop();
@@ -835,33 +811,53 @@ void CTracks::OnExitThread()
 	m_pPlayThread = new CPlayThread(this);
 }
 
+void CTracks::Play()
+{
+	if(NULL != m_pPlayThread)
+	{
+		if( m_pPlayThread->IsPaused() )
+			m_pPlayThread->Pause();
+		else if( m_pPlayThread->IsPlaying() )
+		{
+			Stop();
+			return;
+		}
+		else if(wxTHREAD_NO_ERROR == m_pPlayThread->Create())
+		{
+			m_iStartSample = GetCaretPos();
+			m_pPlayThread->Play( m_iStartSample );
+			GetStatusBar()->SetStatusText("Playing", 0);
+		}
+
+		m_Timer.Start();
+	}
+}
+
 void CTracks::Pause()
 {
-	if(NULL == m_pPlayThread)
+	if(NULL != m_pPlayThread)
 	{
-		GetStatusBar()->SetStatusText("NULL == m_pPlayThread", 0);
-		return;
+		if(m_pPlayThread->IsPaused())
+			GetStatusBar()->SetStatusText("Playing", 0);
+		else
+			GetStatusBar()->SetStatusText("Paused", 1);
+		m_pPlayThread->Pause();
 	}
-
-	GetStatusBar()->SetStatusText("Paused", 1);
-	m_pPlayThread->Pause();
 }
 
 void CTracks::Stop()
 {
-	if(NULL == m_pPlayThread)
+	if(NULL != m_pPlayThread)
 	{
-		GetStatusBar()->SetStatusText("NULL == m_pPlayThread", 0);
-		return;
+		m_pPlayThread->Stop();
+
+		m_Timer.Stop();
+
+		SetCaretPos( m_iStartSample );
+		SetCursorPosition( m_iStartSample );
+
+		GetStatusBar()->SetStatusText("Idle", 1);
 	}
-
-	m_pPlayThread->Stop();
-	GetStatusBar()->SetStatusText("stoped", 1);
-
-	m_Timer.Stop();
-
-	SetCaretPos( m_iStartSample );
-	SetCursorPosition( m_iStartSample );
 }
 
 void CTracks::SetCaretPos(int samples)
@@ -970,6 +966,11 @@ void CTracks::SetCursorPosition(int samples)
 bool CTracks::IsPlaying()
 {
 	return m_pPlayThread ? m_pPlayThread->IsPlaying() : false;
+}
+
+bool CTracks::IsPaused()
+{
+	return m_pPlayThread ? m_pPlayThread->IsPaused() : false;
 }
 
 bool CTracks::GetViewUpdatedWhilePlaying()
