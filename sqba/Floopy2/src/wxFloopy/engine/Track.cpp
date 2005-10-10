@@ -293,7 +293,7 @@ CRegion *CTrack::GetRegion(int index)
 /////////////////////////////////////////////////////////////////////////////
 void CTrack::Refresh()
 {
-	CRulerView *panel = GetTracks()->GetRegionsView();
+	CRulerView *panel = GetTracks()->GetTimelineView();
 /*
 	int xOrig=0, yOrig=0;
 	panel->GetViewStart(&xOrig, &yOrig);

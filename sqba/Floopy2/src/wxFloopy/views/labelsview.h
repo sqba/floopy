@@ -44,10 +44,10 @@ public:
 	void OnKeyDown(wxKeyEvent& event);
 	void OnSize(wxSizeEvent& event);
 
-	void SetRegionsView(wxScrolledWindow *panel) { m_pRegionsView = panel; }
+	void SetTimelineView(wxScrolledWindow *panel) { m_pTimelineView = panel; }
 
 private:
-	wxScrolledWindow *m_pRegionsView;
+	wxScrolledWindow *m_pTimelineView;
 
 private:
     DECLARE_EVENT_TABLE()

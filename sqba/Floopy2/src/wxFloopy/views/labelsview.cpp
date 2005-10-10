@@ -28,9 +28,9 @@ CLabelsView::CLabelsView(CRulerView* parent, CTracks *tracks) : CMainView(parent
 void CLabelsView::OnDraw(wxDC& dc)
 {
 	int xScrollUnits=0, yScrollUnits=0;
-	m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	m_pTimelineView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 	
-	int y = m_pRegionsView->GetScrollPos(wxVERTICAL) * yScrollUnits;
+	int y = m_pTimelineView->GetScrollPos(wxVERTICAL) * yScrollUnits;
 	dc.SetDeviceOrigin( 0, -y );
 
 	m_pTracks->DrawLabels(dc, GetVirtualSize());
@@ -39,9 +39,9 @@ void CLabelsView::OnDraw(wxDC& dc)
 void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 {
 	int xScrollUnits=0, yScrollUnits=0;
-	m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	m_pTimelineView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 
-	int y = m_pRegionsView->GetScrollPos(wxVERTICAL) * yScrollUnits;
+	int y = m_pTimelineView->GetScrollPos(wxVERTICAL) * yScrollUnits;
 	CTrack *track = m_pTracks->GetTrackAt(event.GetY() + y);
 
 	if( event.ButtonDown(wxMOUSE_BTN_LEFT) )
@@ -51,7 +51,7 @@ void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 		if(track)
 			track->Select();
 
-		m_pRegionsView->SetFocus();
+		m_pTimelineView->SetFocus();
 	}
 
 	if( event.LeftDClick() )
@@ -59,7 +59,7 @@ void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 		if(track)
 			track->Select();
 
-		m_pRegionsView->SetFocus();
+		m_pTimelineView->SetFocus();
 	}
 
 	SetCursor( track ? wxCURSOR_HAND : *wxSTANDARD_CURSOR );
@@ -85,11 +85,11 @@ void CLabelsView::OnKeyDown(wxKeyEvent& event)
 				{
 				case '+':
 					track->SetHeight( track->GetHeight()+1 );
-					//m_pRegionsView->SetFocus();
+					//m_pTimelineView->SetFocus();
 					break;
 				case '-':
 					track->SetHeight( track->GetHeight()-1 );
-					//m_pRegionsView->SetFocus();
+					//m_pTimelineView->SetFocus();
 					break;
 				default:
 					return;

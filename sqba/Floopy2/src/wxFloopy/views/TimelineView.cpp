@@ -1,17 +1,17 @@
-// RegionsView.cpp: implementation of the CRegionsView class.
+// TimelineView.cpp: implementation of the CTimelineView class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "regionsview.h"
+#include "timelineview.h"
 //#include "../FloopyDoc.h"
 #include "rulers/timeruler.h"
 #include "rulers/sampleruler.h"
 
 
-BEGIN_EVENT_TABLE(CRegionsView, CCaretView)
-	EVT_MOUSE_EVENTS(CRegionsView::OnMouseEvent)
-	EVT_MOUSEWHEEL(CRegionsView::OnMouseWheel)
-	EVT_KEY_DOWN( CRegionsView::OnKeyDown )
+BEGIN_EVENT_TABLE(CTimelineView, CCaretView)
+	EVT_MOUSE_EVENTS(CTimelineView::OnMouseEvent)
+	EVT_MOUSEWHEEL(CTimelineView::OnMouseWheel)
+	EVT_KEY_DOWN( CTimelineView::OnKeyDown )
 END_EVENT_TABLE()
 
 
@@ -20,7 +20,7 @@ END_EVENT_TABLE()
 //////////////////////////////////////////////////////////////////////
 
 
-CRegionsView::CRegionsView(CRulerView* parent, wxScrolledWindow *labels, CTracks *tracks)
+CTimelineView::CTimelineView(CRulerView* parent, wxScrolledWindow *labels, CTracks *tracks)
  : CCaretView(parent, tracks)
 {
 	m_pObjMenu		= NULL;
@@ -28,7 +28,7 @@ CRegionsView::CRegionsView(CRulerView* parent, wxScrolledWindow *labels, CTracks
 	m_pLabelsView	= labels;
 	m_pSelectedObj	= NULL;
 	m_ptPrev.x = m_ptPrev.y = 0;
-//	m_pTracks->SetRegionsView(this);
+//	m_pTracks->SetTimelineView(this);
 	
 	SetCursor( wxCURSOR_PENCIL );
 
@@ -38,10 +38,10 @@ CRegionsView::CRegionsView(CRulerView* parent, wxScrolledWindow *labels, CTracks
 	SetTopRuler( new CTimeRuler(parent, tracks) );
 	SetBottomRuler( new CSampleRuler(parent, tracks) );
 
-	wxLog::AddTraceMask(_T("CRegionsView"));
+	wxLog::AddTraceMask(_T("CTimelineView"));
 }
 
-CRegionsView::~CRegionsView()
+CTimelineView::~CTimelineView()
 {
 	delete m_pParamsDialog;
 	delete m_pPropsDialog;
@@ -52,7 +52,7 @@ CRegionsView::~CRegionsView()
 	}*/
 }
 
-void CRegionsView::OnDraw(wxDC &dc)
+void CTimelineView::OnDraw(wxDC &dc)
 {
 	m_pTracks->DrawBG(dc);		// Draw track backgrounds
 	CCaretView::OnDraw(dc);		// Draw grid
@@ -75,7 +75,7 @@ void CRegionsView::OnDraw(wxDC &dc)
 */
 }
 
-void CRegionsView::ScrollWindow( int dx, int dy, const wxRect *rect )
+void CTimelineView::ScrollWindow( int dx, int dy, const wxRect *rect )
 {
 	CCaretView::ScrollWindow( dx, dy, rect );
 /*
@@ -98,14 +98,14 @@ void CRegionsView::ScrollWindow( int dx, int dy, const wxRect *rect )
 		m_pLabelsView->ScrollWindow( 0, dy, NULL );
 }
 
-void CRegionsView::OnKeyDown(wxKeyEvent& event)
+void CTimelineView::OnKeyDown(wxKeyEvent& event)
 {
 	IFloopyObj *obj = m_pTracks->GetSelectedObj();
 	if(NULL==obj || !obj->OnKeyDown(event))
 		m_pTracks->OnKeyDown(event);
 }
 
-void CRegionsView::OnMouseEvent(wxMouseEvent& event)
+void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 {
 	try {
 
@@ -260,7 +260,7 @@ void CRegionsView::OnMouseEvent(wxMouseEvent& event)
 	}
 	catch(...)
 	{
-		wxLogTrace(_T("CRegionsView"), _T("OnMouseEvent exception"));
+		wxLogTrace(_T("CTimelineView"), _T("OnMouseEvent exception"));
 	}
 
 	CCaretView::OnMouseEvent(event);
@@ -269,28 +269,28 @@ void CRegionsView::OnMouseEvent(wxMouseEvent& event)
 		m_pTracks->SetCursorPosition(m_pTracks->GetCaretPos());
 }
 
-void CRegionsView::OnMouseWheel(wxMouseEvent& event)
+void CTimelineView::OnMouseWheel(wxMouseEvent& event)
 {
-	// EVT_MOUSE_EVENTS( CRegionsView::OnMouseEvent )
+	// EVT_MOUSE_EVENTS( CTimelineView::OnMouseEvent )
 	
 	// Zameniti OnMouseEvent pojedinacnim eventima
 
-	// EVT_LEFT_DOWN( CRegionsView::OnLeftDown )
-	// EVT_LEFT_UP( CRegionsView::OnLeftUp )
-	// EVT_LEFT_DCLICK( CRegionsView::OnLeftDClick )
-	// EVT_MIDDLE_DOWN( CRegionsView::OnMiddleDown )
-	// EVT_MIDDLE_UP( CRegionsView::OnMiddleUp )
-	// EVT_MIDDLE_DCLICK( CRegionsView::OnMiddleDClick )
-	// EVT_RIGHT_DOWN( CRegionsView::OnRightDown )
-	// EVT_RIGHT_UP( CRegionsView::OnRightUp )
-	// EVT_RIGHT_DCLICK( CRegionsView::OnRightDClick )
-	// EVT_MOTION( CRegionsView::OnMouseMove )
-	// EVT_ENTER_WINDOW( CRegionsView::OnEnterWindow )
-	// EVT_LEAVE_WINDOW( CRegionsView::OnLeaveWindow )
-	// EVT_MOUSEWHEEL( CRegionsView::OnMouseWheel )
+	// EVT_LEFT_DOWN( CTimelineView::OnLeftDown )
+	// EVT_LEFT_UP( CTimelineView::OnLeftUp )
+	// EVT_LEFT_DCLICK( CTimelineView::OnLeftDClick )
+	// EVT_MIDDLE_DOWN( CTimelineView::OnMiddleDown )
+	// EVT_MIDDLE_UP( CTimelineView::OnMiddleUp )
+	// EVT_MIDDLE_DCLICK( CTimelineView::OnMiddleDClick )
+	// EVT_RIGHT_DOWN( CTimelineView::OnRightDown )
+	// EVT_RIGHT_UP( CTimelineView::OnRightUp )
+	// EVT_RIGHT_DCLICK( CTimelineView::OnRightDClick )
+	// EVT_MOTION( CTimelineView::OnMouseMove )
+	// EVT_ENTER_WINDOW( CTimelineView::OnEnterWindow )
+	// EVT_LEAVE_WINDOW( CTimelineView::OnLeaveWindow )
+	// EVT_MOUSEWHEEL( CTimelineView::OnMouseWheel )
 }
 
-void CRegionsView::ShowParamsDlg()
+void CTimelineView::ShowParamsDlg()
 {
 	IFloopyObj *obj = m_pTracks->GetSelectedObj();
 	if(NULL == obj)
@@ -300,7 +300,7 @@ void CRegionsView::ShowParamsDlg()
 	m_pParamsDialog->Show( true );
 }
 
-void CRegionsView::ShowPropertiesDlg()
+void CTimelineView::ShowPropertiesDlg()
 {
 	IFloopyObj *obj = m_pTracks->GetSelectedObj();
 	if(NULL == obj)
