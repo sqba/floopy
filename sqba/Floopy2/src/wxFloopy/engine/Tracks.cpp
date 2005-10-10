@@ -9,6 +9,10 @@
 #include "Tracks.h"
 #include "../../../IFloopy.h"
 
+typedef IFloopySoundEngine* (*CreateProc)(HMODULE);
+#define PROC_NAME "CreateSoundEngine"
+#define PLUG_EXT ".dll"
+
 //IMPLEMENT_DYNAMIC_CLASS(CTracks, IFloopyObj)
 
 WX_DEFINE_LIST(TracksList);
@@ -21,23 +25,18 @@ CTracks::CTracks() : IFloopyObj(NULL)
 {
 	wxLog::AddTraceMask(_T("CTracks"));
 
-	m_pRegionsView		= NULL;
+	m_pMaster			= NULL;
+	m_pTimelineView		= NULL;
 	m_pLabelsView		= NULL;
-//	m_hres				= 2756; // samples per pixel
-//	m_pps				= 16;	// pixels per second
-//	m_bpm				= 120;	// beats per minute
 	m_length			= 120;	// seconds
-//	m_iSamplesPerPixel	= 2205;
 	m_iPixelsPerSecond	= 32;
 	m_pBorder			= new CBorder(this);
 	m_pEngine			= NULL;
-	m_pMixer			= NULL;
 	m_bSnapTo			= true;
 	m_pPlayThread		= new CPlayThread(this);
 	m_pFrame			= NULL;
 	m_iCursorPosition	= 0;
 	m_bChanged			= false;
-//	m_pPlayThread		= NULL;
 	m_bViewUpdatedWhilePlaying = false;
 
 	memset(m_filename, 0, sizeof(m_filename));
@@ -60,9 +59,7 @@ CTracks::~CTracks()
 
 	if(NULL != m_pEngine)
 	{
-		//m_plugin->Close();
 		delete m_pEngine;
-
 		m_libEngine.Unload();
 	}
 }
@@ -185,7 +182,7 @@ bool CTracks::RemoveTrack(CTrack *track)
 
 	try
 	{
-		if( getMixer()->RemoveSource(track->GetSource()) )
+		if( m_pMaster->RemoveSource(track->GetSource()) )
 		{
 			if(m_tracks.DeleteObject( track ))
 			{
@@ -205,7 +202,6 @@ bool CTracks::RemoveTrack(CTrack *track)
 void CTracks::init()
 {
 	wxLogTrace(_T("CTracks"), _T("Initialization"));
-//	m_pPlayThread = new CPlayThread(this);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -280,8 +276,6 @@ void CTracks::DeselectAllTracks()
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
-		//if( track->IsSelected() )
-		//	track->Refresh();
 		track->Select(false);
 		node = node->GetNext();
 	}
@@ -383,22 +377,14 @@ void CTracks::Refresh()
 	int noUnitsX = GetWidth()  / ppu;
 	int noUnitsY = GetHeight() / ppu;
 
-	if( m_pRegionsView )
+	if( m_pTimelineView )
 	{
-		m_pRegionsView->SetScrollbars(ppu, ppu, noUnitsX+1, noUnitsY+1);
-		m_pRegionsView->Refresh();
+		m_pTimelineView->SetScrollbars(ppu, ppu, noUnitsX+1, noUnitsY+1);
+		m_pTimelineView->Refresh();
 	}
 
 	if( m_pLabelsView )
-	{
-		/*int width=0, height=0;
-		m_pLabelsView->GetSize(&width, &height);
-		m_pLabelsView->SetVirtualSize(width, noUnitsY+1);*/
-
 		m_pLabelsView->Refresh();
-	}
-
-//	SetCaretPos( GetCursorPosition() );
 }
 
 void CTracks::Invalidate()
@@ -412,98 +398,8 @@ void CTracks::Invalidate()
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// SetPixelsPerSecond
-//! Sets new horizontal resolution (pixels per second).
-//! \param pps [in] offset in pixels
-//! \return void
-/////////////////////////////////////////////////////////////////////////////
-/*void CTracks::SetPixelsPerSecond(int pps)
-{
-	if( 1 <= pps )
-	{
-		int x=0, y=0;
-		
-		int width1=0, height1=0;
-		m_pRegionsView->GetVirtualSize(&width1, &height1);
-
-		// Get previous caret position
-		int xc1=0, yc1=0;
-		wxCaret *caret = m_pRegionsView->GetCaret();
-		caret->GetPosition(&x, &y);
-		m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
-
-		// Get previous view position
-		int xs1 = m_pRegionsView->GetScrollPos(wxHORIZONTAL);
-		int ys1 = m_pRegionsView->GetScrollPos(wxVERTICAL);
-		int xScrollUnits, yScrollUnits;
-		m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-
-
-		m_pps = pps;
-
-		Invalidate();
-		Refresh();
-
-
-		int width2=0, height2=0;
-		m_pRegionsView->GetVirtualSize(&width2, &height2);
-
-		// Move caret
-		x = (int)(((float)width2  / (float)width1)  * (float)xc1);
-		y = (int)(((float)height2 / (float)height1) * (float)yc1);
-		int xxc2=0, yyc2=0;
-		m_pRegionsView->CalcScrolledPosition(x, y, &xxc2, &yyc2);
-		caret->Move(xxc2, yyc2);
-
-		// Move view
-		x = (int)(((float)width2  / (float)width1)  * (float)xs1);
-		y = (int)(((float)height2 / (float)height1) * (float)ys1);
-		m_pRegionsView->Scroll(x, y);
-	}
-}*/
-/*
-int CTracks::GetPixelsPerBeat()
-{
-	return 0;//(int)(((float)m_bpm / 60.f) * (float)GetPixelsPerSecond());
-}
-*/
-//int CTracks::GetPixelsPerSecond()
-//{
-//	return m_pps;
-	/*if(m_pEngine)
-	{
-		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-		int freq = fmt->frequency;
-		return freq / m_hres; // m_hres = samples per pixel
-	}
-	return 0;*/
-//}
-/*
-void CTracks::SetPixelsPerSample(int pps)
-{
-	if(m_pEngine)
-	{
-		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-		int freq = fmt->frequency;
-		m_pps = pps / freq;
-	}
-}
-
-int CTracks::GetPixelsPerSample()
-{
-	if(m_pEngine)
-	{
-		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-		int freq = fmt->frequency;
-		return m_pps * freq;
-	}
-	return 0;
-}
-*/
 int CTracks::GetSamplesPerPixel()
 {
-//	return m_hres;
 	if(m_pEngine)
 	{
 		SOUNDFORMAT *fmt = m_pEngine->GetFormat();
@@ -511,7 +407,6 @@ int CTracks::GetSamplesPerPixel()
 		return freq / m_iPixelsPerSecond;
 	}
 	return 0;
-//	return m_iSamplesPerPixel;
 }
 
 void CTracks::SetSamplesPerPixel(int spp)
@@ -519,99 +414,39 @@ void CTracks::SetSamplesPerPixel(int spp)
 	if( spp < 1 )
 		return;
 
-	/*int x=0, y=0;
-	
-	int width1=0, height1=0;
-	m_pRegionsView->GetVirtualSize(&width1, &height1);
-
-	// Get previous caret position
-	int xc1=0, yc1=0;
-	wxCaret *caret = m_pRegionsView->GetCaret();
-	caret->GetPosition(&x, &y);
-	m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
-
-	// Get previous view position
-	int xs1 = m_pRegionsView->GetScrollPos(wxHORIZONTAL);
-	int ys1 = m_pRegionsView->GetScrollPos(wxVERTICAL);
-	int xScrollUnits, yScrollUnits;
-	m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );*/
-
 	int pos = GetCaretPos();
 
-
-	//m_iSamplesPerPixel = spp;
 	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 	int freq = fmt->frequency;
 	m_iPixelsPerSecond = freq / spp;
 
-
 	Invalidate();
 	Refresh();
 
-
 	SetCaretPos( pos );
 
-
-	/*int width2=0, height2=0;
-	m_pRegionsView->GetVirtualSize(&width2, &height2);
-
-	// Move caret
-	x = (int)(((float)width2  / (float)width1)  * (float)xc1);
-	y = (int)(((float)height2 / (float)height1) * (float)yc1);
-	int xxc2=0, yyc2=0;
-	m_pRegionsView->CalcScrolledPosition(x, y, &xxc2, &yyc2);
-	caret->Move(xxc2, yyc2);
-
-	// Move view
-	x = (int)(((float)width2  / (float)width1)  * (float)xs1);
-	y = (int)(((float)height2 / (float)height1) * (float)ys1);
-	m_pRegionsView->Scroll(x, y);*/
-
-
 	CenterView( pos );
-
-
-
-	/*if( m_Timer.IsRunning() )
-	{
-		m_Timer.Stop();
-		m_Timer.Start();
-	}*/
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// SetRegionsView
+// SetTimelineView
 //! Sets the tracks display panel.
 //! \param panel [in] Pointer to the tracks display panel (wxScrolledWindow)
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CTracks::SetRegionsView(CRulerView *panel)
+void CTracks::SetTimelineView(CRulerView *panel)
 {
-	m_pRegionsView = panel;
+	m_pTimelineView = panel;
 	Refresh();
 }
 
 int CTracks::GetWidth()
 {
-	/*SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-	int freq = fmt->frequency;
-	int pps = freq / m_iSamplesPerPixel;
-
-	return m_length * (float)pps;*/
-
 	return m_length * (float)m_iPixelsPerSecond;
 }
 
 void CTracks::SetWidth(int width)
 {
-//	m_length = width / (float)m_pps;
-
-	/*SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-	int freq = fmt->frequency;
-	int pps = freq / m_iSamplesPerPixel;
-
-	m_length = width / (float)pps;*/
-
 	m_length = width / (float)m_iPixelsPerSecond;
 
 	Refresh();
@@ -627,7 +462,6 @@ void CTracks::changeHeight(int dy)
 		node = node->GetNext();
 	}
 	SetCaretPos( GetCaretPos() );
-	//Refresh();
 }
 
 void CTracks::Dump(ostream& stream)
@@ -646,10 +480,6 @@ void CTracks::Dump(ostream& stream)
 
 
 
-typedef IFloopySoundEngine* (*CreateProc)(HMODULE);
-#define PROC_NAME "CreateSoundEngine"
-#define PLUG_EXT ".dll"
-
 bool CTracks::createEngine(char *plugin)
 {
 	char *filename = new char[strlen(plugin) + 5];
@@ -657,18 +487,14 @@ bool CTracks::createEngine(char *plugin)
 	strcat(filename, PLUG_EXT);
 
 	bool result = false;
-	//wxDynamicLibrary dlib;
 
 	if( m_libEngine.Load(filename) ) {
-		//typedef void (*funcType)(IFloopyObj**);
 		CreateProc func = (CreateProc)m_libEngine.GetSymbol(_T(PROC_NAME));
 		if ( !func ) {
 			wxLogTrace(_T("CTrack"), _T("CreateDisplay function not found!"));
-			//sprintf(m_szLastError, "Error: %s not found in %s.\n", PROC_NAME, filename);
 		} else {
 			try {
 				m_pEngine = func( NULL );
-				//func( &m_pDisplay );
 				result = true;
 			} catch(...) {
 				wxLogTrace(_T("CEngine"), _T("CreateDisplay failed!"));
@@ -686,6 +512,8 @@ bool CTracks::Open(char *filename)
 {
 	bool result = false;
 
+	m_pMaster = NULL;
+
 	::wxSetCursor( *wxHOURGLASS_CURSOR );
 
 	if(m_pEngine)
@@ -696,48 +524,27 @@ bool CTracks::Open(char *filename)
 			strcpy(m_filename, filename);
 			Clear();
 			loadTracks(m_pEngine, m_pEngine, 0);
-			//loadTracks(m_pEngine->GetSource(), 0);
 			SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 			float freq = fmt->frequency;
 			m_pEngine->Reset();
 			m_length = (float)m_pEngine->GetSize() / freq;
 			m_length += 2; // seconds
-			//RefreshRulers();
-//			m_pPlayThread = new CPlayThread(this);
 			Refresh();
-			m_pMixer = getMixer();
 			result = true;
 		}
 		else
 		{
-			/*IFloopySoundInput *input = m_pEngine->CreateTrack(filename);
-			if(input)
-			{
-				if(!m_pMixer)
-				{
-					m_pMixer = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
-					m_pMixer->Enable(true);
-					m_pEngine->SetSource(m_pMixer);
-				}
-				IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateInput("stdlib.track");
-				track->SetSource(input);
-				track->SetDisplayName(filename, strlen(filename));
-				m_pMixer->AddSource(track);
-				addTrack(track, 0);
-				Refresh();
-				return true;
-			}*/
 			IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateTrack(filename);
 			if(track)
 			{
-				if(!m_pMixer)
+				if(!m_pMaster)
 				{
-					m_pMixer = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
-					m_pMixer->Enable(true);
-					m_pEngine->SetSource(m_pMixer);
+					m_pMaster = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
+					m_pMaster->Enable(true);
+					m_pEngine->SetSource( m_pMaster );
 				}
 				track->SetDisplayName(filename, strlen(filename));
-				if( m_pMixer->AddSource(track) > -1 )
+				if( m_pMaster->AddSource(track) > -1 )
 				{
 					addTrack(track, track, 0);
 					Refresh();
@@ -788,13 +595,14 @@ void CTracks::loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, in
 
 	if(input->GetType() == TYPE_FLOOPY_SOUND_MIXER)
 	{
-		IFloopySoundMixer *mixer = (IFloopySoundMixer*)input;
+		m_pMaster = (IFloopySoundMixer*)input;
 
-		int count = mixer->GetInputCount();
+		int count = m_pMaster->GetInputCount();
 		
 		for(int i=0; i<count; i++)
 		{
-			loadTracks(mixer->GetSource(i), mixer->GetSource(i), ++level);
+			IFloopySoundInput *track = m_pMaster->GetSource(i);
+			loadTracks(track, track, ++level);
 		}
 
 		return;
@@ -808,31 +616,18 @@ void CTracks::loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, in
 	
 	if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
 		addTrack(input, parent, 0);
-
-	//IFloopySoundInput *track = CTracks::FindComponentByName(input, "track");
-	//if(track)
-	//	loadTracks(input, 0);
-
 }
 
 void CTracks::Clear()
 {
-	/*if(m_pPlayThread)
-	{
-		delete m_pPlayThread;
-		m_pPlayThread = NULL;
-	}*/
-	if(m_pMixer)
-		m_pMixer->Close();
+	if(m_pMaster)
+		m_pMaster->Close();
 	WX_CLEAR_LIST(TracksList, m_tracks);
 	Refresh();
 }
 
 bool CTracks::OnKeyDown(wxKeyEvent& event)
 {
-//	int pps = GetPixelsPerSecond();
-//	int spp = GetSamplesPerPixel();
-
 	switch (event.GetKeyCode() )
 	{
 	case WXK_LEFT:
@@ -935,8 +730,6 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		}*/
 		return false;
 	}
-
-	//RefreshRulers();
 }
 
 void CTracks::OnMouseEvent(wxMouseEvent& event)
@@ -975,8 +768,6 @@ int CTracks::GetClosestGridPos(int pos)
 {
 	if(m_bSnapTo)
 	{
-		//int ppb = GetPixelsPerBeat();
-		
 		int nStep    = CalcStep(MIN_DISTANCE);
 		int nLine = (int)ceil( pos / nStep );
 		int result = nLine * nStep;
@@ -989,11 +780,8 @@ int CTracks::GetClosestGridPos(int pos)
 
 int CTracks::CalcStep(int mindist)
 {
-//	int res = (m_pps / mindist);
-
 	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 	int freq = fmt->frequency;
-//	int pps = m_iSamplesPerPixel / freq;
 	int pps = m_iPixelsPerSecond;
 	int res = (pps / mindist);
 
@@ -1003,11 +791,10 @@ int CTracks::CalcStep(int mindist)
 		res = res - 1;
 	res = (res <= 0 ? 1 : res);
 
-//	int iStep = m_pps / res;
 	int iStep = pps / res;
 
-	if(iStep == 0) // Ovde nastaje interesantan efekat: Kada je iStep = 0 i debager
-		iStep = 1; // se zaustavi, moze se debagovati samo masinski kod!
+	if(iStep == 0)
+		iStep = 1;
 
 	while(iStep < mindist)
 		iStep *= 2;
@@ -1079,37 +866,23 @@ void CTracks::Stop()
 
 void CTracks::SetCaretPos(int samples)
 {
-	wxCaret *caret = m_pRegionsView->GetCaret();
+	wxCaret *caret = m_pTimelineView->GetCaret();
 	if(NULL == caret)
 		return;
 
 	if(samples < 0)
 		samples = 0;
 
-	//if(samples > trackslength)
-	//	samples = trackslength;
-
 	int x = samples / GetSamplesPerPixel();
 	int y = 0;
 
-//	caret->Show(false);
-
 	int xc1, yc1;
 
-	/*int xScrollUnits=0, yScrollUnits=0;
-	m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-	int xOrig=0, yOrig=0;
-	m_pRegionsView->GetViewStart(&xOrig, &yOrig);
-	xOrig *= xScrollUnits;
-	yOrig *= yScrollUnits;*/
-
-	//x -= xOrig;
 	int height = this->GetHeight();
-	//int y = 0;
 
 	///////////////////////////////////////////////
 	// Mora da se popravi vertikalno skrolovanje
-	//m_pRegionsView->GetClientSize(NULL, &height);
+	//m_pTimelineView->GetClientSize(NULL, &height);
 	///////////////////////////////////////////////
 
 	IFloopyObj *obj = GetSelectedTrack();
@@ -1120,32 +893,26 @@ void CTracks::SetCaretPos(int samples)
 		y = pTrack->GetTop();
 	}
 
-	m_pRegionsView->CalcScrolledPosition(x, y, &xc1, &yc1);
-	//m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
-
-	//x -= xOrig;
-	//y -= yOrig;
+	m_pTimelineView->CalcScrolledPosition(x, y, &xc1, &yc1);
 
 	if(height > 0)
 	{
 		caret->SetSize(1, height);
 		caret->Move( xc1, yc1 );
-	//	caret->Show(true);
 	}
-	//else
-	//	caret->Show(false);
+
 	caret->Show(true);
 }
 
 int CTracks::GetCaretPos()
 {
-	wxCaret *caret = m_pRegionsView->GetCaret();
+	wxCaret *caret = m_pTimelineView->GetCaret();
 	if(NULL == caret)
 		return 0;
 
 	int x=0, y=0, xc1=0, yc1=0;
 	caret->GetPosition(&x, &y);
-	m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
+	m_pTimelineView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
 	return xc1 * GetSamplesPerPixel();
 }
 
@@ -1153,51 +920,23 @@ int CTracks::GetCaretPos()
 void CTracks::CenterView(int sample)
 {
 	int xScrollUnits=0, yScrollUnits=0;
-	m_pRegionsView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	m_pTimelineView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
 
 	int width=0, height=0;
-	m_pRegionsView->GetClientSize(&width, &height);
+	m_pTimelineView->GetClientSize(&width, &height);
 
 	int x = sample/GetSamplesPerPixel() - width/2;
 
-	m_pRegionsView->Scroll(x/xScrollUnits, 0);
-}
-
-IFloopySoundMixer *CTracks::getMixer()
-{
-	IFloopySoundInput *tmp = m_pEngine->GetSource();
-	while(tmp)
-	{
-		switch(tmp->GetType())
-		{
-		case TYPE_FLOOPY_SOUND_MIXER:
-			return (IFloopySoundMixer*)tmp;
-		case TYPE_FLOOPY_SOUND_INPUT:
-			return NULL;
-		default:
-			tmp = (IFloopySoundFilter*)((IFloopySoundFilter*)tmp)->GetSource();
-		}
-		/*if(tmp->GetType() == TYPE_FLOOPY_SOUND_MIXER)
-			return (IFloopySoundMixer*)tmp;
-		else if(tmp->GetType() != TYPE_FLOOPY_SOUND_INPUT)
-			tmp = (IFloopySoundFilter*)((IFloopySoundFilter*)tmp)->GetSource();
-		else
-			tmp = NULL;*/
-	}
-	return NULL;
+	m_pTimelineView->Scroll(x/xScrollUnits, 0);
 }
 
 int CTracks::GetCursorPosition()
 {
-	//return m_iCursorPosition;
 	return m_pPlayThread->GetPosition();
 }
 
 void CTracks::SetStatusText(int samples)
 {
-//	int size = m_pEngine->GetSize();
-//	int percent = (int)((float)samples * 100.f / (float)size);
-
 	float seconds = 0.f;
 	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 	if(fmt && fmt->frequency>0)
@@ -1210,8 +949,6 @@ void CTracks::SetStatusText(int samples)
 	csTime.Printf("%2.2d:%2.2d:%3.3d", (int)min, (int)sec, (int)ms);
 
 	wxString str;
-	//str.Printf("%d samples - %.4f seconds %d%%", samples, seconds, percent);
-	//str.Printf("%d samples / %.4f seconds", samples, seconds);
 	str.Printf("%d samples / %s", samples, csTime);
 
 	GetStatusBar()->SetStatusText(str, 1);
@@ -1225,28 +962,9 @@ void CTracks::SetCursorPosition(int samples)
 
 	if(IsPlaying())
 	{
-		//m_pPlayThread->Pause();
 		m_pPlayThread->SetStartPos(samples);
 		SetViewUpdatedWhilePlaying(true);
 	}
-
-	//m_pRegionsView->SetFocus();
-//	SetCaretPos( samples );
-
-/*
-	wxCaret *caret = m_pRegionsView->GetCaret();
-	if(NULL != caret)
-	{
-		int x=0, y=0;
-		//int xc1=0, yc1=0;
-		caret->GetPosition(&x, &y);
-		//m_pRegionsView->CalcUnscrolledPosition(x, y, &xc1, &yc1);
-
-		x = samples / GetSamplesPerPixel();
-		//m_pRegionsView->CalcScrolledPosition(x, y, &xc1, &yc1);
-		caret->Move(x, y);
-	}
-*/
 }
 
 bool CTracks::IsPlaying()
@@ -1257,7 +975,6 @@ bool CTracks::IsPlaying()
 bool CTracks::GetViewUpdatedWhilePlaying()
 {
 	return m_bViewUpdatedWhilePlaying;
-	//return IsPlaying() ? m_bViewUpdatedWhilePlaying : false;
 }
 
 void CTracks::SetViewUpdatedWhilePlaying(bool bUpdate)
@@ -1280,18 +997,7 @@ IFloopySoundInput *CTracks::FindComponentByName(IFloopySoundInput *src, char *na
 			return src;
 
 		int type = src->GetType();
-		/*switch(type)
-		{
-		case TYPE_FLOOPY_SOUND_FILTER:
-		case TYPE_FLOOPY_SOUND_MIXER:
-		case TYPE_FLOOPY_SOUND_TRACK:
-		{
-			src = ((IFloopySoundFilter*)src)->GetSource();
-			break;
-		}
-		default:
-			src = NULL;
-		}*/
+
 		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
 			src = ((IFloopySoundFilter*)src)->GetSource();
 		else
@@ -1427,25 +1133,6 @@ float CTracks::GetPropertyStep(int index)
 /////////////////////////////////////////////////////////////////////
 void CTracks::CTimer::Start()
 {
-	/*IFloopySoundEngine *pEngine = m_pTracks->GetEngine();
-	if(NULL == pEngine)
-		return;
-
-	SOUNDFORMAT *fmt = pEngine->GetFormat();
-	if(NULL == fmt)
-		return;
-
-	float freq = (float)fmt->frequency;
-	if(freq > 0.f)
-	{
-		float spp = (float)m_pTracks->GetSamplesPerPixel();
-		float seconds = spp / freq;
-		int milliseconds = (int)(seconds * 1000.f);
-		if(milliseconds < 1)
-			milliseconds = 1;
-		wxTimer::Start(milliseconds, wxTIMER_CONTINUOUS);
-	}*/
-
 	wxTimer::Start(1, wxTIMER_CONTINUOUS);
 }
 

@@ -302,8 +302,8 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	int y2 = rc.GetBottom();
 
 	int n=0;
-	wxPoint *points = new wxPoint[(loopCount+1)*6*2+4];
-	wxPoint *pointsBottom = new wxPoint[(loopCount+1)*6];
+	wxPoint *points			= new wxPoint[(loopCount+1)*6*2+4];
+	wxPoint *pointsBottom	= new wxPoint[(loopCount+1)*6];
 	int b=0;
 
 	// Vertical left
@@ -1110,28 +1110,7 @@ void CRegion::COffsetBar::DrawBG(wxDC &dc, wxRect &rc)
 	if(false)
 		DrawAquaRect(dc, wxRect(left, top, width, height), 2);
 	else
-	{
-		/*wxBrush oldbrush = dc.GetBrush();
-		wxPen oldpen = dc.GetPen();
-
-		dc.SetBrush( wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), wxSOLID) );
-
-		dc.SetPen( *wxTRANSPARENT_PEN );
-		dc.DrawRectangle(left, top, width, height);
-
-		dc.SetPen(*wxWHITE_PEN);
-		dc.DrawLine(left, top, right, top);			// top
-		dc.DrawLine(left, top, left, bottom);		// left
-
-		dc.SetPen(*wxMEDIUM_GREY_PEN);
-		dc.DrawLine(right-1, top, right-1, bottom);	// right
-		dc.DrawLine(left, bottom-1, right, bottom-1);	// bottom
-
-		dc.SetBrush( oldbrush );
-		dc.SetPen( oldpen );*/
-
 		DrawRect3D(dc, wxRect(left, top, width, height));
-	}
 }
 
 void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)

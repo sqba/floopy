@@ -184,11 +184,11 @@ public:
 	void UpdateSelectedRegions();
 
 
-	void SetRegionsView(CRulerView *panel);
-	void SetLabelsView(CRulerView *panel) { m_pLabelsView = panel; }
+	void SetTimelineView(CRulerView *panel);
+	void SetLabelsView(CRulerView *panel)		{ m_pLabelsView = panel; }
 	
-	CRulerView *GetRegionsView()			{ return m_pRegionsView; };
-	CRulerView *GetLabelsView()			{ return m_pLabelsView; };
+	CRulerView *GetTimelineView()				{ return m_pTimelineView; };
+	CRulerView *GetLabelsView()					{ return m_pLabelsView; };
 
 	void SetCaretPos(int samples);
 	int  GetCaretPos();
@@ -199,7 +199,7 @@ public:
 	float GetLength()							{ return m_length; }
 	void  SetLength(float len)					{ m_length = len; }
 
-	int GetTrackCount()								{ return m_tracks.GetCount(); }
+	int GetTrackCount()							{ return m_tracks.GetCount(); }
 
 	void DrawLabels(wxDC& dc, wxSize size);
 
@@ -222,7 +222,6 @@ public:
 	void Clear();
 
 	IFloopySoundInput *GetInput()				{ return m_pEngine; }
-	IFloopySoundEngine *GetEngine()				{ return m_pEngine; }
 
 	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
@@ -261,7 +260,6 @@ public:
 
 private:
 	CTrack *addTrack(IFloopySoundInput*, IFloopySoundInput*, int);
-	IFloopySoundMixer *getMixer();
 	bool createEngine(char *plugin);
 	void loadTracks(IFloopySoundInput*, IFloopySoundInput*, int);
 	void changeHeight(int dy);
@@ -269,10 +267,10 @@ private:
 
 private:
 	TracksList			m_tracks;
-	CRulerView			*m_pRegionsView, *m_pLabelsView;
-	CBorder				*m_pBorder;
 	IFloopySoundEngine	*m_pEngine;
-	IFloopySoundMixer	*m_pMixer;
+	IFloopySoundMixer	*m_pMaster;
+	CRulerView			*m_pTimelineView, *m_pLabelsView;
+	CBorder				*m_pBorder;
 	wxDynamicLibrary	m_libEngine;
 	CPlayThread			*m_pPlayThread;
 	int					m_iCursorPosition;
@@ -678,8 +676,8 @@ public:
 
 	void *Entry();
 
-	void Play(int sample);
-	void Pause();
+	bool Play(int sample);
+	bool Pause();
 	void Stop();
 
 	void OnExit();
@@ -695,10 +693,12 @@ private:
 	CTracks *m_pTracks;
 	int m_iStartPos;
 	bool m_bPlaying, m_bPaused;
-	IFloopySoundOutput *m_pOutput;
-	IFloopySoundInput *m_pInput;
+	IFloopySoundOutput	*m_pOutput;
+	IFloopySoundInput	*m_pInput;
+	IFloopySoundEngine	*m_pEngine;
 	int m_iBufferLength; // In samples
 	int m_iPosition; // In samples
+	int m_iSamplesToBytes;
 };
 
 

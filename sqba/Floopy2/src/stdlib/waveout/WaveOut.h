@@ -45,6 +45,10 @@ public:
 	int GetPosition();
 	void Reset();
 	void Flush();
+	void Pause();
+
+private:
+	void resume();
 
 private:
 	static void CALLBACK	waveOutProc(HWAVEOUT, UINT, DWORD, DWORD, DWORD);
@@ -55,5 +59,6 @@ private:
 	int				waveFreeBlockCount;
 	HWAVEOUT		m_hWaveOut;	// device handle
 	WAVEFORMATEX	m_wfx;
+	bool			m_bPaused;
 };
 #endif // !defined(AFX_WAVEOUT_H__E86DF3E1_4689_4FCA_9D36_21200D8A38EA__INCLUDED_)

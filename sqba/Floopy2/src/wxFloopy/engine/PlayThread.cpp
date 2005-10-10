@@ -99,17 +99,15 @@ bool CPlayThread::Play(int sample)
 	m_bPaused  = false;
 
 
+	m_pEngine = (IFloopySoundEngine*)m_pTracks->GetInput();
+	if(NULL != m_pEngine)
+		m_pInput = m_pEngine;
+
+
 	// Check if a track is selected
 	CTrack *track = m_pTracks->GetSelectedTrack();
 	if(track)
 		m_pInput = track->GetInput();
-
-
-	m_pEngine = (IFloopySoundEngine*)m_pTracks->GetInput();
-	if(NULL != m_pEngine)
-	{
-		m_pInput = m_pEngine;
-	}
 
 
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();

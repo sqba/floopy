@@ -661,6 +661,12 @@ public:
 			m_dest->Flush();
 	}
 
+	virtual void Pause()
+	{
+		if(NULL != m_dest)
+			m_dest->Pause();
+	}
+
 protected:
 	IFloopySoundOutput *m_dest;
 };

@@ -763,7 +763,7 @@ void CTrack::SetLooped(bool bLooped)
 			if(src->GetSize() == SIZE_INFINITE)
 				return; // No need
 
-			IFloopySoundEngine *engine = GetTracks()->GetEngine();
+			IFloopySoundEngine *engine = (IFloopySoundEngine*)GetTracks()->GetInput();
 			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateInput("stdlib.loop");
 			if(loop)
 			{

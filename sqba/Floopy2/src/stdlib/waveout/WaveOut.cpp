@@ -14,6 +14,8 @@ CWaveOut::CWaveOut(SOUNDFORMAT fmt) : IFloopySoundOutput(fmt)
 	waveBlocks         = allocateBlocks(BLOCK_SIZE, BLOCK_COUNT);
 	waveFreeBlockCount = BLOCK_COUNT;
 	waveCurrentBlock   = 0;
+
+	m_bPaused			= false;
 	
 	InitializeCriticalSection(&waveCriticalSection);
 
@@ -65,6 +67,9 @@ int CWaveOut::Write(BYTE *data, int size)
 {
 	WAVEHDR* current;
 	int remain;
+
+	if( m_bPaused )
+		resume();
 	
 	current = &waveBlocks[waveCurrentBlock];
 	
@@ -242,4 +247,16 @@ void CWaveOut::Flush()
     /*
      * playback can now continue
      */
+}
+
+void CWaveOut::Pause()
+{
+	waveOutPause( m_hWaveOut );
+	m_bPaused = true;
+}
+
+void CWaveOut::resume()
+{
+	waveOutRestart ( m_hWaveOut );
+	m_bPaused = false;
 }
