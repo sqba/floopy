@@ -22,16 +22,16 @@ CTracksView::CTracksView(wxWindow* parent, CTracks *tracks)
 	CLabelsView *pLabelsView = new CLabelsView(m_pLabelsView, m_pTracks);
 	m_pLabelsView->SetView( pLabelsView );
 
-	m_pRegionsView = new CRulerView(this);
-	CRegionsView *pRegionsView = new CRegionsView(m_pRegionsView, m_pLabelsView, m_pTracks);
-	m_pRegionsView->SetView( pRegionsView );
+	m_pTimelineView = new CRulerView(this);
+	CTimelineView *pTimelineView = new CTimelineView(m_pTimelineView, m_pLabelsView, m_pTracks);
+	m_pTimelineView->SetView( pTimelineView );
 
-	pLabelsView->SetRegionsView(m_pRegionsView);
+	pLabelsView->SetTimelineView(m_pTimelineView);
 
-	m_pTracks->SetRegionsView( m_pRegionsView );
+	m_pTracks->SetTimelineView( m_pTimelineView );
 	m_pTracks->SetLabelsView( m_pLabelsView );
 
-    SplitVertically(m_pLabelsView, m_pRegionsView, 100);
+    SplitVertically(m_pLabelsView, m_pTimelineView, 100);
 }
 
 CTracksView::~CTracksView()
@@ -46,8 +46,8 @@ bool CTracksView::Open(char *filename)
 		wxString str;
 		str.Printf("Floopy! - %s", filename);
 		SetTitle( str );
-		//m_pRegionsView->RefreshRulers();
-		m_pRegionsView->SetFocus();
+		//m_pTimelineView->RefreshRulers();
+		m_pTimelineView->SetFocus();
 
 		UINT r=0, g=0, b=0;
 		IFloopySoundEngine *engine = (IFloopySoundEngine*)m_pTracks->GetInput();
@@ -56,7 +56,7 @@ bool CTracksView::Open(char *filename)
 			wxColor color = wxColor(r, g, b);
 
 			m_pLabelsView->SetBackgroundColour( color );
-			m_pRegionsView->SetBackgroundColour( color );
+			m_pTimelineView->SetBackgroundColour( color );
 		}
 		return true;
 	}
@@ -73,12 +73,12 @@ bool CTracksView::Save()
 
 void CTracksView::ShowParamsDlg()
 {
-	((CRegionsView*)m_pRegionsView->GetView())->ShowParamsDlg();
+	((CTimelineView*)m_pTimelineView->GetView())->ShowParamsDlg();
 }
 
 void CTracksView::ShowPropertiesDlg()
 {
-	((CRegionsView*)m_pRegionsView->GetView())->ShowPropertiesDlg();
+	((CTimelineView*)m_pTimelineView->GetView())->ShowPropertiesDlg();
 }
 
 /*

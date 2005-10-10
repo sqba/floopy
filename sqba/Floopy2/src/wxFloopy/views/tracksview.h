@@ -12,7 +12,7 @@
 #include <wx/splitter.h>
 
 #include "labelsview.h"
-#include "regionsview.h"
+#include "timelineview.h"
 #include "rulerview.h"
 
 class CTracksView : public wxSplitterWindow  
@@ -34,7 +34,7 @@ public:
 private:
 	CTracks		*m_pTracks;
 	CRulerView	*m_pLabelsView;
-	CRulerView	*m_pRegionsView;
+	CRulerView	*m_pTimelineView;
 };
 
 #endif // !defined(AFX_FLOOPYVIEW_H__7E793800_358E_41AA_B7DB_B3F81FBB2B02__INCLUDED_)

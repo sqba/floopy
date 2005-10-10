@@ -164,15 +164,15 @@ SOURCE=.\engine\RegionDisplay.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\views\regionsview.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\views\RulerView.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\views\rulers\SampleRuler.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\views\TimelineView.cpp
 # End Source File
 # Begin Source File
 
@@ -236,10 +236,6 @@ SOURCE=.\views\MainView.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\views\regionsview.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\resource.h
 # End Source File
 # Begin Source File
@@ -249,6 +245,10 @@ SOURCE=.\views\RulerView.h
 # Begin Source File
 
 SOURCE=.\views\rulers\SampleRuler.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\views\TimelineView.h
 # End Source File
 # Begin Source File
 
