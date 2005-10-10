@@ -27,81 +27,29 @@ CPlayThread::~CPlayThread()
 
 void *CPlayThread::Entry()
 {
-	if(!m_pTracks || m_iStartPos<0)
+	if(!m_pTracks || m_iStartPos<0 || !m_pEngine || !m_pInput || !m_pOutput)
 		return NULL;
 
-	IFloopySoundEngine	*engine = m_pTracks->GetEngine();
-	m_pInput = engine;
+	int len	= 0;										// bytes
+	m_iPosition = m_iStartPos;							// samples
 
-	if(!engine)
-		return NULL;
-
-	// Check if a track is selected
-	CTrack *track = m_pTracks->GetSelectedTrack();
-	if(track)
-		m_pInput = track->GetInput();
-
-	if(!m_pInput)
-		return NULL;
-
-	SOUNDFORMAT *fmt = m_pInput->GetFormat();
-	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-
-	m_pOutput = engine->CreateOutput("stdlib.waveout", *fmt);
-	if(!m_pOutput)
-		return NULL;
-
-	int stb	= (fmt->bitsPerSample/8) * fmt->channels; // samples to bytes
-	//int pos	= m_iStartPos;	// samples
-	int len	= 0;			// bytes
-	m_iPosition = m_iStartPos;
-
-	//int bufflen = fmt->frequency * stb; // !!Problemi na pochetku regiona
-	//int bufflen = fmt->frequency * stb / 10;
-	int bufflen = m_iBufferLength * stb;
+	int bufflen = m_iBufferLength * m_iSamplesToBytes;	// bytes
 	BYTE *buff = new BYTE[bufflen];
 
-	engine->EmptyBuffer( buff, bufflen );
-	//int size = m_pInput->GetSize();		// Recalculate variables
-	m_pInput->Reset();					// Recalculate variables
-	m_pInput->MoveTo( m_iStartPos );	// Move to cursor position
+	m_pEngine->EmptyBuffer( buff, bufflen );			// Fill with silence
+	m_pInput->Reset();									// Recalculate variables
+	m_pInput->MoveTo( m_iStartPos );					// Move to cursor position
 
 	m_pOutput->Reset();
 
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	int totalLength = m_pTracks->GetLength() * fmt->frequency;
-/*
-	// Play till the end of the track
-	while((len=m_pInput->Read(buff, bufflen)) != EOF)
+
+	//while((len=m_pInput->Read(buff, bufflen)) != EOF)	// Play till the end of the track
+	while(m_iPosition < totalLength)					// Play till the end of the project
 	{
-		// If the view has been resized horizontally the position is lost.
-		if(m_pTracks->GetViewUpdatedWhilePlaying())
-		{
-			m_pTracks->SetViewUpdatedWhilePlaying(true);
-			engine->MoveTo( m_iPosition );
-		}
-
-		if(len == 0)
-			len = bufflen;
-
-		m_iPosition += len / stb;
-		m_pOutput->Write( buff, len );
-		engine->EmptyBuffer( buff, bufflen );
-
-		if ( TestDestroy() )
-			break;
-	}
-*/
-	// Play till the end of the project
-	while(m_iPosition<totalLength)
-	{
-		try
-		{
-			len = m_pInput->Read(buff, bufflen);
-		}
-		catch(...)
-		{
-			break;
-		}
+		len = m_pInput->Read(buff, bufflen);			// Play till the end of the project
 
 		// If the view has been resized horizontally the position is lost.
 		if(m_pTracks->GetViewUpdatedWhilePlaying())
@@ -110,12 +58,13 @@ void *CPlayThread::Entry()
 			m_pInput->MoveTo( m_iPosition );
 		}
 
-		if(len == EOF)
+		//if(len == 0)									// Play till the end of the track
+		if(len == EOF)									// Play till the end of the project
 			len = bufflen;
 
-		m_iPosition += len / stb;
+		m_iPosition += len / m_iSamplesToBytes;
 		m_pOutput->Write( buff, len );
-		engine->EmptyBuffer( buff, bufflen );
+		m_pEngine->EmptyBuffer( buff, bufflen );
 
 		if ( TestDestroy() )
 			break;
@@ -124,9 +73,15 @@ void *CPlayThread::Entry()
 	// Wait for output to finish!!!
 	if( !TestDestroy() )
 	{
+		int endPos = totalLength;
+		int pos=0, prev=0;
 		do {
-			wxThread::Sleep(1000);
-		} while(m_iPosition < m_pOutput->GetPosition());
+			prev = pos;
+			pos = GetPosition();
+			if(prev == pos)
+				break;
+			wxThread::Sleep(10);
+		} while(pos < endPos);
 	}
 
 	m_pOutput->Flush();
@@ -138,10 +93,30 @@ void *CPlayThread::Entry()
 	return NULL;
 }
 
-void CPlayThread::Play(int sample)
+bool CPlayThread::Play(int sample)
 {
 	m_bPlaying = true;
 	m_bPaused  = false;
+
+
+	// Check if a track is selected
+	CTrack *track = m_pTracks->GetSelectedTrack();
+	if(track)
+		m_pInput = track->GetInput();
+
+
+	m_pEngine = (IFloopySoundEngine*)m_pTracks->GetInput();
+	if(NULL != m_pEngine)
+	{
+		m_pInput = m_pEngine;
+	}
+
+
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
+	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+	m_iSamplesToBytes = (fmt->bitsPerSample/8) * fmt->channels;
+	m_pOutput = m_pEngine->CreateOutput("stdlib.waveout", *fmt);
+
 
 	if( wxThread::IsPaused() )
 		wxThread::Resume();
@@ -150,9 +125,11 @@ void CPlayThread::Play(int sample)
 		m_iStartPos = sample;
 		wxThread::Run();
 	}
+
+	return true;
 }
 
-void CPlayThread::Pause()
+bool CPlayThread::Pause()
 {
 	if( wxThread::IsPaused() )
 		wxThread::Resume();
@@ -161,6 +138,8 @@ void CPlayThread::Pause()
 		m_bPaused = true;
 		wxThread::Pause();
 	}
+
+	return true;
 }
 
 void CPlayThread::Stop()
