@@ -29,7 +29,7 @@ public:
 
 public:
 //	CParameter() {}
-	CParameter(CRegion *region, IFloopySoundInput *obj, int index);
+	CParameter(CRegion *region, IFloopySoundInput *obj, int index, bool bAfterTrack, wxColor color=*wxCYAN);
 	virtual ~CParameter();
 
 	int GetType()	{ return FLOOPY_PARAMETER; }
@@ -37,6 +37,7 @@ public:
 	IFloopyObj *GetChildAt(int x, int y);
 	float GetValueAt(int x);
 	void DrawFore(wxDC& dc, wxRect& rc);
+//	void DrawBG(wxDC& dc, wxRect& rc);
 	bool HitTest(int x, int y);
 
 private:
@@ -50,6 +51,7 @@ private:
 	int		m_iSamplePos, m_iPrevSamplePos;
 	CPoint	*m_pPoint;
 	IFloopySoundInput *m_pObj;
+	bool m_bAfterTrack;
 };
 
 

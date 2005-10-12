@@ -13,34 +13,21 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CParameter::CParameter(CRegion *region, IFloopySoundInput *obj, int index)
+CParameter::CParameter(CRegion *region, IFloopySoundInput *obj, int index, bool bAfterTrack, wxColor color)
  : IFloopyObj(region)
 {
 	m_index  = index;
-	m_color  = *wxCYAN;
+	m_color  = color;
 	m_pPoint = new CPoint(this);
 
-	m_pObj = obj;
+	m_bAfterTrack = bAfterTrack;
 
-	
-	
-	/*IFloopySoundInput *input = getTrack()->GetInput();
-	int offset = 0;
-	do {
-		float value = 0.f;
-		if(input->GetParamVal(m_index, &value))
-		{
-			m_Offsets.Add(offset);
-		}
-		offset = input->GetNextOffset(offset);
-	} while (offset > 0);
-	int c = m_Offsets.Count();*/
+	m_pObj = obj;
 }
 
 CParameter::~CParameter()
 {
 	delete m_pPoint;
-//	WX_CLEAR_ARRAY(m_Offsets);
 }
 
 float CParameter::GetValueAt(int x)
@@ -51,10 +38,6 @@ float CParameter::GetValueAt(int x)
 	IFloopySoundInput *input = getTrack()->GetInput();
 	if( input->GetParamAt(offset, m_index, &value) )
 		return value;
-	else
-	{
-		//int prev = input->GetPrevOffset(offset);
-	}
 	return 0.f;
 }
 /*
@@ -71,20 +54,22 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 	if(max > 0)
 	{
 		int hres	= getTracks()->GetSamplesPerPixel();
-		int offset	= getRegion()->GetStartPos();
+		int start	= getRegion()->GetStartPos();
 		int end		= getRegion()->GetEndPos();
+		//int top		= rc.GetTop();
 		int bottom	= rc.GetTop() + rc.GetHeight();
 		int min		= input->GetParamMin(m_index);
+		if(min == 0)
+			min = 1;
 		int left	= rc.GetX();
 		int right	= rc.GetX()+rc.GetWidth();
-		float scale = (float)rc.GetHeight() / (float)(max - min);
+		float scale = (float)(min * rc.GetHeight()) / (float)max;
 		float value = 0.f;
 		int prevX	= left;
 		int prevY	= bottom;
+		int offset	= m_bAfterTrack ? 0 : start;
 
-		//wxBrush oldBrush = dc.GetBrush();
 		wxPen oldpen = dc.GetPen();
-		//dc.SetBrush( wxBrush(m_color) );
 		dc.SetPen( wxPen(m_color) );
 
 		bool bDrawCircle = true;
@@ -98,19 +83,22 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 		do {
 			if(input->GetParamAt(offset, m_index, &value))
 			{
-				int x = bDrawCircle ? offset / hres : getRegion()->GetStartPos() / hres;
+				int x = offset;
 				int y = (int)((float)bottom - (value * scale));
-				
-				if( bDrawCircle )
-					dc.DrawCircle(prevX+1, y, 3);
-					//dc.DrawRectangle(prevX-2, y-2, 5, 5);
 
-				bDrawCircle = true;
+				if(m_bAfterTrack)
+					x += start;
+				x /= hres;
 				
 				if(prevX > left)
-					dc.DrawLine(prevX, prevY, prevX, y);
+					dc.DrawLine(prevX, prevY, prevX, y);	// Vertical line
 				
-				dc.DrawLine(prevX, y, x, y);
+				dc.DrawLine(prevX, y, x, y);				// Horizontal line
+
+				if( bDrawCircle )
+					dc.DrawCircle(prevX+1, y, 3);			// Parameter
+
+				bDrawCircle = true;
 
 				prevX = x;
 				prevY = y;

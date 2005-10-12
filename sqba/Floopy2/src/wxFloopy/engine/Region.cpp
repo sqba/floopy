@@ -47,6 +47,10 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 
 	m_pDisplay = new CRegionDisplay(this);
 
+	IFloopySoundInput *input = CTracks::FindComponentByName(track->GetInput(), "volume");
+	if(NULL != input)
+		loadParameters( input );
+
 	Invalidate();
 }
 
@@ -487,7 +491,7 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	dc.SetPen(oldpen);
 	///////////////////////////////////////////////////////
 
-//	drawParametersFore(dc, rce);
+	drawParametersFore(dc, rce);
 }
 
 wxColor CRegion::GetBGColor()
@@ -924,11 +928,36 @@ void CRegion::loadParameters(IFloopySoundInput *obj)
 	if(NULL == obj)
 		return;
 
+
+
+	////////////////////////////////////////////////////////
+	bool bAfterTrack = false; // Is obj source of track?
+	IFloopySoundInput *track = getTrack()->GetTrack();
+	IFloopySoundInput *tmp = track;
+
+	while(tmp)
+	{
+		if(obj == tmp)
+		{
+			bAfterTrack = true;
+			break;
+		}
+
+		int type = tmp->GetType();
+		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
+			tmp = ((IFloopySoundFilter*)tmp)->GetSource();
+		else
+			tmp = NULL;
+	}
+	////////////////////////////////////////////////////////
+
+
+
 	WX_CLEAR_LIST(ParameterList, m_Parameters);
 
 	for(int index=0; index<obj->GetParamCount(); index++)
 	{
-		m_Parameters.Append( new CParameter(this, obj, index) );
+		m_Parameters.Append( new CParameter(this, obj, index, bAfterTrack) );
 	}
 }
 
