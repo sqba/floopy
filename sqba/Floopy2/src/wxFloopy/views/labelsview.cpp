@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "LabelsView.h"
+#include "../engine/track.h"
 
 
 BEGIN_EVENT_TABLE( CLabelsView, CMainView )

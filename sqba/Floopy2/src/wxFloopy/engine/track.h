@@ -8,9 +8,6 @@
 #include "ObjTypes.h"
 
 
-//#include "engine.h"
-
-
 #include <wx/string.h>
 #include <strstrea.h>
 

@@ -3,9 +3,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "timelineview.h"
-//#include "../FloopyDoc.h"
 #include "rulers/timeruler.h"
 #include "rulers/sampleruler.h"
+#include "../engine/track.h"
+#include "../engine/region.h"
 
 
 BEGIN_EVENT_TABLE(CTimelineView, CCaretView)

@@ -31,12 +31,11 @@
 //#include <wx/dragimag.h>
 //#include <wx/generic/dragimgg.h>
 
-#include <wx/docview.h>
+//#include <wx/docview.h>
 
-#include "labelsview.h"
+//#include "labelsview.h"
 #include "caretview.h"
-#include "../engine/tracks.h"
-
+#include "../engine/engine.h"
 #include "../dialogs/controldlg.h"
 
 class CTimelineView : public CCaretView

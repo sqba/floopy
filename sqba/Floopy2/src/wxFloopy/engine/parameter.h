@@ -30,7 +30,7 @@ public:
 	};
 
 public:
-	CParameter() {}
+//	CParameter() {}
 	CParameter(CRegion *region, IFloopySoundInput *obj, int index);
 	virtual ~CParameter();
 

@@ -20,7 +20,6 @@
 #include "floopyobj.h"
 #include "../views/rulerview.h"
 
-//#include "engine.h"
 #include "objtypes.h"
 
 
