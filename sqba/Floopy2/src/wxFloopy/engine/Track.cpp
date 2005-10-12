@@ -20,18 +20,17 @@ WX_DEFINE_LIST(RegionList);
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *parent, int level)
+CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
  : IFloopyObj(tracks)
 {
 	wxLog::AddTraceMask(_T("CTrack"));
 
 	m_nLevel = level;
 
-	m_pInput = CTracks::FindComponentByName(input, "track");
+	m_pInput = input;
+	m_pTrack = CTracks::FindComponentByName(input, "track");
 
-	m_pSource = parent;
-
-	assert(NULL != m_pInput);
+	assert(NULL != m_pTrack);
 
 
 	char *name = input->GetDisplayName();
@@ -44,10 +43,10 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *par
 
 	/*m_height  = MIN_HEIGHT*3;
 	int index = 0;
-	if(m_pInput->GetPropertyIndex("height", &index))
+	if(m_pTrack->GetPropertyIndex("height", &index))
 	{
 		float val = 0;
-		if(m_pInput->GetPropertyVal(index, &val))
+		if(m_pTrack->GetPropertyVal(index, &val))
 			m_height = (int)val;
 	}*/
 
@@ -169,8 +168,8 @@ CRegion *CTrack::AddNewRegionAt(int left)
 	int end   = start + nSamplesPerPixel;
 
 	// Dodati novi event u input
-	m_pInput->EnableAt(start, true);
-	m_pInput->EnableAt(end, false);
+	m_pTrack->EnableAt(start, true);
+	m_pTrack->EnableAt(end, false);
 
 	CRegion *region = new CRegion( this, start, end );
 	try {
@@ -389,10 +388,10 @@ int CTrack::GetHeight()
 {
 	int height = MIN_HEIGHT*3;
 	int index = 0;
-	if(m_pInput->GetPropertyIndex("height", &index))
+	if(m_pTrack->GetPropertyIndex("height", &index))
 	{
 		float val = 0;
-		if(m_pInput->GetPropertyVal(index, &val))
+		if(m_pTrack->GetPropertyVal(index, &val))
 			height = (int)val;
 	}
 
@@ -411,9 +410,9 @@ void CTrack::SetHeight(int height)
 	if( MIN_HEIGHT <= height )
 	{
 		int index = 0;
-		if(m_pInput->GetPropertyIndex("height", &index))
+		if(m_pTrack->GetPropertyIndex("height", &index))
 		{
-			m_pInput->SetPropertyVal(index, (float)height);
+			m_pTrack->SetPropertyVal(index, (float)height);
 
 			Refresh();
 			
@@ -496,17 +495,17 @@ void CTrack::Select(bool sel)
 void CTrack::loadRegions()
 {
 	int start=-1, end=-1;
-	SOUNDFORMAT *fmt = m_pInput->GetFormat();
+	SOUNDFORMAT *fmt = m_pTrack->GetFormat();
 	float freq = (float)fmt->frequency;
 
-	m_pInput->Reset();
+	m_pTrack->Reset();
 
 	int offset=0;
 	do {
-		m_pInput->MoveTo(offset);
+		m_pTrack->MoveTo(offset);
 
 		float paramVal = 0.f;
-		if(m_pInput->GetParamVal(TIMELINE_PARAM_ENABLE, &paramVal))
+		if(m_pTrack->GetParamVal(TIMELINE_PARAM_ENABLE, &paramVal))
 		{
 			if((paramVal == PARAM_VALUE_ENABLED) && (start == -1))
 				start = offset;
@@ -518,12 +517,12 @@ void CTrack::loadRegions()
 			}
 		}
 
-		offset = m_pInput->GetNextOffset(offset);
+		offset = m_pTrack->GetNextOffset(offset);
 	} while (offset > 0);
 
 	if(end == -1 && start >= 0)
 	{
-		end = m_pInput->GetSize();
+		end = m_pTrack->GetSize();
 		AddRegion(start, end);
 	}
 }
@@ -759,9 +758,9 @@ void CTrack::SetLooped(bool bLooped)
 	}
 	else if(bLooped)
 	{
-		if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+		if(m_pTrack->GetType() == TYPE_FLOOPY_SOUND_TRACK)
 		{
-			IFloopySoundInput *src = ((IFloopySoundFilter*)m_pInput)->GetSource();
+			IFloopySoundInput *src = ((IFloopySoundFilter*)m_pTrack)->GetSource();
 			if(src->GetSize() == SIZE_INFINITE)
 				return; // No need
 
@@ -773,7 +772,7 @@ void CTrack::SetLooped(bool bLooped)
 				loop->SetBypass(false);
 
 				loop->SetSource( src );
-				((IFloopySoundFilter*)m_pInput)->SetSource( loop );
+				((IFloopySoundFilter*)m_pTrack)->SetSource( loop );
 
 				Invalidate();
 				Refresh();
@@ -803,9 +802,9 @@ void CTrack::SetReverse(bool bReverse)
 	}
 	else if(bReverse)
 	{
-		if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+		if(m_pTrack->GetType() == TYPE_FLOOPY_SOUND_TRACK)
 		{
-			IFloopySoundInput *src = ((IFloopySoundFilter*)m_pInput)->GetSource();
+			IFloopySoundInput *src = ((IFloopySoundFilter*)m_pTrack)->GetSource();
 			while(src && src->GetSize() == SIZE_INFINITE)
 			{
 				/*int t = src->GetType();
@@ -831,7 +830,7 @@ void CTrack::SetReverse(bool bReverse)
 				reverse->SetBypass(false);
 
 				reverse->SetSource( src );
-				((IFloopySoundFilter*)m_pInput)->SetSource( reverse );
+				((IFloopySoundFilter*)m_pTrack)->SetSource( reverse );
 
 				Invalidate();
 				Refresh();
@@ -844,10 +843,10 @@ bool CTrack::GetReset()
 {
 	return m_bReset;
 
-	/*if(m_pInput->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+	/*if(m_pTrack->GetType() == TYPE_FLOOPY_SOUND_TRACK)
 	{
 		float value =0.f;
-		if(m_pInput->GetParamAt(0, 0, &value))
+		if(m_pTrack->GetParamAt(0, 0, &value))
 			return value != 0.f;
 	}
 	return false;*/
@@ -868,7 +867,7 @@ void CTrack::SetReset(bool bReset)
 
 IFloopySoundInput *CTrack::FindComponentByName(char *name)
 {
-	return CTracks::FindComponentByName(m_pInput, name);
+	return CTracks::FindComponentByName(m_pTrack, name);
 }
 
 void CTrack::InvalidateRegions(CRegion *start)
@@ -890,7 +889,7 @@ void CTrack::InvalidateRegions(CRegion *start)
 wxColor CTrack::GetColor()
 {
 	/*UINT r, g, b;
-	if( m_pInput->GetColor(&r, &g, &b) )
+	if( m_pTrack->GetColor(&r, &g, &b) )
 		return wxColor(r, g, b);
 	else*/
 		return m_color;
@@ -899,8 +898,8 @@ wxColor CTrack::GetColor()
 void CTrack::SetColor(wxColor color)
 {
 	m_color = color;
-	if(m_pInput)
-		m_pInput->SetColor(color.Red(), color.Green(), color.Blue());
+	if(m_pTrack)
+		m_pTrack->SetColor(color.Red(), color.Green(), color.Blue());
 }
 
 wxColor CTrack::GetBGColor()
@@ -953,12 +952,12 @@ int CTrack::GetCaretPos()
 
 	float value = 0;
 	int offset = 0;
-	if(m_pInput->GetParamAt(pos, TIMELINE_PARAM_MOVETO, &value))
+	if(m_pTrack->GetParamAt(pos, TIMELINE_PARAM_MOVETO, &value))
 		pos -= (int)value;
 	else
 	{
-		int prev = m_pInput->GetPrevOffset( pos, TIMELINE_PARAM_MOVETO );
-		if(m_pInput->GetParamAt(prev, TIMELINE_PARAM_MOVETO, &value))
+		int prev = m_pTrack->GetPrevOffset( pos, TIMELINE_PARAM_MOVETO );
+		if(m_pTrack->GetParamAt(prev, TIMELINE_PARAM_MOVETO, &value))
 		{
 			pos -= prev + (int)value;
 		}

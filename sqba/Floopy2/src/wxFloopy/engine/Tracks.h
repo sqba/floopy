@@ -241,9 +241,9 @@ public:
 	static IFloopySoundInput *FindComponentByName(IFloopySoundInput*, char*);
 
 private:
-	CTrack *addTrack(IFloopySoundInput*, IFloopySoundInput*, int);
+	CTrack *addTrack(IFloopySoundInput*, int);
 	bool createEngine(char *plugin);
-	void loadTracks(IFloopySoundInput*, IFloopySoundInput*, int);
+	void loadTracks(IFloopySoundInput*, int);
 	void changeHeight(int dy);
 	void init();
 

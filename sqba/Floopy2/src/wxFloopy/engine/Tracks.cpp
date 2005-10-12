@@ -141,11 +141,11 @@ void CTracks::DrawLabels(wxDC& dc, wxSize size)
 	dc.SetFont(oldFont);
 }
 
-CTrack *CTracks::addTrack(IFloopySoundInput *input, IFloopySoundInput *parent, int level)
+CTrack *CTracks::addTrack(IFloopySoundInput *input, int level)
 {
 	wxLogTrace(_T("CTracks"), _T("Adding new track"));
 
-	CTrack *track = new CTrack( this, input, parent, level );
+	CTrack *track = new CTrack( this, input, level );
 
 	UINT r=255, g=255, b=255;
 	input = track->GetInput();
@@ -525,7 +525,7 @@ bool CTracks::Open(char *filename)
 			memset(m_filename, 0, sizeof(m_filename));
 			strcpy(m_filename, filename);
 			Clear();
-			loadTracks(m_pEngine, m_pEngine, 0);
+			loadTracks(m_pEngine, 0);
 			SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 			float freq = fmt->frequency;
 			m_pEngine->Reset();
@@ -548,7 +548,7 @@ bool CTracks::Open(char *filename)
 				track->SetDisplayName(filename, strlen(filename));
 				if( m_pMaster->AddSource(track) > -1 )
 				{
-					addTrack(track, track, 0);
+					addTrack(track, 0);
 					Refresh();
 					result = true;
 				}
@@ -590,7 +590,7 @@ void CTracks::RefreshTracks(CTrack *startTrack)
 	}
 }
 
-void CTracks::loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, int level)
+void CTracks::loadTracks(IFloopySoundInput *input, int level)
 {
 	if(!input)
 		return;
@@ -604,7 +604,8 @@ void CTracks::loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, in
 		for(int i=0; i<count; i++)
 		{
 			IFloopySoundInput *track = m_pMaster->GetSource(i);
-			loadTracks(track, track, ++level);
+//			loadTracks(track, track, ++level);
+			addTrack(track, 0);
 		}
 
 		return;
@@ -613,11 +614,11 @@ void CTracks::loadTracks(IFloopySoundInput *input, IFloopySoundInput *parent, in
 	{
 		int type = input->GetType();
 		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
-			loadTracks(((IFloopySoundFilter*)input)->GetSource(), parent, ++level);
+			loadTracks(((IFloopySoundFilter*)input)->GetSource(), ++level);
 	}
 	
-	if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
-		addTrack(input, parent, 0);
+	//if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
+	//	addTrack(input, parent, 0);
 }
 
 void CTracks::Clear()

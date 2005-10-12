@@ -115,7 +115,7 @@ public:
 
 public:
 //	CTrack() {}
-	CTrack(CTracks *tracks, IFloopySoundInput *input, IFloopySoundInput *parent, int level);
+	CTrack(CTracks *tracks, IFloopySoundInput *input, int level);
 	virtual ~CTrack();
 
 	int GetType()	{ return FLOOPY_TRACK; }
@@ -156,8 +156,9 @@ public:
 
 	void Dump(ostream& stream);
 
+	IFloopySoundInput *GetTrack()	{ return m_pTrack; }
 	IFloopySoundInput *GetInput()	{ return m_pInput; }
-	IFloopySoundInput *GetSource()	{ return m_pSource; }
+	IFloopySoundInput *GetSource()	{ return m_pInput; }
 
 	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
@@ -208,11 +209,11 @@ private:
 	wxString	m_name;
 	wxBitmap	*m_pBitmap;
 	CBorder		*m_pBorder;
+	IFloopySoundInput *m_pTrack;
 	IFloopySoundInput *m_pInput;
 
 	bool		m_bReset;
 
-	IFloopySoundInput *m_pSource;
 	CTrackLabel	*m_pLabel;
 };
 

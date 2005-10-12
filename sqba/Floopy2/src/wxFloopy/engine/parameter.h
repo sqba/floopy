@@ -2,8 +2,6 @@
 #define Parameter_H
 
 
-#include "../../../ifloopy.h"
-#include "../FloopyControl.h"
 #include "floopyobj.h"
 #include "ObjTypes.h"
 
