@@ -6,7 +6,9 @@
 #include <wx/wx.h>
 #include <wx/caret.h>
 
-#include "Tracks.h"
+#include "tracks.h"
+#include "track.h"
+#include "playthread.h"
 #include "../../../IFloopy.h"
 
 typedef IFloopySoundEngine* (*CreateProc)(HMODULE);

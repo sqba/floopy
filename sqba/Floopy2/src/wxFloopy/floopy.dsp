@@ -204,6 +204,10 @@ SOURCE=.\dialogs\ControlDlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\engine\engine.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FloopyApp.h
 # End Source File
 # Begin Source File
@@ -236,6 +240,26 @@ SOURCE=.\views\MainView.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\engine\ObjTypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\engine\parameter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\engine\playthread.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\engine\region.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\engine\regiondisplay.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\resource.h
 # End Source File
 # Begin Source File
@@ -253,6 +277,10 @@ SOURCE=.\views\TimelineView.h
 # Begin Source File
 
 SOURCE=.\views\rulers\TimeRuler.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\engine\track.h
 # End Source File
 # Begin Source File
 

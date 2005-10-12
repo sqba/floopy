@@ -4,6 +4,10 @@
 
 #include <math.h>
 #include "tracks.h"
+#include "track.h"
+#include "region.h"
+#include "parameter.h"
+#include "regiondisplay.h"
 #include "../util/util.h"
 
 //IMPLEMENT_DYNAMIC_CLASS(CRegion, IFloopyObj)
@@ -1047,6 +1051,31 @@ int CRegion::GetCaretPos()
 	}*/
 		
 	return pos;
+}
+
+wxColor CRegion::GetColor()
+{
+	return getTrack()->GetColor();
+}
+
+int CRegion::GetHeight()
+{
+	return getTrack()->GetHeight() - 2;
+}
+
+int CRegion::GetTop()
+{
+	return getTrack()->GetTop() + 1;
+}
+
+IFloopySoundInput *CRegion::GetInput()
+{
+	return getTrack()->GetInput();
+}
+
+CTracks *CRegion::getTracks()
+{
+	return (CTracks*)getTrack()->GetParent();
 }
 
 

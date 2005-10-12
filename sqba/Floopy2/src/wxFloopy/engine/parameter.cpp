@@ -3,6 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "tracks.h"
+#include "track.h"
+#include "region.h"
+#include "parameter.h"
 
 //IMPLEMENT_DYNAMIC_CLASS(CParameter, IFloopyObj)
 
@@ -203,6 +206,16 @@ bool CParameter::HitTest(int x, int y)
 	}
 
 	return false;
+}
+
+CTrack *CParameter::getTrack()
+{
+	return (CTrack*)getRegion()->GetParent();
+}
+
+CTracks *CParameter::getTracks()
+{
+	return (CTracks*)getTrack()->GetParent();
 }
 
 void CParameter::CPoint::Move(int dx, int WXUNUSED(dy))

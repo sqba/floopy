@@ -4,7 +4,6 @@
 
 #include "ControlDlg.h"
 
-
 //#include <wx/arrimpl.cpp>
 //WX_DEFINE_OBJARRAY(LabelArray);
 

@@ -28,11 +28,11 @@
 #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#include <wx/docview.h>
+//#include <wx/docview.h>
 #include <wx/log.h>
 
 #include "MainView.h"
-#include "../engine/tracks.h"
+#include "../engine/engine.h"
 
 class CLabelsView : public CMainView
 {

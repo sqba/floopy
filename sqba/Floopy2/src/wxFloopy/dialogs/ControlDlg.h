@@ -14,7 +14,7 @@
 #include <wx/stattext.h>
 #include <wx/slider.h>
 
-#include "../engine/tracks.h"
+#include "../engine/engine.h"
 
 
 //WX_DECLARE_OBJARRAY(wxStaticText, LabelArray);

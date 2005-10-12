@@ -3,7 +3,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <math.h>
-#include "../engine/Tracks.h"
+#include "../engine/tracks.h"
+#include "../engine/track.h"
+#include "../engine/region.h"
+#include "../engine/regiondisplay.h"
 
 //#include <wx/dcbuffer.h>
 
@@ -14,8 +17,10 @@
 
 #define SAMPLE	short int
 
+
 #include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(PeaksArray);
+
 
 CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
 {

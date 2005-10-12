@@ -4,7 +4,9 @@
 
 //#include "Track.h"
 #include <stdio.h>
+#include "track.h"
 #include "tracks.h"
+#include "region.h"
 #include "../util/util.h"
 #include <wx/caret.h>
 
@@ -970,7 +972,10 @@ bool CTrack::HitTest(int y)
 	return (y>m_top && y<m_top+GetHeight());
 }
 
-
+int CTrack::GetWidth()
+{
+	return GetTracks()->GetWidth();
+}
 
 
 
