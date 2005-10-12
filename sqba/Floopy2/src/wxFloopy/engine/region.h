@@ -2,13 +2,12 @@
 #define Region_H
 
 
-#include "../../../ifloopy.h"
-#include "../FloopyControl.h"
 #include "floopyobj.h"
 #include "ObjTypes.h"
 
 
 class CParameter;
+class CRegionDisplay;
 
 
 WX_DECLARE_LIST(CParameter, ParameterList);

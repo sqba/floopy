@@ -2,8 +2,6 @@
 #define RegionDisplay_H
 
 
-#include "../../../ifloopy.h"
-#include "../FloopyControl.h"
 #include "floopyobj.h"
 #include "ObjTypes.h"
 
@@ -18,6 +16,8 @@ struct Peak
 
 WX_DECLARE_OBJARRAY(Peak, PeaksArray);
 
+
+class CRegion;
 
 class CRegionDisplay : public IFloopyObj
 {
@@ -53,23 +53,24 @@ private:
 
 private:
 	IFloopySoundInput	*m_pInput;
-	CRegion				*m_pRegion;
-	bool				m_bLoaded;
-	PeaksArray			m_peaks;
 
-	CTrack				*m_pTrack;
-	CTracks				*m_pTracks;
+	CRegion		*m_pRegion;
+	bool		m_bLoaded;
+	PeaksArray	m_peaks;
 
-	bool				m_bDrawVertical;
+	CTrack		*m_pTrack;
+	CTracks		*m_pTracks;
 
-	wxMemoryDC			m_tempDC;
-	wxBitmap			m_tempBitmap;
-	bool				m_bRepaint;
+	bool		m_bDrawVertical;
+
+	wxMemoryDC	m_tempDC;
+	wxBitmap	m_tempBitmap;
+	bool		m_bRepaint;
 
 	// Properties
-	float				m_fdB;
-	bool				m_bDrawDBLines;
-	bool				m_bDrawContour;
+	float		m_fdB;
+	bool		m_bDrawDBLines;
+	bool		m_bDrawContour;
 };
 
 

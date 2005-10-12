@@ -2,23 +2,20 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <math.h>
-#include "../engine/tracks.h"
 #include "../engine/track.h"
 #include "../engine/region.h"
+#include "../engine/tracks.h"
 #include "../engine/regiondisplay.h"
 
+
+#include <math.h>
+#include <wx/arrimpl.cpp>
 //#include <wx/dcbuffer.h>
 
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 #define SAMPLE	short int
 
 
-#include <wx/arrimpl.cpp>
 WX_DEFINE_OBJARRAY(PeaksArray);
 
 
@@ -521,6 +518,7 @@ int CRegionDisplay::getMaxSampleValue()
 
 	return max;
 }
+
 
 
 int CRegionDisplay::GetPropertyCount()

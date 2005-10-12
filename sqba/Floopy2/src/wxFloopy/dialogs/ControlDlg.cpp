@@ -3,9 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "ControlDlg.h"
-
-//#include <wx/arrimpl.cpp>
-//WX_DEFINE_OBJARRAY(LabelArray);
+#include "../engine/region.h"
 
 
 BEGIN_EVENT_TABLE( CControlDlg, wxDialog )

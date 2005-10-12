@@ -76,7 +76,7 @@ void CRegion::Remove()
 
 	if(m_bEdit)
 	{
-		IFloopySoundInput *track = getTrack()->GetInput();
+		IFloopySoundInput *track = getTrack()->GetTrack();
 		assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) );
 		assert( track->ResetParamAt(m_iPrevEnd,   TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) );
 		float value = 0.f;
@@ -85,7 +85,7 @@ void CRegion::Remove()
 	}
 	else
 	{
-		IFloopySoundInput *track = getTrack()->GetInput();
+		IFloopySoundInput *track = getTrack()->GetTrack();
 		assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) );
 		assert( track->ResetParamAt(m_iEndSample,   TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) );
 		float value = 0.f;
@@ -716,7 +716,7 @@ void CRegion::Update()
 {
 	bool bRefresh = true;
 
-	IFloopySoundInput *track = getTrack()->GetInput();
+	IFloopySoundInput *track = getTrack()->GetTrack();
 
 	if(m_iStartSample < 0)
 		m_iStartSample = 0;
@@ -740,12 +740,12 @@ void CRegion::Update()
 		}
 
 		float value = 0;
-		if(getTrack()->GetInput()->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
+		if(track->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
 		{
 			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, value, m_iStartSample) )
 			{
 				assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, value) );
-				getTrack()->GetInput()->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+				track->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
 			}
 
 			//assert( getReset( m_iStartSample ) );
@@ -827,7 +827,7 @@ bool CRegion::OnKeyDown(wxKeyEvent& event)
 			if(offset > 0)
 			{
 				float value = 0.f;
-				if(getTrack()->GetInput()->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
+				if(getTrack()->GetTrack()->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 					offset += (int)value;
 				SetStartOffset( offset );
 				Update();
@@ -950,7 +950,7 @@ bool CRegion::GetReset()
 	return getReset( m_iStartSample );
 
 	/*float value = 0.f;
-	if(getTrack()->GetInput()->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
+	if(getTrack()->GetTrack()->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 		return value==0.f;
 	else
 		return false;*/
@@ -959,14 +959,14 @@ bool CRegion::GetReset()
 bool CRegion::HasStartOffset()
 {
 	float value = 0.f;
-	IFloopySoundInput *input = getTrack()->GetInput();
+	IFloopySoundInput *input = getTrack()->GetTrack();
 	return(input->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value));
 }
 
 bool CRegion::getReset(int sample)
 {
 	float value = 0.f;
-	IFloopySoundInput *input = getTrack()->GetInput();
+	IFloopySoundInput *input = getTrack()->GetTrack();
 	if(input->GetParamAt(sample, TIMELINE_PARAM_MOVETO, &value))
 		return value==0.f;
 	else
@@ -976,7 +976,7 @@ bool CRegion::getReset(int sample)
 int CRegion::getStartOffset()
 {
 	float value = 0;
-	IFloopySoundInput *input = getTrack()->GetInput();
+	IFloopySoundInput *input = getTrack()->GetTrack();
 	if(input->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 		return (int)value;
 	return -1;
@@ -991,7 +991,7 @@ void CRegion::SetReset(bool bReset)
 		SetStartOffset(0);
 	else
 	{
-		IFloopySoundInput *track = getTrack()->GetInput();
+		IFloopySoundInput *track = getTrack()->GetTrack();
 
 		float value = 0;
 		if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
@@ -1013,7 +1013,7 @@ void CRegion::SetStartOffset(int sample)
 	//formatTime(sec, csLabel);
 */
 
-	IFloopySoundInput *track = getTrack()->GetInput();
+	IFloopySoundInput *track = getTrack()->GetTrack();
 
 	float value = 0;
 	if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
@@ -1041,7 +1041,7 @@ int CRegion::GetCaretPos()
 
 	/*float value = 0;
 	int offset = 0;
-	IFloopySoundInput *track = getTrack()->GetInput();
+	IFloopySoundInput *track = getTrack()->GetTrack();
 	if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 		pos -= m_iStartSample + (int)value;*/
 
