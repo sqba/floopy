@@ -54,14 +54,16 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 	if(max > 0)
 	{
 		int hres	= getTracks()->GetSamplesPerPixel();
-		int start	= getRegion()->GetStartPos();
-		int end		= getRegion()->GetEndPos();
+		//int start	= getRegion()->GetStartPos();
+		//int end		= getRegion()->GetEndPos();
 		int startOffset = getRegion()->GetStartOffset();
 		int top		= rc.GetTop();
 		int bottom	= rc.GetTop() + rc.GetHeight();
 		int min		= input->GetParamMin(m_index);
-		int left	= rc.GetX();
-		int right	= rc.GetX()+rc.GetWidth();
+		int left	= rc.GetX()+1;
+		int right	= left+rc.GetWidth()-1;
+		int start	= left * hres;
+		int end		= right * hres;
 		m_fScale	= (float)rc.GetHeight() / (float)(max - min);
 		float value = 0.f;
 		int prevX	= left;
@@ -103,7 +105,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 					}
 					else
 					{
-						dc.DrawLine(prevX, prevY, left, prevY);	// Horizontal line
+						//dc.DrawLine(prevX, prevY, left, prevY);	// Horizontal line
 						prevX = left;
 					}
 
@@ -115,7 +117,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 			offset = input->GetNextOffset(offset);
 		} while ( (offset > 0) && (offset < end) );
 
-		if(bDrawCircle) // there have been parameters!
+		if(prevX < right) // there have been parameters!
 			dc.DrawLine(prevX, prevY, right, prevY);
 
 		dc.SetPen(oldpen);
