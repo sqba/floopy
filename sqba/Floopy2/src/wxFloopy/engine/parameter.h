@@ -20,7 +20,7 @@ public:
 		CPoint(CParameter *parameter) : IFloopyObj(parameter) { m_offset = 0; }
 		virtual ~CPoint() {}
 
-		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZENS); }
+		wxCursor GetCursor() { return wxCursor(m_bValueOnly ? wxCURSOR_SIZENS : wxCURSOR_SIZING); }
 
 		void Move(int dx, int dy);
 
@@ -30,6 +30,7 @@ public:
 		IFloopySoundInput *m_pObj;
 		int m_index;
 		float m_value;
+		bool m_bValueOnly;
 	};
 
 public:

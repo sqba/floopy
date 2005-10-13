@@ -132,8 +132,14 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 	if(max != 0)
 	{
 		int samplesPerPixel = getTracks()->GetSamplesPerPixel();
-		int offset = x * samplesPerPixel;
+
+		//int startOffset = getRegion()->GetStartOffset();
+		int start = getRegion()->GetStartPos();
+		if(m_bAfterTrack)
+			x -= start/samplesPerPixel;
 		
+		int offset = x * samplesPerPixel;
+
 		float value = 0.f;
 
 		if( !m_pObj->GetParamAt(offset, m_index, &value) )
@@ -146,6 +152,31 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 				int next = m_pObj->GetNextOffset(offset, m_index);
 				if(next>0 && samplesPerPixel>=next-offset)
 					offset = next;
+				else if( m_pObj->GetParamAt(prev, m_index, &value) )
+				{
+					if((prev==0 || offset>prev) && (next==0 || offset<=next))
+					{
+						//int min		= m_pObj->GetParamMin(m_index);
+						//int height	= getRegion()->GetHeight();
+						int bottom	= getRegion()->GetTop() + getRegion()->GetHeight();
+						//float scale	= (float)height / (float)(max - min);
+						
+						int tmpY = (int)((float)bottom - (value * m_fScale));
+						if(tmpY >= y-1 && tmpY <= y+1)
+						{
+							m_pPoint->m_offset = prev;
+							m_pPoint->m_samplesPerPixel = samplesPerPixel;
+							m_pPoint->m_fScale = m_fScale;
+							m_pPoint->m_pObj = m_pObj;
+							m_pPoint->m_index = m_index;
+							m_pPoint->m_value = value;
+							m_pPoint->m_bValueOnly = true;
+							return m_pPoint;
+						}
+						//else
+						//	return NULL;
+					}
+				}
 				else
 					return NULL;
 			}
@@ -153,12 +184,12 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 
 		if( m_pObj->GetParamAt(offset, m_index, &value) )
 		{
-			int min		= m_pObj->GetParamMin(m_index);
-			int height	= getRegion()->GetHeight();
+			//int min		= m_pObj->GetParamMin(m_index);
+			//int height	= getRegion()->GetHeight();
 			int bottom	= getRegion()->GetTop() + getRegion()->GetHeight();
-			float scale	= (float)height / (float)(max - min);
+			//float scale	= (float)height / (float)(max - min);
 			
-			int tmpY = bottom - (value * scale);
+			int tmpY = (int)((float)bottom - (value * m_fScale));
 			if(tmpY >= y-1 && tmpY <= y+1)
 			{
 				m_pPoint->m_offset = offset;
@@ -167,6 +198,7 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 				m_pPoint->m_pObj = m_pObj;
 				m_pPoint->m_index = m_index;
 				m_pPoint->m_value = value;
+				m_pPoint->m_bValueOnly = false;
 				return m_pPoint;
 			}
 		}
@@ -215,7 +247,7 @@ void CParameter::CPoint::Move(int dx, int dy)
 	//int offset = x * samplesPerPixel;
 	int offset = m_offset;
 
-	if(dx != 0)
+	if(dx!=0 && !m_bValueOnly)
 	{
 		offset += dx*m_samplesPerPixel;
 		if( m_pObj->MoveParam(m_offset, m_index, m_value, offset) )
