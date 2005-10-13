@@ -219,7 +219,10 @@ void CParameter::CPoint::Move(int dx, int dy)
 	{
 		offset += dx*m_samplesPerPixel;
 		if( m_pObj->MoveParam(m_offset, m_index, m_value, offset) )
+		{
+			m_offset = offset;
 			bRefresh = true;
+		}
 		else
 			offset = m_offset;
 	}
