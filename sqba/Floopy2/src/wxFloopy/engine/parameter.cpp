@@ -56,14 +56,16 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 		int hres	= getTracks()->GetSamplesPerPixel();
 		int start	= getRegion()->GetStartPos();
 		int end		= getRegion()->GetEndPos();
+		int startOffset = getRegion()->GetStartOffset();
 		//int top		= rc.GetTop();
 		int bottom	= rc.GetTop() + rc.GetHeight();
 		int min		= input->GetParamMin(m_index);
-		if(min == 0)
-			min = 1;
+		//if(min == 0)
+		//	min = 1;
 		int left	= rc.GetX();
 		int right	= rc.GetX()+rc.GetWidth();
-		float scale = (float)(min * rc.GetHeight()) / (float)max;
+		//float scale = (float)(min * rc.GetHeight()) / (float)max;
+		float scale = (float)rc.GetHeight() / (float)(max - min);
 		float value = 0.f;
 		int prevX	= left;
 		int prevY	= bottom;
@@ -87,16 +89,17 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 				int y = (int)((float)bottom - (value * scale));
 
 				if(m_bAfterTrack)
-					x += start;
+					x += start-startOffset;
 				x /= hres;
-				
-				if(prevX > left)
-					dc.DrawLine(prevX, prevY, prevX, y);	// Vertical line
-				
-				dc.DrawLine(prevX, y, x, y);				// Horizontal line
 
+				if(x<left)
+					x = left;
+				
+				dc.DrawLine(prevX, prevY, x, prevY);// Horizontal line
+				dc.DrawLine(x, prevY, x, y);		// Vertical line
+				
 				if( bDrawCircle )
-					dc.DrawCircle(prevX+1, y, 3);			// Parameter
+					dc.DrawCircle(x+1, y, 3);		// Parameter
 
 				bDrawCircle = true;
 
@@ -108,7 +111,6 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 
 		dc.DrawLine(prevX, prevY, right, prevY);
 
-		//dc.SetBrush( oldBrush );
 		dc.SetPen(oldpen);
 	}
 }
