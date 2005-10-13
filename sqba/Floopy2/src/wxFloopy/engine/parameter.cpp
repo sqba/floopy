@@ -115,7 +115,8 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 			offset = input->GetNextOffset(offset);
 		} while ( (offset > 0) && (offset < end) );
 
-		dc.DrawLine(prevX, prevY, right, prevY);
+		if(bDrawCircle) // there have been parameters!
+			dc.DrawLine(prevX, prevY, right, prevY);
 
 		dc.SetPen(oldpen);
 	}
@@ -135,8 +136,9 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 
 		//int startOffset = getRegion()->GetStartOffset();
 		int start = getRegion()->GetStartPos();
+		int startOffset = getRegion()->GetStartOffset();
 		if(m_bAfterTrack)
-			x -= start/samplesPerPixel;
+			x -= (start-startOffset)/samplesPerPixel;
 		
 		int offset = x * samplesPerPixel;
 
