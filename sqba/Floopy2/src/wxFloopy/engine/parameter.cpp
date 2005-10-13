@@ -62,7 +62,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 		int min		= input->GetParamMin(m_index);
 		int left	= rc.GetX();
 		int right	= rc.GetX()+rc.GetWidth();
-		float scale = (float)rc.GetHeight() / (float)(max - min);
+		m_fScale	= (float)rc.GetHeight() / (float)(max - min);
 		float value = 0.f;
 		int prevX	= left;
 		int prevY	= bottom;
@@ -83,7 +83,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 			if(input->GetParamAt(offset, m_index, &value))
 			{
 				int x = offset;
-				int y = (int)((float)bottom - (value * scale));
+				int y = (int)((float)bottom - (value * m_fScale));
 
 				if(y>top && y<bottom)
 				{
@@ -128,9 +128,7 @@ IFloopyObj *CParameter::GetSelectedObj()
 */
 IFloopyObj *CParameter::GetChildAt(int x, int y)
 {
-	IFloopySoundInput *input = getTrack()->GetInput();
-
-	int max = input->GetParamMax(m_index);
+	int max = m_pObj->GetParamMax(m_index);
 	if(max != 0)
 	{
 		int samplesPerPixel = getTracks()->GetSamplesPerPixel();
@@ -138,46 +136,40 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 		
 		float value = 0.f;
 
-		if( input->GetParamAt(offset, m_index, &value) )
+		if( !m_pObj->GetParamAt(offset, m_index, &value) )
 		{
-			int min = input->GetParamMin(m_index);
-			int height = getRegion()->GetHeight();
-			int bottom	= getRegion()->GetTop() + getRegion()->GetHeight();
-			float scale = (float)height / (float)(max - min);
-			
-			int tmpY = bottom - (value * scale);
-			if(tmpY >= y-20 && tmpY <= y+20)
+			int prev = m_pObj->GetPrevOffset(offset, m_index);
+			if(prev>0 && samplesPerPixel>=offset-prev)
+				offset = prev;
+			else
 			{
-				m_pPoint->m_offset = offset;
-				return m_pPoint;
+				int next = m_pObj->GetNextOffset(offset, m_index);
+				if(next>0 && samplesPerPixel>=next-offset)
+					offset = next;
+				else
+					return NULL;
 			}
 		}
 
-	
-		/*int c = m_Offsets.Count();
-		for(int i=0; i<m_Offsets.Count(); i++)
+		if( m_pObj->GetParamAt(offset, m_index, &value) )
 		{
-			int tmp = m_Offsets.Item(i);
-			if(tmp >= offset-samplesPerPixel && tmp <= y+samplesPerPixel)
+			int min		= m_pObj->GetParamMin(m_index);
+			int height	= getRegion()->GetHeight();
+			int bottom	= getRegion()->GetTop() + getRegion()->GetHeight();
+			float scale	= (float)height / (float)(max - min);
+			
+			int tmpY = bottom - (value * scale);
+			if(tmpY >= y-1 && tmpY <= y+1)
 			{
-				int min = input->GetParamMin(m_index);
-				int height = getRegion()->GetHeight();
-				int bottom	= getRegion()->GetTop() + getRegion()->GetHeight();
-				float scale = (float)height / (float)(max - min);
-
-				float value = 0.f;
-				
-				if( input->GetParamAt(tmp, m_index, &value) )
-				{
-					int tmpY = bottom - (value * scale);
-					if(tmpY >= y-20 && tmpY <= y+20)
-					{
-						m_pPoint->m_offset = offset;
-						return m_pPoint;
-					}
-				}
+				m_pPoint->m_offset = offset;
+				m_pPoint->m_samplesPerPixel = samplesPerPixel;
+				m_pPoint->m_fScale = m_fScale;
+				m_pPoint->m_pObj = m_pObj;
+				m_pPoint->m_index = m_index;
+				m_pPoint->m_value = value;
+				return m_pPoint;
 			}
-		}*/
+		}
 	}
 
 	return NULL;
@@ -214,6 +206,33 @@ CTracks *CParameter::getTracks()
 	return (CTracks*)getTrack()->GetParent();
 }
 
-void CParameter::CPoint::Move(int dx, int WXUNUSED(dy))
+void CParameter::CPoint::Move(int dx, int dy)
 {
+	bool bRefresh = false;
+	CParameter *param = (CParameter*)GetParent();
+
+	//int samplesPerPixel = param->getTracks()->GetSamplesPerPixel();
+	//int offset = x * samplesPerPixel;
+	int offset = m_offset;
+
+	if(dx != 0)
+	{
+		offset += dx*m_samplesPerPixel;
+		if( m_pObj->MoveParam(m_offset, m_index, m_value, offset) )
+			bRefresh = true;
+		else
+			offset = m_offset;
+	}
+
+	if(dy != 0)
+	{
+		m_value -= (float)dy / m_fScale;
+		m_pObj->SetParamAt(offset, m_index, m_value);
+		bRefresh = true;
+	}
+
+	//m_pObj->ResetParamAt(m_offset, m_index, m_value);
+
+	if( bRefresh )
+		param->GetParent()->Refresh();
 }

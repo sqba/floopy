@@ -22,9 +22,14 @@ public:
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZENS); }
 
-		void Move(int dx, int WXUNUSED(dy));
+		void Move(int dx, int dy);
 
 		int m_offset;
+		int m_samplesPerPixel;
+		float m_fScale;
+		IFloopySoundInput *m_pObj;
+		int m_index;
+		float m_value;
 	};
 
 public:
@@ -52,6 +57,7 @@ private:
 	CPoint	*m_pPoint;
 	IFloopySoundInput *m_pObj;
 	bool m_bAfterTrack;
+	float m_fScale;
 };
 
 

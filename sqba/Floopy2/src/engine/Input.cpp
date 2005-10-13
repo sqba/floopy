@@ -530,7 +530,9 @@ bool CInput::GetParamAt(int offset, int index, float *value)
 {
 	offset *= m_nSamplesToBytes;
 
-	if(m_timeline.GetParamVal(offset, index, value))
+	return m_timeline.GetParamVal(offset, index, value);
+
+	/*if(m_timeline.GetParamVal(offset, index, value))
 		return true;
 	else if(index != TIMELINE_PARAM_MOVETO)
 	{
@@ -540,8 +542,7 @@ bool CInput::GetParamAt(int offset, int index, float *value)
 		else
 			return m_plugin->GetParamVal(index, value);
 	}
-
-	return false;
+	return false;*/
 }
 
 void CInput::SetParamAt(int offset, int index, float value)
