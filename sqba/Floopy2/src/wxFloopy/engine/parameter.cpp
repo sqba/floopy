@@ -174,7 +174,7 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 							m_pPoint->m_pObj = m_pObj;
 							m_pPoint->m_index = m_index;
 							m_pPoint->m_value = value;
-							m_pPoint->m_bValueOnly = true;
+							m_pPoint->m_iSizeOrientation = SIZE_VALUE;
 							return m_pPoint;
 						}
 						//else
@@ -202,7 +202,18 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 				m_pPoint->m_pObj = m_pObj;
 				m_pPoint->m_index = m_index;
 				m_pPoint->m_value = value;
-				m_pPoint->m_bValueOnly = false;
+				m_pPoint->m_iSizeOrientation = SIZE_ALL;
+				return m_pPoint;
+			}
+			else
+			{
+				m_pPoint->m_offset = offset;
+				m_pPoint->m_samplesPerPixel = samplesPerPixel;
+				m_pPoint->m_fScale = m_fScale;
+				m_pPoint->m_pObj = m_pObj;
+				m_pPoint->m_index = m_index;
+				m_pPoint->m_value = value;
+				m_pPoint->m_iSizeOrientation = SIZE_OFFSET;
 				return m_pPoint;
 			}
 		}
@@ -242,6 +253,28 @@ CTracks *CParameter::getTracks()
 	return (CTracks*)getTrack()->GetParent();
 }
 
+
+
+
+
+
+
+wxCursor CParameter::CPoint::GetCursor()
+{
+	switch(m_iSizeOrientation)
+	{
+	case SIZE_VALUE:
+		return wxCursor(wxCURSOR_SIZENS);
+	case SIZE_OFFSET:
+		return wxCursor(wxCURSOR_SIZEWE);
+	case SIZE_ALL:
+		return wxCursor(wxCURSOR_SIZING);
+	default:
+		return wxCursor(wxCURSOR_ARROW);
+	}
+	//return wxCursor(m_bValueOnly ? wxCURSOR_SIZENS : wxCURSOR_SIZING);
+}
+
 void CParameter::CPoint::Move(int dx, int dy)
 {
 	bool bRefresh = false;
@@ -251,7 +284,7 @@ void CParameter::CPoint::Move(int dx, int dy)
 	//int offset = x * samplesPerPixel;
 	int offset = m_offset;
 
-	if(dx!=0 && !m_bValueOnly)
+	if(dx!=0 && m_iSizeOrientation!=SIZE_VALUE)
 	{
 		offset += dx*m_samplesPerPixel;
 		if( m_pObj->MoveParam(m_offset, m_index, m_value, offset) )
@@ -263,7 +296,7 @@ void CParameter::CPoint::Move(int dx, int dy)
 			offset = m_offset;
 	}
 
-	if(dy != 0)
+	if(dy!=0 && m_iSizeOrientation!=SIZE_OFFSET)
 	{
 		m_value -= (float)dy / m_fScale;
 		m_pObj->SetParamAt(offset, m_index, m_value);

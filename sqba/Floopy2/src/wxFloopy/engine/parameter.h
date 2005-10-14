@@ -6,6 +6,11 @@
 #include "ObjTypes.h"
 
 
+#define SIZE_VALUE	0
+#define SIZE_OFFSET	1
+#define SIZE_ALL	2
+
+
 class CRegion;
 
 
@@ -20,7 +25,7 @@ public:
 		CPoint(CParameter *parameter) : IFloopyObj(parameter) { m_offset = 0; }
 		virtual ~CPoint() {}
 
-		wxCursor GetCursor() { return wxCursor(m_bValueOnly ? wxCURSOR_SIZENS : wxCURSOR_SIZING); }
+		wxCursor GetCursor();
 
 		void Move(int dx, int dy);
 
@@ -30,7 +35,7 @@ public:
 		IFloopySoundInput *m_pObj;
 		int m_index;
 		float m_value;
-		bool m_bValueOnly;
+		int m_iSizeOrientation;
 	};
 
 public:
