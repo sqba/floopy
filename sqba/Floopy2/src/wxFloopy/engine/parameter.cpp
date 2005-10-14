@@ -145,15 +145,19 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 		int offset = x * samplesPerPixel;
 
 		float value = 0.f;
+		float valuePrev = 0.f;
+		float valueNext = 0.f;
+		int prev = 0;
+		int next = 0;
 
 		if( !m_pObj->GetParamAt(offset, m_index, &value) )
 		{
-			int prev = m_pObj->GetPrevOffset(offset, m_index);
+			prev = m_pObj->GetPrevOffset(offset, m_index);
 			if(prev>0 && samplesPerPixel>=offset-prev)
 				offset = prev;
 			else
 			{
-				int next = m_pObj->GetNextOffset(offset, m_index);
+				next = m_pObj->GetNextOffset(offset, m_index);
 				if(next>0 && samplesPerPixel>=next-offset)
 					offset = next;
 				else if( m_pObj->GetParamAt(prev, m_index, &value) )
@@ -207,14 +211,31 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 			}
 			else
 			{
-				m_pPoint->m_offset = offset;
-				m_pPoint->m_samplesPerPixel = samplesPerPixel;
-				m_pPoint->m_fScale = m_fScale;
-				m_pPoint->m_pObj = m_pObj;
-				m_pPoint->m_index = m_index;
-				m_pPoint->m_value = value;
-				m_pPoint->m_iSizeOrientation = SIZE_OFFSET;
-				return m_pPoint;
+				if( m_pObj->GetParamAt(prev, m_index, &valuePrev) &&
+					m_pObj->GetParamAt(next, m_index, &valueNext))
+				{
+					int bottom	= getRegion()->GetTop() + getRegion()->GetHeight();
+					int tmpY1 = (int)((float)bottom - (valuePrev * m_fScale));
+					int tmpY2 = (int)((float)bottom - (valueNext * m_fScale));
+					if(tmpY1 > tmpY2)
+					{
+						int tmp = tmpY2;
+						tmpY2 = tmpY1;
+						tmpY1 = tmp;
+					}
+
+					if(y>tmpY1 && y<tmpY2)
+					{
+						m_pPoint->m_offset = offset;
+						m_pPoint->m_samplesPerPixel = samplesPerPixel;
+						m_pPoint->m_fScale = m_fScale;
+						m_pPoint->m_pObj = m_pObj;
+						m_pPoint->m_index = m_index;
+						m_pPoint->m_value = value;
+						m_pPoint->m_iSizeOrientation = SIZE_OFFSET;
+						return m_pPoint;
+					}
+				}
 			}
 		}
 	}
