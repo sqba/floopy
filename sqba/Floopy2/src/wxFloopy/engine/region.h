@@ -61,6 +61,7 @@ public:
 
 	private:
 		inline CRegion  *getRegion()		{ return (CRegion*)GetParent(); }
+		CRegion *getPrevRegion();
 
 	private:
 		int m_iStart;
@@ -125,6 +126,7 @@ public:
 	int GetCaretPos();
 
 	int GetStartOffset()						{ return m_iStartOffset; }
+	int GetEndOffset();
 
 private:
 	static void remove(IFloopyObj *region);
@@ -140,6 +142,7 @@ private:
 	int getStartOffset();
 	void drawFrame(wxDC& dc, wxRect& rc);
 	int getLengthNotLooped();
+	CRegion *getPrevRegion();
 
 private:
 	bool			m_bEdit;

@@ -1008,6 +1008,15 @@ int CRegion::getStartOffset()
 	IFloopySoundInput *input = getTrack()->GetTrack();
 	if(input->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
 		return (int)value;
+	else
+	{
+		CRegion *prev = getPrevRegion();
+		if(NULL != prev)
+		{
+			int dist = GetStartPos() - prev->GetEndPos();
+			return prev->GetEndOffset() + dist;
+		}
+	}
 	return -1;
 }
 
@@ -1107,6 +1116,46 @@ CTracks *CRegion::getTracks()
 	return (CTracks*)getTrack()->GetParent();
 }
 
+CRegion *CRegion::getPrevRegion()
+{
+	CTrack	*track	= getTrack();
+	CRegion	*prev	= NULL;
+	int start = GetStartPos();
+	int max = 0;
+
+	for(int i=0; i<track->GetRegionCount(); i++)
+	{
+		CRegion *tmp = track->GetRegion(i);
+		int end = tmp->GetEndPos();
+		if(end<start && end>=max)
+		{
+			prev = tmp;
+			max = end;
+		}
+	}
+
+	return prev;
+}
+
+int CRegion::GetEndOffset()
+{
+	int len = GetEndPos() - GetStartPos();
+	if(m_iStartOffset >= 0)
+		return m_iStartOffset + len;
+	else
+	{
+		CRegion *prev = getPrevRegion();
+		if(NULL != prev)
+		{
+			int dist = GetStartPos() - prev->GetEndPos();
+			return prev->GetEndOffset() + dist + len;
+		}
+		else
+		{
+			return GetEndPos();
+		}
+	}
+}
 
 
 
@@ -1214,7 +1263,16 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 		///////////////////////////////////////////////////////
 		// Ovde treba uzeti kraj prethodnog regiona + razmak!!!
 		///////////////////////////////////////////////////////
-		start = pRegion->GetStartPos();
+		CRegion *prev = getPrevRegion();
+		if(NULL != prev)
+		{
+			CRegion	*region	= getRegion();
+			int prevEndOffset = prev->GetEndOffset();
+			int dist = region->GetStartPos() - prev->GetEndPos();
+			start = prevEndOffset + dist;
+		}
+		else
+			start = pRegion->GetStartPos();
 		m_iStart = start;
 		start /= spp;
 	}
@@ -1250,4 +1308,26 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 		dc.SetPen(*wxWHITE_PEN);
 		dc.DrawLine(x+1, iLineTop, x+1, iLineBottom);
 	}
+}
+
+CRegion *CRegion::COffsetBar::getPrevRegion()
+{
+	CRegion	*region	= getRegion();
+	CTrack	*track	= (CTrack*)region->GetParent();
+	CRegion	*prev	= NULL;
+	int start = region->GetStartPos();
+	int max = 0;
+
+	for(int i=0; i<track->GetRegionCount(); i++)
+	{
+		CRegion *tmp = track->GetRegion(i);
+		int end = tmp->GetEndPos();
+		if(end<start && end>=max)
+		{
+			prev = tmp;
+			max = end;
+		}
+	}
+
+	return prev;
 }
