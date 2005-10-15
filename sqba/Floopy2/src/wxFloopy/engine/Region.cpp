@@ -1148,9 +1148,9 @@ void CRegion::COffsetBar::Move(int dx, int WXUNUSED(dy))
 //	SOUNDFORMAT *fmt = pTracks->GetInput()->GetFormat();
 //	int channels = fmt->channels;
 
-	int start = pRegion->GetStartOffset();
+	//int start = pRegion->GetStartOffset();
 	int spp = pTracks->GetSamplesPerPixel();
-	int newOffset = start - dx*spp;
+	int newOffset = m_iStart - dx*spp;
 
 	if(newOffset >= 0)
 		pRegion->SetStartOffset( newOffset );
@@ -1205,9 +1205,21 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 	int spp = pTracks->GetSamplesPerPixel();
 	
 	if(start >= 0)
+	{
+		m_iStart = start;
 		start /= spp;
+	}
+	else
+	{
+		///////////////////////////////////////////////////////
+		// Ovde treba uzeti kraj prethodnog regiona + razmak!!!
+		///////////////////////////////////////////////////////
+		start = pRegion->GetStartPos();
+		m_iStart = start;
+		start /= spp;
+	}
 
-	int pos = start >= 0 ? start : pRegion->GetStartPos()/spp;
+	int pos = start;
 
 	for(int x=left; x<right; x+=iStep)
 	{
