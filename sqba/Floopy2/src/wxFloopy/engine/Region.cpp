@@ -36,7 +36,7 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 
 	m_bEdit			= false;
 
-	m_iStartOffset	= 0;
+	m_iStartOffset	= -1;
 	m_iLengthNotLooped = 0;
 
 	m_bDrawPreview = true;
@@ -1203,9 +1203,11 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 
 	int start = pRegion->GetStartOffset();
 	int spp = pTracks->GetSamplesPerPixel();
-	start /= spp;
+	
+	if(start >= 0)
+		start /= spp;
 
-	int pos = start;
+	int pos = start >= 0 ? start : pRegion->GetStartPos()/spp;
 
 	for(int x=left; x<right; x+=iStep)
 	{

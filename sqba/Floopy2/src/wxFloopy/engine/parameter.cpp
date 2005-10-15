@@ -89,7 +89,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 
 				if(y>top && y<bottom)
 				{
-					if(m_bAfterTrack)
+					if(m_bAfterTrack && startOffset>=0)
 						x += start-startOffset;
 					x /= hres;
 
@@ -139,7 +139,7 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 		//int startOffset = getRegion()->GetStartOffset();
 		int start = getRegion()->GetStartPos();
 		int startOffset = getRegion()->GetStartOffset();
-		if(m_bAfterTrack)
+		if(m_bAfterTrack && startOffset>=0)
 			x -= (start-startOffset)/samplesPerPixel;
 		
 		int offset = x * samplesPerPixel;

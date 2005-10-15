@@ -61,6 +61,9 @@ public:
 
 	private:
 		inline CRegion  *getRegion()		{ return (CRegion*)GetParent(); }
+
+	private:
+		int m_iStart;
 	};
 
 public:
