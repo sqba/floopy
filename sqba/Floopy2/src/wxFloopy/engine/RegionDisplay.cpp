@@ -24,8 +24,9 @@ CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
 	m_pRegion		= region;
 	m_pTrack		= (CTrack*)m_pRegion->GetParent();
 	m_pTracks		= (CTracks*)m_pTrack->GetParent();
-	m_pInput		= m_pTrack->GetInput();
-	m_pTrackInput	= m_pTrack->GetTrack();
+	//m_pInput		= m_pTrack->GetInput();
+	m_pInput		= m_pTrack->GetSource();
+//	m_pTrackInput	= m_pTrack->GetTrack();
 	m_fdB			= -6.f;
 	m_bDrawDBLines	= true;
 	m_bLoaded		= false;
@@ -46,7 +47,7 @@ void CRegionDisplay::DrawBG(wxDC& dc, wxRect& rc)
 	if(!m_bDrawDBLines)
 		return;
 
-	SOUNDFORMAT *fmt	= m_pTrackInput->GetFormat();
+	SOUNDFORMAT *fmt	= m_pInput->GetFormat();
 	int channels		= fmt->channels;
 	int width			= rc.GetWidth();
 	int height			= rc.GetHeight() / channels;
@@ -68,7 +69,7 @@ void CRegionDisplay::DrawFore(wxDC& dc, wxRect& rc)
 
 	if(m_bRepaint || height!=m_tempBitmap.GetHeight())
 	{
-		SOUNDFORMAT *fmt = m_pTrackInput->GetFormat();
+		SOUNDFORMAT *fmt = m_pInput->GetFormat();
 		int channels = fmt->channels;
 		int channelHeight = height / channels;
 
@@ -128,8 +129,8 @@ void CRegionDisplay::LoadPeaks()
 	if(NULL == m_pInput)
 		return;
 
-	if(NULL == m_pTrackInput)
-		return;
+//	if(NULL == m_pTrackInput)
+//		return;
 
 	//loadPeaks();
 	loadPeaksChunked();
@@ -151,7 +152,7 @@ void CRegionDisplay::loadPeaks()
 
 	m_bDrawVertical = (interval > 10);
 
-	SOUNDFORMAT *fmt = m_pTrackInput->GetFormat();
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 	if(NULL == fmt)
 		return;
 	int channels = fmt->channels;
@@ -173,8 +174,8 @@ void CRegionDisplay::loadPeaks()
 
 	try
 	{
-		m_pTrackInput->MoveTo(start);
-		bytesRead = m_pTrackInput->Read((BYTE*)buffer, bytes);
+		m_pInput->MoveTo(start);
+		bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
 	}
 	catch(...)
 	{
@@ -270,7 +271,7 @@ void CRegionDisplay::loadPeaksChunked()
 
 	m_bDrawVertical = (interval > 85);
 
-	SOUNDFORMAT *fmt = m_pTrackInput->GetFormat();
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 	if(NULL == fmt)
 		return;
 	int channels = fmt->channels;
@@ -297,7 +298,7 @@ void CRegionDisplay::loadPeaksChunked()
 
 	SAMPLE *buffer = new SAMPLE[buffSize];	// Create the buffer
 
-	m_pTrackInput->MoveTo(start);				// Move to the beginning of the region
+	m_pInput->MoveTo(start);				// Move to the beginning of the region
 
 	for(int pos=channels; pos<=totalSamples; pos+=channels)
 	{
@@ -312,13 +313,13 @@ void CRegionDisplay::loadPeaksChunked()
 			if(buffSize <= 0)
 				break;
 
-			//m_pTrackInput->MoveTo(pos); // <-- Ovde se neshto jako interesantno deshava!
+			//m_pInput->MoveTo(pos); // <-- Ovde se neshto jako interesantno deshava!
 
 			int bytes = buffSize * sizeof(SAMPLE);	// Buffer size in bytes
 
 			memset(buffer, 0, bytes);		// Fill with silence instead!
 
-			int bytesRead = m_pTrackInput->Read((BYTE*)buffer, bytes);	// Load the chunk
+			int bytesRead = m_pInput->Read((BYTE*)buffer, bytes);	// Load the chunk
 
 			if(EOF == bytesRead)			// No data inside, exit the loop
 				break;
@@ -397,7 +398,7 @@ void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
 	if(0.f == m_fdB)
 		return;
 
-	SOUNDFORMAT *fmt = m_pTrackInput->GetFormat();
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 
 	int top		= rc.GetTop();
 	int left	= rc.GetX();
@@ -435,7 +436,7 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 	if(!m_bLoaded)
 		return;
 
-	SOUNDFORMAT *fmt = m_pTrackInput->GetFormat();
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 
 	int channels = fmt->channels;
 	int left	= rc.GetX();
@@ -508,7 +509,7 @@ int CRegionDisplay::getLengthNotLooped()
  */
 int CRegionDisplay::getMaxSampleValue()
 {
-	SOUNDFORMAT *fmt = m_pTrackInput->GetFormat();
+	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 
 	if(!fmt || fmt->bitsPerSample<=0)
 		return 0;

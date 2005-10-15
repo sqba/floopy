@@ -30,6 +30,12 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
 	m_pInput = input;
 	m_pTrack = CTracks::FindComponentByName(input, "track");
 
+	m_pSource = CTracks::FindComponentByName(input, "mono2stereo");
+	if(NULL == m_pSource)
+		m_pSource = input;
+	else
+		m_pSource = ((IFloopySoundFilter*)m_pSource)->GetSource();
+
 	assert(NULL != m_pTrack);
 
 

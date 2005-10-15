@@ -53,7 +53,7 @@ private:
 
 private:
 	IFloopySoundInput	*m_pInput;
-	IFloopySoundInput	*m_pTrackInput;
+//	IFloopySoundInput	*m_pTrackInput;
 
 	CRegion		*m_pRegion;
 	bool		m_bLoaded;

@@ -158,7 +158,7 @@ public:
 
 	IFloopySoundInput *GetTrack()	{ return m_pTrack; }
 	IFloopySoundInput *GetInput()	{ return m_pInput; }
-	IFloopySoundInput *GetSource()	{ return m_pInput; }
+	IFloopySoundInput *GetSource()	{ return m_pSource; }
 
 	bool OnKeyDown(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
@@ -211,6 +211,7 @@ private:
 	CBorder		*m_pBorder;
 	IFloopySoundInput *m_pTrack;
 	IFloopySoundInput *m_pInput;
+	IFloopySoundInput *m_pSource;
 
 	bool		m_bReset;
 
