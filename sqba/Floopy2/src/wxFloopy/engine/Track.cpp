@@ -584,6 +584,12 @@ bool CTrack::OnKeyDown(wxKeyEvent& event)
 	case 'V':
 		SetReverse( !IsReverse() );
 		return true;
+	case 'p':
+	case 'P':
+		SetDrawPreview( !IsDrawPreviewOn() );
+		Invalidate();
+		Refresh();
+		return true;
 	case WXK_F5:
 	case WXK_SPACE:
 		if(GetTracks()->IsPlaying())
@@ -981,6 +987,92 @@ int CTrack::GetWidth()
 {
 	return GetTracks()->GetWidth();
 }
+
+
+
+
+int CTrack::GetPropertyCount()
+{
+	return 1;
+}
+
+bool CTrack::GetPropertyVal(int index, float *value)
+{
+	switch(index)
+	{
+	case 0:
+		*value = (float)IsDrawPreviewOn();
+		return true;
+	}
+	return false;
+}
+
+void CTrack::SetPropertyVal(int index, float value)
+{
+	switch(index)
+	{
+	case 0:
+		SetDrawPreview( value != 0.f );
+		return;
+	}
+}
+
+char *CTrack::GetPropertyName(int index)
+{
+	switch(index)
+	{
+	case 0: return "DrawPreview";
+	}
+	return NULL;
+}
+
+char *CTrack::GetPropertyDesc(int index)
+{
+	switch(index)
+	{
+	case 0: return "Draw region previews";
+	}
+	return NULL;
+}
+
+float CTrack::GetPropertyMin(int index)
+{
+	switch(index)
+	{
+	case 0: return 0.f;
+	}
+	return 0.f;
+}
+
+float CTrack::GetPropertyMax(int index)
+{
+	switch(index)
+	{
+	case 0: return 1.f;
+	}
+	return 0.f;
+}
+
+char *CTrack::GetPropertyUnit(int index)
+{
+	//switch(index)
+	//{
+	//case 0: return "Db";
+	//}
+	return NULL;
+}
+
+float CTrack::GetPropertyStep(int index)
+{
+	switch(index)
+	{
+	case 0: return 1.f;
+	}
+	return 0.f;
+}
+
+
+
 
 
 

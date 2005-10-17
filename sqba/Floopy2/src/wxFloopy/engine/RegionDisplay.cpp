@@ -24,6 +24,8 @@ CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
 	m_pTrack		= (CTrack*)m_pRegion->GetParent();
 	m_pTracks		= (CTracks*)m_pTrack->GetParent();
 	m_pInput		= m_pTrack->GetSource();
+//	m_pInput		= m_pTrack->GetInput();
+//	m_pInput		= m_pTrack->GetTrack();
 	m_bLoaded		= false;
 	m_bDrawVertical = false;
 	m_bRepaint		= false;
@@ -442,15 +444,19 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 	int yscale	= max / height * 2;
 	int count	= m_iPeakCount;
 	//int count	= m_peaks.GetCount();
-	int i		= start;
+//	int i		= start;
 	int right	= left + width;
+	
 	Peak *peak	= m_pFirstPeak;
+
+	for(int i=0; i<start; i++)
+		peak = peak->next;	// Move to the start channel
 
 	int prevMin	= middle, prevMax = middle;
 
 	for(int x=left; x<right && i<count; x++)
 	{
-		//Peak *peak = &m_peaks.Item(i);
+//		Peak *peak = &m_peaks.Item(i);
 
 		int y1 = middle - peak->value1 / yscale;
 		int y2 = middle - peak->value2 / yscale;
@@ -478,9 +484,14 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 			dc.DrawLine(x-1, y1, x, y2);
 		}
 
-		i += channels;
+//		i += channels;
 
-		peak = peak->next;
+		for(int c=0; c<channels; c++)
+		{
+			// Move to the next sample from the same channel
+			if(peak)
+				peak = peak->next;
+		}
 	}
 }
 

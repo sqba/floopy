@@ -39,8 +39,6 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 	m_iStartOffset	= -1;
 	m_iLengthNotLooped = 0;
 
-	m_bDrawPreview = true;
-
 	createMenu();
 
 	wxLog::AddTraceMask(_T("CRegion"));
@@ -50,6 +48,8 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 	IFloopySoundInput *input = CTracks::FindComponentByName(track->GetInput(), "volume");
 	if(NULL != input)
 		loadParameters( input );
+
+//	SetDrawPreview( false );
 
 	Invalidate();
 }
@@ -441,7 +441,7 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	dc.SetPen(wxPen(*wxLIGHT_GREY));
 	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
 	CRegionDisplay *disp = m_pDisplay;
-	if(disp && m_bDrawPreview)
+	if(disp && IsDrawPreviewOn())
 		disp->DrawBG(dc, wxRect(left+border, top+border, width-border*2, height-border*2));
 	dc.SetPen(oldpen);
 	///////////////////////////////////////////////////////
@@ -485,7 +485,7 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	dc.SetPen(wxPen(color, 1));
 	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
 	CRegionDisplay *disp = m_pDisplay;
-	if(disp && m_bDrawPreview)
+	if(disp && IsDrawPreviewOn())
 		//disp->DrawRegion(this, dc, rce);
 		disp->DrawFore(dc, rce);
 	dc.SetPen(oldpen);
@@ -592,7 +592,7 @@ void CRegion::Invalidate()
 
 	///////////////////////////////////////////////////////
 	CRegionDisplay *disp = m_pDisplay;
-	if(disp && m_bDrawPreview)
+	if(disp && IsDrawPreviewOn())
 		//m_pDisplay->Run();
 		disp->LoadPeaks();
 	///////////////////////////////////////////////////////
@@ -839,6 +839,12 @@ bool CRegion::OnKeyDown(wxKeyEvent& event)
 			}
 		break;
 		}
+		return true;
+	case 'p':
+	case 'P':
+		SetDrawPreview( !IsDrawPreviewOn() );
+		Invalidate();
+		Refresh();
 		return true;
 	default:
 		return getTrack()->OnKeyDown(event);
@@ -1155,6 +1161,88 @@ int CRegion::GetEndOffset()
 			return GetEndPos();
 		}
 	}
+}
+
+
+
+int CRegion::GetPropertyCount()
+{
+	return 1;
+}
+
+bool CRegion::GetPropertyVal(int index, float *value)
+{
+	switch(index)
+	{
+	case 0:
+		*value = (float)IsDrawPreviewOn();
+		return true;
+	}
+	return false;
+}
+
+void CRegion::SetPropertyVal(int index, float value)
+{
+	switch(index)
+	{
+	case 0:
+		SetDrawPreview( value != 0.f );
+		return;
+	}
+}
+
+char *CRegion::GetPropertyName(int index)
+{
+	switch(index)
+	{
+	case 0: return "DrawPreview";
+	}
+	return NULL;
+}
+
+char *CRegion::GetPropertyDesc(int index)
+{
+	switch(index)
+	{
+	case 0: return "Draw region previews";
+	}
+	return NULL;
+}
+
+float CRegion::GetPropertyMin(int index)
+{
+	switch(index)
+	{
+	case 0: return 0.f;
+	}
+	return 0.f;
+}
+
+float CRegion::GetPropertyMax(int index)
+{
+	switch(index)
+	{
+	case 0: return 1.f;
+	}
+	return 0.f;
+}
+
+char *CRegion::GetPropertyUnit(int index)
+{
+	//switch(index)
+	//{
+	//case 0: return "Db";
+	//}
+	return NULL;
+}
+
+float CRegion::GetPropertyStep(int index)
+{
+	switch(index)
+	{
+	case 0: return 1.f;
+	}
+	return 0.f;
 }
 
 

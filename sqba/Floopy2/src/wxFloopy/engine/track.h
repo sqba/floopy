@@ -197,6 +197,16 @@ public:
 
 	CTrackLabel	*GetLabel() { return m_pLabel; }
 
+	int   GetPropertyCount();
+	bool  GetPropertyVal(int, float*);
+	void  SetPropertyVal(int, float);
+	char *GetPropertyName(int);
+	char *GetPropertyDesc(int);
+	float GetPropertyMax(int);
+	float GetPropertyMin(int);
+	char *GetPropertyUnit(int);
+	float GetPropertyStep(int);
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();

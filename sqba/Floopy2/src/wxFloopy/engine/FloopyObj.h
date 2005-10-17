@@ -63,6 +63,7 @@ public:
 		m_ptPrev.x	= m_ptPrev.y = 0;
 		m_bChanged	= false;
 		m_iWidth	= m_iHeight = 0;
+		m_bDrawPreview = true;
 	}
 
 	virtual ~IFloopyObj()
@@ -119,6 +120,16 @@ public:
 	virtual int GetHeight()							{ return m_iHeight; }
 	virtual void SetHeight(int height)				{ m_iHeight = height; }
 
+	void SetDrawPreview(bool bDrawPreview)			{ m_bDrawPreview = bDrawPreview; }
+	//bool IsDrawPreviewOn()							{ return m_bDrawPreview; }
+	bool IsDrawPreviewOn()
+	{
+		if(NULL != m_pParent)
+			return m_bDrawPreview && m_pParent->IsDrawPreviewOn();
+		else
+			return m_bDrawPreview;
+	}
+
 protected:
 	IFloopyObj	*m_pParent;
 	CMenu		*m_pMenu;
@@ -128,6 +139,7 @@ protected:
 	bool		m_bChanged;
 	int			m_iWidth;
 	int			m_iHeight;
+	bool		m_bDrawPreview;
 };
 
 

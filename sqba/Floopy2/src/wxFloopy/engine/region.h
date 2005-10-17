@@ -128,6 +128,16 @@ public:
 	int GetStartOffset()						{ return m_iStartOffset; }
 	int GetEndOffset();
 
+	int   GetPropertyCount();
+	bool  GetPropertyVal(int, float*);
+	void  SetPropertyVal(int, float);
+	char *GetPropertyName(int);
+	char *GetPropertyDesc(int);
+	float GetPropertyMax(int);
+	float GetPropertyMin(int);
+	char *GetPropertyUnit(int);
+	float GetPropertyStep(int);
+
 private:
 	static void remove(IFloopyObj *region);
 	void createMenu();
@@ -151,7 +161,6 @@ private:
 	CBorder			*m_pLeftBorder, *m_pRightBorder;
 	ParameterList	m_Parameters;
 	CRegionDisplay	*m_pDisplay;
-	bool			m_bDrawPreview;
 	int				m_iStartOffset;
 	int				m_iLengthNotLooped;
 	COffsetBar		*m_pOffsetBar;

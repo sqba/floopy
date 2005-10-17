@@ -717,6 +717,12 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		return true;
 	case WXK_END:
 		return true;
+	case 'p':
+	case 'P':
+		SetDrawPreview( !IsDrawPreviewOn() );
+		Invalidate();
+		Refresh();
+		return true;
 	default:
 		/*if(event.GetKeyCode() < m_tracks.GetCount())
 		{
@@ -1016,7 +1022,7 @@ IFloopySoundInput *CTracks::FindComponentByName(IFloopySoundInput *src, char *na
 
 int CTracks::GetPropertyCount()
 {
-	return 3;
+	return 5;
 }
 
 bool CTracks::GetPropertyVal(int index, float *value)
@@ -1024,15 +1030,18 @@ bool CTracks::GetPropertyVal(int index, float *value)
 	switch(index)
 	{
 	case 0:
-		*value = (float)GetSamplesPerPixel();
+		*value = (float)IsDrawPreviewOn();
 		return true;
 	case 1:
-		*value = (float)GetLength();
+		*value = (float)GetSamplesPerPixel();
 		return true;
 	case 2:
-		*value = (float)m_bSnapTo;
+		*value = (float)GetLength();
 		return true;
 	case 3:
+		*value = (float)m_bSnapTo;
+		return true;
+	case 4:
 		*value = (float)GetCaretPos();
 		return true;
 	}
@@ -1044,15 +1053,18 @@ void CTracks::SetPropertyVal(int index, float value)
 	switch(index)
 	{
 	case 0:
-		SetSamplesPerPixel((int)value);
+		SetDrawPreview( value != 0.f );
 		return;
 	case 1:
-		SetLength((int)value);
+		SetSamplesPerPixel((int)value);
 		return;
 	case 2:
-		m_bSnapTo = (value==0.f ? false : true);
+		SetLength((int)value);
 		return;
 	case 3:
+		m_bSnapTo = (value==0.f ? false : true);
+		return;
+	case 4:
 		SetCaretPos((int)value);
 		return;
 	}
@@ -1062,10 +1074,11 @@ char *CTracks::GetPropertyName(int index)
 {
 	switch(index)
 	{
-	case 0: return "SamplesPerPixel";
-	case 1: return "Length";
-	case 2: return "SnapToGrid";
-	case 3: return "CaretPos";
+	case 0: return "DrawPreview";
+	case 1: return "SamplesPerPixel";
+	case 2: return "Length";
+	case 3: return "SnapToGrid";
+	case 4: return "CaretPos";
 	}
 	return NULL;
 }
@@ -1074,10 +1087,11 @@ char *CTracks::GetPropertyDesc(int index)
 {
 	switch(index)
 	{
-	case 0: return "Samples per pixel";
-	case 1: return "Project length";
-	case 2: return "Snap to grid";
-	case 3: return "Caret position";
+	case 0: return "Draw region previews";
+	case 1: return "Samples per pixel";
+	case 2: return "Project length";
+	case 3: return "Snap to grid";
+	case 4: return "Caret position";
 	}
 	return NULL;
 }
@@ -1086,10 +1100,11 @@ float CTracks::GetPropertyMin(int index)
 {
 	switch(index)
 	{
-	case 0: return 1.f;
+	case 0: return 0.f;
 	case 1: return 1.f;
-	case 2: return 0.f;
+	case 2: return 1.f;
 	case 3: return 0.f;
+	case 4: return 0.f;
 	}
 	return 0.f;
 }
@@ -1098,10 +1113,11 @@ float CTracks::GetPropertyMax(int index)
 {
 	switch(index)
 	{
-	case 0: return 65535.f; //?
-	case 1: return 3600.f;
-	case 2: return 1.f;
-	case 3: return 65535.f; //?
+	case 0: return 1.f;
+	case 1: return 65535.f; //?
+	case 2: return 3600.f;
+	case 3: return 1.f;
+	case 4: return 65535.f; //?
 	}
 	return 0.f;
 }
@@ -1125,6 +1141,7 @@ float CTracks::GetPropertyStep(int index)
 	case 1: return 1.f;
 	case 2: return 1.f;
 	case 3: return 1.f;
+	case 4: return 1.f;
 	}
 	return 0.f;
 }
