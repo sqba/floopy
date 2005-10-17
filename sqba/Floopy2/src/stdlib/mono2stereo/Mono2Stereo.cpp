@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <assert.h>
 
+
+#define SAMPLE	short int
+
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -19,7 +23,7 @@ CMono2Stereo::CMono2Stereo()
 CMono2Stereo::~CMono2Stereo()
 {
 	if(m_pBuffer)
-		delete m_pBuffer;
+		delete[] m_pBuffer;
 }
 
 int CMono2Stereo::Read(BYTE *data, int size)
@@ -32,7 +36,7 @@ int CMono2Stereo::Read(BYTE *data, int size)
 	if(size > m_nBuffSize)
 	{
 		if(m_pBuffer)
-			delete m_pBuffer;
+			delete[] m_pBuffer;
 		m_nBuffSize = size;
 		m_pBuffer = new BYTE[m_nBuffSize];
 	}
@@ -42,11 +46,11 @@ int CMono2Stereo::Read(BYTE *data, int size)
 	int len = IFloopySoundFilter::Read(m_pBuffer, size/2);
 
 	if(len <= 0)
-		return len;
+		return len; // EOF
 
-	short int *mono = (short int*)m_pBuffer;
-	short int *stereo = (short int*)data;
-	int samples = len / sizeof(short int);
+	SAMPLE *mono	= (SAMPLE*)m_pBuffer;
+	SAMPLE *stereo	= (SAMPLE*)data;
+	int samples = len / sizeof(SAMPLE);
 
 	for(int i=0; i<samples; i++)
 	{

@@ -6,21 +6,23 @@
 #include "ObjTypes.h"
 
 
-struct Peak
-{
-	short int prev;
-	short int value;
-	int pos;			// Sample offset
-};
-
-
-WX_DECLARE_OBJARRAY(Peak, PeaksArray);
+#define SAMPLE	short int
 
 
 class CRegion;
 
+
 class CRegionDisplay : public IFloopyObj
 {
+private:
+	struct Peak
+	{
+		SAMPLE	value1;
+		SAMPLE	value2;
+		int		pos;	/// Sample offset
+		Peak	*next;
+	};
+
 public:
 	CRegionDisplay(CRegion *region);
 	virtual ~CRegionDisplay();
@@ -50,14 +52,15 @@ private:
 	void loadPeaksChunked();
 	int getLengthNotLooped();
 	int getMaxSampleValue();
+	void add(Peak *peak);
+	void clear();
 
 private:
 	IFloopySoundInput	*m_pInput;
-//	IFloopySoundInput	*m_pTrackInput;
 
 	CRegion		*m_pRegion;
 	bool		m_bLoaded;
-	PeaksArray	m_peaks;
+//	PeaksArray	m_peaks;
 
 	CTrack		*m_pTrack;
 	CTracks		*m_pTracks;
@@ -67,6 +70,10 @@ private:
 	wxMemoryDC	m_tempDC;
 	wxBitmap	m_tempBitmap;
 	bool		m_bRepaint;
+
+	Peak		*m_pFirstPeak;
+	Peak		*m_pLastPeak;
+	int			m_iPeakCount;
 
 	// Properties
 	float		m_fdB;

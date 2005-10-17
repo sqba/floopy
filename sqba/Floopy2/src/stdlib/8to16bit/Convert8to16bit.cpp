@@ -5,59 +5,53 @@
 #include <stdio.h>
 #include "Convert8to16bit.h"
 
+
+#define SAMPLE	short int
+
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
 CConvert8to16bit::CConvert8to16bit()
 {
-	m_pBuffer = NULL;
-	m_nBuffSize = NULL;
+	m_pBuffer	= NULL;
+	m_nBuffSize	= 0;
 }
 
 CConvert8to16bit::~CConvert8to16bit()
 {
 	if(m_pBuffer)
-		delete m_pBuffer;
+		delete[] m_pBuffer;
 }
 
 int CConvert8to16bit::Read(BYTE *data, int size)
 {
 	size /= 2;
 
-	BYTE *pBuffer = m_pBuffer;
-	bool bDelete = false;
-
-	if(size != m_nBuffSize)
+	if(size > m_nBuffSize)
 	{
-		if(pBuffer)
+		if(m_pBuffer)
 		{
-			try {
-				delete pBuffer;
-				m_nBuffSize = size;
-			} catch(...) {
-				bDelete = true;
-			}
+			delete[] m_pBuffer;
+			m_nBuffSize = size;
 		}
-		pBuffer = new BYTE[size];
+		m_pBuffer = new BYTE[size];
 	}
-	memset(pBuffer, 128, size); // Fill with 8bit silence
+	memset(m_pBuffer, 128, m_nBuffSize); // Fill with 8bit silence
 
-	int len = IFloopySoundFilter::Read(pBuffer, size);
+	int len = IFloopySoundFilter::Read(m_pBuffer, size);
 
 	if(len != EOF)
 	{
 		int numsamples = len;
 
-		BYTE *in		= (BYTE*)pBuffer;
-		short int *out	= (short int*)data;
+		BYTE *in	= (BYTE*)m_pBuffer;
+		SAMPLE *out	= (SAMPLE*)data;
 
 		while(numsamples--)
-			*(out++) = (short int)(*(in++)) * 256 - 32768;
+			*(out++) = (SAMPLE)(*(in++)) * 256 - 32768;
 	}
-
-	if(bDelete)
-		delete pBuffer;
 
 	return len*2;
 }
