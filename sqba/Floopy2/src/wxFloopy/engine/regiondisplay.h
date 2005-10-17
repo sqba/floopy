@@ -48,11 +48,8 @@ private:
 	void drawDBLines(wxDC& dc, wxRect& rc);
 	void drawCenterLine(wxDC& dc, wxRect& rc);
 	void drawPeaks(wxDC& dc, wxRect& rc, int start);
-	void loadPeaks();
-	void loadPeaksChunked();
-	int getLengthNotLooped();
 	int getMaxSampleValue();
-	void add(Peak *peak);
+	void add(CRegionDisplay::Peak *peak);
 	void clear();
 
 private:
@@ -60,7 +57,6 @@ private:
 
 	CRegion		*m_pRegion;
 	bool		m_bLoaded;
-//	PeaksArray	m_peaks;
 
 	CTrack		*m_pTrack;
 	CTracks		*m_pTracks;
@@ -79,6 +75,7 @@ private:
 	float		m_fdB;
 	bool		m_bDrawDBLines;
 	bool		m_bDrawContour;
+	int			m_iBufferLength;
 };
 
 

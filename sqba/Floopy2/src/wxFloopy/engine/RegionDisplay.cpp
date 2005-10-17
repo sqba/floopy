@@ -9,13 +9,6 @@
 
 
 #include <math.h>
-//#include <wx/arrimpl.cpp>
-//#include <wx/dcbuffer.h>
-
-
-
-//WX_DEFINE_OBJARRAY(PeaksArray);
-//WX_DEFINE_ARRAY(Peak*, PeaksArray);
 
 
 CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
@@ -24,8 +17,6 @@ CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
 	m_pTrack		= (CTrack*)m_pRegion->GetParent();
 	m_pTracks		= (CTracks*)m_pTrack->GetParent();
 	m_pInput		= m_pTrack->GetSource();
-//	m_pInput		= m_pTrack->GetInput();
-//	m_pInput		= m_pTrack->GetTrack();
 	m_bLoaded		= false;
 	m_bDrawVertical = false;
 	m_bRepaint		= false;
@@ -37,8 +28,7 @@ CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
 	m_fdB			= -6.f;
 	m_bDrawDBLines	= true;
 	m_bDrawContour	= false;
-
-	LoadPeaks();
+	m_iBufferLength	= 1280;
 }
 
 CRegionDisplay::~CRegionDisplay()
@@ -121,28 +111,18 @@ void CRegionDisplay::DrawFore(wxDC& dc, wxRect& rc)
 
 void CRegionDisplay::LoadPeaks()
 {
-	if(!m_pRegion || !m_pTrack || !m_pTracks || !m_pInput)
-		return;
-
-	//loadPeaks();
-	loadPeaksChunked();
-}
-
-
-/**
- * Loads peaks in one big chunk.
- */
-void CRegionDisplay::loadPeaks()
-{
 	m_bLoaded = false;
 
 	clear();
+
+	if(!m_pRegion || !m_pTrack || !m_pTracks || !m_pInput)
+		return;
 
 	int interval = m_pTracks->GetSamplesPerPixel() - 1;
 	if(interval < 0)
 		return;
 
-	m_bDrawVertical = (interval > 10);
+	m_bDrawVertical = (interval > 1);
 
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 	if(NULL == fmt)
@@ -156,176 +136,43 @@ void CRegionDisplay::loadPeaks()
 	if(end<=0 || start<0)
 		return;
 
-	int samples	= (end - start) * channels;
-
-	SAMPLE *buffer = new SAMPLE[samples];
-	int bytes = samples * sizeof(SAMPLE);
-	memset(buffer, 0, bytes);
-	
-	int bytesRead = 0;
-
-	try
-	{
-		m_pInput->MoveTo(start);
-		bytesRead = m_pInput->Read((BYTE*)buffer, bytes);
-	}
-	catch(...)
-	{
-		delete[] buffer;
-		return;
-	}
-	
-	m_pTracks->SetViewUpdatedWhilePlaying(true);
-	
-	if(EOF != bytesRead)
-	{
-		samples = bytesRead / (fmt->bitsPerSample / 8);
-
-		int srcLen = getLengthNotLooped();
-		int counter=interval;
-		int peakcount=0;
-		int ch=0;
-
-		short int min[2]={0}, max[2]={0};
-		short int prev[2] = {0};
-
-		for(int pos=channels; pos<samples; pos+=channels)
-		{
-			for(ch=0; ch<channels; ch++)
-			{
-				short int sample = buffer[pos-channels+ch];
-
-				if(sample > max[ch])
-					max[ch] = sample;
-				else if(sample < min[ch])
-					min[ch] = sample;
-			}
-
-			//if(counter >= interval || (srcLen && pos%srcLen==0))
-			if(counter >= interval || (srcLen && (pos&(srcLen-1))==0))
-			{
-				for(ch=0; ch<channels; ch++)
-				{
-					short int sample = buffer[pos-channels+ch];
-
-					Peak *peak = new Peak;
-					memset(peak, 0, sizeof(Peak));
-
-					if(!m_bDrawVertical)
-					{
-						if(max[ch]==0 && min[ch]!=0)
-							max[ch] = min[ch];
-						else if(min[ch]==0 && max[ch]!=0)
-							min[ch] = max[ch];
-
-						peak->value1 = prev[ch];
-						//peak->value2 = ( (peakcount%2) == 0 ? max[ch] : min[ch] );
-						peak->value2 = ( (peakcount&1) == 0 ? max[ch] : min[ch] );
-
-						prev[ch] = peak->value2;
-					}
-					else
-					{
-						peak->value1 = max[ch];
-						peak->value2 = min[ch];
-					}
-
-					peak->pos = pos/channels;
-
-					add( peak );
-
-					max[ch] = min[ch] = sample;
-				}
-				counter = 0;
-				peakcount++;
-			} else
-				counter++;
-		}
-
-		m_bLoaded = true;
-	}
-
-	delete[] buffer;
-
-	m_bRepaint = true;
-}
-
-/**
- * Loads peaks in small chunks.
- */
-void CRegionDisplay::loadPeaksChunked()
-{
-	m_bLoaded = false;
-
-	clear();
-
-	int interval = m_pTracks->GetSamplesPerPixel() - 1;
-	if(interval < 0)
-		return;
-
-	m_bDrawVertical = (interval > 85);
-
-	SOUNDFORMAT *fmt = m_pInput->GetFormat();
-	if(NULL == fmt)
-		return;
-	int channels = fmt->channels;
-	if(0 == channels)
-		return;
-
-	int start = m_pRegion->GetStartPos();
-	int end   = m_pRegion->GetEndPos();
-	if(end<=0 || start<0)
-		return;
-	
-	m_pTracks->SetViewUpdatedWhilePlaying(true);
-
-	int srcLen		= getLengthNotLooped();	// Length of the not looped source
-	int counter		= interval;				// Load first sample
-	int peakcount	= 0;					// Number of peaks loaded
-	int ch			= 0;					// Channel counter
+	bool bMax		= true;
+	int counter		= interval;					// Load first sample
+	int peakcount	= 0;						// Number of peaks loaded
+	int ch			= 0;						// Channel counter
+	int buffPos		= 0;						// Buffer position
 	int totalSamples = (end - start) * channels;
-	int buffLen	= 128;
-	int buffPos		= 0;					// Buffer position
+	int buffLen		= m_iBufferLength>0 ? m_iBufferLength : totalSamples;	// Samples
+	int size		= buffLen;					// Remaining buffer size
 
-	SAMPLE min[2]={0}, max[2]={0};			// Largest and smallest sample values
-	SAMPLE prev[2] = {0};					// Previous peak value
+	SAMPLE min[2]={0}, max[2]={0};				// Current peaks
+	SAMPLE prev[2] = {0};						// Previous peak (when !m_bDrawVertical)
 
-	SAMPLE *buffer = new SAMPLE[buffLen];	// Create the buffer
+	SAMPLE *buffer = new SAMPLE[buffLen];		// Create the buffer
 
-	m_pInput->MoveTo(start);				// Move to the beginning of the region
+	m_pInput->MoveTo(start);					// Move to the beginning of the region
 
-	int size = buffLen;
+	m_pTracks->SetViewUpdatedWhilePlaying(true);
 
 	for(int pos=channels; pos<=totalSamples; pos+=channels)
 	{
-		// Load the chunk because we're at the
-		// beginning or the end of the chunk
-		if((buffPos == 0) || (buffPos >= size))
+		// Load the chunk
+		if(buffPos==0 || buffPos>=size)
 		{
-			// Fewer samples left than the buffer accepts
-			if( buffPos + size > totalSamples )
-				size = totalSamples - pos;
-
+			if( buffPos+size > totalSamples )
+				size = totalSamples - pos;		// Fewer samples left than the buffer accepts
 			if(size <= 0)
 				break;
-
-			//m_pInput->MoveTo(pos); // <-- Ovde se neshto jako interesantno deshava!
-
 			int bytes = size * sizeof(SAMPLE);	// Buffer size in bytes
-
-			memset(buffer, 0, bytes);		// Fill with silence instead!
-
+			memset(buffer, 0, bytes);			// Fill with silence instead!
 			int bytesRead = m_pInput->Read((BYTE*)buffer, bytes);	// Load the chunk
-
-			if(EOF == bytesRead)			// No data inside, exit the loop
+			if(EOF == bytesRead)				// No data inside, exit the loop
 				break;
-
 			size = bytesRead / (fmt->bitsPerSample / 8);
-
-			buffPos = 0;					// Reset buffer position
+			buffPos = 0;						// Reset buffer position
 		}
 
-		// Find largest and smallest sample values
+		// Find peaks
 		for(ch=0; ch<channels; ch++)
 		{
 			SAMPLE sample = buffer[buffPos+ch];
@@ -336,55 +183,50 @@ void CRegionDisplay::loadPeaksChunked()
 				min[ch] = sample;
 		}
 
-		// Time to add peak to the array
-		if(counter >= interval)// || (srcLen && pos%srcLen==0))
+		// Time to add the peak to the array
+		if(counter >= interval)
 		{
 			for(ch=0; ch<channels; ch++)
 			{
 				SAMPLE sample = buffer[buffPos+ch];
-
 				Peak *peak = new Peak;
-				memset(peak, 0, sizeof(Peak));
-
 				if(!m_bDrawVertical)
 				{
-					if(max[ch] == 0 && min[ch] != 0)
+					if(max[ch]==0 && min[ch]!=0)
 						max[ch] = min[ch];
-					else if(min[ch] == 0 && max[ch] != 0)
+					else if(min[ch]==0 && max[ch]!=0)
 						min[ch] = max[ch];
 
-					peak->value1	= prev[ch];
 					// Trick: x % a = x & (a - 1) for binary numbers
-					//SAMPLE val	= (peakcount%2) == 0 ? max[ch] : min[ch];
-					SAMPLE val	= (peakcount&1) == 0 ? max[ch] : min[ch];
-					peak->value2	= val;
+					//SAMPLE val = (peakcount%2) == 0 ? max[ch] : min[ch];
+					//SAMPLE val = (peakcount&1) == 0 ? max[ch] : min[ch];
+					SAMPLE val = bMax ? max[ch] : min[ch];
 
-					prev[ch]	= val;
+					bMax = !bMax;
+
+					peak->value1 = prev[ch];
+					peak->value2 = prev[ch] = val;
 				}
-				else						// We're drawing vertical lines
+				else							// We're drawing vertical lines
 				{
-					peak->value1	= max[ch];	// Top point
-					peak->value2	= min[ch];	// Bottom point
+					peak->value1 = max[ch];		// Top point
+					peak->value2 = min[ch];		// Bottom point
 				}
-
-				peak->pos = pos/channels;	// Sample offset
-				
+				peak->pos = pos/channels;		// Sample offset
 				add( peak );
-
-				max[ch] = min[ch] = sample;	// New value
+				max[ch] = min[ch] = sample;		// New peak values
 			}
-			counter = 0;					// Reset the counter
-			peakcount++;					// Increase peak counter
+			counter = 0;						// Reset the counter
+			peakcount++;						// Increase peak counter
 		} else
-			counter++;						// Increase the counter
+			counter++;							// Increase the counter
 
-		buffPos += channels;				// Increase buffer position
+		buffPos += channels;					// Increase buffer position
 	}
 
 	delete[] buffer;
 
-	m_bRepaint = true;
-	m_bLoaded = true;
+	m_bLoaded = m_bRepaint = true;
 }
 
 /**
@@ -443,8 +285,6 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 	int max		= getMaxSampleValue();
 	int yscale	= max / height * 2;
 	int count	= m_iPeakCount;
-	//int count	= m_peaks.GetCount();
-//	int i		= start;
 	int right	= left + width;
 	
 	Peak *peak	= m_pFirstPeak;
@@ -456,8 +296,6 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 
 	for(int x=left; x<right && i<count; x++)
 	{
-//		Peak *peak = &m_peaks.Item(i);
-
 		int y1 = middle - peak->value1 / yscale;
 		int y2 = middle - peak->value2 / yscale;
 
@@ -484,8 +322,6 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 			dc.DrawLine(x-1, y1, x, y2);
 		}
 
-//		i += channels;
-
 		for(int c=0; c<channels; c++)
 		{
 			// Move to the next sample from the same channel
@@ -493,26 +329,6 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 				peak = peak->next;
 		}
 	}
-}
-
-/**
- * Returns the original source length, before the looping component.
- */
-int CRegionDisplay::getLengthNotLooped()
-{
-	int len = 0;
-	if( m_pTrack->IsLooped() )
-	{
-		IFloopySoundInput *input = m_pTrack->FindComponentByName("loop");
-		IFloopySoundFilter *loop = (IFloopySoundFilter*)input;
-		if(loop)
-		{
-			IFloopySoundInput *src = loop->GetSource();
-			if(src)
-				len = src->GetSize();
-		}
-	}
-	return len;
 }
 
 /**
@@ -535,15 +351,14 @@ int CRegionDisplay::getMaxSampleValue()
 	return max;
 }
 
-void CRegionDisplay::add(Peak *peak)
+void CRegionDisplay::add(CRegionDisplay::Peak *peak)
 {
 	if(NULL == m_pLastPeak)
 		m_pFirstPeak = m_pLastPeak = peak;
 	else
 		m_pLastPeak = m_pLastPeak->next = peak;
 	m_iPeakCount++;
-
-	//m_peaks.Add( peak );
+	peak->next = NULL;
 }
 
 void CRegionDisplay::clear()
@@ -556,22 +371,13 @@ void CRegionDisplay::clear()
 		delete tmp;
 	}
 	m_pFirstPeak = m_pLastPeak = NULL;
-	m_iPeakCount	= 0;
-
-	/*for(int i=0; i<m_peaks.GetCount(); i++)
-	{
-		Peak *peak = m_peaks.Item(i);
-		delete peak;
-	}*/
-	//WX_CLEAR_ARRAY(m_peaks);
-	//m_peaks.Empty();
-	//m_peaks.Clear();	// This should free the allocated memory
+	m_iPeakCount = 0;
 }
 
 
 int CRegionDisplay::GetPropertyCount()
 {
-	return 3;
+	return 4;
 }
 
 bool CRegionDisplay::GetPropertyVal(int index, float *value)
@@ -586,6 +392,9 @@ bool CRegionDisplay::GetPropertyVal(int index, float *value)
 		return true;
 	case 2:
 		*value = (float)m_bDrawContour;
+		return true;
+	case 3:
+		*value = (float)m_iBufferLength;
 		return true;
 	}
 	return false;
@@ -604,6 +413,9 @@ void CRegionDisplay::SetPropertyVal(int index, float value)
 	case 2:
 		m_bDrawContour = (value==0.f ? false : true);
 		return;
+	case 3:
+		m_iBufferLength = (int)value;
+		return;
 	}
 }
 
@@ -614,6 +426,7 @@ char *CRegionDisplay::GetPropertyName(int index)
 	case 0: return "DbLines";
 	case 1: return "DrawDbLines";
 	case 2: return "DrawContour";
+	case 3: return "BufferLength";
 	}
 	return NULL;
 }
@@ -625,6 +438,7 @@ char *CRegionDisplay::GetPropertyDesc(int index)
 	case 0: return "Decibell Lines";
 	case 1: return "Draw Decibell Lines";
 	case 2: return "Draw Contour";
+	case 3: return "Buffer Length";
 	}
 	return NULL;
 }
@@ -636,6 +450,7 @@ float CRegionDisplay::GetPropertyMin(int index)
 	case 0: return -24.f;
 	case 1: return 0.f;
 	case 2: return 0.f;
+	case 3: return 0.f;
 	}
 	return 0.f;
 }
@@ -647,6 +462,7 @@ float CRegionDisplay::GetPropertyMax(int index)
 	case 0: return 0.f;
 	case 1: return 1.f;
 	case 2: return 1.f;
+	case 3: return 2048;
 	}
 	return 0.f;
 }
@@ -658,6 +474,7 @@ char *CRegionDisplay::GetPropertyUnit(int index)
 	case 0: return "Db";
 	case 1: return "On/Off";
 	case 2: return "On/Off";
+	case 3: return "Samples";
 	}
 	return NULL;
 }
@@ -669,6 +486,7 @@ float CRegionDisplay::GetPropertyStep(int index)
 	case 0: return 0.1f;
 	case 1: return 1.f;
 	case 2: return 1.f;
+	case 3: return 32.f;
 	}
 	return 0.f;
 }
