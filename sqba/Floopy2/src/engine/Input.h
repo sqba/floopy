@@ -150,10 +150,15 @@ private:
 	void	getLibraryName(char *fullname, char *name);
 	void	getPluginName(char *fullname, char *name);
 
+	void loadDefaultParams();
+
 private:
 	char m_szDisplayName[50];
 	char m_szLastError[100];
 	char m_szObjPath[MAX_PATH];
+
+	float *m_pDefaultParams;
+	int m_iParamCount;
 
 	UINT m_red, m_green, m_blue;
 

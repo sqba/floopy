@@ -7,13 +7,19 @@
 #include <math.h>
 //#include <assert.h>
 
+
+#define LEFT	0
+#define RIGHT	1
+
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
 CVolume::CVolume()
 {
-	m_masterLeft = m_masterRight = m_left = m_right = 100;
+	m_master[LEFT] = m_master[RIGHT] = 100;
+	m_volume[LEFT] = m_volume[RIGHT] = 100;
 }
 
 CVolume::~CVolume()
@@ -28,7 +34,8 @@ int CVolume::Read(BYTE *data, int size)
 	if(len <= 0)
 		return len;
 
-	if(m_masterLeft==100 && m_masterRight==100 && m_left==100 && m_right==100)
+	if( m_master[LEFT]==100 && m_master[RIGHT]==100 && 
+		m_volume[LEFT]==100 && m_volume[RIGHT]==100 )
 		return len;
 
 //	if(m_left == 100 && m_right == 100)
@@ -45,13 +52,13 @@ int CVolume::Read(BYTE *data, int size)
 	{
 		int numsamples = len / (fmt->bitsPerSample/8);
 
-		float lpercentmast = (float)m_masterLeft / 100.f;
-		float rpercentmast = (float)m_masterRight / 100.f;
+		float lpercentmast = (float)m_master[LEFT]	/ 100.f;
+		float rpercentmast = (float)m_master[RIGHT]	/ 100.f;
 
-		if(m_left != 100 || m_right != 100)
+		if(m_volume[LEFT] != 100 || m_volume[RIGHT] != 100)
 		{
-			float lpercent = (float)m_left / 100.f;
-			float rpercent = (float)m_right / 100.f;
+			float lpercent = (float)m_volume[LEFT]	/ 100.f;
+			float rpercent = (float)m_volume[RIGHT] / 100.f;
 
 			lpercentmast *= lpercent;
 			rpercentmast *= rpercent;
@@ -93,38 +100,49 @@ int CVolume::Read(BYTE *data, int size)
 	m_masterLeft = m_masterRight = m_left = m_right = 100;
 }*/
 
+int CVolume::GetParamCount()
+{
+	if(NULL == GetSource())
+		return 3;
+	else
+		return getChannels() + 1;
+}
+
 bool CVolume::GetParamVal(int index, float *value)
 {
 	switch(index)
 	{
 	case 0:
-		*value = (float)(m_left > m_right ? m_left : m_right);
-		return true;
+		if(m_volume[LEFT] == m_volume[RIGHT])
+		{
+			*value = (float)m_volume[LEFT];
+			return true;
+		}
 	case 1:
-		*value = (float)m_left;
+		*value = (float)m_volume[LEFT];
 		return true;
 	case 2:
-		*value = (float)(getChannels() == 2 ? m_right : m_left);
+		*value = (float)m_volume[RIGHT];
 		return true;
 	}
 	return false;
 }
 
+// Problem: kada se jednom promeni vrednost lednog kanala posebno,
+// ta vrednost se upisuje u tajmlajn i vishe nije moguce postaviti
+// vrednost za oba kanala zajedno (case 0).
 void CVolume::SetParamVal(int index, float value)
 {
 	switch(index)
 	{
 	case 0:
-		m_left = m_right = (int)value;
+		m_volume[LEFT] = m_volume[RIGHT] = (int)value;
 		break;
 	case 1:
-		m_left = (int)value;
+		m_volume[LEFT] = (int)value;
 		break;
 	case 2:
-		(getChannels() == 2 ? m_right : m_left) = (int)value;
-		break;
-	default:
-		m_left = m_right = (int)value;
+		m_volume[RIGHT] = (int)value;
 		break;
 	}
 }
@@ -133,12 +151,9 @@ char *CVolume::GetParamName(int index)
 {
 	switch(index)
 	{
-	case 0:
-		return (getChannels() == 2 ? "both" : "volume");
-	case 1:
-		return (getChannels() == 2 ? "left" : "volume");
-	case 2:
-		return (getChannels() == 2 ? "right" : "volume");
+	case 0: return "volume";
+	case 1: return getChannels() > 1 ? "left" : "Volume";
+	case 2: return "right";
 	}
 	return NULL;
 }
@@ -147,12 +162,9 @@ char *CVolume::GetParamDesc(int index)
 {
 	switch(index)
 	{
-	case 0:
-		return "Volume";
-	case 1:
-		return (getChannels() == 2 ? "Left volume" : "Volume");
-	case 2:
-		return (getChannels() == 2 ? "Right volume" : "Volume");
+	case 0: return "Volume";
+	case 1: return getChannels() > 1 ? "Left volume" : "Volume";
+	case 2: return "Right volume";
 	}
 	return NULL;
 }
@@ -166,11 +178,6 @@ int CVolume::getChannels()
 		return 0;
 }
 
-int CVolume::GetParamCount()
-{
-	//return getChannels() + 1;
-	return getChannels()==2 ? 3 : 1;
-}
 
 int CVolume::GetPropertyCount()
 {
@@ -182,13 +189,10 @@ bool CVolume::GetPropertyVal(int index, float *value)
 	switch(index)
 	{
 	case 0:
-		*value = (float)(m_masterLeft > m_masterRight ? m_masterLeft : m_masterRight);
+		*value = (float)m_master[LEFT];
 		return true;
 	case 1:
-		*value = (float)m_masterLeft;
-		return true;
-	case 2:
-		*value = (float)(getChannels() == 2 ? m_masterRight : m_masterLeft);
+		*value = (float)m_master[RIGHT];
 		return true;
 	}
 	return false;
@@ -199,16 +203,10 @@ void CVolume::SetPropertyVal(int index, float value)
 	switch(index)
 	{
 	case 0:
-		m_masterLeft = m_masterRight = (int)value;
+		m_master[LEFT] = (int)value;
 		break;
 	case 1:
-		m_masterLeft = (int)value;
-		break;
-	case 2:
-		(getChannels() == 2 ? m_masterRight : m_masterLeft) = (int)value;
-		break;
-	default:
-		m_masterLeft = m_masterRight = (int)value;
+		m_master[RIGHT] = (int)value;
 		break;
 	}
 }

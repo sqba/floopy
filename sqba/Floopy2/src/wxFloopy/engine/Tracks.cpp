@@ -184,7 +184,7 @@ bool CTracks::RemoveTrack(CTrack *track)
 
 	try
 	{
-		if( m_pMaster->RemoveSource(track->GetSource()) )
+		if( m_pMaster->RemoveSource(track->GetInput()) )
 		{
 			if(m_tracks.DeleteObject( track ))
 			{
@@ -193,6 +193,8 @@ bool CTracks::RemoveTrack(CTrack *track)
 				return true;
 			}
 		}
+		else
+			wxLogTrace(_T("CTracks"), _T("RemoveTrack error: track input not found!"));
 	}
 	catch(...)
 	{
@@ -514,14 +516,13 @@ bool CTracks::Open(char *filename)
 {
 	bool result = false;
 
-	m_pMaster = NULL;
-
 	::wxSetCursor( *wxHOURGLASS_CURSOR );
 
 	if(m_pEngine)
 	{
 		if(m_pEngine->Open(filename))
 		{
+			m_pMaster = NULL;
 			memset(m_filename, 0, sizeof(m_filename));
 			strcpy(m_filename, filename);
 			Clear();

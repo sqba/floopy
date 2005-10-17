@@ -34,6 +34,8 @@ CInput::CInput(UpdateCallback func)
 	m_nSkipBytes = m_nSamplesToBytes = 0;
 
 	m_bFadeEdges = true;
+
+	m_pDefaultParams = NULL;
 }
 
 CInput::~CInput()
@@ -43,6 +45,9 @@ CInput::~CInput()
 
 	if(NULL != m_hinst)
 		FreeLibrary(m_hinst);
+
+	if(NULL != m_pDefaultParams)
+		delete[] m_pDefaultParams;
 }
 
 /**
@@ -91,7 +96,30 @@ bool CInput::Create(char *name)
 	tmp = tmp ? ++tmp : plugin;
 	SetDisplayName(plugin, strlen(tmp));
 
+	loadDefaultParams();
+
 	return true;
+}
+
+void CInput::loadDefaultParams()
+{
+	if(NULL != m_pDefaultParams)
+	{
+		delete[] m_pDefaultParams;
+		m_iParamCount = 0;
+	}
+
+	int count = m_plugin->GetParamCount();
+	if(count > 0)
+	{
+		m_iParamCount = count;
+		m_pDefaultParams = new float[count];
+		memset(m_pDefaultParams, 0, count*sizeof(float));
+		for(int i=0; i<count; i++)
+		{
+			m_plugin->GetParamVal(i, &m_pDefaultParams[i]);
+		}
+	}
 }
 
 /**
@@ -110,6 +138,8 @@ bool CInput::Create(IFloopySoundEngine *src)
 	char *name = src->GetDisplayName();
 	if(NULL != name)
 		SetDisplayName(name, strlen(name));
+
+	loadDefaultParams();
 
 	return true;
 }
@@ -446,6 +476,11 @@ bool CInput::GetParamVal(int index, float *value)
 		int prev = m_timeline.GetPrevOffset( m_offset, index );
 		if(m_timeline.GetParamVal(prev, index, value))
 			return true;
+		else if(index>=0 && index<m_iParamCount)
+		{
+			*value = m_pDefaultParams[index];
+			return true;
+		}
 		else
 			return m_plugin->GetParamVal(index, value);
 	}
@@ -530,19 +565,24 @@ bool CInput::GetParamAt(int offset, int index, float *value)
 {
 	offset *= m_nSamplesToBytes;
 
-	return m_timeline.GetParamVal(offset, index, value);
+//	return m_timeline.GetParamVal(offset, index, value);
 
-	/*if(m_timeline.GetParamVal(offset, index, value))
+	if(m_timeline.GetParamVal(offset, index, value))
 		return true;
-	else if(index != TIMELINE_PARAM_MOVETO)
+	else if(offset==0)// && index!=TIMELINE_PARAM_MOVETO)
 	{
 		int prev = m_timeline.GetPrevOffset( offset, index );
 		if(m_timeline.GetParamVal(prev, index, value))
 			return true;
+		else if(index>=0 && index<m_iParamCount)
+		{
+			*value = m_pDefaultParams[index];
+			return true;
+		}
 		else
 			return m_plugin->GetParamVal(index, value);
 	}
-	return false;*/
+	return false;
 }
 
 void CInput::SetParamAt(int offset, int index, float value)

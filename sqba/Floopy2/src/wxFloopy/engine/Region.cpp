@@ -460,8 +460,8 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	calcPos(&left, &right);
 	int width = right - left;
 	int border = (IsSelected() ? 2 : 1);
-	int top    = rc.GetTop();
-	int height = rc.GetHeight();
+	int top    = rc.GetTop() + 1;
+	int height = rc.GetHeight() - 2;
 
 	if(m_bShowOffsetBar && this->GetHeight()>2*m_pOffsetBar->GetHeight())
 	{
@@ -533,7 +533,7 @@ bool CRegion::HitTest(int x, int y)
 	int left=0, right=0;
 	calcPos(&left, &right);
 	int width = right - left;
-	wxRect rc(left, getTrack()->GetTop(), width, GetHeight());
+	wxRect rc(left, getTrack()->GetTop()-1, width, GetHeight()+2);
 	return rc.Inside(x, y);
 }
 

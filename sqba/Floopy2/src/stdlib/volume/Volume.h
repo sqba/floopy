@@ -55,8 +55,8 @@ private:
 	int getChannels();
 
 private:
-	int m_left, m_right; // In percents
-	int m_masterLeft, m_masterRight; // Not affected by the timeline, in percents
+	int m_master[2];	/// Property (not on the timeline)
+	int m_volume[2];	/// Parameter
 };
 
 #endif // !defined(AFX_VOLUME_H__05C04C12_471D_4FD8_BCD1_350030686D0F__INCLUDED_)

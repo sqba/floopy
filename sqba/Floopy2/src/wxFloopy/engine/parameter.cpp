@@ -69,6 +69,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 		int prevX	= left;
 		int prevY	= bottom;
 		int offset	= m_bAfterTrack ? 0 : start;
+		bool bLoaded = false;
 
 		wxPen oldpen = dc.GetPen();
 		dc.SetPen( wxPen(m_color) );
@@ -80,10 +81,14 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 			offset = input->GetPrevOffset(offset);
 			bDrawCircle = false;
 		}
+		else
+			bLoaded = true;
 
 		do {
 			if(input->GetParamAt(offset, m_index, &value))
 			{
+				bLoaded = true;
+
 				int x = offset;
 				int y = (int)((float)bottom - (value * m_fScale));
 
@@ -117,7 +122,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 			offset = input->GetNextOffset(offset);
 		} while ( (offset > 0) && (offset < end) );
 
-		if(prevX < right) // there have been parameters!
+		if(bLoaded && prevX<right) // there have been parameters!
 			dc.DrawLine(prevX, prevY, right, prevY);
 
 		dc.SetPen(oldpen);
