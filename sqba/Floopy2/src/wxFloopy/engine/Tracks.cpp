@@ -8,6 +8,7 @@
 
 #include "tracks.h"
 #include "track.h"
+#include "label.h"
 #include "playthread.h"
 #include "../../../IFloopy.h"
 
@@ -130,7 +131,7 @@ void CTracks::DrawLabels(wxDC& dc, wxSize size)
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
-		CTrack::CLabel *label = track->GetLabel();
+		CLabel *label = track->GetLabel();
 		int height = track->GetHeight();
 		rc.SetHeight( height );
 		label->DrawBG(dc, rc);
