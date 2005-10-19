@@ -50,7 +50,7 @@ class CTrack : public IFloopyObj
 	};
 
 public:
-	class CTrackLabel : public IFloopyObj
+	class CLabel : public IFloopyObj
 	{
 	public:
 		/*! \class CLoopButton
@@ -94,8 +94,8 @@ public:
 		};
 
 	public:
-		CTrackLabel(CTrack *track);
-		virtual ~CTrackLabel();
+		CLabel(CTrack *track);
+		virtual ~CLabel();
 
 		void DrawBG   (wxDC& dc, wxRect& rc);
 		void DrawFore (wxDC& dc, wxRect& rc);
@@ -195,7 +195,7 @@ public:
 
 	int GetCaretPos();//	{ return GetTracks()->GetCaretPos(); }
 
-	CTrackLabel	*GetLabel() { return m_pLabel; }
+	CLabel	*GetLabel() { return m_pLabel; }
 
 	int   GetPropertyCount();
 	bool  GetPropertyVal(int, float*);
@@ -225,7 +225,7 @@ private:
 
 	bool		m_bReset;
 
-	CTrackLabel	*m_pLabel;
+	CLabel	*m_pLabel;
 };
 
 

@@ -85,7 +85,7 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
 
 	loadRegions();
 
-	m_pLabel = new CTrackLabel( this );
+	m_pLabel = new CLabel( this );
 
 	m_bReset = true;
 
@@ -1136,7 +1136,7 @@ void CTrack::CBorder::DrawFore(wxDC& dc, wxRect& rc)
 /////////////////////////////////////////////////////////////////////
 // CLoopButton functions
 /////////////////////////////////////////////////////////////////////
-void CTrack::CTrackLabel::CLoopButton::DrawFore(wxDC& dc, wxRect& rc)
+void CTrack::CLabel::CLoopButton::DrawFore(wxDC& dc, wxRect& rc)
 {
 	wxBrush oldBrush = dc.GetBrush();
 	wxPen oldpen = dc.GetPen();
@@ -1165,7 +1165,7 @@ void CTrack::CTrackLabel::CLoopButton::DrawFore(wxDC& dc, wxRect& rc)
 /////////////////////////////////////////////////////////////////////
 // CCacheButton functions
 /////////////////////////////////////////////////////////////////////
-void CTrack::CTrackLabel::CCacheButton::DrawFore(wxDC& dc, wxRect& rc)
+void CTrack::CLabel::CCacheButton::DrawFore(wxDC& dc, wxRect& rc)
 {
 	wxBrush oldBrush = dc.GetBrush();
 	wxPen oldpen = dc.GetPen();
@@ -1196,22 +1196,22 @@ void CTrack::CTrackLabel::CCacheButton::DrawFore(wxDC& dc, wxRect& rc)
 
 
 /////////////////////////////////////////////////////////////////////
-// CTrackLabel functions
+// CLabel functions
 /////////////////////////////////////////////////////////////////////
 
-CTrack::CTrackLabel::CTrackLabel(CTrack *track) : IFloopyObj(track)
+CTrack::CLabel::CLabel(CTrack *track) : IFloopyObj(track)
 {
 	m_pButtonLoop = new CLoopButton(track);
 	m_pButtonCache = new CCacheButton(track);
 }
 
-CTrack::CTrackLabel::~CTrackLabel()
+CTrack::CLabel::~CLabel()
 {
 	delete m_pButtonLoop;
 	delete m_pButtonCache;
 }
 
-void CTrack::CTrackLabel::DrawBG(wxDC& dc, wxRect& rc)
+void CTrack::CLabel::DrawBG(wxDC& dc, wxRect& rc)
 {
 	CTrack *track = getTrack();
 	m_rcLabel = rc;
@@ -1295,7 +1295,7 @@ void CTrack::CTrackLabel::DrawBG(wxDC& dc, wxRect& rc)
 	dc.SetBrush( oldBrush );
 }
 
-void CTrack::CTrackLabel::DrawFore(wxDC& dc, wxRect& rc)
+void CTrack::CLabel::DrawFore(wxDC& dc, wxRect& rc)
 {
 
 }
@@ -1306,18 +1306,18 @@ void CTrack::CTrackLabel::DrawFore(wxDC& dc, wxRect& rc)
 //! \param y [in] vertical coordinate
 //! \return true if the vertical coordinate y is in the track
 /////////////////////////////////////////////////////////////////////////////
-bool CTrack::CTrackLabel::HitTest(int y)
+bool CTrack::CLabel::HitTest(int y)
 {
 	return m_rcLabel.Inside(1, y);
 }
 
-void CTrack::CTrackLabel::drawLoopSign(wxDC& dc, wxRect& rc)
+void CTrack::CLabel::drawLoopSign(wxDC& dc, wxRect& rc)
 {
 	m_pButtonLoop->DrawBG(dc, rc);
 	m_pButtonLoop->DrawFore(dc, rc);
 }
 
-void CTrack::CTrackLabel::drawCacheSign(wxDC& dc, wxRect& rc)
+void CTrack::CLabel::drawCacheSign(wxDC& dc, wxRect& rc)
 {
 	m_pButtonCache->DrawBG(dc, rc);
 	m_pButtonCache->DrawFore(dc, rc);

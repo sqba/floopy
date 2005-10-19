@@ -22,48 +22,49 @@ public:
 	class CPoint : public IFloopyObj
 	{
 	public:
-		CPoint(CParameter *parameter) : IFloopyObj(parameter) { m_offset = 0; }
+		CPoint(CParameter *parameter);
 		virtual ~CPoint() {}
 
 		wxCursor GetCursor();
 
 		void Move(int dx, int dy);
 
-		int m_offset;
-		int m_samplesPerPixel;
-		float m_fScale;
-		IFloopySoundInput *m_pObj;
-		int m_index;
-		float m_value;
-		int m_iSizeOrientation;
+		IFloopySoundInput *m_pInput;
+		CParameter *m_pParameter;
+		int		m_offset;
+		int		m_samplesPerPixel;
+		float	m_fScale;
+		int		m_index;
+		float	m_value;
+		int		m_sizing;
 	};
 
 public:
-//	CParameter() {}
-	CParameter(CRegion *region, IFloopySoundInput *obj, int index, bool bAfterTrack, wxColor color=*wxCYAN);
+	CParameter(CRegion*, IFloopySoundInput*, int, bool, wxColor color=*wxCYAN);
 	virtual ~CParameter();
 
 	int GetType()	{ return FLOOPY_PARAMETER; }
 
+	void Refresh();
+	//void Invalidate();
+
 	IFloopyObj *GetChildAt(int x, int y);
-	float GetValueAt(int x);
 	void DrawFore(wxDC& dc, wxRect& rc);
-//	void DrawBG(wxDC& dc, wxRect& rc);
-	bool HitTest(int x, int y);
+//	float GetValueAt(int x);
 
 private:
-	inline CRegion	*getRegion()	{ return (CRegion*)GetParent(); }
-	inline CTrack	*getTrack();
-	inline CTracks	*getTracks();
-
-private:
+	CRegion	*m_pRegion;
+	CTrack	*m_pTrack;
+	CTracks	*m_pTracks;
 	int		m_index;
-	bool	m_bEdit;
-	int		m_iSamplePos, m_iPrevSamplePos;
+//	bool	m_bEdit;
+//	int		m_iSamplePos, m_iPrevSamplePos;
 	CPoint	*m_pPoint;
-	IFloopySoundInput *m_pObj;
-	bool m_bAfterTrack;
-	float m_fScale;
+	IFloopySoundInput *m_pInput;
+	bool	m_bAfterTrack;
+	float	m_fScale;
+	float	m_fMin, m_fMax;
+	int		m_iSamplesPerPixel;
 };
 
 

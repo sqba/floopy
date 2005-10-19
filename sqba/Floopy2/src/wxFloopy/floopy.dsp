@@ -132,6 +132,10 @@ SOURCE=.\views\gridview.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\engine\label.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\views\labelsview.cpp
 # End Source File
 # Begin Source File
@@ -229,6 +233,10 @@ SOURCE=.\engine\FloopyObj.h
 # Begin Source File
 
 SOURCE=.\views\gridview.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\engine\label.h
 # End Source File
 # Begin Source File
 
