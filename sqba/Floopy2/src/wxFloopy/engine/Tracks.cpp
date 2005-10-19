@@ -499,6 +499,7 @@ bool CTracks::createEngine(char *plugin)
 		} else {
 			try {
 				m_pEngine = func( NULL );
+				SetEngine(m_pEngine);
 				result = true;
 			} catch(...) {
 				wxLogTrace(_T("CEngine"), _T("CreateDisplay failed!"));

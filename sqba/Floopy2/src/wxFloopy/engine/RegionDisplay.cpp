@@ -294,7 +294,7 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 
 	int prevMin	= middle, prevMax = middle;
 
-	for(int x=left; x<right && i<count; x++)
+	for(int x=left; x<right && NULL!=peak; x++)
 	{
 		int y1 = middle - peak->value1 / yscale;
 		int y2 = middle - peak->value2 / yscale;

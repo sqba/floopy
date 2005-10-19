@@ -2,6 +2,9 @@
 #include "Reverse.h"
 
 
+#define SAMPLE	short int
+
+
 CReverse::CReverse()
 {
 	m_nPosition	= 0;
@@ -68,8 +71,8 @@ void CReverse::reverse(BYTE *data, int size)
 	SOUNDFORMAT *fmt = GetFormat();
 	if(size>0 && fmt && fmt->channels>0 && fmt->bitsPerSample==16)
 	{
-		short int *tmp = (short int*)(m_pBuffer+size);
-		short int *out = (short int*)data;
+		SAMPLE *tmp = (short int*)(m_pBuffer+size);
+		SAMPLE *out = (short int*)data;
 
 		int numsamples = size / (fmt->bitsPerSample/8);
 
@@ -88,15 +91,20 @@ void CReverse::MoveTo(int samples)
 {
 	int size = IFloopySoundFilter::GetSize();
 
+//	assert(samples <= size);
+
 	if(SIZE_INFINITE != size)
 	{
 		if(size >= samples)
 			samples = size - samples;
+		else if(samples > size)
+			samples = 0;
 	}
 
-	m_nPosition = samples;
-
 	assert(m_nPosition >= 0);
+	assert(m_nPosition <= size);
+
+	m_nPosition = samples;
 
 	IFloopySoundFilter::MoveTo(samples);
 }

@@ -835,17 +835,21 @@ void CTrack::SetReverse(bool bReverse)
 				return; // No need
 
 			IFloopySoundEngine *engine = GetTracks()->GetEngine();
-			IFloopySoundFilter *reverse = (IFloopySoundFilter*)engine->CreateInput("stdlib.reverse");
-			if(reverse)
+			assert(engine != NULL);
+			if(NULL != engine)
 			{
-				reverse->EnableAt(0, true);
-				reverse->SetBypass(false);
+				IFloopySoundFilter *reverse = (IFloopySoundFilter*)engine->CreateInput("stdlib.reverse");
+				if(NULL != reverse)
+				{
+					reverse->EnableAt(0, true);
+					reverse->SetBypass(false);
 
-				reverse->SetSource( src );
-				((IFloopySoundFilter*)m_pTrack)->SetSource( reverse );
+					reverse->SetSource( src );
+					((IFloopySoundFilter*)m_pTrack)->SetSource( reverse );
 
-				Invalidate();
-				Refresh();
+					Invalidate();
+					Refresh();
+				}
 			}
 		}
 	}
