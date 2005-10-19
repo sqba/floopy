@@ -996,21 +996,28 @@ void CTracks::SetViewUpdatedWhilePlaying(bool bUpdate)
 }
 
 
+char *CTracks::GetComponentName(IFloopySoundInput *src)
+{
+	if(NULL == src)
+		return NULL;
+	char *tmp = src->GetName();
+	char *name = strrchr(tmp, '.');
+	if(NULL == name)
+		name = tmp;
+	else
+		name++;
+	return name;
+}
+
 IFloopySoundInput *CTracks::FindComponentByName(IFloopySoundInput *src, char *name)
 {
 	while(src)
 	{
-		char *tmp = strrchr(src->GetName(), '.');
-		if(NULL == tmp)
-			tmp = src->GetName();
-		else
-			tmp++;
+		char *tmp = GetComponentName(src);
 		if(0==strcmpi(tmp, name))
 			return src;
 
-		int type = src->GetType();
-
-		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
+		if( IsFilter(src) )
 			src = ((IFloopySoundFilter*)src)->GetSource();
 		else
 			src = NULL;
@@ -1018,6 +1025,13 @@ IFloopySoundInput *CTracks::FindComponentByName(IFloopySoundInput *src, char *na
 	return NULL;
 }
 
+bool CTracks::IsFilter(IFloopySoundInput *src)
+{
+	if(NULL == src)
+		return false;
+	int type = src->GetType();
+	return(type == (TYPE_FLOOPY_SOUND_FILTER | type));
+}
 
 
 

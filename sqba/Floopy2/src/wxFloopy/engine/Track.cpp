@@ -30,11 +30,25 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
 	m_pInput = input;
 	m_pTrack = CTracks::FindComponentByName(input, "track");
 
+
+	m_pSource = input;
+
+	// Check if input is mono to stereo converter:
+	// if it is then draw mono source.
+	if( CTracks::IsFilter(input) )
+	{
+		char *tmp = CTracks::GetComponentName(input);
+		if(0==strcmpi(tmp, "mono2stereo"))
+			m_pSource = ((IFloopySoundFilter*)input)->GetSource();
+	}
+
+/*
 	m_pSource = CTracks::FindComponentByName(input, "mono2stereo");
 	if(NULL == m_pSource)
 		m_pSource = input;
 	else
 		m_pSource = ((IFloopySoundFilter*)m_pSource)->GetSource();
+*/
 
 	assert(NULL != m_pTrack);
 

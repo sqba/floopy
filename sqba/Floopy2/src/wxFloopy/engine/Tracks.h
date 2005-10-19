@@ -239,6 +239,8 @@ public:
 	int GetPixelsPerSecond() { return m_iPixelsPerSecond; }
 
 	static IFloopySoundInput *FindComponentByName(IFloopySoundInput*, char*);
+	static char *GetComponentName(IFloopySoundInput*);
+	static bool IsFilter(IFloopySoundInput*);
 
 private:
 	CTrack *addTrack(IFloopySoundInput*, int);
