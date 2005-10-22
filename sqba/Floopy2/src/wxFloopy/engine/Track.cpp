@@ -629,8 +629,8 @@ IFloopyObj *CTrack::GetSelectedObj()
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
 	{
-		CRegion *event = (CRegion*)node->GetData();
-		IFloopyObj *tmp = event->GetSelectedObj();
+		CRegion *region = (CRegion*)node->GetData();
+		IFloopyObj *tmp = region->GetSelectedObj();
 		if(tmp)
 			return tmp;
 		node = node->GetNext();

@@ -67,7 +67,10 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 		bLoaded = true;
 
 	wxPen oldpen = dc.GetPen();
-	dc.SetPen( wxPen(m_color) );
+	wxColor color = m_color;
+	if( IsSelected() )
+		color.Set(255-color.Red(), 255-color.Green(), 255-color.Blue());
+	dc.SetPen( wxPen(color) );
 
 	do {
 		if(m_pInput->GetParamAt(pos, m_index, &value))
@@ -237,8 +240,74 @@ IFloopyObj *CParameter::GetSelectedObj()
 }
 */
 
+bool CParameter::OnKeyDown(wxKeyEvent& event)
+{
+	switch( event.GetKeyCode() )
+	{
+	case WXK_UP:
+	case WXK_NUMPAD_UP:
+		break;
+	case WXK_DOWN:
+	case WXK_NUMPAD_DOWN:
+		break;
+	case WXK_LEFT:
+	case WXK_NUMPAD_LEFT:
+		break;
+	case '-':
+		break;
+	case WXK_RIGHT:
+	case WXK_NUMPAD_RIGHT:
+		break;
+	case '+':
+		break;
+	case WXK_DELETE:
+		break;
+	case 'p':
+	case 'P':
+		insertParam(event.GetX(), event.GetY());
+		return true;
+	case WXK_F5:
+	case WXK_SPACE:
+		break;
+	case WXK_END:
+	case WXK_RETURN:
+		break;
+	default:
+		break;
+	}
+		
+	return false;
+}
 
+void CParameter::insertParam(int x, int y)
+{
+	int start = m_pRegion->GetStartPos();
+	int end = m_pRegion->GetEndPos();
+	int offset = x * m_iSamplesPerPixel;
+	if(offset<start || offset>end)
+		return;
 
+	if(m_bAfterTrack)
+		offset -= start;
+
+	int top = m_pRegion->GetTop();
+	int bottom = top + m_pRegion->GetHeight();
+	if(y<top || y>bottom)
+		return;
+
+	int ypos = bottom - y;
+	float value = (float)ypos / m_fScale;
+
+	m_pInput->SetParamAt(offset, m_index, value);
+
+	m_pRegion->Invalidate();
+	Refresh();
+}
+
+bool CParameter::HitTest(int x, int y)
+{
+	return NULL != GetChildAt(x, y);
+}
 
 
 
@@ -286,4 +355,9 @@ void CParameter::CPoint::Move(int dx, int dy)
 
 	if( bRefresh )
 		m_pParameter->Refresh();
+}
+
+void CParameter::CPoint::Select(bool selected)
+{
+	m_pParameter->Select(selected);
 }

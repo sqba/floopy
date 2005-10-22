@@ -101,6 +101,13 @@ void CTimelineView::ScrollWindow( int dx, int dy, const wxRect *rect )
 
 void CTimelineView::OnKeyDown(wxKeyEvent& event)
 {
+	int x, y, xScrollUnits, yScrollUnits;
+	GetViewStart(&x, &y);
+	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+
+	event.m_x += x*xScrollUnits;
+	event.m_y += y*yScrollUnits;
+
 	IFloopyObj *obj = m_pTracks->GetSelectedObj();
 	if(NULL==obj || !obj->OnKeyDown(event))
 		m_pTracks->OnKeyDown(event);
@@ -202,6 +209,14 @@ void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 
 					return; // Don't move the caret
 				}
+			default:
+				if( !obj->IsSelected() )
+				{
+					m_pTracks->DeselectAllTracks();
+					m_pTracks->DeselectAllRegions();
+					obj->Select();
+				}
+				return;
 			}
 		}
 		else if(event.RightUp())

@@ -29,6 +29,8 @@ public:
 
 		void Move(int dx, int dy);
 
+		void Select(bool selected=true);
+
 		IFloopySoundInput *m_pInput;
 		CParameter *m_pParameter;
 		int		m_offset;
@@ -51,6 +53,9 @@ public:
 	IFloopyObj *GetChildAt(int x, int y);
 	void DrawFore(wxDC& dc, wxRect& rc);
 //	float GetValueAt(int x);
+	bool OnKeyDown(wxKeyEvent& event);
+	void insertParam(int x, int y);
+	bool HitTest(int x, int y);
 
 private:
 	CRegion	*m_pRegion;

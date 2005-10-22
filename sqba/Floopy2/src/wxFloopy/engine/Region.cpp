@@ -673,6 +673,14 @@ IFloopyObj *CRegion::GetChildAt(int x, int y)
 
 IFloopyObj *CRegion::GetSelectedObj()
 {
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param->IsSelected())
+			return param;
+		node = node->GetNext();
+	}
 	return ( IsSelected() ? this : NULL);
 }
 
@@ -1074,6 +1082,18 @@ void CRegion::SetStartOffset(int sample)
 
 void CRegion::Select(bool selected)
 {
+	if(!selected)
+	{
+		ParameterList::Node *node = m_Parameters.GetFirst();
+		while (node)
+		{
+			CParameter *param = (CParameter*)node->GetData();
+			if(param)
+				param->Select(false);
+			node = node->GetNext();
+		}
+	}
+
 	IFloopyObj::Select(selected);
 
 	Refresh();
