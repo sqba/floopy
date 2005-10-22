@@ -46,8 +46,8 @@ public:
 	int   GetParamCount()							{ return m_plugin->GetParamCount(); }
 	bool  GetParamVal(int index, float *value);
 	void  SetParamVal(int index, float value);
-	char *GetParamName(int index)					{ return m_plugin->GetParamName(index); }
-	char *GetParamDesc(int index)					{ return m_plugin->GetParamDesc(index); }
+	char *GetParamName(int index);
+	char *GetParamDesc(int index);
 	bool  GetParamIndex(char *name, int *index);
 	float GetParamMax(int index)					{ return m_plugin->GetParamMax(index); }
 	float GetParamMin(int index)					{ return m_plugin->GetParamMin(index); }

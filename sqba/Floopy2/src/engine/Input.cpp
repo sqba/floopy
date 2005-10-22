@@ -465,6 +465,26 @@ bool CInput::IsEnabled()
 	return result;
 }
 
+char *CInput::GetParamName(int index)
+{
+	switch(index)
+	{
+	case TIMELINE_PARAM_ENABLE:	return "Enable";
+	case TIMELINE_PARAM_MOVETO:	return "MoveTo";
+	default:					return m_plugin->GetParamName(index);
+	}
+}
+
+char *CInput::GetParamDesc(int index)
+{
+	switch(index)
+	{
+	case TIMELINE_PARAM_ENABLE:	return "Enable";
+	case TIMELINE_PARAM_MOVETO:	return "MoveTo";
+	default:					return m_plugin->GetParamDesc(index);
+	}
+}
+
 bool CInput::GetParamVal(int index, float *value)
 {
 //	return m_timeline.GetParamVal(m_offset, index, value);
