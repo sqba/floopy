@@ -244,34 +244,10 @@ bool CParameter::OnKeyDown(wxKeyEvent& event)
 {
 	switch( event.GetKeyCode() )
 	{
-	case WXK_UP:
-	case WXK_NUMPAD_UP:
-		break;
-	case WXK_DOWN:
-	case WXK_NUMPAD_DOWN:
-		break;
-	case WXK_LEFT:
-	case WXK_NUMPAD_LEFT:
-		break;
-	case '-':
-		break;
-	case WXK_RIGHT:
-	case WXK_NUMPAD_RIGHT:
-		break;
-	case '+':
-		break;
-	case WXK_DELETE:
-		break;
 	case 'p':
 	case 'P':
 		insertParam(event.GetX(), event.GetY());
 		return true;
-	case WXK_F5:
-	case WXK_SPACE:
-		break;
-	case WXK_END:
-	case WXK_RETURN:
-		break;
 	default:
 		break;
 	}
@@ -281,14 +257,18 @@ bool CParameter::OnKeyDown(wxKeyEvent& event)
 
 void CParameter::insertParam(int x, int y)
 {
+	int offset = m_pRegion->GetStartOffset();
 	int start = m_pRegion->GetStartPos();
 	int end = m_pRegion->GetEndPos();
-	int offset = x * m_iSamplesPerPixel;
-	if(offset<start || offset>end)
+
+	int pos = x * m_iSamplesPerPixel;
+	if(pos<start || pos>end)
 		return;
 
+	pos += offset;
+
 	if(m_bAfterTrack)
-		offset -= start;
+		pos -= start;
 
 	int top = m_pRegion->GetTop();
 	int bottom = top + m_pRegion->GetHeight();
@@ -298,7 +278,7 @@ void CParameter::insertParam(int x, int y)
 	int ypos = bottom - y;
 	float value = (float)ypos / m_fScale;
 
-	m_pInput->SetParamAt(offset, m_index, value);
+	m_pInput->SetParamAt(pos, m_index, value);
 
 	m_pRegion->Invalidate();
 	Refresh();
