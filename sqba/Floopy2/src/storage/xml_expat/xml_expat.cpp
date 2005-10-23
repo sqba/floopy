@@ -1,6 +1,38 @@
-// xml_expat.cpp : Defines the entry point for the DLL application.
-//
 
+
+
+#include "../../ifloopy.h"
+#include "storage.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+__declspec( dllexport ) char *GetExtension()
+{
+	return "xml";
+}
+
+__declspec( dllexport ) bool Load(IFloopySoundEngine *engine, char *filename)
+{
+	CStorage storage(engine);
+	return storage.Load(filename);
+}
+
+__declspec( dllexport ) bool Save(IFloopySoundEngine *engine, char *filename)
+{
+	CStorage storage(engine);
+	return storage.Save(filename);
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+
+
+
+/*
 #define MAX_PATH          260
 
 #include "expat/xmlparse/xmlparse.h"
@@ -13,32 +45,16 @@
 
 
 
-/*
-bool APIENTRY DllMain( HANDLE hModule, 
-                       DWORD  ul_reason_for_call, 
-                       LPVOID lpReserved
-					 )
-{
-    return true;
-}
-*/
-
-
-
-struct tTimeline
-{
-	IFloopySoundInput *obj;
-	char *data;
-};
-
-
-
 
 struct tSessionInfo
 {
-	tTimeline gObjects[1024];	// Temporary solution
-	int gIndex;
+	struct tTimeline
+	{
+		IFloopySoundInput *obj;
+		char *data;
+	} gObjects[1024];	// Temporary solution
 
+	int gIndex;
 
 	int gBuffLen;
 	int gBuffEnd;
@@ -56,7 +72,6 @@ struct tSessionInfo
 	IFloopySoundInput *gInput;
 
 	bool bInitialized;
-	//char filename[MAX_PATH];
 };
 
 bool loadXML(IFloopySoundEngine *engine, char *filename);
@@ -78,12 +93,11 @@ __declspec( dllexport ) bool Save(IFloopySoundEngine *engine, char *filename)
 {
 	return saveXML(engine, filename);
 }
-/*
+
 __declspec( dllexport ) char *GetExtension()
 {
 	return "XML";
 }
-*/
 #ifdef __cplusplus
 }
 #endif
@@ -356,10 +370,6 @@ bool saveXML(IFloopySoundEngine *engine, char *filename)
 	si.level = 0;
 
 	si.bInitialized = false;
-	/*strcpy(si.filename, filename);
-	char *c = strrchr(si.filename, '\\');
-	if(c)
-		*c++ = '\0';*/
 
 	FILE *fp = fopen(filename, "w");
 	if(fp)
@@ -375,46 +385,6 @@ bool saveXML(IFloopySoundEngine *engine, char *filename)
 
 
 
-
-
-/*
-void saveParamTimeline(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, int index)
-{
-	char space[100] = {0};
-	if(si->level < 100)
-		memset(space, ' ', si->level+1);
-
-	UINT r=0, g=0, b=0;
-	input->GetColor(&r, &g, &b);
-
-	SOUNDFORMAT *fmt = input->GetFormat();
-	int freq = fmt->frequency;
-
-	fprintf(fp, "%s<param name='%s' index='%d' color='%d,%d,%d'>", 
-			space, input->GetParamName(index), index, r, g, b);
-
-	bool bStart = true;
-	int offset = 0;
-	do {
-		float seconds = (float)offset / (float)freq;
-		float value = 0.f;
-		
-		if(input->GetParamAt(offset, index, &value))
-		{
-			if(!bStart)
-				fprintf(fp, ", "); // Separator
-			else
-				bStart = false;
-
-			fprintf(fp, "%.3f:%.3f", seconds, value);
-		}
-		
-		offset = input->GetNextOffset(offset);
-	} while (offset > 0);
-
-	fprintf(fp, "</param>\n");
-}
-*/
 
 
 void writeProperties(FILE *fp, IFloopySoundInput *input)
@@ -540,8 +510,8 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, bool recursiv
 	if(bEngine && si->bInitialized)
 	{
 		char *path = input->GetPath();
-		/*if(0 == strnicmp(path, si->filename, strlen(si->gPath)))
-			path += strlen(si->gPath);*/
+		//if(0 == strnicmp(path, si->filename, strlen(si->gPath)))
+		//	path += strlen(si->gPath);
 		fprintf(fp, "%s<input source='%s' name='%s'", 
 			space, path, input->GetDisplayName());
 		recursive = false;
@@ -553,40 +523,10 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, bool recursiv
 	UINT r=0, g=0, b=0;
 	if( input->GetColor(&r, &g, &b) )
 		fprintf(fp, " color='%d,%d,%d'", r, g, b);
-/*
-	if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
-	{
-		float red=0.f, green=0.f, blue=0.f;
-		int index=0;
-		
-		if( input->GetPropertyIndex("BGColorRed", &index) )
-			input->GetPropertyVal(index, &red);
 
-		if( input->GetPropertyIndex("BGColorGreen", &index) )
-			input->GetPropertyVal(index, &green);
-
-		if( input->GetPropertyIndex("BGColorBlue", &index) )
-			input->GetPropertyVal(index, &blue);
-
-		fprintf(fp, " color='%d,%d,%d'", red, green, blue);
-	}
-*/
 	fprintf(fp, ">\n");
 
 	si->bInitialized = true;
-
-
-
-
-
-
-/*
-	for(int index=0; index<input->GetParamCount(); index++)
-	{
-		saveParamTimeline(si, fp, input, index);
-	}
-*/
-
 
 	fprintf(fp, "%s ", space);
 	writeProperties(fp, input);
@@ -698,3 +638,4 @@ void loadTimeline(tSessionInfo *si, IFloopySoundInput *input, char *data)
 //	" &quot;
 //	' &apos;
 /////////////////////////
+*/
