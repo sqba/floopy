@@ -152,6 +152,10 @@ SOURCE=.\engine\parameter.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\engine\PathCtrl.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\engine\PlayThread.cpp
 # End Source File
 # Begin Source File
@@ -253,6 +257,10 @@ SOURCE=.\engine\ObjTypes.h
 # Begin Source File
 
 SOURCE=.\engine\parameter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\engine\PathCtrl.h
 # End Source File
 # Begin Source File
 

@@ -2,6 +2,7 @@
 #include "../FloopyControl.h"
 #include "floopyobj.h"
 #include "ObjTypes.h"
+#include "PathCtrl.h"
 
 class CTrack;
 
@@ -64,6 +65,7 @@ private:
 
 private:
 	wxRect m_rcLabel;
-	CLoopButton		*m_pButtonLoop;
-	CCacheButton	*m_pButtonCache;
+//	CLoopButton		*m_pButtonLoop;
+//	CCacheButton	*m_pButtonCache;
+	CPathCtrl		*m_pPathCtrl;
 };

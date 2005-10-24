@@ -38,24 +38,21 @@ private:
 		{
 			IFloopySoundInput *obj;
 			char *data;
-		} gObjects[1024];	// Temporary solution
+		} objects[1024];	// Temporary solution
 
-		int gIndex;
-
-		int gBuffLen;
-		int gBuffEnd;
-		char *gpbuff;
-
-		const char *gElement;
-
-		char gPath[_MAX_PATH];
-
-		IFloopySoundInput *buff[20]; //temp
+		int iIndex;
+		int iBuffLen;
+		int iBuffEnd;
 		int level;
 
+		const char *pElement;
+		char pPath[_MAX_PATH];
+		char *pBuff;
+
 		XML_Parser parser;
-		IFloopySoundEngine *gEngine;
-		IFloopySoundInput *gInput;
+		IFloopySoundEngine	*pEngine;
+		IFloopySoundInput	*pInput;
+		IFloopySoundInput	*buff[20]; //temp
 
 		bool bInitialized;
 		//char filename[MAX_PATH];

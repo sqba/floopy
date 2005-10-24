@@ -207,22 +207,25 @@ bool CStorage::Load(char *filename)
 
 	m_pFile = fopen(filename, "r");
 	if(NULL == m_pFile)
+	{
+		fprintf(stderr, "File not found: %s\n", filename);
 		return false;
+	}
 
 	tSessionInfo si;
 	memset(&si, 0, sizeof(tSessionInfo));
 
-	si.gEngine			= m_pEngine;
-	si.gInput			= m_pEngine;
+	si.pEngine			= m_pEngine;
+	si.pInput			= m_pEngine;
 	si.buff[0]			= NULL;
-	si.gObjects[0].obj	= m_pEngine;
+	si.objects[0].obj	= m_pEngine;
 	si.level			= 0;
 
+	// Extract project path
 	char *pathend = strrchr(filename, '\\');
 	if(pathend)
-	{
-		memcpy(si.gPath, filename, pathend - filename);
-	}
+		memcpy(si.pPath, filename, pathend - filename);
+
 
 	char buf[BUFSIZ];
 	si.parser = XML_ParserCreate(NULL);
@@ -235,7 +238,8 @@ bool CStorage::Load(char *filename)
 	do {
 		size_t len = fread(buf, 1, sizeof(buf), m_pFile);
 		done = (len < sizeof(buf));
-		if (!XML_Parse(si.parser, buf, len, done)) {
+		if (!XML_Parse(si.parser, buf, len, done))
+		{
 			fprintf(stderr,
 				"%s at line %d\n",
 				XML_ErrorString(XML_GetErrorCode(si.parser)),
@@ -252,6 +256,76 @@ bool CStorage::Load(char *filename)
 	fclose(m_pFile);
 
 	return true;
+}
+
+void CStorage::startElement(void *userData, const char *name, const char **atts)
+{
+	tSessionInfo *si = (tSessionInfo*)userData;
+	si->pElement = name;
+	if(0 == strcmp(name, "input"))
+	{
+		loadInputNode(si, atts);
+	}
+	else if(0 == strcmp(name, "properties"))
+	{
+		loadPropertiesNode(si, atts);
+	}
+}
+
+void CStorage::endElement(void *userData, const char *name)
+{
+	tSessionInfo *si = (tSessionInfo*)userData;
+
+	if(si->pInput && (0 == strcmp(name, "input")))
+	{
+		si->pInput = si->buff[--si->level];
+		si->iIndex++;
+	}
+	else if(0 == strcmp(si->pElement, "timeline"))
+	{
+		if(si->pBuff)
+		{
+			si->objects[si->iIndex].data = new char[si->iBuffEnd];
+			memcpy(si->objects[si->iIndex].data, si->pBuff, si->iBuffEnd);
+			si->iIndex++;
+			//loadTimeline(pInput, pBuff);
+
+			delete[] si->pBuff;
+			si->pBuff = NULL;
+			si->iBuffEnd = 0;
+		}
+	}
+}
+
+void CStorage::elementData(void *userData, const char *data, int len)
+{
+	tSessionInfo *si = (tSessionInfo*)userData;
+
+	if(0 == strcmp(si->pElement, "timeline"))
+	{
+		if(!si->pBuff)
+		{
+			si->iBuffLen = len*2 + 1;
+			si->pBuff = new char[si->iBuffLen];
+			memset(si->pBuff, 0, si->iBuffLen);
+		}
+
+		if(si->iBuffEnd + len < si->iBuffLen)
+		{
+			strncat(si->pBuff, data, len);
+		}
+		else
+		{
+			char *tmp = si->pBuff;
+			si->iBuffLen = si->iBuffEnd + len + 1;
+			si->pBuff = new char[si->iBuffLen];
+			memset(si->pBuff, 0, si->iBuffLen);
+			memcpy(si->pBuff, tmp, si->iBuffEnd);
+			strncat(si->pBuff, data, len);
+			delete[] tmp;
+		}
+		si->iBuffEnd += len;
+	}
 }
 
 void CStorage::loadInputNode(tSessionInfo *si, const char **atts)
@@ -284,13 +358,13 @@ void CStorage::loadInputNode(tSessionInfo *si, const char **atts)
 		if(source && (0 != strcmp(source, "engine")))
 		{
 			char tmp[_MAX_PATH] = {0};
-			if(strlen(si->gPath))
+			if(strlen(si->pPath))
 			{
 				if(strchr(source, ':'))	// Absolute path!
 					memcpy(tmp, source, strlen(source));
 				else
 				{
-					memcpy(tmp, si->gPath, strlen(si->gPath));
+					memcpy(tmp, si->pPath, strlen(si->pPath));
 					strcat(tmp, "\\");
 					strcat(tmp, source);
 				}
@@ -298,31 +372,31 @@ void CStorage::loadInputNode(tSessionInfo *si, const char **atts)
 			else
 				memcpy(tmp, source, strlen(source));
 			
-			IFloopySoundInput *input = si->gEngine->CreateInput(tmp);
-			if(input && si->gInput)
+			IFloopySoundInput *input = si->pEngine->CreateInput(tmp);
+			if(input && si->pInput)
 			{
-				if( IsFilter(si->gInput) )
+				if( IsFilter(si->pInput) )
 				{
-					((IFloopySoundFilter*)si->gInput)->SetSource(input);
-					si->gInput = input;
+					((IFloopySoundFilter*)si->pInput)->SetSource(input);
+					si->pInput = input;
 					if(desc)
 						input->SetDisplayName(desc, strlen(desc));
 					if(r<256 && g<256 && b<256)
 						input->SetColor(r, g, b);
 					r=g=b=256;
-					si->gObjects[si->gIndex].obj = input;
-					si->buff[++si->level] = si->gInput;
+					si->objects[si->iIndex].obj = input;
+					si->buff[++si->level] = si->pInput;
 				}
 			}
 			else
-				si->gInput = NULL;
+				si->pInput = NULL;
 		}
 		else
 		{
 			if(desc)
-				si->gEngine->SetDisplayName(desc, strlen(desc));
+				si->pEngine->SetDisplayName(desc, strlen(desc));
 			if(r<256 && g<256 && b<256)
-				si->gEngine->SetColor(r, g, b);
+				si->pEngine->SetColor(r, g, b);
 			r=g=b=256;
 		}
 	}
@@ -331,106 +405,29 @@ void CStorage::loadInputNode(tSessionInfo *si, const char **atts)
 void CStorage::loadPropertiesNode(tSessionInfo *si, const char **atts)
 {
 	XML_Parser parser = si->parser;
+	IFloopySoundInput *input = si->pInput;
 	int n = XML_GetSpecifiedAttributeCount(parser);
-	if(n > 0)
-	{
-		char *source = NULL;
-		char *desc = NULL;
 
-		IFloopySoundInput *input = si->gInput;
-		
-		if(NULL != input)
+	if(NULL!=input && n>=2)
+	{
+		for(int i=0; i<n-1; i+=2)
 		{
-			for(int i=0; i<n-1; i+=2)
+			if(NULL != atts[i])
 			{
-				if(atts[i])
+				int index = 0;
+				if( input->GetPropertyIndex((char*)atts[i], &index) )
 				{
-					int index = 0;
-					char *name = (char*)atts[i];
-					if( input->GetPropertyIndex(name, &index) )
-					{
-						float value = (float)atof(atts[i+1]);
-						input->SetPropertyVal(index, value);
-					}
+					float value = (float)atof(atts[i+1]);
+					input->SetPropertyVal(index, value);
 				}
 			}
 		}
 	}
 }
 
-void CStorage::startElement(void *userData, const char *name, const char **atts)
-{
-	tSessionInfo *si = (tSessionInfo*)userData;
-	si->gElement = name;
-	if(0 == strcmp(name, "input"))
-	{
-		loadInputNode(si, atts);
-	}
-	else if(0 == strcmp(name, "properties"))
-	{
-		loadPropertiesNode(si, atts);
-	}
-}
-
-void CStorage::endElement(void *userData, const char *name)
-{
-	tSessionInfo *si = (tSessionInfo*)userData;
-
-	if(si->gInput && (0 == strcmp(name, "input")))
-	{
-		si->gInput = si->buff[--si->level];
-		si->gIndex++;
-	}
-	else if(0 == strcmp(si->gElement, "timeline"))
-	{
-		if(si->gpbuff)
-		{
-			si->gObjects[si->gIndex].data = new char[si->gBuffEnd];
-			memcpy(si->gObjects[si->gIndex].data, si->gpbuff, si->gBuffEnd);
-			si->gIndex++;
-			//loadTimeline(gInput, gpbuff);
-
-			delete[] si->gpbuff;
-			si->gpbuff = NULL;
-			si->gBuffEnd = 0;
-		}
-	}
-}
-
-void CStorage::elementData(void *userData, const char *data, int len)
-{
-	tSessionInfo *si = (tSessionInfo*)userData;
-
-	if(0 == strcmp(si->gElement, "timeline"))
-	{
-		if(!si->gpbuff)
-		{
-			si->gBuffLen = len*2 + 1;
-			si->gpbuff = new char[si->gBuffLen];
-			memset(si->gpbuff, 0, si->gBuffLen);
-		}
-
-		if(si->gBuffEnd + len < si->gBuffLen)
-		{
-			strncat(si->gpbuff, data, len);
-		}
-		else
-		{
-			char *tmp = si->gpbuff;
-			si->gBuffLen = si->gBuffEnd + len + 1;
-			si->gpbuff = new char[si->gBuffLen];
-			memset(si->gpbuff, 0, si->gBuffLen);
-			memcpy(si->gpbuff, tmp, si->gBuffEnd);
-			strncat(si->gpbuff, data, len);
-			delete[] tmp;
-		}
-		si->gBuffEnd += len;
-	}
-}
-
 void CStorage::loadColor(char *str, UINT *r, UINT *g, UINT *b)
 {
-	char seps[]   = ",";
+	char seps[] = ",";
 	char *token = strtok( str, seps );
 	int i=0;
 	while( token != NULL )
@@ -465,9 +462,9 @@ bool CStorage::IsFilter(IFloopySoundInput *input)
 // onda njihovi timeline-ovi.
 void CStorage::loadTimelines(tSessionInfo *si)
 {
-	for(int i=0; i<si->gIndex; i++)
+	for(int i=0; i<si->iIndex; i++)
 	{
-		loadTimeline(si, si->gObjects[i].obj, si->gObjects[i].data);
+		loadTimeline(si, si->objects[i].obj, si->objects[i].data);
 	}
 }
 

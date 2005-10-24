@@ -135,6 +135,7 @@ void CTracks::DrawLabels(wxDC& dc, wxSize size)
 		int height = track->GetHeight();
 		rc.SetHeight( height );
 		label->DrawBG(dc, rc);
+		label->DrawFore(dc, rc);
 		rc.Offset(0, height);
 		node = node->GetNext();
 	}

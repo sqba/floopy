@@ -74,14 +74,16 @@ void CLabel::CCacheButton::DrawFore(wxDC& dc, wxRect& rc)
 
 CLabel::CLabel(CTrack *track) : IFloopyObj(track)
 {
-	m_pButtonLoop = new CLoopButton(track);
-	m_pButtonCache = new CCacheButton(track);
+//	m_pButtonLoop = new CLoopButton(track);
+//	m_pButtonCache = new CCacheButton(track);
+	m_pPathCtrl = new CPathCtrl(track->GetInput());
 }
 
 CLabel::~CLabel()
 {
-	delete m_pButtonLoop;
-	delete m_pButtonCache;
+//	delete m_pButtonLoop;
+//	delete m_pButtonCache;
+	delete m_pPathCtrl;
 }
 
 void CLabel::DrawBG(wxDC& dc, wxRect& rc)
@@ -156,12 +158,17 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 	dc.DrawText( csName, x, y );
 	m_rcLabel.SetHeight(rc.GetHeight());
 
-
+/*
 	int n = rc.GetHeight()/2-2;
 	if(n > 20)
 		n = 20;
 	drawLoopSign(dc,  wxRect(5, top+height-n-2, n, n));
 	drawCacheSign(dc, wxRect(n+5+1, top+height-n-2, n, n));
+*/
+	wxRect rcTmp = rc;
+	rcTmp.SetY(top+height - height/3);
+	rcTmp.SetHeight(height/3);
+	m_pPathCtrl->DrawBG(dc, rcTmp);
 
 
 	dc.SetPen(oldpen);
@@ -170,7 +177,13 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 
 void CLabel::DrawFore(wxDC& dc, wxRect& rc)
 {
+	int top    = rc.GetTop()+1;
+	int height = rc.GetHeight()-2;
 
+	wxRect rcTmp = rc;
+	rcTmp.SetY(top+height - height/3);
+	rcTmp.SetHeight(height/3);
+	m_pPathCtrl->DrawFore(dc, rcTmp);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -186,12 +199,12 @@ bool CLabel::HitTest(int y)
 
 void CLabel::drawLoopSign(wxDC& dc, wxRect& rc)
 {
-	m_pButtonLoop->DrawBG(dc, rc);
-	m_pButtonLoop->DrawFore(dc, rc);
+//	m_pButtonLoop->DrawBG(dc, rc);
+//	m_pButtonLoop->DrawFore(dc, rc);
 }
 
 void CLabel::drawCacheSign(wxDC& dc, wxRect& rc)
 {
-	m_pButtonCache->DrawBG(dc, rc);
-	m_pButtonCache->DrawFore(dc, rc);
+//	m_pButtonCache->DrawBG(dc, rc);
+//	m_pButtonCache->DrawFore(dc, rc);
 }
