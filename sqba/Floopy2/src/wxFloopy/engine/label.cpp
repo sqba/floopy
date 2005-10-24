@@ -167,8 +167,11 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 	drawCacheSign(dc, wxRect(n+5+1, top+height-n-2, n, n));
 */
 	wxRect rcTmp = rc;
-	rcTmp.SetY(top+height - height/3);
-	rcTmp.SetHeight(height/3);
+	int tmpHeight = height/3;
+	if(tmpHeight>25)
+		tmpHeight = 25;
+	rcTmp.SetY(top+height - tmpHeight);
+	rcTmp.SetHeight(tmpHeight);
 	m_pPathCtrl->DrawBG(dc, rcTmp);
 
 
@@ -182,8 +185,11 @@ void CLabel::DrawFore(wxDC& dc, wxRect& rc)
 	int height = rc.GetHeight()-2;
 
 	wxRect rcTmp = rc;
-	rcTmp.SetY(top+height - height/3);
-	rcTmp.SetHeight(height/3);
+	int tmpHeight = height/3;
+	if(tmpHeight>25)
+		tmpHeight = 25;
+	rcTmp.SetY(top+height - tmpHeight);
+	rcTmp.SetHeight(tmpHeight);
 	m_pPathCtrl->DrawFore(dc, rcTmp);
 }
 

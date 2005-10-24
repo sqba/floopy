@@ -23,6 +23,7 @@ public:
 	{
 	public:
 		CPoint(CParameter *parameter);
+		CPoint(CPoint *pt);
 		virtual ~CPoint() {}
 	
 		int GetType()	{ return FLOOPY_PARAMETER; }
@@ -60,6 +61,9 @@ public:
 	bool HitTest(int x, int y);
 
 	void Select(bool selected=true);
+	void SelectPoint(CPoint *pt);
+
+	IFloopyObj *GetSelectedObj();
 
 	IFloopySoundInput *GetInput() { return m_pInput; }
 
@@ -70,7 +74,7 @@ private:
 	int		m_index;
 //	bool	m_bEdit;
 //	int		m_iSamplePos, m_iPrevSamplePos;
-	CPoint	*m_pPoint;
+	CPoint	*m_pPoint, *m_pSelectedPoint;
 	IFloopySoundInput *m_pInput;
 	bool	m_bAfterTrack;
 	float	m_fScale;

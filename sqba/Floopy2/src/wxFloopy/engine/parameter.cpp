@@ -203,11 +203,14 @@ CParameter::CParameter(CParameters *parent, IFloopySoundInput *obj, int index,
 	m_fMin			= m_pInput->GetParamMin(m_index);
 	m_fMax			= m_pInput->GetParamMax(m_index);
 	m_iSamplesPerPixel = 0;
+	m_pSelectedPoint = NULL;
 }
 
 CParameter::~CParameter()
 {
 	delete m_pPoint;
+	if(m_pSelectedPoint)
+		delete m_pSelectedPoint;
 }
 
 void CParameter::DrawFore(wxDC& dc, wxRect& rc)
@@ -268,7 +271,16 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 					dc.DrawLine(x, prevY, x, y);			// Vertical line
 					
 					if( bDrawCircle )
-						dc.DrawCircle(x, y, 3);				// Parameter
+					{
+						if(m_pSelectedPoint &&
+							m_pSelectedPoint->m_offset==pos &&
+							m_pSelectedPoint->m_value==value)
+						{
+							dc.DrawRectangle(x-3, y-3, 6, 6);	// Selected parameter
+						}
+						else
+							dc.DrawCircle(x, y, 3);				// Parameter
+					}
 					
 					prevX = x;
 				}
@@ -347,6 +359,7 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 	if( m_pInput->GetParamAt(pos, m_index, &value) )
 	{
 		int tmpY = (int)((float)bottom - (value * m_fScale));
+		
 		if(tmpY >= y-1 && tmpY <= y+1)
 		{
 			m_pPoint->m_samplesPerPixel = m_iSamplesPerPixel;
@@ -360,19 +373,18 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 		}
 		else
 		{
-			if( m_pInput->GetParamAt(prevOffset, m_index, &valuePrev) &&
-				m_pInput->GetParamAt(nextOffset, m_index, &valueNext))
+			if( m_pInput->GetParamAt(prevOffset, m_index, &valuePrev) )
 			{
-				int tmpY1 = (int)((float)bottom - (valuePrev * m_fScale));
-				int tmpY2 = (int)((float)bottom - (valueNext * m_fScale));
-				if(tmpY1 > tmpY2)
+				int prevY = (int)((float)bottom - (valuePrev * m_fScale));
+				
+				if(prevY > tmpY)
 				{
-					int tmp = tmpY2;
-					tmpY2 = tmpY1;
-					tmpY1 = tmp;
+					int tmp	= tmpY;
+					tmpY	= prevY;
+					prevY	= tmp;
 				}
 
-				if(y>tmpY1 && y<tmpY2)
+				if(y>prevY && y<tmpY)
 				{
 					m_pPoint->m_samplesPerPixel = m_iSamplesPerPixel;
 					m_pPoint->m_sizing	= SIZE_OFFSET;
@@ -423,28 +435,38 @@ bool CParameter::OnKeyDown(wxKeyEvent& event)
 	case 'P':
 		insertParam(event.GetX(), event.GetY());
 		return true;
-	/*case WXK_UP:
+	case WXK_UP:
 	case WXK_NUMPAD_UP:
-		if(IsSelected())
-		{
-			IFloopyObj *obj = GetChildAt(event.GetX(), event.GetY());
-			if(NULL != obj)
-			{
-				obj->Move(0, -1);
-			}
-		}
+	case '+':
+		if(NULL != m_pSelectedPoint)
+			m_pSelectedPoint->Move(0, -1);
 		return true;
 	case WXK_DOWN:
 	case WXK_NUMPAD_DOWN:
-		if(IsSelected())
+	case '-':
+		if(NULL != m_pSelectedPoint)
+			m_pSelectedPoint->Move(0, 1);
+		return true;
+	case WXK_PRIOR:
+	case WXK_PAGEUP:
+	case WXK_NUMPAD_PAGEUP:
+		if(NULL != m_pSelectedPoint)
+			m_pSelectedPoint->Move(-1, 0);
+		return true;
+	case WXK_NEXT:
+	case WXK_PAGEDOWN:
+	case WXK_NUMPAD_PAGEDOWN:
+		if(NULL != m_pSelectedPoint)
+			m_pSelectedPoint->Move(1, 0);
+		return true;
+	case WXK_DELETE:
+		if(NULL != m_pSelectedPoint)
 		{
-			IFloopyObj *obj = GetChildAt(event.GetX(), event.GetY());
-			if(NULL != obj)
-			{
-				obj->Move(0, 1);
-			}
+			if( m_pInput->ResetParamAt( m_pSelectedPoint->m_offset,
+										m_index, m_pSelectedPoint->m_value) )
+				Refresh();
 		}
-		return true;*/
+		break;
 	default:
 		break;
 	}
@@ -497,6 +519,27 @@ void CParameter::Select(bool selected)
 	}
 }
 
+void CParameter::SelectPoint(CPoint *pt)
+{
+	if(m_pSelectedPoint)
+	{
+		delete m_pSelectedPoint;
+		m_pSelectedPoint = NULL;
+	}
+	if(pt)
+		m_pSelectedPoint = new CPoint(pt);
+}
+
+IFloopyObj *CParameter::GetSelectedObj()
+{
+	if(m_pSelectedPoint)
+		return m_pSelectedPoint;
+	else
+		return this;
+}
+
+
+
 
 
 
@@ -504,6 +547,21 @@ CParameter::CPoint::CPoint(CParameter *parameter) : IFloopyObj(parameter)
 {
 	m_pParameter = parameter;
 	m_offset = 0;
+}
+
+
+CParameter::CPoint::CPoint(CPoint *pt)
+{
+	IFloopyObj( pt->GetParent() );
+	m_pParameter = (CParameter*)pt->GetParent();
+
+	m_samplesPerPixel = pt->m_samplesPerPixel;
+	m_sizing	= SIZE_ALL;
+	m_offset	= pt->m_offset;
+	m_fScale	= pt->m_fScale;
+	m_pInput	= pt->m_pInput;
+	m_index		= pt->m_index;
+	m_value		= pt->m_value;
 }
 
 wxCursor CParameter::CPoint::GetCursor()
@@ -549,5 +607,6 @@ void CParameter::CPoint::Move(int dx, int dy)
 void CParameter::CPoint::Select(bool selected)
 {
 	m_pParameter->Select(selected);
+	m_pParameter->SelectPoint(selected ? this : NULL);
 	m_pParameter->Refresh();
 }

@@ -100,12 +100,12 @@ void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 
 		m_pTimelineView->SetFocus();
 	}
-	else if( event.LeftDClick() )
+	/*else if( event.LeftDClick() )
 	{
 		track->Select();
 
 		m_pTimelineView->SetFocus();
-	}
+	}*/
 	else
 	{
 		CLabel *label = track->GetLabel();

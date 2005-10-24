@@ -207,12 +207,6 @@ void CPathCtrl::DrawBG(wxDC &dc, wxRect &rc)
 {
 	m_rc = rc;
 
-	if(rc.GetHeight() > MAX_HEIGHT)
-	{
-		rc.Offset( 0, rc.GetHeight() - MAX_HEIGHT );
-		rc.SetHeight( MAX_HEIGHT );
-	}
-
 	rc.Deflate(1, 2);
 //	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
 
@@ -236,12 +230,6 @@ void CPathCtrl::DrawBG(wxDC &dc, wxRect &rc)
 
 void CPathCtrl::DrawFore(wxDC &dc, wxRect &rc)
 {
-	if(rc.GetHeight() > MAX_HEIGHT)
-	{
-		rc.Offset( 0, rc.GetHeight() - MAX_HEIGHT );
-		rc.SetHeight( MAX_HEIGHT );
-	}
-
 	rc.Deflate(0, 2);
 //	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
 
