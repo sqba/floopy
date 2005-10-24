@@ -19,7 +19,7 @@
 class CPathItem : public IFloopyObj
 {
 public:
-	CPathItem(IFloopySoundInput *input);
+	CPathItem(IFloopySoundInput *input, bool first);
 	virtual ~CPathItem();
 
 	void DrawBG  (wxDC &dc, wxRect &rc);
@@ -27,6 +27,7 @@ public:
 
 private:
 	IFloopySoundInput *m_pInput;
+	bool m_bFirst;
 //	wxRegion m_Region;
 };
 

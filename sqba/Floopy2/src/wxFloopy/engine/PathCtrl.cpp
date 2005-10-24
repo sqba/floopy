@@ -14,9 +14,10 @@ WX_DEFINE_LIST(ItemList);
 #define CORNER_LENGTH	8
 
 
-CPathItem::CPathItem(IFloopySoundInput *input)
+CPathItem::CPathItem(IFloopySoundInput *input, bool first)
 {
 	m_pInput = input;
+	m_bFirst = first;
 
 	unsigned int r=255, g=255, b=255;
 	input->GetColor(&r, &g, &b);
@@ -48,28 +49,38 @@ void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 	points[4] = wxPoint(x,								y+h);
 	points[5] = wxPoint(x+CORNER_LENGTH,				y+h/2);
 
-	dc.DrawPolygon(6, points);
+	dc.DrawPolygon(m_bFirst ? 5 : 6, points);
 
 	dc.SetBrush( oldBrush );
 }
 
 void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 {
+//	wxPen oldpen = dc.GetPen();
+//	wxPen pen( *wxMEDIUM_GREY_PEN );
+//	pen.SetWidth(1);
+//	dc.SetPen( pen );
+	dc.SetTextForeground(*wxBLACK);
+
 	wxString csName;
 	char *name = m_pInput->GetName();
 	char *dname = m_pInput->GetDisplayName();
 	csName = strlen(name) > strlen(dname) ? dname : name;
 
-	int width = rc.GetWidth() - CORNER_LENGTH;
+	int width = rc.GetWidth();
+	if(!m_bFirst)
+		width -= CORNER_LENGTH;
 
 	int w=0, h=0;
 	dc.GetTextExtent(csName, &w, &h);
 	if(w<width && h<rc.GetHeight())
 	{
-		int x = rc.GetX() + CORNER_LENGTH + width/2 - w/2;
+		int x = rc.GetX() + width/2 - w/2 + (m_bFirst ? 0 : CORNER_LENGTH);
 		int y = rc.GetY() + rc.GetHeight()/2 - h/2;
 		dc.DrawText( csName, x, y );
 	}
+
+//	dc.SetPen(oldpen);
 }
 
 
@@ -92,23 +103,20 @@ void CPathCtrl::SetPath(IFloopySoundInput *input)
 {
 	Clear();
 
-	ItemList::Node *prev = NULL;
 	IFloopySoundInput *tmp = input;
 	while(tmp)
 	{
-		CPathItem *item = new CPathItem(tmp);
-//		if(prev)
-//			prev = m_PathList.Insert(prev, item);
-//		else
-//			prev = m_PathList.Append(item);
-
-		m_PathList.Insert((int)0, item);
+		IFloopySoundInput *tmp2 = tmp;
 		
 		int type = tmp->GetType();
 		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
 			tmp = ((IFloopySoundFilter*)tmp)->GetSource();
 		else
 			tmp = NULL;
+
+		CPathItem *item = new CPathItem(tmp2, tmp==NULL);
+		//m_PathList.Append(item);
+		m_PathList.Insert((int)0, item);
 	}
 }
 
