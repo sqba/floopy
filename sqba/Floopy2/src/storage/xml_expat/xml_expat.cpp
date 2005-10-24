@@ -1,6 +1,6 @@
 
 
-
+/*
 #include "../../ifloopy.h"
 #include "storage.h"
 
@@ -11,6 +11,7 @@ extern "C" {
 __declspec( dllexport ) char *GetExtension()
 {
 	return "xml";
+	//return "mix";
 }
 
 __declspec( dllexport ) bool Load(IFloopySoundEngine *engine, char *filename)
@@ -28,11 +29,11 @@ __declspec( dllexport ) bool Save(IFloopySoundEngine *engine, char *filename)
 #ifdef __cplusplus
 }
 #endif
+*/
 
 
 
 
-/*
 #define MAX_PATH          260
 
 #include "expat/xmlparse/xmlparse.h"
@@ -416,12 +417,15 @@ void writeProperties(FILE *fp, IFloopySoundInput *input)
 }
 
 
-bool writeParameters(FILE *fp, IFloopySoundInput *input, float seconds)
+bool writeParameters(FILE *fp, IFloopySoundInput *input, int offset)
 {
 	bool bStart = true;
 
+	SOUNDFORMAT *fmt = input->GetFormat();
+	float seconds = (float)offset / (float)fmt->frequency;
+
 	float paramVal = 0.f;
-	if(input->GetParamVal(TIMELINE_PARAM_ENABLE, &paramVal))
+	if(input->GetParamAt(offset, TIMELINE_PARAM_ENABLE, &paramVal))
 	{
 		char *enabled = (paramVal == PARAM_VALUE_ENABLED ? "ON" : "OFF");
 		if(!bStart)
@@ -432,7 +436,7 @@ bool writeParameters(FILE *fp, IFloopySoundInput *input, float seconds)
 		fprintf(fp, "%.4f:%s", seconds, enabled);
 	}
 
-	if(input->GetParamVal(TIMELINE_PARAM_MOVETO, &paramVal))
+	if(input->GetParamAt(offset, TIMELINE_PARAM_MOVETO, &paramVal))
 	{
 		if(!bStart)
 			fprintf(fp, ", "); // Separator
@@ -450,7 +454,7 @@ bool writeParameters(FILE *fp, IFloopySoundInput *input, float seconds)
 		for(int i=0; i<input->GetParamCount(); i++)
 		{
 			float paramVal = 0.f;
-			if(input->GetParamVal(i, &paramVal))
+			if(input->GetParamAt(offset, i, &paramVal))
 			{
 				//char *paramName = input->GetParamName(i);
 				if(!bStart)
@@ -469,9 +473,6 @@ bool writeParameters(FILE *fp, IFloopySoundInput *input, float seconds)
 
 void writeTimeline(FILE *fp, IFloopySoundInput *input)
 {
-	SOUNDFORMAT *fmt = input->GetFormat();
-	int freq = fmt->frequency;
-
 	int offset=0;
 
 	bool bStart = true;
@@ -479,13 +480,10 @@ void writeTimeline(FILE *fp, IFloopySoundInput *input)
 	fprintf(fp, "<timeline>");
 	do
 	{
-		float seconds = (float)offset / (float)freq;
-		input->MoveTo(offset);
-
 		if(!bStart)
 			fprintf(fp, ", "); // Separator
 
-		bStart = writeParameters(fp, input, seconds);
+		bStart = writeParameters(fp, input, offset);
 
 		offset = input->GetNextOffset(offset);
 	} while (offset > 0);
@@ -638,4 +636,4 @@ void loadTimeline(tSessionInfo *si, IFloopySoundInput *input, char *data)
 //	" &quot;
 //	' &apos;
 /////////////////////////
-*/
+
