@@ -3,6 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "PathCtrl.h"
+#include "track.h"
+#include "label.h"
 
 #include <wx/wx.h>
 
@@ -89,6 +91,26 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 		int x = rc.GetX() + width/2 - w/2 + (m_bFirst ? 0 : CORNER_LENGTH);
 		int y = rc.GetY() + rc.GetHeight()/2 - h/2;
 		dc.DrawText( csName, x, y );
+	}
+}
+
+void CPathItem::Select(bool selected)
+{
+	IFloopyObj::Select( selected );
+
+	CPathCtrl *ctrl = (CPathCtrl*)GetParent();
+	if(NULL != ctrl)
+	{
+		CLabel *label = (CLabel*)ctrl->GetParent();
+		if(NULL != label)
+		{
+			CTrack *track = (CTrack*)label->GetParent();
+			if(NULL != track)
+			{
+				track->ShowObjectParameters(m_pInput, selected);
+				track->Refresh();
+			}
+		}
 	}
 }
 

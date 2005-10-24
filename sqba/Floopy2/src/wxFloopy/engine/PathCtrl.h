@@ -26,6 +26,8 @@ public:
 	void DrawBG  (wxDC &dc, wxRect &rc);
 	void DrawFore(wxDC &dc, wxRect &rc);
 
+	void Select(bool selected);
+
 public:
 	wxRect m_rc;
 
