@@ -223,7 +223,12 @@ IFloopyObj *CLabel::GetChildAt(int x, int y)
 
 	if(NULL != obj)
 		return obj;
-
+/*
+	CTrack *track = (CTrack*)GetParent();
+	int bottom = track->GetTop() + track->GetHeight();
+	if(y>=bottom-1 && y<=bottom+1)
+		return track->GetChildAt(x, y);
+*/
 	return this;
 }
 

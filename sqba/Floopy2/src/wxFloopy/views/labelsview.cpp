@@ -68,41 +68,53 @@ void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 	int y = m_pTimelineView->GetScrollPos(wxVERTICAL) * yScrollUnits;
 	CTrack *track = m_pTracks->GetTrackAt(event.GetY() + y);
 
+	if(NULL == track)
+	{
+		SetCursor( *wxSTANDARD_CURSOR );
+		m_pTimelineView->SetFocus();
+		return;
+	}
+
 	if( event.ButtonDown(wxMOUSE_BTN_LEFT) )
 	{
-		if(track)
+		CLabel *label = track->GetLabel();
+		IFloopyObj *obj = label->GetChildAt(event.GetX(), event.GetY() + y);
+		if(obj)
 		{
-			CLabel *label = track->GetLabel();
-			IFloopyObj *obj = label->GetChildAt(event.GetX(), event.GetY() + y);
-			if(obj)
+			if(obj == label)
 			{
-				if(obj == label)
-				{
-					m_pTracks->DeselectAllTracks();
-					obj->Select();
-				}
-				else
-				{
-					obj->Select( !obj->IsSelected() );
-					Refresh(); // obj->Select should do this
-				}
+				m_pTracks->DeselectAllTracks();
+				obj->Select();
 			}
 			else
 			{
-				m_pTracks->DeselectAllTracks();
-				track->Select();
+				obj->Select( !obj->IsSelected() );
+				Refresh(); // obj->Select should do this
 			}
+		}
+		else
+		{
+			m_pTracks->DeselectAllTracks();
+			track->Select();
 		}
 
 		m_pTimelineView->SetFocus();
 	}
-
-	if( event.LeftDClick() )
+	else if( event.LeftDClick() )
 	{
-		if(track)
-			track->Select();
+		track->Select();
 
 		m_pTimelineView->SetFocus();
+	}
+	else
+	{
+		CLabel *label = track->GetLabel();
+		IFloopyObj *obj = label->GetChildAt(event.GetX(), event.GetY() + y);
+		if(obj)
+		{
+			SetCursor( obj->GetCursor() );
+			return;
+		}
 	}
 
 	SetCursor( track ? wxCURSOR_HAND : *wxSTANDARD_CURSOR );

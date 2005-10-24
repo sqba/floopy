@@ -96,6 +96,8 @@ public:
 	IFloopyObj *GetChildAt(int x, int y);
 	IFloopyObj *GetSelectedObj();
 
+	wxCursor GetCursor();
+
 private:
 	bool paramsLoaded(IFloopySoundInput *obj);
 	bool isAfterTrack(IFloopySoundInput *obj);

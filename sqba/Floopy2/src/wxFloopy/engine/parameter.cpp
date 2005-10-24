@@ -170,6 +170,20 @@ void CParameters::DeselectAll(CParameter *caller)
 	}
 }
 
+wxCursor CParameters::GetCursor()
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param->IsSelected())
+			param->Select(false);
+		node = node->GetNext();
+	}
+
+	return wxCursor(wxCURSOR_HAND);
+}
+
 
 
 
@@ -409,6 +423,28 @@ bool CParameter::OnKeyDown(wxKeyEvent& event)
 	case 'P':
 		insertParam(event.GetX(), event.GetY());
 		return true;
+	/*case WXK_UP:
+	case WXK_NUMPAD_UP:
+		if(IsSelected())
+		{
+			IFloopyObj *obj = GetChildAt(event.GetX(), event.GetY());
+			if(NULL != obj)
+			{
+				obj->Move(0, -1);
+			}
+		}
+		return true;
+	case WXK_DOWN:
+	case WXK_NUMPAD_DOWN:
+		if(IsSelected())
+		{
+			IFloopyObj *obj = GetChildAt(event.GetX(), event.GetY());
+			if(NULL != obj)
+			{
+				obj->Move(0, 1);
+			}
+		}
+		return true;*/
 	default:
 		break;
 	}

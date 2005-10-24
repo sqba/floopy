@@ -26,6 +26,13 @@ CPathItem::CPathItem(CPathCtrl *parent, IFloopySoundInput *input, bool first)
 	unsigned int r=255, g=255, b=255;
 	if(NULL != m_pInput)
 		input->GetColor(&r, &g, &b);
+	else
+	{
+		// Mixer
+		r = 0;
+		g = 0;
+		b = 200;
+	}
 	m_color.Set(r, g, b);
 
 	m_pRegion = NULL;
@@ -40,12 +47,12 @@ CPathItem::~CPathItem()
 void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 {
 	wxPen oldpen = dc.GetPen();
-	wxPen pen( *wxMEDIUM_GREY_PEN );
+	wxPen pen( IsSelected() ? *wxBLACK_PEN : *wxMEDIUM_GREY_PEN );
 	pen.SetWidth(IsSelected() ? 2 : 1);
 	dc.SetPen( pen );
 
 	wxBrush oldBrush = dc.GetBrush();
-	wxBrush brush(m_color, wxSOLID);
+	wxBrush brush(m_color, NULL!=m_pInput ? wxSOLID : wxTRANSPARENT);
 	dc.SetBrush(brush);
 
 	int x = rc.GetX();
@@ -207,7 +214,7 @@ void CPathCtrl::DrawBG(wxDC &dc, wxRect &rc)
 	}
 
 	rc.Deflate(1, 2);
-	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
+//	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
 
 	int count = m_PathList.GetCount();
 	if(count > 0)
@@ -236,7 +243,7 @@ void CPathCtrl::DrawFore(wxDC &dc, wxRect &rc)
 	}
 
 	rc.Deflate(0, 2);
-	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
+//	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
 
 	int count = m_PathList.GetCount();
 	if(count > 0)
@@ -263,7 +270,12 @@ IFloopyObj *CPathCtrl::GetChildAt(int x, int y)
 	{
 		CPathItem *item = (CPathItem*)node->GetData();
 		if(item->m_pRegion->Contains(x, y))
-			return item;
+		{
+			if(NULL != node->GetNext())
+				return item;
+			else // Mixer
+				break;
+		}
 		node = node->GetNext();
 	}
 

@@ -64,6 +64,7 @@ public:
 	void Move(int dx, int dy);
 	IFloopyObj *GetSelectedObj();
 	void Select(bool selected);
+	wxCursor GetCursor()					{ return wxCursor(wxCURSOR_HAND); }
 
 private:
 	inline CTrack  *getTrack()	{ return (CTrack*)GetParent(); }
