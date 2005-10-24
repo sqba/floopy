@@ -13,7 +13,6 @@ WX_DEFINE_LIST(ItemList);
 
 
 #define GAP_LENGTH		2
-#define CORNER_LENGTH	8
 
 
 CPathItem::CPathItem(CPathCtrl *parent, IFloopySoundInput *input, bool first)
@@ -53,12 +52,12 @@ void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 
 	wxPoint points[6];
 
-	points[0] = wxPoint(x,								y);
-	points[1] = wxPoint(x+w-GAP_LENGTH,					y);
-	points[2] = wxPoint(x+w+CORNER_LENGTH-GAP_LENGTH,	y+h/2);
-	points[3] = wxPoint(x+w-GAP_LENGTH,					y+h);
-	points[4] = wxPoint(x,								y+h);
-	points[5] = wxPoint(x+CORNER_LENGTH,				y+h/2);
+	points[0] = wxPoint(x,					y);
+	points[1] = wxPoint(x+w-GAP_LENGTH,		y);
+	points[2] = wxPoint(x+w+w/8-GAP_LENGTH,	y+h/2);
+	points[3] = wxPoint(x+w-GAP_LENGTH,		y+h);
+	points[4] = wxPoint(x,					y+h);
+	points[5] = wxPoint(x+w/8,				y+h/2);
 
 	int n = m_bFirst ? 5 : 6;
 
@@ -84,7 +83,7 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 
 	int width = rc.GetWidth();
 	if(!m_bFirst)
-		width -= CORNER_LENGTH;
+		width -= width/8;
 
 	int w=0, h=0;
 	dc.GetTextExtent(csName, &w, &h);
@@ -95,7 +94,7 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 			csName.Printf("%c\0", disp[0]);
 			dc.GetTextExtent(csName, &w, &h);
 		}
-		int x = rc.GetX() + width/2 - w/2 + (m_bFirst ? 0 : CORNER_LENGTH);
+		int x = rc.GetX() + width/2 - w/2 + (m_bFirst ? 0 : width/8);
 		int y = rc.GetY() + rc.GetHeight()/2 - h/2;
 		dc.DrawText( csName, x, y );
 	}
@@ -176,13 +175,13 @@ void CPathCtrl::DrawBG(wxDC &dc, wxRect &rc)
 	m_rc = rc;
 
 	rc.Deflate(1, 2);
-	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
 
 	int count = m_PathList.GetCount();
 	if(count > 0)
 	{
 		wxRect rcItem = rc;
 		int width = rc.GetWidth() / count;
+		width = (rc.GetWidth() - width/8) / count;
 		rcItem.SetWidth(width);
 
 		ItemList::Node *node = m_PathList.GetFirst();
@@ -199,13 +198,13 @@ void CPathCtrl::DrawBG(wxDC &dc, wxRect &rc)
 void CPathCtrl::DrawFore(wxDC &dc, wxRect &rc)
 {
 	rc.Deflate(0, 2);
-	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
 
 	int count = m_PathList.GetCount();
 	if(count > 0)
 	{
 		wxRect rcItem = rc;
 		int width = rc.GetWidth() / count;
+		width = (rc.GetWidth() - width/8) / count;
 		rcItem.SetWidth(width);
 
 		ItemList::Node *node = m_PathList.GetFirst();
