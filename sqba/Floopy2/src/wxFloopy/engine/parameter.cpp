@@ -13,11 +13,172 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CParameter::CParameter(CRegion *region, IFloopySoundInput *obj, int index,
-					   bool bAfterTrack, wxColor color)
- : IFloopyObj(region)
+#include <wx/wx.h>
+
+#include <wx/listimpl.cpp>
+WX_DEFINE_LIST(ParameterList);
+
+
+CParameters::CParameters(IFloopyObj *parent) : IFloopyObj(parent)
 {
-	m_pRegion		= region;
+
+}
+
+CParameters::~CParameters()
+{
+	WX_CLEAR_LIST(ParameterList, m_Parameters);
+}
+
+void CParameters::LoadInput(IFloopySoundInput *obj)
+{
+	if(NULL == obj)
+		return;
+
+	// Check if object exists
+	if( paramsLoaded(obj) )
+		return;
+
+	bool bAfterTrack = isAfterTrack(obj);
+
+//	WX_CLEAR_LIST(ParameterList, m_Parameters);
+
+	for(int index=0; index<obj->GetParamCount(); index++)
+	{
+		m_Parameters.Append( new CParameter(this, obj, index, bAfterTrack) );
+	}
+}
+
+void CParameters::RemoveInput(IFloopySoundInput *obj)
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param->GetInput()==obj)
+		{
+			ParameterList::Node *tmp = node->GetNext();
+			if(m_Parameters.DeleteNode(node))
+			{
+				delete param;
+				node = tmp;
+			}
+			else
+				node = node->GetNext();
+		}
+		else
+			node = node->GetNext();
+	}
+}
+
+bool CParameters::paramsLoaded(IFloopySoundInput *obj)
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param->GetInput()==obj)
+			return true;
+		node = node->GetNext();
+	}
+	return false;
+}
+
+IFloopyObj *CParameters::GetChildAt(int x, int y)
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		//if(param->HitTest(x, y))
+		//	return param->GetChildAt(x, y);
+		IFloopyObj *obj = param->GetChildAt(x, y);
+		if(obj)
+			return obj;
+		node = node->GetNext();
+	}
+	return NULL;
+}
+
+void CParameters::DrawFore(wxDC& dc, wxRect& rc)
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		param->DrawFore(dc, rc);
+		node = node->GetNext();
+	}
+}
+
+void CParameters::DeselectAll()
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param)
+			param->Select(false);
+		node = node->GetNext();
+	}
+}
+
+bool CParameters::isAfterTrack(IFloopySoundInput *obj)
+{
+	bool bAfterTrack = false; // Is obj source of track?
+	CRegion *region = (CRegion*)GetParent();
+	CTrack *track = (CTrack*)region->GetParent();
+	IFloopySoundInput *input = track->GetTrack();
+	IFloopySoundInput *tmp = input;
+
+	while(tmp)
+	{
+		if(obj == tmp)
+			return true;
+
+		int type = tmp->GetType();
+		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
+			tmp = ((IFloopySoundFilter*)tmp)->GetSource();
+		else
+			tmp = NULL;
+	}
+
+	return false;
+}
+
+IFloopyObj *CParameters::GetSelectedObj()
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param->IsSelected())
+			return param;
+		node = node->GetNext();
+	}
+	return NULL;
+}
+
+void CParameters::DeselectAll(CParameter *caller)
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param!=caller)
+			param->Select(false);
+		node = node->GetNext();
+	}
+}
+
+
+
+
+
+CParameter::CParameter(CParameters *parent, IFloopySoundInput *obj, int index,
+					   bool bAfterTrack, wxColor color)
+ : IFloopyObj(parent)
+{
+	m_pRegion		= (CRegion*)parent->GetParent();
 	m_pTrack		= (CTrack*)m_pRegion->GetParent();
 	m_pTracks		= (CTracks*)m_pTrack->GetParent();
 	m_index			= index;
@@ -289,6 +450,18 @@ bool CParameter::HitTest(int x, int y)
 	return NULL != GetChildAt(x, y);
 }
 
+void CParameter::Select(bool selected)
+{
+	IFloopyObj::Select(selected);
+	// Deselect other parameters
+	if(selected)
+	{
+		CParameters *parent = (CParameters*)GetParent();
+		parent->DeselectAll(this);
+	}
+}
+
+
 
 
 CParameter::CPoint::CPoint(CParameter *parameter) : IFloopyObj(parameter)
@@ -340,4 +513,5 @@ void CParameter::CPoint::Move(int dx, int dy)
 void CParameter::CPoint::Select(bool selected)
 {
 	m_pParameter->Select(selected);
+	m_pParameter->Refresh();
 }

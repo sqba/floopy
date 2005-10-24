@@ -209,6 +209,9 @@ void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 
 					return; // Don't move the caret
 				}
+			case FLOOPY_PARAMETER:
+				obj->Select();
+				return;
 			default:
 				if( !obj->IsSelected() )
 				{

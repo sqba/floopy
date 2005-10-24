@@ -6,11 +6,12 @@
 #include "ObjTypes.h"
 
 
-class CParameter;
+//class CParameter;
+class CParameters;
 class CRegionDisplay;
 
 
-WX_DECLARE_LIST(CParameter, ParameterList);
+//WX_DECLARE_LIST(CParameter, ParameterList);
 
 
 class CRegion : public IFloopyObj
@@ -140,6 +141,8 @@ public:
 
 	void ShowObjectParameters(IFloopySoundInput *obj, bool show=true);
 
+//	void DeselectAllParameters(CParameter *caller);
+
 private:
 	static void remove(IFloopyObj *region);
 	void createMenu();
@@ -147,11 +150,11 @@ private:
 	void calcPos(int *left, int *right);
 	inline CTrack  *getTrack()					{ return (CTrack*)GetParent(); }
 	inline CTracks *getTracks();
-	void loadParameters(IFloopySoundInput *obj);
-	void removeParameters(IFloopySoundInput *obj);
-	void drawParametersFore(wxDC& dc, wxRect& rc);
+//	void loadParameters(IFloopySoundInput *obj);
+//	void removeParameters(IFloopySoundInput *obj);
+//	void drawParametersFore(wxDC& dc, wxRect& rc);
 	bool getReset(int sample);
-	bool isAfterTrack(IFloopySoundInput *obj);
+//	bool isAfterTrack(IFloopySoundInput *obj);
 	bool paramsLoaded(IFloopySoundInput *obj);
 
 	int getStartOffset();
@@ -164,12 +167,13 @@ private:
 	int				m_iStartSample, m_iEndSample, m_iPrevStart, m_iPrevEnd;
 	wxRect			m_rcRegion;
 	CBorder			*m_pLeftBorder, *m_pRightBorder;
-	ParameterList	m_Parameters;
+//	ParameterList	m_Parameters;
 	CRegionDisplay	*m_pDisplay;
 	int				m_iStartOffset;
 	int				m_iLengthNotLooped;
 	COffsetBar		*m_pOffsetBar;
 	bool			m_bShowOffsetBar;
+	CParameters		*m_pParameters;
 };
 
 

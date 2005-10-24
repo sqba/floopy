@@ -12,7 +12,7 @@
 
 //IMPLEMENT_DYNAMIC_CLASS(CRegion, IFloopyObj)
 
-WX_DEFINE_LIST(ParameterList);
+//WX_DEFINE_LIST(ParameterList);
 
 //#define TRANSPARENT_BACKGROUND
 
@@ -45,6 +45,8 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 
 	m_pDisplay = new CRegionDisplay(this);
 
+	m_pParameters = new CParameters(this);
+
 //	IFloopySoundInput *input = CTracks::FindComponentByName(track->GetInput(), "volume");
 //	if(NULL != input)
 //		loadParameters( input );
@@ -60,9 +62,10 @@ CRegion::~CRegion()
 	delete m_pRightBorder;
 	delete m_pOffsetBar;
 	//delete m_pMenu; // !Deleted in ~IFloopyObj()
-	WX_CLEAR_LIST(ParameterList, m_Parameters);
+//	WX_CLEAR_LIST(ParameterList, m_Parameters);
 	if(m_pDisplay)
 		delete m_pDisplay;
+	delete m_pParameters;
 }
 
 void CRegion::createMenu()
@@ -491,7 +494,8 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	dc.SetPen(oldpen);
 	///////////////////////////////////////////////////////
 
-	drawParametersFore(dc, rce);
+//	drawParametersFore(dc, rce);
+	m_pParameters->DrawFore(dc, rce);
 }
 
 wxColor CRegion::GetBGColor()
@@ -653,7 +657,10 @@ IFloopyObj *CRegion::GetChildAt(int x, int y)
 			return m_pRightBorder;
 		else
 		{
-			ParameterList::Node *node = m_Parameters.GetFirst();
+			IFloopyObj *obj = m_pParameters->GetChildAt(x, y);
+			if(obj)
+				return obj;
+			/*ParameterList::Node *node = m_Parameters.GetFirst();
 			while (node)
 			{
 				CParameter *param = (CParameter*)node->GetData();
@@ -663,7 +670,7 @@ IFloopyObj *CRegion::GetChildAt(int x, int y)
 				if(obj)
 					return obj;
 				node = node->GetNext();
-			}
+			}*/
 			return this;
 		}
 	}
@@ -673,14 +680,17 @@ IFloopyObj *CRegion::GetChildAt(int x, int y)
 
 IFloopyObj *CRegion::GetSelectedObj()
 {
-	ParameterList::Node *node = m_Parameters.GetFirst();
+	IFloopyObj *obj = m_pParameters->GetSelectedObj();
+	if(obj)
+		return obj;
+	/*ParameterList::Node *node = m_Parameters.GetFirst();
 	while (node)
 	{
 		CParameter *param = (CParameter*)node->GetData();
 		if(param && param->IsSelected())
 			return param;
 		node = node->GetNext();
-	}
+	}*/
 	return ( IsSelected() ? this : NULL);
 }
 
@@ -936,7 +946,7 @@ int CRegion::GetWidth()
 {
 	return (m_iEndSample - m_iStartSample) / getTracks()->GetSamplesPerPixel();
 }
-
+/*
 bool CRegion::isAfterTrack(IFloopySoundInput *obj)
 {
 	bool bAfterTrack = false; // Is obj source of track?
@@ -957,16 +967,18 @@ bool CRegion::isAfterTrack(IFloopySoundInput *obj)
 
 	return false;
 }
-
+*/
 void CRegion::ShowObjectParameters(IFloopySoundInput *obj, bool show)
 {
 	if(!show)
-		removeParameters( obj );
+		//removeParameters( obj );
+		m_pParameters->RemoveInput( obj );
 	else
-		loadParameters( obj );
+		//loadParameters( obj );
+		m_pParameters->LoadInput( obj );
 	Refresh();
 }
-
+/*
 void CRegion::removeParameters(IFloopySoundInput *obj)
 {
 	ParameterList::Node *node = m_Parameters.GetFirst();
@@ -1031,7 +1043,7 @@ void CRegion::drawParametersFore(wxDC& dc, wxRect& rc)
 		node = node->GetNext();
 	}
 }
-
+*/
 bool CRegion::GetReset()
 {
 //	return m_bReset;
@@ -1130,21 +1142,34 @@ void CRegion::Select(bool selected)
 {
 	if(!selected)
 	{
-		ParameterList::Node *node = m_Parameters.GetFirst();
+		/*ParameterList::Node *node = m_Parameters.GetFirst();
 		while (node)
 		{
 			CParameter *param = (CParameter*)node->GetData();
 			if(param)
 				param->Select(false);
 			node = node->GetNext();
-		}
+		}*/
+		m_pParameters->DeselectAll();
 	}
 
 	IFloopyObj::Select(selected);
 
 	Refresh();
 }
-
+/*
+void CRegion::DeselectAllParameters(CParameter *caller)
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param!=caller)
+			param->Select(false);
+		node = node->GetNext();
+	}
+}
+*/
 int CRegion::GetCaretPos()
 {
 	int pos = getTrack()->GetCaretPos();

@@ -36,9 +36,9 @@
 
 
 class CTrack;
-class CRegion;
-class CRegionBorder;
-class CParameter;
+//class CRegion;
+//class CRegionBorder;
+//class CParameter;
 class CPlayThread;
 class CRegionDisplay;
 

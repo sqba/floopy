@@ -14,6 +14,7 @@ WX_DEFINE_LIST(ItemList);
 
 #define GAP_LENGTH		2
 #define CORNER_LENGTH	8
+#define MAX_HEIGHT		25
 
 
 CPathItem::CPathItem(CPathCtrl *parent, IFloopySoundInput *input, bool first)
@@ -23,7 +24,8 @@ CPathItem::CPathItem(CPathCtrl *parent, IFloopySoundInput *input, bool first)
 	m_bFirst = first;
 
 	unsigned int r=255, g=255, b=255;
-	input->GetColor(&r, &g, &b);
+	if(NULL != m_pInput)
+		input->GetColor(&r, &g, &b);
 	m_color.Set(r, g, b);
 
 	m_pRegion = NULL;
@@ -50,17 +52,32 @@ void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 	int y = rc.GetY();
 	int w = rc.GetWidth();
 	int h = rc.GetHeight();
+	int n = 0;
 
 	wxPoint points[6];
 
-	points[0] = wxPoint(x,								y);
-	points[1] = wxPoint(x+w-GAP_LENGTH,					y);
-	points[2] = wxPoint(x+w+CORNER_LENGTH-GAP_LENGTH,	y+h/2);
-	points[3] = wxPoint(x+w-GAP_LENGTH,					y+h);
-	points[4] = wxPoint(x,								y+h);
-	points[5] = wxPoint(x+CORNER_LENGTH,				y+h/2);
-
-	int n = m_bFirst ? 5 : 6;
+	if(NULL != m_pInput)
+	{
+		points[0] = wxPoint(x,								y);
+		points[1] = wxPoint(x+w-GAP_LENGTH,					y);
+		points[2] = wxPoint(x+w+CORNER_LENGTH-GAP_LENGTH,	y+h/2);
+		points[3] = wxPoint(x+w-GAP_LENGTH,					y+h);
+		points[4] = wxPoint(x,								y+h);
+		points[5] = wxPoint(x+CORNER_LENGTH,				y+h/2);
+		
+		n = m_bFirst ? 5 : 6;
+	}
+	else
+	{
+		// Last component: mixer
+		points[0] = wxPoint(x,					y);
+		points[1] = wxPoint(x+w,				y);
+		points[2] = wxPoint(x+w,				y+h);
+		points[3] = wxPoint(x,					y+h);
+		points[4] = wxPoint(x+CORNER_LENGTH,	y+h/2);
+		
+		n = 5;
+	}
 
 	if(m_pRegion)
 		delete m_pRegion;
@@ -77,9 +94,13 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 	dc.SetTextForeground(*wxBLACK);
 
 	wxString csName;
-	char *nname = m_pInput->GetName();
-	char *dname = m_pInput->GetDisplayName();
-	char *disp = strlen(nname) > strlen(dname) ? dname : nname;
+	char *disp = "mixer";
+	if(NULL != m_pInput)
+	{
+		char *nname = m_pInput->GetName();
+		char *dname = m_pInput->GetDisplayName();
+		disp = strlen(nname) > strlen(dname) ? dname : nname;
+	}
 	csName = disp;
 
 	int width = rc.GetWidth();
@@ -103,6 +124,9 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 
 void CPathItem::Select(bool selected)
 {
+	if(NULL == m_pInput)
+		return;
+
 	IFloopyObj::Select( selected );
 
 	CPathCtrl *ctrl = (CPathCtrl*)GetParent();
@@ -157,6 +181,7 @@ void CPathCtrl::SetPath(IFloopySoundInput *input)
 		//m_PathList.Append(item);
 		m_PathList.Insert((int)0, item);
 	}
+	m_PathList.Append(new CPathItem(this, NULL, false));
 }
 
 void CPathCtrl::Clear()
@@ -174,6 +199,12 @@ void CPathCtrl::Clear()
 void CPathCtrl::DrawBG(wxDC &dc, wxRect &rc)
 {
 	m_rc = rc;
+
+	if(rc.GetHeight() > MAX_HEIGHT)
+	{
+		rc.Offset( 0, rc.GetHeight() - MAX_HEIGHT );
+		rc.SetHeight( MAX_HEIGHT );
+	}
 
 	rc.Deflate(1, 2);
 	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
@@ -198,6 +229,12 @@ void CPathCtrl::DrawBG(wxDC &dc, wxRect &rc)
 
 void CPathCtrl::DrawFore(wxDC &dc, wxRect &rc)
 {
+	if(rc.GetHeight() > MAX_HEIGHT)
+	{
+		rc.Offset( 0, rc.GetHeight() - MAX_HEIGHT );
+		rc.SetHeight( MAX_HEIGHT );
+	}
+
 	rc.Deflate(0, 2);
 	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
 
