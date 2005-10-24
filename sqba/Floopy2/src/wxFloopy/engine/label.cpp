@@ -76,8 +76,8 @@ CLabel::CLabel(CTrack *track) : IFloopyObj(track)
 {
 //	m_pButtonLoop = new CLoopButton(track);
 //	m_pButtonCache = new CCacheButton(track);
-//	m_pPathCtrl = new CPathCtrl(track->GetInput());
-	m_pPathCtrl = new CPathCtrl(track->GetSource());
+	m_pPathCtrl = new CPathCtrl(track->GetInput());
+//	m_pPathCtrl = new CPathCtrl(track->GetSource());
 }
 
 CLabel::~CLabel()

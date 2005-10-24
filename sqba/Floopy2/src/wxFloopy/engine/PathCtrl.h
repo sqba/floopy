@@ -26,7 +26,7 @@ public:
 	void DrawFore(wxDC &dc, wxRect &rc);
 
 private:
-	IFloopySoundInput *m_pinput;
+	IFloopySoundInput *m_pInput;
 //	wxRegion m_Region;
 };
 
