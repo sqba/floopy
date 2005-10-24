@@ -499,6 +499,21 @@ void CParameter::insertParam(int x, int y)
 
 	m_pInput->SetParamAt(pos, m_index, value);
 
+
+	if(m_pSelectedPoint)
+	{
+		delete m_pSelectedPoint;
+		m_pSelectedPoint = new CPoint(this);
+	}
+	m_pSelectedPoint->m_samplesPerPixel = m_iSamplesPerPixel;
+	m_pSelectedPoint->m_sizing	= SIZE_ALL;
+	m_pSelectedPoint->m_offset	= pos;
+	m_pSelectedPoint->m_fScale	= m_fScale;
+	m_pSelectedPoint->m_pInput	= m_pInput;
+	m_pSelectedPoint->m_index	= m_index;
+	m_pSelectedPoint->m_value	= value;
+
+
 	m_pRegion->Invalidate();
 	Refresh();
 }
