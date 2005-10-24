@@ -76,7 +76,7 @@ CLabel::CLabel(CTrack *track) : IFloopyObj(track)
 {
 //	m_pButtonLoop = new CLoopButton(track);
 //	m_pButtonCache = new CCacheButton(track);
-	m_pPathCtrl = new CPathCtrl(track->GetInput());
+	m_pPathCtrl = new CPathCtrl(this, track->GetInput());
 //	m_pPathCtrl = new CPathCtrl(track->GetSource());
 }
 
@@ -208,4 +208,49 @@ void CLabel::drawCacheSign(wxDC& dc, wxRect& rc)
 {
 //	m_pButtonCache->DrawBG(dc, rc);
 //	m_pButtonCache->DrawFore(dc, rc);
+}
+
+void CLabel::Select(bool selected)
+{
+	IFloopyObj::Select( selected );
+	GetParent()->Select( selected );
+	Refresh();
+}
+
+IFloopyObj *CLabel::GetChildAt(int x, int y)
+{
+	IFloopyObj *obj = m_pPathCtrl->GetChildAt(x, y);
+
+	if(NULL != obj)
+		return obj;
+
+	return this;
+}
+
+int CLabel::GetChildCount()
+{
+	return 1;
+}
+
+IFloopyObj *CLabel::GetChild(int index)
+{
+	return m_pPathCtrl;
+}
+
+void CLabel::Move(int dx, int dy)
+{
+
+}
+
+IFloopyObj *CLabel::GetSelectedObj()
+{
+	IFloopyObj *obj = m_pPathCtrl->GetSelectedObj();
+
+	if(NULL != obj)
+		return obj;
+
+	if(NULL==obj && GetParent()->IsSelected())
+		return this;
+
+	return NULL;
 }

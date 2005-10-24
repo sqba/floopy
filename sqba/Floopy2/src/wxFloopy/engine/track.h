@@ -143,6 +143,8 @@ public:
 	char *GetPropertyUnit(int);
 	float GetPropertyStep(int);
 
+	void ShowObjectParameters(IFloopySoundInput *obj, bool show=true);
+
 private:
 	bool LoadDisplay(wxString strType);
 	void loadRegions();

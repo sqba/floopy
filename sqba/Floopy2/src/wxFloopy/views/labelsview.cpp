@@ -4,6 +4,7 @@
 
 #include "LabelsView.h"
 #include "../engine/track.h"
+#include "../engine/label.h"
 
 
 BEGIN_EVENT_TABLE( CLabelsView, CMainView )
@@ -34,7 +35,29 @@ void CLabelsView::OnDraw(wxDC& dc)
 	int y = m_pTimelineView->GetScrollPos(wxVERTICAL) * yScrollUnits;
 	dc.SetDeviceOrigin( 0, -y );
 
-	m_pTracks->DrawLabels(dc, GetVirtualSize());
+	wxSize size = GetVirtualSize();
+
+//	m_pTracks->DrawLabels(dc, size);
+
+	wxFont oldFont = dc.GetFont();
+
+	wxFont fixedFont(12, wxDEFAULT, wxITALIC, wxBOLD);
+	dc.SetFont(fixedFont);
+
+	wxRect rc(0, 0, size.GetWidth(), size.GetHeight());
+
+	for(int i=0; i<m_pTracks->GetTrackCount(); i++)
+	{
+		CTrack *track = m_pTracks->GetTrack(i);
+		CLabel *label = track->GetLabel();
+		int height = track->GetHeight();
+		rc.SetHeight( height );
+		label->DrawBG(dc, rc);
+		label->DrawFore(dc, rc);
+		rc.Offset(0, height);
+	}
+
+	dc.SetFont(oldFont);
 }
 
 void CLabelsView::OnMouseEvent(wxMouseEvent& event)
@@ -47,10 +70,29 @@ void CLabelsView::OnMouseEvent(wxMouseEvent& event)
 
 	if( event.ButtonDown(wxMOUSE_BTN_LEFT) )
 	{
-		m_pTracks->DeselectAllTracks();
-
 		if(track)
-			track->Select();
+		{
+			CLabel *label = track->GetLabel();
+			IFloopyObj *obj = label->GetChildAt(event.GetX(), event.GetY() + y);
+			if(obj)
+			{
+				if(obj == label)
+				{
+					m_pTracks->DeselectAllTracks();
+					obj->Select();
+				}
+				else
+				{
+					obj->Select( !obj->IsSelected() );
+					Refresh(); // obj->Select should do this
+				}
+			}
+			else
+			{
+				m_pTracks->DeselectAllTracks();
+				track->Select();
+			}
+		}
 
 		m_pTimelineView->SetFocus();
 	}

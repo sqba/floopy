@@ -45,9 +45,9 @@ CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
 
 	m_pDisplay = new CRegionDisplay(this);
 
-	IFloopySoundInput *input = CTracks::FindComponentByName(track->GetInput(), "volume");
-	if(NULL != input)
-		loadParameters( input );
+//	IFloopySoundInput *input = CTracks::FindComponentByName(track->GetInput(), "volume");
+//	if(NULL != input)
+//		loadParameters( input );
 
 //	SetDrawPreview( false );
 
@@ -937,14 +937,8 @@ int CRegion::GetWidth()
 	return (m_iEndSample - m_iStartSample) / getTracks()->GetSamplesPerPixel();
 }
 
-void CRegion::loadParameters(IFloopySoundInput *obj)
+bool CRegion::isAfterTrack(IFloopySoundInput *obj)
 {
-	if(NULL == obj)
-		return;
-
-
-
-	////////////////////////////////////////////////////////
 	bool bAfterTrack = false; // Is obj source of track?
 	IFloopySoundInput *track = getTrack()->GetTrack();
 	IFloopySoundInput *tmp = track;
@@ -952,10 +946,7 @@ void CRegion::loadParameters(IFloopySoundInput *obj)
 	while(tmp)
 	{
 		if(obj == tmp)
-		{
-			bAfterTrack = true;
-			break;
-		}
+			return true;
 
 		int type = tmp->GetType();
 		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
@@ -963,11 +954,66 @@ void CRegion::loadParameters(IFloopySoundInput *obj)
 		else
 			tmp = NULL;
 	}
-	////////////////////////////////////////////////////////
 
+	return false;
+}
 
+void CRegion::ShowObjectParameters(IFloopySoundInput *obj, bool show)
+{
+	if(!show)
+		removeParameters( obj );
+	else
+		loadParameters( obj );
+	Refresh();
+}
 
-	WX_CLEAR_LIST(ParameterList, m_Parameters);
+void CRegion::removeParameters(IFloopySoundInput *obj)
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param->GetInput()==obj)
+		{
+			ParameterList::Node *tmp = node->GetNext();
+			if(m_Parameters.DeleteNode(node))
+			{
+				delete param;
+				node = tmp;
+			}
+			else
+				node = node->GetNext();
+		}
+		else
+			node = node->GetNext();
+	}
+}
+
+bool CRegion::paramsLoaded(IFloopySoundInput *obj)
+{
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param->GetInput()==obj)
+			return true;
+		node = node->GetNext();
+	}
+	return false;
+}
+
+void CRegion::loadParameters(IFloopySoundInput *obj)
+{
+	if(NULL == obj)
+		return;
+
+	// Check if object exists
+	if( paramsLoaded(obj) )
+		return;
+
+	bool bAfterTrack = isAfterTrack(obj);
+
+//	WX_CLEAR_LIST(ParameterList, m_Parameters);
 
 	for(int index=0; index<obj->GetParamCount(); index++)
 	{

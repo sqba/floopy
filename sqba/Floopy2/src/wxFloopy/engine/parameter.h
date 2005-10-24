@@ -57,6 +57,8 @@ public:
 	void insertParam(int x, int y);
 	bool HitTest(int x, int y);
 
+	IFloopySoundInput *GetInput() { return m_pInput; }
+
 private:
 	CRegion	*m_pRegion;
 	CTrack	*m_pTrack;

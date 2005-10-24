@@ -15,15 +15,19 @@
 
 #include "FloopyObj.h"
 
+class CPathCtrl;
 
 class CPathItem : public IFloopyObj
 {
 public:
-	CPathItem(IFloopySoundInput *input, bool first);
+	CPathItem(CPathCtrl *parent, IFloopySoundInput *input, bool first);
 	virtual ~CPathItem();
 
 	void DrawBG  (wxDC &dc, wxRect &rc);
 	void DrawFore(wxDC &dc, wxRect &rc);
+
+public:
+	wxRect m_rc;
 
 private:
 	IFloopySoundInput *m_pInput;
@@ -38,7 +42,7 @@ WX_DECLARE_LIST(CPathItem, ItemList);
 class CPathCtrl : public IFloopyObj
 {
 public:
-	CPathCtrl(IFloopySoundInput *input);
+	CPathCtrl(IFloopyObj parent, IFloopySoundInput *input);
 	virtual ~CPathCtrl();
 
 	void SetPath(IFloopySoundInput *input);
@@ -47,8 +51,15 @@ public:
 	void DrawBG  (wxDC &dc, wxRect &rc);
 	void DrawFore(wxDC &dc, wxRect &rc);
 
+	IFloopyObj *GetChildAt(int x, int y);
+	int GetChildCount();
+	IFloopyObj *GetChild(int index);
+	void Move(int dx, int dy);
+	IFloopyObj *GetSelectedObj();
+
 private:
 	ItemList m_PathList;
+	wxRect m_rc;
 };
 
 #endif // !defined(AFX_PATHCTRL_H__D02B75EF_1C75_4BA5_9B5E_B402DB4371ED__INCLUDED_)

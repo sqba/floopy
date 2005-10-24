@@ -138,6 +138,8 @@ public:
 	char *GetPropertyUnit(int);
 	float GetPropertyStep(int);
 
+	void ShowObjectParameters(IFloopySoundInput *obj, bool show=true);
+
 private:
 	static void remove(IFloopyObj *region);
 	void createMenu();
@@ -146,8 +148,11 @@ private:
 	inline CTrack  *getTrack()					{ return (CTrack*)GetParent(); }
 	inline CTracks *getTracks();
 	void loadParameters(IFloopySoundInput *obj);
+	void removeParameters(IFloopySoundInput *obj);
 	void drawParametersFore(wxDC& dc, wxRect& rc);
 	bool getReset(int sample);
+	bool isAfterTrack(IFloopySoundInput *obj);
+	bool paramsLoaded(IFloopySoundInput *obj);
 
 	int getStartOffset();
 	void drawFrame(wxDC& dc, wxRect& rc);

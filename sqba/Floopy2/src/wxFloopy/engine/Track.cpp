@@ -1007,6 +1007,21 @@ int CTrack::GetWidth()
 	return GetTracks()->GetWidth();
 }
 
+void CTrack::ShowObjectParameters(IFloopySoundInput *obj, bool show)
+{
+	UpdateSelectedRegions();
+	RegionList::Node *node = m_regions.GetFirst();
+	while (node)
+	{
+		CRegion *region = (CRegion*)node->GetData();
+		if(region)
+		{
+			region->ShowObjectParameters(obj, show);
+			region->Refresh();
+		}
+		node = node->GetNext();
+	}
+}
 
 
 

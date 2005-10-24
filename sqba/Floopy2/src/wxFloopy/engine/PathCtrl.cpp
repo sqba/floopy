@@ -14,7 +14,8 @@ WX_DEFINE_LIST(ItemList);
 #define CORNER_LENGTH	8
 
 
-CPathItem::CPathItem(IFloopySoundInput *input, bool first)
+CPathItem::CPathItem(CPathCtrl *parent, IFloopySoundInput *input, bool first)
+ : IFloopyObj(parent)
 {
 	m_pInput = input;
 	m_bFirst = first;
@@ -31,6 +32,13 @@ CPathItem::~CPathItem()
 
 void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 {
+	m_rc = rc;
+
+	wxPen oldpen = dc.GetPen();
+	wxPen pen( *wxMEDIUM_GREY_PEN );
+	pen.SetWidth(IsSelected() ? 2 : 1);
+	dc.SetPen( pen );
+
 	wxBrush oldBrush = dc.GetBrush();
 	wxBrush brush(m_color, wxSOLID);
 	dc.SetBrush(brush);
@@ -52,20 +60,18 @@ void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 	dc.DrawPolygon(m_bFirst ? 5 : 6, points);
 
 	dc.SetBrush( oldBrush );
+	dc.SetPen(oldpen);
 }
 
 void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 {
-//	wxPen oldpen = dc.GetPen();
-//	wxPen pen( *wxMEDIUM_GREY_PEN );
-//	pen.SetWidth(1);
-//	dc.SetPen( pen );
 	dc.SetTextForeground(*wxBLACK);
 
 	wxString csName;
-	char *name = m_pInput->GetName();
+	char *nname = m_pInput->GetName();
 	char *dname = m_pInput->GetDisplayName();
-	csName = strlen(name) > strlen(dname) ? dname : name;
+	char *disp = strlen(nname) > strlen(dname) ? dname : nname;
+	csName = disp;
 
 	int width = rc.GetWidth();
 	if(!m_bFirst)
@@ -73,14 +79,17 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 
 	int w=0, h=0;
 	dc.GetTextExtent(csName, &w, &h);
-	if(w<width && h<rc.GetHeight())
+	if(h<rc.GetHeight())
 	{
+		if(w>width)
+		{
+			csName.Printf("%c\0", disp[0]);
+			dc.GetTextExtent(csName, &w, &h);
+		}
 		int x = rc.GetX() + width/2 - w/2 + (m_bFirst ? 0 : CORNER_LENGTH);
 		int y = rc.GetY() + rc.GetHeight()/2 - h/2;
 		dc.DrawText( csName, x, y );
 	}
-
-//	dc.SetPen(oldpen);
 }
 
 
@@ -89,7 +98,8 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CPathCtrl::CPathCtrl(IFloopySoundInput *input)
+CPathCtrl::CPathCtrl(IFloopyObj parent, IFloopySoundInput *input)
+ : IFloopyObj(parent)
 {
 	SetPath(input);
 }
@@ -114,7 +124,7 @@ void CPathCtrl::SetPath(IFloopySoundInput *input)
 		else
 			tmp = NULL;
 
-		CPathItem *item = new CPathItem(tmp2, tmp==NULL);
+		CPathItem *item = new CPathItem(this, tmp2, tmp==NULL);
 		//m_PathList.Append(item);
 		m_PathList.Insert((int)0, item);
 	}
@@ -134,6 +144,8 @@ void CPathCtrl::Clear()
 
 void CPathCtrl::DrawBG(wxDC &dc, wxRect &rc)
 {
+	m_rc = rc;
+
 	rc.Deflate(1, 2);
 	rc.SetWidth(rc.GetWidth() - CORNER_LENGTH);
 
@@ -176,4 +188,54 @@ void CPathCtrl::DrawFore(wxDC &dc, wxRect &rc)
 			node = node->GetNext();
 		}
 	}
+}
+
+IFloopyObj *CPathCtrl::GetChildAt(int x, int y)
+{
+	ItemList::Node *node = m_PathList.GetFirst();
+	while (node)
+	{
+		CPathItem *item = (CPathItem*)node->GetData();
+		if(item->m_rc.Inside(x, y))
+			return item;
+		node = node->GetNext();
+	}
+
+	if(m_rc.Inside(x, y))
+		return this;
+
+	return NULL;
+}
+
+int CPathCtrl::GetChildCount()
+{
+	return m_PathList.GetCount();
+}
+
+IFloopyObj *CPathCtrl::GetChild(int index)
+{
+	ItemList::Node *node = m_PathList.Item(index);
+	if(node)
+		return (CPathItem*)node->GetData();
+	return NULL;
+}
+
+void CPathCtrl::Move(int dx, int dy)
+{
+	IFloopyObj *obj = GetSelectedObj();
+	if(obj)
+		obj->Move(dx, dy);
+}
+
+IFloopyObj *CPathCtrl::GetSelectedObj()
+{
+	ItemList::Node *node = m_PathList.GetFirst();
+	while (node)
+	{
+		CPathItem *item = (CPathItem*)node->GetData();
+		if(item->IsSelected())
+			return item;
+		node = node->GetNext();
+	}
+	return NULL;
 }

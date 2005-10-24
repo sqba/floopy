@@ -58,6 +58,13 @@ public:
 
 	bool HitTest(int y);
 
+	IFloopyObj *GetChildAt(int x, int y);
+	int GetChildCount();
+	IFloopyObj *GetChild(int index);
+	void Move(int dx, int dy);
+	IFloopyObj *GetSelectedObj();
+	void Select(bool selected);
+
 private:
 	inline CTrack  *getTrack()	{ return (CTrack*)GetParent(); }
 	void drawLoopSign(wxDC& dc, wxRect& rc);
