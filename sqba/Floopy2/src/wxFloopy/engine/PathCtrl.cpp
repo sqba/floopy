@@ -25,17 +25,18 @@ CPathItem::CPathItem(CPathCtrl *parent, IFloopySoundInput *input, bool first)
 	unsigned int r=255, g=255, b=255;
 	input->GetColor(&r, &g, &b);
 	m_color.Set(r, g, b);
+
+	m_pRegion = NULL;
 }
 
 CPathItem::~CPathItem()
 {
-
+	if(m_pRegion)
+		delete m_pRegion;
 }
 
 void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 {
-	m_rc = rc;
-
 	wxPen oldpen = dc.GetPen();
 	wxPen pen( *wxMEDIUM_GREY_PEN );
 	pen.SetWidth(IsSelected() ? 2 : 1);
@@ -59,7 +60,13 @@ void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 	points[4] = wxPoint(x,								y+h);
 	points[5] = wxPoint(x+CORNER_LENGTH,				y+h/2);
 
-	dc.DrawPolygon(m_bFirst ? 5 : 6, points);
+	int n = m_bFirst ? 5 : 6;
+
+	if(m_pRegion)
+		delete m_pRegion;
+	m_pRegion = new wxRegion(n, points);
+
+	dc.DrawPolygon(n, points);
 
 	dc.SetBrush( oldBrush );
 	dc.SetPen(oldpen);
@@ -218,7 +225,7 @@ IFloopyObj *CPathCtrl::GetChildAt(int x, int y)
 	while (node)
 	{
 		CPathItem *item = (CPathItem*)node->GetData();
-		if(item->m_rc.Inside(x, y))
+		if(item->m_pRegion->Contains(x, y))
 			return item;
 		node = node->GetNext();
 	}

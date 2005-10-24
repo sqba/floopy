@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 
-//#include <wx/region.h>
+#include <wx/region.h>
 #include <wx/list.h>
 
 #include "FloopyObj.h"
@@ -29,12 +29,12 @@ public:
 	void Select(bool selected);
 
 public:
-	wxRect m_rc;
+//	wxRect m_rc;
+	wxRegion *m_pRegion;
 
 private:
 	IFloopySoundInput *m_pInput;
 	bool m_bFirst;
-//	wxRegion m_Region;
 };
 
 
