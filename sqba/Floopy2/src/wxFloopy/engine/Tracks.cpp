@@ -754,9 +754,9 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 	}
 }
 
-void CTracks::OnMouseEvent(wxMouseEvent& event)
+bool CTracks::OnMouseEvent(wxMouseEvent& event)
 {
-	IFloopyObj::OnMouseEvent(event);
+	return IFloopyObj::OnMouseEvent(event);
 }
 
 IFloopyObj *CTracks::GetSelectedObj()
@@ -1210,15 +1210,17 @@ void CTracks::CBorder::Move(int dx, int WXUNUSED(dy))
 	getTracks()->SetWidth(getTracks()->GetWidth() + dx);
 }
 
-void CTracks::CBorder::OnMouseEvent(wxMouseEvent& event)
+bool CTracks::CBorder::OnMouseEvent(wxMouseEvent& event)
 {
+	bool bResult = false;
 	if(event.Dragging() && (0 != m_ptPrev.x)) {
 		int dx = event.GetX() - m_ptPrev.x;
 		int dy = event.GetY() - m_ptPrev.y;
 		Move(dx, dy);
+		bResult = true;
 	}
-
 	IFloopyObj::OnMouseEvent(event);
+	return bResult;
 }
 
 void CTracks::CBorder::DrawBG(wxDC& dc, wxRect& rc)

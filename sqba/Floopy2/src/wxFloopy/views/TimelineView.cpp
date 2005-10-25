@@ -115,17 +115,16 @@ void CTimelineView::OnKeyDown(wxKeyEvent& event)
 
 void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 {
-	try {
-
-		//int n = event.GetWheelRotation();
-		//int d = event.GetWheelDelta();
-
 	int x, y, xScrollUnits, yScrollUnits;
 	GetViewStart(&x, &y);
 	GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
+	x = event.GetX() + x * xScrollUnits;
+	y = event.GetY() + y * yScrollUnits;
+	wxMouseEvent event2 = event;
+	event2.m_x = x;
+	event2.m_y = y;
 
-	IFloopyObj *obj = m_pTracks->GetChildAt(event.GetX() + x*xScrollUnits,
-											event.GetY() + y*yScrollUnits);
+	IFloopyObj *obj = m_pTracks->GetChildAt(x, y);
 
 	if( event.Dragging() && m_pSelectedObj )
 	{
@@ -167,60 +166,50 @@ void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 		{
 			m_pSelectedObj = obj;
 
-			switch( obj->GetType() )
+			//if( !obj->OnMouseEvent(event2) )
 			{
-			case FLOOPY_TRACK:
+				switch( obj->GetType() )
 				{
-					CTrack *track = (CTrack*)obj;
-				
-					if( !track->IsSelected() )
-						m_pTracks->DeselectAllTracks();
-					
-					m_pTracks->DeselectAllRegions();
-
-					m_pTracks->SetCaretPos(m_pTracks->GetCaretPos());
-
-					int xScrollUnits=0, yScrollUnits=0;
-					GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-					int xOrig=0, yOrig=0;
-					GetViewStart(&xOrig, &yOrig);
-					xOrig *= xScrollUnits;
-					yOrig *= yScrollUnits;
-
-					///////////////////////////////////////////
-					// Add new region
-					int x1 = event.GetX() + xOrig;
-					CRegion *region = track->AddNewRegionAt(x1);
-					m_pSelectedObj = region->GetBorder(false);
-					//region->Refresh();
-					///////////////////////////////////////////
-
-					break;
-				}
-			case FLOOPY_REGION:
-				{
+				case FLOOPY_TRACK:
+					{	// Add new region
+						CTrack *track = (CTrack*)obj;
+						if( !track->IsSelected() )
+							m_pTracks->DeselectAllTracks();
+						m_pTracks->DeselectAllRegions();
+						m_pTracks->SetCaretPos(m_pTracks->GetCaretPos());
+						CRegion *region = track->AddNewRegionAt(x);
+						m_pSelectedObj = region->GetBorder(false);
+						break;
+					}
+				case FLOOPY_REGION:
 					if( !event.ShiftDown() && !obj->IsSelected())
 						m_pTracks->DeselectAllRegions();
 					if( !obj->IsSelected() )
 						obj->Select();
-
 					m_pParamsDialog->Update();
 					m_pPropsDialog->Update();
-
 					return; // Don't move the caret
+				case FLOOPY_PARAMETER:
+					obj->OnMouseEvent(event2);
+					//obj->Select();
+					return;
+				default:
+					if( !obj->IsSelected() )
+					{
+						m_pTracks->DeselectAllTracks();
+						m_pTracks->DeselectAllRegions();
+						obj->Select();
+					}
+					return;
 				}
-			case FLOOPY_PARAMETER:
-				obj->Select();
-				return;
-			default:
-				if( !obj->IsSelected() )
-				{
-					m_pTracks->DeselectAllTracks();
-					m_pTracks->DeselectAllRegions();
-					obj->Select();
-				}
-				return;
 			}
+			//else
+			//	return;
+		}
+		else if(event.MiddleDown())
+		{
+			if(obj->OnMouseEvent(event2))
+				return;
 		}
 		else if(event.RightUp())
 		{
@@ -275,12 +264,6 @@ void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 
 	m_ptPrev.x = event.GetX();
 	m_ptPrev.y = event.GetY();
-
-	}
-	catch(...)
-	{
-		wxLogTrace(_T("CTimelineView"), _T("OnMouseEvent exception"));
-	}
 
 	CCaretView::OnMouseEvent(event);
 

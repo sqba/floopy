@@ -104,7 +104,7 @@ public:
 	void Remove();
 
 	bool OnKeyDown(wxKeyEvent& event);
-	void OnMouseEvent(wxMouseEvent& event);
+	bool OnMouseEvent(wxMouseEvent& event);
 
 	int GetStartPos()							{ return m_iStartSample; }
 	int GetEndPos()								{ return m_iEndSample; }
@@ -126,7 +126,7 @@ public:
 	IFloopySoundInput *GetInput();
 	int GetCaretPos();
 
-	int GetStartOffset()						{ return m_iStartOffset; }
+	int GetStartOffset();//						{ return m_iStartOffset; }
 	int GetEndOffset();
 
 	int   GetPropertyCount();

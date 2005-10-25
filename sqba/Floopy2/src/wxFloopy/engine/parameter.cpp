@@ -474,17 +474,36 @@ bool CParameter::OnKeyDown(wxKeyEvent& event)
 	return false;
 }
 
+bool CParameter::OnMouseEvent(wxMouseEvent& event)
+{
+	bool bResult = false;
+	if( event.LeftDown() )
+	{
+		if( !IsSelected() )
+			Select();
+		bResult = true;
+	}
+	else if( event.MiddleDown() )
+	{
+		insertParam(event.GetX(), event.GetY());
+		bResult = true;
+	}
+	IFloopyObj::OnMouseEvent(event);
+	return bResult;
+}
+
 void CParameter::insertParam(int x, int y)
 {
-	int offset = m_pRegion->GetStartOffset();
-	int start = m_pRegion->GetStartPos();
-	int end = m_pRegion->GetEndPos();
+	int offset	= m_pRegion->GetStartOffset();
+	int start	= m_pRegion->GetStartPos();
+	int end		= m_pRegion->GetEndPos();
+	int pos		= x * m_iSamplesPerPixel;
 
-	int pos = x * m_iSamplesPerPixel;
 	if(pos<start || pos>end)
 		return;
 
-	pos += offset;
+	if(offset > 0)
+		pos += offset;
 
 	if(m_bAfterTrack)
 		pos -= start;
@@ -500,11 +519,8 @@ void CParameter::insertParam(int x, int y)
 	m_pInput->SetParamAt(pos, m_index, value);
 
 
-	if(m_pSelectedPoint)
-	{
-		delete m_pSelectedPoint;
+	if(NULL == m_pSelectedPoint)
 		m_pSelectedPoint = new CPoint(this);
-	}
 	m_pSelectedPoint->m_samplesPerPixel = m_iSamplesPerPixel;
 	m_pSelectedPoint->m_sizing	= SIZE_ALL;
 	m_pSelectedPoint->m_offset	= pos;
@@ -532,6 +548,7 @@ void CParameter::Select(bool selected)
 		CParameters *parent = (CParameters*)GetParent();
 		parent->DeselectAll(this);
 	}
+	Refresh();
 }
 
 void CParameter::SelectPoint(CPoint *pt)
@@ -643,4 +660,9 @@ void CParameter::CPoint::Select(bool selected)
 	m_pParameter->Select(selected);
 	m_pParameter->SelectPoint(selected ? this : NULL);
 	m_pParameter->Refresh();
+}
+
+bool CParameter::CPoint::OnMouseEvent(wxMouseEvent& event)
+{
+	return m_pParameter->OnMouseEvent(event);
 }

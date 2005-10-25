@@ -871,36 +871,21 @@ bool CRegion::OnKeyDown(wxKeyEvent& event)
 	return false;
 }
 
-void CRegion::OnMouseEvent(wxMouseEvent& event)
+bool CRegion::OnMouseEvent(wxMouseEvent& event)
 {
-	if( event.Dragging() && (0 != m_ptPrev.x) ) {
-		int dx = event.GetX() - m_ptPrev.x;
-		getTracks()->MoveSelectedRegions(dx);
-		//return;
-	}
-
+	bool bResult = false;
 	if( event.LeftDown() )
 	{
-		//if(!event.ControlDown())
-		//if( !event.ShiftDown() && !m_bDrag ) {
-		if( !event.ShiftDown() ) {
-			//getTracks()->DeselectAllTracks();
+		if( !event.ShiftDown() && !IsSelected())
 			getTracks()->DeselectAllRegions();
-		} //else
-		//	m_bDrag = true;
-
-		//m_pSelectedObj->Select();
-		//m_pSelectedObj->Refresh();
-
-		return; // Don't move the caret
+		if( !IsSelected() )
+			Select();
+//		m_pParamsDialog->Update();
+//		m_pPropsDialog->Update();
+		bResult = true;
 	}
-
-	if( event.LeftUp() )
-	{
-		Update();
-	}
-
 	IFloopyObj::OnMouseEvent(event);
+	return bResult;
 }
 
 void CRegion::startEdit()
@@ -1074,6 +1059,11 @@ bool CRegion::getReset(int sample)
 		return false;
 }
 
+int CRegion::GetStartOffset()
+{
+	return getStartOffset();
+}
+
 int CRegion::getStartOffset()
 {
 	float value = 0;
@@ -1088,6 +1078,8 @@ int CRegion::getStartOffset()
 			int dist = GetStartPos() - prev->GetEndPos();
 			return prev->GetEndOffset() + dist;
 		}
+		else
+			return GetStartPos();
 	}
 	return -1;
 }

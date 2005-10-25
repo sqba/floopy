@@ -101,7 +101,7 @@ class CTracks : public IFloopyObj
 
 		wxCursor GetCursor() { return wxCursor(wxCURSOR_SIZEWE); }
 		void Move(int dx, int WXUNUSED(dy));
-		void OnMouseEvent(wxMouseEvent& event);
+		bool OnMouseEvent(wxMouseEvent& event);
 		void DrawBG(wxDC&, wxRect&);
 		void DrawFore(wxDC&, wxRect&);
 
@@ -205,7 +205,7 @@ public:
 	IFloopySoundInput *GetInput()				{ return m_pEngine; }
 
 	bool OnKeyDown(wxKeyEvent& event);
-	void OnMouseEvent(wxMouseEvent& event);
+	bool OnMouseEvent(wxMouseEvent& event);
 	IFloopyObj *GetSelectedObj();
 	CTrack *GetSelectedTrack();
 

@@ -97,7 +97,7 @@ public:
 	IFloopySoundInput *GetSource()	{ return m_pSource; }
 
 	bool OnKeyDown(wxKeyEvent& event);
-	void OnMouseEvent(wxMouseEvent& event);
+	bool OnMouseEvent(wxMouseEvent& event);
 
 	int GetRegionCount()			{ return m_regions.GetCount(); }
 

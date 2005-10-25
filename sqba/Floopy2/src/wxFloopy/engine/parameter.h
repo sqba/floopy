@@ -33,6 +33,7 @@ public:
 		void Move(int dx, int dy);
 
 		void Select(bool selected=true);
+		bool OnMouseEvent(wxMouseEvent& event);
 
 		IFloopySoundInput *m_pInput;
 		CParameter *m_pParameter;
@@ -57,6 +58,7 @@ public:
 	void DrawFore(wxDC& dc, wxRect& rc);
 //	float GetValueAt(int x);
 	bool OnKeyDown(wxKeyEvent& event);
+	bool OnMouseEvent(wxMouseEvent& event);
 	void insertParam(int x, int y);
 	bool HitTest(int x, int y);
 

@@ -646,48 +646,21 @@ IFloopyObj *CTrack::GetSelectedObj()
 	return NULL;
 }
 
-void CTrack::OnMouseEvent(wxMouseEvent& event)
+bool CTrack::OnMouseEvent(wxMouseEvent& event)
 {
-	/*if( event.LeftDown() )
+	bool bResult = false;
+	/*if(event.LeftDown())
 	{
-		wxScrolledWindow *panel = getTracks()->GetPanel();
-		wxCaret *caret = panel->GetCaret();
-		caret->Show(false);
-
-		int x=0;
-		caret->GetPosition(&x, NULL);
-
-		int xScrollUnits=0, yScrollUnits=0;
-		panel->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-		int xOrig=0, yOrig=0;
-		panel->GetViewStart(&xOrig, &yOrig);
-		xOrig *= xScrollUnits;
-		yOrig *= yScrollUnits;
-	
-		if( IsSelected() ) {
-			caret->SetSize(1, GetHeight());
-			caret->Move( x-xOrig, GetTop()-yOrig );
-		} else {
-			getTracks()->DeselectAllTracks();
-			getTracks()->DeselectAllRegions();
-
-			caret->SetSize(1, panel->GetSize().GetHeight());
-			caret->Move( x-xOrig, 0 );
-		}
-		caret->Show(true);
-
-		///////////////////////////////////////////
-		// Add new event
-		int x1 = event.GetX() + xOrig;
-		CRegion *evt = AddEventAt(x1);
-		//m_pSelectedObj = evt->GetBorder(false);
-		evt->Refresh();
-		///////////////////////////////////////////
-	}
-
-	if( event.LeftUp() )
-	{
+		if( !IsSelected() )
+			m_pTracks->DeselectAllTracks();
+		m_pTracks->DeselectAllRegions();
+		m_pTracks->SetCaretPos(m_pTracks->GetCaretPos());
+		CRegion *region = AddNewRegionAt(x);
+		m_pSelectedObj = region->GetBorder(false);
+		bResult = true;
 	}*/
+	IFloopyObj::OnMouseEvent(event);
+	return bResult;
 }
 
 

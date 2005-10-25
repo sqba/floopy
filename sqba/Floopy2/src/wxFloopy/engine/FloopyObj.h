@@ -106,10 +106,11 @@ public:
 	virtual IFloopyObj *GetSelectedObj()			{ return NULL; }
 
 	virtual bool OnKeyDown(wxKeyEvent& event)		{ return false; }
-	virtual void OnMouseEvent(wxMouseEvent& event)
+	virtual bool OnMouseEvent(wxMouseEvent& event)
 	{
 		m_ptPrev.x = event.GetX();
 		m_ptPrev.y = event.GetY();
+		return false;
 	}
 
 	virtual void SetChanged(bool bChanged)			{ m_bChanged = bChanged; }
