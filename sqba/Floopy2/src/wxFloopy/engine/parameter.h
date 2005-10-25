@@ -67,6 +67,8 @@ public:
 
 	IFloopySoundInput *GetInput() { return m_pInput; }
 
+	void Smooth(int start, int end, int res);
+
 private:
 	CRegion	*m_pRegion;
 	CTrack	*m_pTrack;

@@ -553,6 +553,25 @@ IFloopyObj *CParameter::GetSelectedObj()
 		return this;
 }
 
+void CParameter::Smooth(int start, int end, int res)
+{
+	/*int offset = start;
+	int prevOffset = start;
+	float value = 0.f;
+	float prevValue = 0.f;
+	if( m_pInput->GetParamAt(offset, m_index, &value) )
+		prevValue = value;
+	while(offset=m_pInput->GetNextOffset(offset, m_index) < end)
+	{
+		int points = (offset - prevOffset) / m_iSamplesPerPixel;
+		prevOffset = offset;
+		prevValue = value;
+	}*/
+}
+
+
+
+
 
 
 
