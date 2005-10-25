@@ -17,7 +17,7 @@
 
 class CTracksView : public wxSplitterWindow  
 {
-    DECLARE_EVENT_TABLE()
+//	DECLARE_EVENT_TABLE()
 
 public:
 	CTracksView(wxWindow* parent, CTracks *tracks);
@@ -25,11 +25,10 @@ public:
 
 //	void OnKeyDown(wxKeyEvent& event);
 
-	bool Open(char *filename);
-	bool Save();
-
 	void ShowParamsDlg();
 	void ShowPropertiesDlg();
+
+	void SetBackgroundColour(wxColour& color);
 
 private:
 	CTracks		*m_pTracks;

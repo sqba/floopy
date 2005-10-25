@@ -393,16 +393,22 @@ void CTrack::UpdateSelectedRegions()
 	}
 }
 
-void CTrack::RemoveSelectedObjects()
+bool CTrack::RemoveSelectedObjects()
 {
+	bool bResult = false;
 	RegionList::Node *node = m_regions.GetFirst();
 	while (node)
 	{
 		CRegion *region = (CRegion*)node->GetData();
 		node = node->GetNext();
 		if( region->IsSelected() )
-			RemoveRegion( region );
+		{
+			if( !region->RemoveSelectedObjects() )
+				RemoveRegion( region );
+			bResult = true;
+		}
 	}
+	return bResult;
 }
 
 int CTrack::GetHeight()

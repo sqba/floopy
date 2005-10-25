@@ -161,7 +161,7 @@ public:
 
 	void DeselectAllTracks();
 	void DeselectAllRegions();
-	void RemoveSelectedObjects();
+	bool RemoveSelectedObjects();
 	void UpdateSelectedRegions();
 
 

@@ -35,9 +35,9 @@ public:
 	CFloopyFrame();
 	~CFloopyFrame();
 
-	void Open(char *filename);
+	bool Open(char *filename);
 	bool Save();
-	void SaveAs();
+	bool SaveAs();
 	bool Close();
 
 private:

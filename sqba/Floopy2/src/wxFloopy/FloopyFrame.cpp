@@ -205,18 +205,36 @@ void CFloopyFrame::initToolbar()
 	toolbar->Realize();
 }
 
-void CFloopyFrame::Open(char *filename)
+bool CFloopyFrame::Open(char *filename)
 {
-	m_pView->Open(filename);
+	if( m_pTracks->Open(filename) )
+	{
+		wxString str;
+		str.Printf("Floopy! - %s", filename);
+		SetTitle( str );
+		//m_pTimelineView->RefreshRulers();
+//		m_pTimelineView->SetFocus();
+
+		UINT r=0, g=0, b=0;
+		IFloopySoundEngine *engine = (IFloopySoundEngine*)m_pTracks->GetInput();
+		if( engine->GetColor(&r, &g, &b) )
+			m_pView->SetBackgroundColour( wxColor(r, g, b) );
+		return true;
+	}
+	return false;
 }
 
 bool CFloopyFrame::Save()
 {
-	return m_pView->Save();
+	char *filename = m_pTracks->GetFilename();
+	if(strlen(filename) > 0)
+		return m_pTracks->Save(filename);
+	return false;
 }
 
-void CFloopyFrame::SaveAs()
+bool CFloopyFrame::SaveAs()
 {
+	bool bResult = false;
 	wxFileDialog *dlg = new wxFileDialog(this, "Save", "", "",
 		"XML Files(*.xml)|*.xml|Wav files(*.wav)|*.wav|All files(*.*)|*.*",
 		wxSAVE, wxDefaultPosition);
@@ -225,9 +243,11 @@ void CFloopyFrame::SaveAs()
 		SetStatusText(dlg->GetFilename(), 0);
 		char *filename = (char*)dlg->GetPath().c_str();
 		m_pTracks->Save(filename);
+		bResult = true;
 	}
 	dlg->Destroy();
 	//delete dlg;
+	return bResult;
 }
 
 bool CFloopyFrame::Close()

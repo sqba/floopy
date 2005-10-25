@@ -354,22 +354,26 @@ void CTracks::UpdateSelectedRegions()
 	}
 }
 
-void CTracks::RemoveSelectedObjects()
+bool CTracks::RemoveSelectedObjects()
 {
+	bool bResult = false;
 	TracksList::Node *node = m_tracks.GetFirst();
 	while (node)
 	{
 		CTrack *track = (CTrack*)node->GetData();
 		node = node->GetNext();
-		track->RemoveSelectedObjects();
-		if( track->IsSelected() )
+		if( !track->RemoveSelectedObjects() && track->IsSelected() )
 		{
 			if( RemoveTrack(track) )
+			{
 				GetStatusBar()->SetStatusText("Track removed", 0);
+				bResult = true;
+			}
 			else
 				GetStatusBar()->SetStatusText("Failed to remove track", 0);
 		}
 	}
+	return bResult;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -391,6 +395,8 @@ void CTracks::Refresh()
 
 	if( m_pLabelsView )
 		m_pLabelsView->Refresh();
+
+	SetCaretPos( GetCaretPos() );
 }
 
 void CTracks::Invalidate()
@@ -569,6 +575,8 @@ bool CTracks::Open(char *filename)
 
 	::wxSetCursor( *wxSTANDARD_CURSOR );
 
+	SetCaretPos( 0 );
+
 	return result;
 }
 
@@ -639,6 +647,8 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 	{
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
+	case '<':
+	case ',':
 		SetCaretPos( GetCaretPos() - GetSamplesPerPixel() );
 		return true;
 	case '-':
@@ -646,6 +656,8 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		return true;
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
+	case '>':
+	case '.':
 		SetCaretPos( GetCaretPos() + GetSamplesPerPixel() );
 		return true;
 	case '+':

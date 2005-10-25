@@ -141,6 +141,8 @@ public:
 
 	void ShowObjectParameters(IFloopySoundInput *obj, bool show=true);
 
+	bool RemoveSelectedObjects();
+
 //	void DeselectAllParameters(CParameter *caller);
 
 private:

@@ -87,7 +87,7 @@ public:
 	void Move(int dx, int dy);
 
 	void MoveSelectedRegions(int dx);
-	void RemoveSelectedObjects();
+	bool RemoveSelectedObjects();
 	void UpdateSelectedRegions();
 
 	void Dump(ostream& stream);

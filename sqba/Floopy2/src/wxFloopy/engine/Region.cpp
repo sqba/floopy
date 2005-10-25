@@ -1254,6 +1254,11 @@ int CRegion::GetEndOffset()
 	}
 }
 
+bool CRegion::RemoveSelectedObjects()
+{
+	return false;
+}
+
 
 
 int CRegion::GetPropertyCount()
