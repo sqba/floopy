@@ -162,6 +162,9 @@ void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 	{
 		SetCursor( obj->GetCursor() );
 
+//		if(obj->OnMouseEvent(event2))
+//			return;
+
 		if(event.LeftDown())
 		{
 			m_pSelectedObj = obj;

@@ -184,6 +184,25 @@ wxCursor CParameters::GetCursor()
 	return wxCursor(wxCURSOR_HAND);
 }
 
+bool CParameters::OnMouseEvent(wxMouseEvent& event)
+{
+	bool bResult = false;
+	ParameterList::Node *node = m_Parameters.GetFirst();
+	while (node)
+	{
+		CParameter *param = (CParameter*)node->GetData();
+		if(param && param->IsSelected())
+		{
+			param->OnMouseEvent(event);
+			bResult = true;
+			break;
+		}
+		node = node->GetNext();
+	}
+	IFloopyObj::OnMouseEvent(event);
+	return bResult;
+}
+
 
 
 
@@ -481,6 +500,8 @@ bool CParameter::OnMouseEvent(wxMouseEvent& event)
 	{
 		if( !IsSelected() )
 			Select();
+//		else
+//			insertParam(event.GetX(), event.GetY());
 		bResult = true;
 	}
 	else if( event.MiddleDown() )

@@ -111,9 +111,9 @@ void CRegion::Remove()
 
 void CRegion::remove(IFloopyObj *evt)
 {
-	CRegion *region = (CRegion*)evt;
-	CTrack *track = region->getTrack();
-	track->RemoveRegion( region );
+//	CRegion *region = (CRegion*)evt;
+//	CTrack *track = region->getTrack();
+//	track->RemoveRegion( region );
 }
 
 /**
@@ -884,6 +884,8 @@ bool CRegion::OnMouseEvent(wxMouseEvent& event)
 //		m_pPropsDialog->Update();
 		bResult = true;
 	}
+	else
+		bResult = m_pParameters->OnMouseEvent(event);
 	IFloopyObj::OnMouseEvent(event);
 	return bResult;
 }

@@ -104,6 +104,8 @@ public:
 	IFloopyObj *GetChildAt(int x, int y);
 	IFloopyObj *GetSelectedObj();
 
+	bool OnMouseEvent(wxMouseEvent& event);
+
 	wxCursor GetCursor();
 
 private:
