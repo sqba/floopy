@@ -238,6 +238,8 @@ public:
 
 	int GetPixelsPerSecond() { return m_iPixelsPerSecond; }
 
+	void SetDrawPreview(bool bDrawPreview);
+
 	static IFloopySoundInput *FindComponentByName(IFloopySoundInput*, char*);
 	static char *GetComponentName(IFloopySoundInput*);
 	static bool IsFilter(IFloopySoundInput*);

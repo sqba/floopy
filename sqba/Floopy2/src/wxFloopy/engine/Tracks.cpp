@@ -1052,6 +1052,15 @@ bool CTracks::IsFilter(IFloopySoundInput *src)
 	return(type == (TYPE_FLOOPY_SOUND_FILTER | type));
 }
 
+void CTracks::SetDrawPreview(bool bDrawPreview)
+{
+//	IFloopyObj *obj = GetSelectedObj();
+//	if(obj)
+//		obj->SetDrawPreview(bDrawPreview);
+//	else
+		IFloopyObj::SetDrawPreview(bDrawPreview);
+}
+
 
 
 
