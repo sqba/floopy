@@ -47,6 +47,8 @@ CTracks::CTracks() : IFloopyObj(NULL)
 
 	m_Timer.SetParent( this );
 
+	m_bDrawPreview		= false;	// Default
+
 	createEngine("engine");
 }
 
@@ -528,7 +530,6 @@ bool CTracks::Open(char *filename)
 	bool result = false;
 
 	((CTimelineView*)m_pTimelineView)->Init();
-	SetDrawPreview( false );
 
 	::wxSetCursor( *wxHOURGLASS_CURSOR );
 
