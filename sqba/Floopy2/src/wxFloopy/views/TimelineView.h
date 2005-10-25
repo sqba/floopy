@@ -51,6 +51,8 @@ public:
 	void ShowParamsDlg();
 	void ShowPropertiesDlg();
 
+	void Init();
+
 private:
 	CControlDlg			*m_pParamsDialog;
 	CControlDlg			*m_pPropsDialog;

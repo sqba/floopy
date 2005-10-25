@@ -314,3 +314,13 @@ void CTimelineView::ShowPropertiesDlg()
 	m_pPropsDialog->InitProps( obj );
 	m_pPropsDialog->Show( true );
 }
+
+void CTimelineView::Init()
+{
+	m_pObjMenu		= NULL;
+	m_bDrag			= false;
+	m_pSelectedObj	= NULL;
+	m_ptPrev.x = m_ptPrev.y = 0;
+	
+	SetCursor( wxCURSOR_PENCIL );
+}

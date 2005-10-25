@@ -861,8 +861,8 @@ bool CRegion::OnKeyDown(wxKeyEvent& event)
 	case 'p':
 	case 'P':
 		SetDrawPreview( !IsDrawPreviewOn() );
-		Invalidate();
-		Refresh();
+		//Invalidate();
+		//Refresh();
 		return true;
 	default:
 		return getTrack()->OnKeyDown(event);

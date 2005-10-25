@@ -121,7 +121,12 @@ public:
 	virtual int GetHeight()							{ return m_iHeight; }
 	virtual void SetHeight(int height)				{ m_iHeight = height; }
 
-	void SetDrawPreview(bool bDrawPreview)			{ m_bDrawPreview = bDrawPreview; }
+	void SetDrawPreview(bool bDrawPreview)
+	{
+		m_bDrawPreview = bDrawPreview;
+		Invalidate();
+		Refresh();
+	}
 	//bool IsDrawPreviewOn()							{ return m_bDrawPreview; }
 	bool IsDrawPreviewOn()
 	{

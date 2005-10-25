@@ -608,8 +608,8 @@ bool CTrack::OnKeyDown(wxKeyEvent& event)
 	case 'p':
 	case 'P':
 		SetDrawPreview( !IsDrawPreviewOn() );
-		Invalidate();
-		Refresh();
+		//Invalidate();
+		//Refresh();
 		return true;
 	case WXK_F5:
 	case WXK_SPACE:

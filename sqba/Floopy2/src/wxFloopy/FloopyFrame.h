@@ -53,6 +53,7 @@ private:
 	void OnStop( wxCommandEvent &WXUNUSED(event) );
 	void OnShowParams( wxCommandEvent &WXUNUSED(event) );
 	void OnShowProperties( wxCommandEvent &WXUNUSED(event) );
+	void OnShowPreview( wxCommandEvent &WXUNUSED(event) );
 
 	void initMenus();
 	void initToolbar();

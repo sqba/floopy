@@ -10,6 +10,7 @@
 #include "track.h"
 #include "label.h"
 #include "playthread.h"
+#include "../views/timelineview.h"
 #include "../../../IFloopy.h"
 
 typedef IFloopySoundEngine* (*CreateProc)(HMODULE);
@@ -408,6 +409,7 @@ void CTracks::Invalidate()
 		track->Invalidate();
 		node = node->GetNext();
 	}
+//	SetCaretPos( GetCaretPos() );
 }
 
 int CTracks::GetSamplesPerPixel()
@@ -524,6 +526,9 @@ bool CTracks::createEngine(char *plugin)
 bool CTracks::Open(char *filename)
 {
 	bool result = false;
+
+	((CTimelineView*)m_pTimelineView)->Init();
+	SetDrawPreview( false );
 
 	::wxSetCursor( *wxHOURGLASS_CURSOR );
 
@@ -736,8 +741,8 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 	case 'p':
 	case 'P':
 		SetDrawPreview( !IsDrawPreviewOn() );
-		Invalidate();
-		Refresh();
+		//Invalidate();
+		//Refresh();
 		return true;
 	default:
 		/*if(event.GetKeyCode() < m_tracks.GetCount())

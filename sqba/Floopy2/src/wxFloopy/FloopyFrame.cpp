@@ -21,7 +21,8 @@ enum // menu items
 	ID_PAUSE,
 	ID_STOP,
 	ID_PARAMS,
-	ID_PROPS
+	ID_PROPS,
+	ID_PREVIEW
 };
 
 //IMPLEMENT_DYNAMIC_CLASS(CFloopyFrame, wxFrame)
@@ -39,6 +40,7 @@ BEGIN_EVENT_TABLE(CFloopyFrame, wxFrame)
 	EVT_MENU(ID_STOP,		CFloopyFrame::OnStop)
 	EVT_MENU(ID_PARAMS,		CFloopyFrame::OnShowParams)
 	EVT_MENU(ID_PROPS,		CFloopyFrame::OnShowProperties)
+	EVT_MENU(ID_PREVIEW,	CFloopyFrame::OnShowPreview)
 END_EVENT_TABLE()
 
 
@@ -150,6 +152,11 @@ void CFloopyFrame::OnShowProperties( wxCommandEvent &WXUNUSED(event) )
 	m_pView->ShowPropertiesDlg();
 }
 
+void CFloopyFrame::OnShowPreview( wxCommandEvent &WXUNUSED(event) )
+{
+	m_pTracks->SetDrawPreview( !m_pTracks->IsDrawPreviewOn() );
+}
+
 void CFloopyFrame::initMenus()
 {
 	//// Make a menubar
@@ -169,9 +176,10 @@ void CFloopyFrame::initMenus()
 	edit_menu->AppendSeparator();
 
 	wxMenu *view_menu = new wxMenu;
-	view_menu->Append(ID_FULL,		_T("&Full screen"),		_T("Full screen on/off"));
+	view_menu->Append(ID_FULL,		_T("&Full screen"),			_T("Full screen on/off"));
 	view_menu->Append(ID_PARAMS,	_T("Show &parameters..."),	_T("Show parameters dialog"));
 	view_menu->Append(ID_PROPS,		_T("Show pr&operties..."),	_T("Show properties dialog"));
+	view_menu->Append(ID_PREVIEW,	_T("Show previe&w"),		_T("Show preview"));
 
 	wxMenu *help_menu = new wxMenu;
 	help_menu->Append(ID_ABOUT,		_("&About...\tCtrl-A"),	_("Show about dialog"));
