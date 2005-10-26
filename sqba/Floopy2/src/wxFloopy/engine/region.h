@@ -129,6 +129,21 @@ public:
 	int GetStartOffset();//						{ return m_iStartOffset; }
 	int GetEndOffset();
 
+
+	bool MoveParam(int offset, int index, float value, int newoffset);
+
+	int   GetParamCount();
+	//bool  GetParamIndex(char *name, int *index);
+	bool  GetParamVal(int index, float *value);
+	void  SetParamVal(int index, float value);
+	float GetParamMin(int index);
+	float GetParamMax(int index);
+	float GetParamStep(int index);
+	char *GetParamName(int index);
+	char *GetParamDesc(int index);
+	char *GetParamUnit(int index);
+
+
 	int   GetPropertyCount();
 	bool  GetPropertyVal(int, float*);
 	void  SetPropertyVal(int, float);
@@ -163,6 +178,9 @@ private:
 	void drawFrame(wxDC& dc, wxRect& rc);
 	int getLengthNotLooped();
 	CRegion *getPrevRegion();
+
+	bool setStartPos(int prevPos, int newPos);
+	bool setEndPos(int prevPos, int newPos);
 
 private:
 	bool			m_bEdit;

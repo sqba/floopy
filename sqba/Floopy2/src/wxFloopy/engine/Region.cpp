@@ -735,7 +735,7 @@ void CRegion::Resize(int dl, int dr)
 		}
 	}
 }
-
+/*
 void CRegion::Update()
 {
 	bool bRefresh = true;
@@ -814,6 +814,9 @@ void CRegion::Update()
 
 	getTracks()->SetViewUpdatedWhilePlaying(true);
 }
+*/
+
+
 
 void CRegion::CancelUpdate()
 {
@@ -1522,3 +1525,202 @@ CRegion *CRegion::COffsetBar::getPrevRegion()
 
 	return prev;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bool CRegion::setStartPos(int prevPos, int newPos)
+{
+	if((prevPos >= 0) && (prevPos != newPos))
+	{
+		IFloopySoundInput *track = getTrack()->GetTrack();
+
+		if( !track->MoveParam(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED, newPos) )
+		{
+			if( !track->ResetParamAt(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) )
+				return false;
+			track->EnableAt(newPos, true);
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////
+		//if((m_iPrevStart != m_iStartSample) && (m_iPrevEnd != m_iEndSample))
+		//	track->MoveAllParamsBetween(m_iStartSample, m_iEndSample, m_iStartSample-m_iPrevStart);
+		/////////////////////////////////////////////////////////////////////////////////////////
+
+		float value = 0;
+		if(track->GetParamAt(prevPos, TIMELINE_PARAM_MOVETO, &value))
+		{
+			if( !track->MoveParam(prevPos, TIMELINE_PARAM_MOVETO, value, newPos) )
+			{
+				if( !track->ResetParamAt(prevPos, TIMELINE_PARAM_MOVETO, value) )
+					return false;
+				track->SetParamAt(newPos, TIMELINE_PARAM_MOVETO, value);
+			}
+		}
+
+		m_iStartSample = newPos;
+
+		return true;
+	}
+	return false;
+}
+
+bool CRegion::setEndPos(int prevPos, int newPos)
+{
+	if((prevPos >= 0.f) && (prevPos != newPos))
+	{
+		IFloopySoundInput *track = getTrack()->GetTrack();
+
+		if( !track->MoveParam(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED, newPos) )
+		{
+			if( !track->ResetParamAt(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) )
+				return false;
+			track->EnableAt(newPos, false);
+		}
+
+		m_iEndSample = newPos;
+
+		return true;
+	}
+	return false;
+}
+
+void CRegion::Update()
+{
+	bool bRefresh = true;
+
+	IFloopySoundInput *track = getTrack()->GetTrack();
+
+	CActionHistory *actionHistory = getTracks()->GetActionHistory();
+
+	if(m_iStartSample < 0)
+		m_iStartSample = 0;
+
+//	bool bOffset	= true;
+//	bool bResize	= (m_iPrevEnd-m_iPrevStart > m_iEndSample-m_iStartSample);
+
+	//setStartPos(m_iPrevStart, m_iStartSample);
+	//setEndPos(m_iPrevEnd, m_iEndSample);
+	actionHistory->MoveParam(this, this, m_iPrevStart, 0, 0.f, m_iStartSample);
+	actionHistory->MoveParam(this, this, m_iPrevEnd, 1, 0.f, m_iEndSample);
+
+	m_iPrevStart = m_iPrevEnd = -1;
+
+	m_bEdit = false;
+
+//	if(!bOffset || bResize)
+	{
+		Invalidate();
+		Refresh();
+	}
+
+	getTrack()->InvalidateRegions( this );
+
+	getTracks()->SetChanged( true );
+
+	getTracks()->SetViewUpdatedWhilePlaying(true);
+}
+
+
+
+bool CRegion::MoveParam(int offset, int index, float value, int newoffset)
+{
+	switch(index)
+	{
+	case 0: return setStartPos(offset, newoffset);
+	case 1: return setEndPos(offset, newoffset);
+	}
+	return false;
+}
+
+int CRegion::GetParamCount()
+{
+	return 0;
+}
+
+bool CRegion::GetParamVal(int index, float *value)
+{
+	return false;
+}
+
+void CRegion::SetParamVal(int index, float value)
+{
+
+}
+
+float CRegion::GetParamMin(int index)
+{
+	return 0.f;
+}
+
+float CRegion::GetParamMax(int index)
+{
+	return 0.f;
+}
+
+float CRegion::GetParamStep(int index)
+{
+	return 0.f;
+}
+
+char *CRegion::GetParamName(int index)
+{
+	return NULL;
+}
+
+char *CRegion::GetParamDesc(int index)
+{
+	return NULL;
+}
+
+char *CRegion::GetParamUnit(int index)
+{
+	return NULL;
+}
+
