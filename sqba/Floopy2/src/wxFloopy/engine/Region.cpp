@@ -1577,7 +1577,7 @@ CRegion *CRegion::COffsetBar::getPrevRegion()
 
 bool CRegion::setStartPos(int prevPos, int newPos)
 {
-	if((prevPos >= 0) && (prevPos != newPos))
+//	if((prevPos >= 0) && (prevPos != newPos))
 	{
 		IFloopySoundInput *track = getTrack()->GetTrack();
 
@@ -1613,7 +1613,7 @@ bool CRegion::setStartPos(int prevPos, int newPos)
 
 bool CRegion::setEndPos(int prevPos, int newPos)
 {
-	if((prevPos >= 0.f) && (prevPos != newPos))
+//	if((prevPos >= 0.f) && (prevPos != newPos))
 	{
 		IFloopySoundInput *track = getTrack()->GetTrack();
 
@@ -1647,8 +1647,21 @@ void CRegion::Update()
 
 	//setStartPos(m_iPrevStart, m_iStartSample);
 	//setEndPos(m_iPrevEnd, m_iEndSample);
-	actionHistory->MoveParam(this, this, m_iPrevStart, 0, 0.f, m_iStartSample);
-	actionHistory->MoveParam(this, this, m_iPrevEnd, 1, 0.f, m_iEndSample);
+	if(m_iPrevEnd-m_iPrevStart == m_iEndSample-m_iStartSample)
+	{
+		// Move whole region
+		actionHistory->MoveParam(this, this, m_iPrevStart, 0, 0.f, m_iStartSample);
+	}
+	else
+	{
+		// Move start
+		if((m_iPrevStart >= 0) && (m_iPrevStart != m_iStartSample))
+			actionHistory->MoveParam(this, this, m_iPrevStart, 1, 0.f, m_iStartSample);
+
+		// Move end
+		if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))
+			actionHistory->MoveParam(this, this, m_iPrevEnd, 2, 0.f, m_iEndSample);
+	}
 
 	m_iPrevStart = m_iPrevEnd = -1;
 
@@ -1673,8 +1686,16 @@ bool CRegion::MoveParam(int offset, int index, float value, int newoffset)
 {
 	switch(index)
 	{
-	case 0: return setStartPos(offset, newoffset);
-	case 1: return setEndPos(offset, newoffset);
+	case 0:
+		{
+			int len = m_iEndSample-m_iStartSample;
+			if( !setStartPos(offset, newoffset) )
+				return false;
+			return setEndPos(offset+len, newoffset+len);
+		}
+		return true;
+	case 1: return setStartPos(offset, newoffset);
+	case 2: return setEndPos(offset, newoffset);
 	}
 	return false;
 }
