@@ -31,6 +31,7 @@ public:
 		wxCursor GetCursor();
 
 		void Move(int dx, int dy);
+		void Refresh();
 
 		void Select(bool selected=true);
 		bool OnMouseEvent(wxMouseEvent& event);
@@ -43,6 +44,7 @@ public:
 		int		m_index;
 		float	m_value;
 		int		m_sizing;
+		CActionHistory *m_pActionHistory;
 	};
 
 public:

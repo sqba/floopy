@@ -41,6 +41,7 @@ class CTrack;
 //class CParameter;
 class CPlayThread;
 class CRegionDisplay;
+class CActionHistory;
 
 
 
@@ -240,6 +241,8 @@ public:
 
 	void SetDrawPreview(bool bDrawPreview);
 
+	CActionHistory *GetActionHistory() { return m_pActionHistory; }
+
 	static IFloopySoundInput *FindComponentByName(IFloopySoundInput*, char*);
 	static char *GetComponentName(IFloopySoundInput*);
 	static bool IsFilter(IFloopySoundInput*);
@@ -266,6 +269,7 @@ private:
 	int					m_iStartSample;
 	char				m_filename[MAX_PATH];
 	bool				m_bViewUpdatedWhilePlaying;
+	CActionHistory		*m_pActionHistory;
 
 	// Properties
 	bool	m_bSnapTo;

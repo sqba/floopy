@@ -216,10 +216,11 @@ void CTimeline::Clear()
 	m_pFirst = m_pLast = NULL;
 }
 
-void CTimeline::EnableAt(int offset, bool bEnable)
+bool CTimeline::EnableAt(int offset, bool bEnable)
 {
 	float value = bEnable ? PARAM_VALUE_ENABLED : PARAM_VALUE_DISABLED;
 	SetParamVal(offset, TIMELINE_PARAM_ENABLE, value);
+	return true;
 }
 
 

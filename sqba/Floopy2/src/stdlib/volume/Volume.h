@@ -21,7 +21,7 @@ public:
 	virtual ~CVolume();
 
 	int Read(BYTE*, int);
-//	void Reset();
+	void Reset();
 
 	char *GetName()					{ return "stdlib.volume"; }
 	char *GetDescription()			{ return "Volume control"; }

@@ -42,7 +42,7 @@ public:
 
 	bool MoveAllParamsBetween(int start, int end, int offset);
 
-	void EnableAt(int offset, bool bEnable);
+	bool EnableAt(int offset, bool bEnable);
 
 private:
 	tParam *getParam(int offset, int index);

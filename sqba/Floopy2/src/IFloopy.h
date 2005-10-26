@@ -226,7 +226,7 @@ public:
 	 * @param index index of the parameter.
 	 * @param value new parameter value.
 	 */
-	virtual void SetParamAt(int offset, int index, float value) {}
+	virtual bool SetParamAt(int offset, int index, float value) { return false; }
 
 	/**
 	 * Schedules particular parameter's value for change at specific offset.
@@ -251,9 +251,9 @@ public:
 	 * @param offset position in samples at which the change was supposed to occur.
 	 * @param bEnable enable or disable.
 	 */
-	virtual void EnableAt(int offset, bool bEnable) {}
+	virtual bool EnableAt(int offset, bool bEnable) { return false; }
 
-	virtual void ClearAllParams() {}
+	virtual bool ClearAllParams() { return false; }
 
 	/**
 	 * Moves all parameters between start and end sample.

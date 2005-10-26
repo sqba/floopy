@@ -191,6 +191,8 @@ CRegion *CTrack::AddNewRegionAt(int left)
 	// Dodati novi event u input
 	m_pTrack->EnableAt(start, true);
 	m_pTrack->EnableAt(end, false);
+	//getTracks()->GetActionHistory()->EnableAt(this, start, true);
+	//getTracks()->GetActionHistory()->EnableAt(this, end, false);
 
 	CRegion *region = new CRegion( this, start, end );
 	try {

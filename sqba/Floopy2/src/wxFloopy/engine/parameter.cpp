@@ -6,6 +6,7 @@
 #include "track.h"
 #include "region.h"
 #include "parameter.h"
+#include "actionhistory.h"
 
 //IMPLEMENT_DYNAMIC_CLASS(CParameter, IFloopyObj)
 
@@ -217,6 +218,7 @@ CParameter::CParameter(CParameters *parent, IFloopySoundInput *obj, int index,
 	m_index			= index;
 	m_color			= color;
 	m_pPoint		= new CPoint(this);
+	m_pPoint->m_pActionHistory = m_pTracks->GetActionHistory();
 	m_bAfterTrack	= bAfterTrack;
 	m_pInput		= obj;
 	m_fMin			= m_pInput->GetParamMin(m_index);
@@ -537,11 +539,15 @@ void CParameter::insertParam(int x, int y)
 	int ypos = bottom - y;
 	float value = (float)ypos / m_fScale;
 
-	m_pInput->SetParamAt(pos, m_index, value);
+	//m_pInput->SetParamAt(pos, m_index, value);
+	m_pTracks->GetActionHistory()->SetParamAt(this, m_pInput, pos, m_index, value);
 
 
 	if(NULL == m_pSelectedPoint)
+	{
 		m_pSelectedPoint = new CPoint(this);
+		m_pSelectedPoint->m_pActionHistory = m_pTracks->GetActionHistory();
+	}
 	m_pSelectedPoint->m_samplesPerPixel = m_iSamplesPerPixel;
 	m_pSelectedPoint->m_sizing	= SIZE_ALL;
 	m_pSelectedPoint->m_offset	= pos;
@@ -580,7 +586,10 @@ void CParameter::SelectPoint(CPoint *pt)
 		m_pSelectedPoint = NULL;
 	}
 	if(pt)
+	{
 		m_pSelectedPoint = new CPoint(pt);
+		m_pSelectedPoint->m_pActionHistory = m_pTracks->GetActionHistory();
+	}
 }
 
 IFloopyObj *CParameter::GetSelectedObj()
@@ -656,7 +665,8 @@ void CParameter::CPoint::Move(int dx, int dy)
 	if(dx!=0 && m_sizing!=SIZE_VALUE)
 	{
 		offset += dx*m_samplesPerPixel;
-		if( m_pInput->MoveParam(m_offset, m_index, m_value, offset) )
+		//if( m_pInput->MoveParam(m_offset, m_index, m_value, offset) )
+		if(m_pActionHistory->MoveParam(this, m_pInput, m_offset, m_index, m_value, offset))
 		{
 			m_offset = offset;
 			bRefresh = true;
@@ -668,7 +678,8 @@ void CParameter::CPoint::Move(int dx, int dy)
 	if(dy!=0 && m_sizing!=SIZE_OFFSET)
 	{
 		m_value -= (float)dy / m_fScale;
-		m_pInput->SetParamAt(offset, m_index, m_value);
+		//m_pInput->SetParamAt(offset, m_index, m_value);
+		m_pActionHistory->SetParamAt(this, m_pInput, m_offset, m_index, m_value);
 		bRefresh = true;
 	}
 
@@ -686,4 +697,9 @@ void CParameter::CPoint::Select(bool selected)
 bool CParameter::CPoint::OnMouseEvent(wxMouseEvent& event)
 {
 	return m_pParameter->OnMouseEvent(event);
+}
+
+void CParameter::CPoint::Refresh()
+{
+	m_pParameter->Refresh();
 }

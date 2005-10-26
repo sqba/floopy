@@ -52,9 +52,9 @@ public:
 	IFloopySoundInput  *CreateTrack(char *plugin);
 	IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt);
 
-//	void SetParamAt(IFloopy *obj, int offset, int index, float value);
+//	bool SetParamAt(IFloopy *obj, int offset, int index, float value);
 //	bool ResetParamAt(IFloopy *obj, int offset, int index);
-//	void EnableAt(IFloopy *obj, int offset, bool bEnable);
+//	bool EnableAt(IFloopy *obj, int offset, bool bEnable);
 
 	char *GetDisplayName();
 	void SetDisplayName(char *name, int len);

@@ -250,6 +250,13 @@ void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 
 					m_pSelectedObj = NULL;
 				}
+			case FLOOPY_PARAMETER:
+				{
+					//CParameter *param = (CParameter*)m_pSelectedObj;
+					//param->Update();
+					m_pSelectedObj = NULL;
+				}
+				break;
 			}
 		}
 	}

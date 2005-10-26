@@ -104,9 +104,9 @@ public:
 	int GetPrevOffset(int, int);
 
 	bool GetParamAt(int, int, float*);
-	void SetParamAt(int, int, float);
+	bool SetParamAt(int, int, float);
 	bool ResetParamAt(int, int, float);
-	void EnableAt(int, bool);
+	bool EnableAt(int, bool);
 	bool MoveParam(int, int, float, int);
 	bool MoveAllParamsBetween(int, int, int);
 
@@ -124,7 +124,7 @@ public:
 	int GetInputCount();
 	///////////////////////////////////////////
 
-	void ClearAllParams();
+	bool ClearAllParams();
 
 	bool GetBypass();
 	void SetBypass(bool);

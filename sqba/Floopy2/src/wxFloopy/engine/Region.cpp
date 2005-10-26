@@ -9,6 +9,7 @@
 #include "parameter.h"
 #include "regiondisplay.h"
 #include "../util/util.h"
+#include "actionhistory.h"
 
 //IMPLEMENT_DYNAMIC_CLASS(CRegion, IFloopyObj)
 
@@ -494,8 +495,9 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	dc.SetPen(oldpen);
 	///////////////////////////////////////////////////////
 
+	if(!m_bEdit)
+		m_pParameters->DrawFore(dc, rce);
 //	drawParametersFore(dc, rce);
-	m_pParameters->DrawFore(dc, rce);
 }
 
 wxColor CRegion::GetBGColor()
@@ -740,13 +742,15 @@ void CRegion::Update()
 
 	IFloopySoundInput *track = getTrack()->GetTrack();
 
+	CActionHistory *actionHistory = getTracks()->GetActionHistory();
+
 	if(m_iStartSample < 0)
 		m_iStartSample = 0;
 
-	bool bOffset = true;
-	int len1 = m_iPrevEnd - m_iPrevStart;
-	int len2 = m_iEndSample - m_iStartSample;
-	bool bResize = (len2 > len1);
+	bool bOffset	= true;
+	int len1		= m_iPrevEnd - m_iPrevStart;
+	int len2		= m_iEndSample - m_iStartSample;
+	bool bResize	= (len2 > len1);
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	//if((m_iPrevStart != m_iStartSample) && (m_iPrevEnd != m_iEndSample))
@@ -755,19 +759,25 @@ void CRegion::Update()
 
 	if((m_iPrevStart >= 0) && (m_iPrevStart != m_iStartSample))
 	{
-		if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED, m_iStartSample) )
+		//if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED, m_iStartSample) )
+		if( !actionHistory->MoveParam(this, track, m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED, m_iStartSample) )
 		{
-			assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) );
-			track->EnableAt(m_iStartSample, true);
+			//assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) );
+			//track->EnableAt(m_iStartSample, true);
+			actionHistory->ResetParamAt(this, track, m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED);
+			actionHistory->EnableAt(this, track, m_iStartSample, true);
 		}
 
 		float value = 0;
 		if(track->GetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, &value))
 		{
-			if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, value, m_iStartSample) )
+			//if( !track->MoveParam(m_iPrevStart, TIMELINE_PARAM_MOVETO, value, m_iStartSample) )
+			if( !actionHistory->MoveParam(this, track, m_iPrevStart, TIMELINE_PARAM_MOVETO, value, m_iStartSample) )
 			{
-				assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, value) );
-				track->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+				//assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_MOVETO, value) );
+				//track->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+				actionHistory->ResetParamAt(this, track, m_iPrevStart, TIMELINE_PARAM_MOVETO, value);
+				actionHistory->SetParamAt(this, track, m_iStartSample, TIMELINE_PARAM_MOVETO, value);
 			}
 
 			//assert( getReset( m_iStartSample ) );
@@ -778,22 +788,25 @@ void CRegion::Update()
 
 	if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))
 	{
-		if( !track->MoveParam(m_iPrevEnd, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED, m_iEndSample) )
+		//if( !track->MoveParam(m_iPrevEnd, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED, m_iEndSample) )
+		if( !actionHistory->MoveParam(this, track, m_iPrevEnd, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED, m_iEndSample) )
 		{
-			assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) );
-			track->EnableAt(m_iEndSample, false);
+			//assert( track->ResetParamAt(m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) );
+			//track->EnableAt(m_iEndSample, false);
+			actionHistory->ResetParamAt(this, track, m_iPrevStart, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED);
+			actionHistory->EnableAt(this, track, m_iStartSample, false);
 		}
-	}
-
-	if(!bOffset || bResize)
-	{
-		Invalidate();
-		Refresh();
 	}
 
 	m_iPrevStart = m_iPrevEnd = -1;
 
 	m_bEdit = false;
+
+//	if(!bOffset || bResize)
+	{
+		Invalidate();
+		Refresh();
+	}
 
 	getTrack()->InvalidateRegions( this );
 

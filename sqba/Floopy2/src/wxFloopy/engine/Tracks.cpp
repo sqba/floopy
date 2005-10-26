@@ -12,6 +12,7 @@
 #include "playthread.h"
 #include "../views/timelineview.h"
 #include "../../../IFloopy.h"
+#include "ActionHistory.h"
 
 typedef IFloopySoundEngine* (*CreateProc)(HMODULE);
 #define PROC_NAME "CreateSoundEngine"
@@ -49,13 +50,17 @@ CTracks::CTracks() : IFloopyObj(NULL)
 
 	m_bDrawPreview		= false;	// Default
 
+	m_pActionHistory	= new CActionHistory();
+
 	createEngine("engine");
 }
 
 CTracks::~CTracks()
 {
 	WX_CLEAR_LIST(TracksList, m_tracks);
+
 	delete m_pBorder;
+
 	if(m_pPlayThread)
 	{
 		if(m_pPlayThread->IsPlaying())
@@ -68,6 +73,8 @@ CTracks::~CTracks()
 		delete m_pEngine;
 		m_libEngine.Unload();
 	}
+
+	delete m_pActionHistory;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -744,6 +751,16 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		SetDrawPreview( !IsDrawPreviewOn() );
 		//Invalidate();
 		//Refresh();
+		return true;
+	case 'z':
+	case 'Z':
+		if( event.ControlDown() )
+		{
+			if( event.ShiftDown() )
+				m_pActionHistory->RedoLastAction();
+			else 
+				m_pActionHistory->UndoLastAction();
+		}
 		return true;
 	default:
 		/*if(event.GetKeyCode() < m_tracks.GetCount())

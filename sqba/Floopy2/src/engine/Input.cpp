@@ -605,13 +605,14 @@ bool CInput::GetParamAt(int offset, int index, float *value)
 	return false;
 }
 
-void CInput::SetParamAt(int offset, int index, float value)
+bool CInput::SetParamAt(int offset, int index, float value)
 {
 	offset *= m_nSamplesToBytes;
 	m_timeline.SetParamVal(offset, index, value);
 	if(offset == 0)
 		m_plugin->SetParamVal(index, value);
 	recalcVariables();
+	return true;
 }
 
 bool CInput::ResetParamAt(int offset, int index, float value)
@@ -642,16 +643,18 @@ bool CInput::MoveParam(int offset, int index, float value, int newOffset)
  * @param offset number of samples.
  * @param bEnable enable/disable.
  */
-void CInput::EnableAt(int offset, bool bEnable)
+bool CInput::EnableAt(int offset, bool bEnable)
 {
 	offset *= m_nSamplesToBytes;
 	m_timeline.EnableAt(offset, bEnable);
 	recalcVariables();
+	return true;
 }
 
-void CInput::ClearAllParams()
+bool CInput::ClearAllParams()
 {
 	m_timeline.Clear();
+	return true;
 }
 
 bool CInput::GetBypass()

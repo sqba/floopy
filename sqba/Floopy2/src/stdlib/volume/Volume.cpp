@@ -95,10 +95,11 @@ int CVolume::Read(BYTE *data, int size)
 		return 0;
 }
 
-/*void CVolume::Reset()
+void CVolume::Reset()
 {
-	m_masterLeft = m_masterRight = m_left = m_right = 100;
-}*/
+	m_master[LEFT] = m_master[RIGHT] = 100;
+	m_volume[LEFT] = m_volume[RIGHT] = 100;
+}
 
 int CVolume::GetParamCount()
 {

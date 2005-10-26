@@ -518,7 +518,7 @@ enumObjType CEngine::createObject(char *filename)
 */
 
 /*
-void CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
+bool CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
 {
 	tComponent *tmp = m_pFirst;
 	while(tmp)
