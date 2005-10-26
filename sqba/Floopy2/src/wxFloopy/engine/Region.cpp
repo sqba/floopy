@@ -1688,14 +1688,19 @@ bool CRegion::MoveParam(int offset, int index, float value, int newoffset)
 	{
 	case 0:
 		{
+			Refresh();
 			int len = m_iEndSample-m_iStartSample;
 			if( !setStartPos(offset, newoffset) )
 				return false;
 			return setEndPos(offset+len, newoffset+len);
 		}
 		return true;
-	case 1: return setStartPos(offset, newoffset);
-	case 2: return setEndPos(offset, newoffset);
+	case 1:
+		Refresh();
+		return setStartPos(offset, newoffset);
+	case 2:
+		Refresh();
+		return setEndPos(offset, newoffset);
 	}
 	return false;
 }
