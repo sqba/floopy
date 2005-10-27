@@ -12,6 +12,10 @@
 
 
 class CRegion;
+class CTrack;
+class CTracks;
+class CActionHistory;
+class CParameters;
 
 
 class CParameter : public IFloopyObj
@@ -87,6 +91,7 @@ private:
 	float	m_fMin, m_fMax;
 	int		m_iSamplesPerPixel;
 };
+
 
 WX_DECLARE_LIST(CParameter, ParameterList);
 

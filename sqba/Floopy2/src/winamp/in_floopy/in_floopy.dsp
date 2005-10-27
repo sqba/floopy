@@ -64,8 +64,8 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "../../Debug/tmp/in_floopy"
-# PROP Intermediate_Dir "../../Debug/tmp/in_floopy"
+# PROP Output_Dir "../../tmp/in_floopy/Debug"
+# PROP Intermediate_Dir "../../tmp/in_floopy/Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "IN_FLOOPY_EXPORTS" /Yu"stdafx.h" /FD /GZ /c

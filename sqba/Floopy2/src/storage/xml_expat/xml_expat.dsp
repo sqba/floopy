@@ -65,8 +65,8 @@ LINK32=link.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "../../../Debug/tmp/xml_expat"
-# PROP Intermediate_Dir "../../../Debug/tmp/xml_expat"
+# PROP Output_Dir "../../../tmp/xml_expat/Debug"
+# PROP Intermediate_Dir "../../../tmp/xml_expat/Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "XML_EXPAT_EXPORTS" /Yu"stdafx.h" /FD /GZ /c
