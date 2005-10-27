@@ -161,7 +161,7 @@ bool CActionHistory::exec(CActionHistory::tAction *a, bool bRedo)
 			bResult = a->obj->MoveParam(a->newoffset, a->index, a->value, a->offset);
 			break;
 		}
-		if(bResult)
+		if(bResult && NULL!=a->caller)
 		{
 			a->caller->Invalidate();
 			a->caller->Refresh();
