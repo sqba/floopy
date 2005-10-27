@@ -1112,10 +1112,13 @@ void CRegion::SetReset(bool bReset)
 	else
 	{
 		IFloopySoundInput *track = getTrack()->GetTrack();
+	
+		CActionHistory *actionHistory = getTracks()->GetActionHistory();
 
 		float value = 0;
 		if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
-			track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+			//track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+			actionHistory->ResetParamAt(this, track, m_iStartSample, TIMELINE_PARAM_MOVETO, value);
 
 		Invalidate();
 		Refresh();
@@ -1135,11 +1138,15 @@ void CRegion::SetStartOffset(int sample)
 
 	IFloopySoundInput *track = getTrack()->GetTrack();
 
+	CActionHistory *actionHistory = getTracks()->GetActionHistory();
+
 	float value = 0;
 	if(track->GetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, &value))
-		track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+		//track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value);
+		actionHistory->ResetParamAt(this, track, m_iStartSample, TIMELINE_PARAM_MOVETO, value);
 
-	track->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, sample);
+	//track->SetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, sample);
+	actionHistory->SetParamAt(this, track, m_iStartSample, TIMELINE_PARAM_MOVETO, sample);
 
 	Invalidate();
 	Refresh();

@@ -27,6 +27,7 @@ private:
 		int offset;
 		int index;
 		float value;
+		float prevValue;
 		union {
 			int newoffset;
 			bool bEnable;
@@ -50,8 +51,8 @@ public:
 	//bool RemoveObject(IFloopyObj *obj);
 
 private:
-	void add(tAction *action);
-	bool exec(tAction *action);
+	void add(CActionHistory::tAction *action);
+	bool exec(CActionHistory::tAction *action, bool bRedo);
 
 private:
 	tAction *m_pActions;

@@ -48,14 +48,14 @@ bool CActionHistory::SetParamAt(IFloopyObj *caller, IFloopy *obj, int offset, in
 	obj->GetParamAt(offset, index, &prevValue);
 	if( obj->SetParamAt(offset, index, value) )
 	{
-		tAction *action	= new tAction;
-		action->type	= SET_PARAM_AT;
-		action->caller	= caller;
-		action->obj		= obj;
-		action->offset	= offset;
-		action->index	= index;
-		//action->value	= value;
-		action->value	= prevValue;
+		tAction *action		= new tAction;
+		action->type		= SET_PARAM_AT;
+		action->caller		= caller;
+		action->obj			= obj;
+		action->offset		= offset;
+		action->index		= index;
+		action->value		= value;
+		action->prevValue	= prevValue;
 		add( action );
 
 		return true;
@@ -70,14 +70,14 @@ bool CActionHistory::ResetParamAt(IFloopyObj *caller, IFloopy *obj, int offset, 
 	{
 		if( obj->ResetParamAt(offset, index, value) )
 		{
-			tAction *action	= new tAction;
-			action->type	= RESET_PARAM_AT;
-			action->caller	= caller;
-			action->obj		= obj;
-			action->offset	= offset;
-			action->index	= index;
-			//action->value	= value;
-			action->value	= prevValue;
+			tAction *action		= new tAction;
+			action->type		= RESET_PARAM_AT;
+			action->caller		= caller;
+			action->obj			= obj;
+			action->offset		= offset;
+			action->index		= index;
+			action->value		= value;
+			action->prevValue	= prevValue;
 			add( action );
 
 			return true;
@@ -107,7 +107,7 @@ bool CActionHistory::MoveParam(IFloopyObj *caller, IFloopy *obj, int offset, int
 
 bool CActionHistory::UndoLastAction()
 {
-	if(NULL!=m_pLastAction && exec(m_pLastAction))
+	if(NULL!=m_pLastAction && exec(m_pLastAction, false))
 	{
 		m_pLastAction = m_pLastAction->next;
 		return true;
@@ -117,18 +117,15 @@ bool CActionHistory::UndoLastAction()
 
 bool CActionHistory::RedoLastAction()
 {
-	if(NULL!=m_pLastAction && NULL!=m_pLastAction->prev)
+	if(NULL!=m_pLastAction && exec(m_pLastAction, true))
 	{
-		if( exec( m_pLastAction->prev ) )
-		{
-			m_pLastAction = m_pLastAction->prev;
-			return true;
-		}
+		m_pLastAction = m_pLastAction->prev;
+		return true;
 	}
 	return false;
 }
 
-void CActionHistory::add(tAction *action)
+void CActionHistory::add(CActionHistory::tAction *action)
 {
 	action->prev = NULL;
 	if(NULL == m_pActions)
@@ -143,7 +140,7 @@ void CActionHistory::add(tAction *action)
 	m_pActions = action;
 }
 
-bool CActionHistory::exec(tAction *a)
+bool CActionHistory::exec(CActionHistory::tAction *a, bool bRedo)
 {
 	bool bResult = false;
 	if(NULL != a)
@@ -154,11 +151,11 @@ bool CActionHistory::exec(tAction *a)
 			bResult = a->obj->EnableAt(a->offset, !a->bEnable);
 			break;
 		case SET_PARAM_AT:
-			bResult = a->obj->SetParamAt(a->offset, a->index, a->value);
+			bResult = a->obj->SetParamAt(a->offset, a->index, bRedo ? a->value : a->prevValue);
 			break;
 		case RESET_PARAM_AT:
 			//bResult = a->obj->ResetParamAt(a->offset, a->index, a->value);
-			bResult = a->obj->SetParamAt(a->offset, a->index, a->value);
+			bResult = a->obj->SetParamAt(a->offset, a->index, bRedo ? a->value : a->prevValue);
 			break;
 		case MOVE_PARAM:
 			bResult = a->obj->MoveParam(a->newoffset, a->index, a->value, a->offset);
