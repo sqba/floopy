@@ -64,6 +64,7 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 	int iLineTop = top;
 	int iLineBottom = top + height;
 
+	wxFont oldFont = dc.GetFont();
 	//dc.SetFont( *wxSWISS_FONT );
 	wxFont font(7, wxSWISS, wxNORMAL, wxLIGHT);
 	dc.SetFont( font );
@@ -131,6 +132,8 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 		dc.SetPen(*wxWHITE_PEN);
 		dc.DrawLine(x+1, iLineTop, x+1, iLineBottom);
 	}
+
+	dc.SetFont(oldFont);
 }
 
 CRegion *CRegion::COffsetBar::getPrevRegion()

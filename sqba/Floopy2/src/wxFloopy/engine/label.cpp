@@ -1,89 +1,18 @@
 
+
 #include "tracks.h"
 #include "track.h"
 #include "label.h"
 #include "../util/util.h"
 
 
-
-/////////////////////////////////////////////////////////////////////
-// CLoopButton functions
-/////////////////////////////////////////////////////////////////////
-void CLabel::CLoopButton::DrawFore(wxDC& dc, wxRect& rc)
-{
-	wxBrush oldBrush = dc.GetBrush();
-	wxPen oldpen = dc.GetPen();
-
-	wxPen pen( getTrack()->IsLooped() ? *wxBLACK : *wxLIGHT_GREY );
-	pen.SetWidth(1);
-	dc.SetPen( pen );
-
-	wxBrush brush(getTrack()->GetColor(), wxSOLID);
-	dc.SetBrush(brush);
-
-	int left   = rc.GetX();
-	int top    = rc.GetTop();
-	int width  = rc.GetWidth();
-	int height = rc.GetHeight();
-
-	dc.DrawCircle(left+width/2, top+height/2, height/3);
-
-	dc.SetPen(oldpen);
-	dc.SetBrush( oldBrush );
-}
-
-
-
-
-/////////////////////////////////////////////////////////////////////
-// CCacheButton functions
-/////////////////////////////////////////////////////////////////////
-void CLabel::CCacheButton::DrawFore(wxDC& dc, wxRect& rc)
-{
-	wxBrush oldBrush = dc.GetBrush();
-	wxPen oldpen = dc.GetPen();
-
-	wxPen pen( *wxLIGHT_GREY );
-	pen.SetWidth(1);
-	dc.SetPen( pen );
-
-	//wxBrush brush(m_color, (IsSelected() ? wxCROSSDIAG_HATCH : wxSOLID));
-	wxBrush brush(getTrack()->GetColor(), wxSOLID);
-	dc.SetBrush(brush);
-
-	// Draw background
-	int left   = rc.GetX();
-	int top    = rc.GetTop();
-	int width  = rc.GetWidth();
-	int height = rc.GetHeight();
-
-	//dc.DrawCircle(left+width/2, top+height/2, height/3);
-
-	dc.SetPen(oldpen);
-	dc.SetBrush( oldBrush );
-}
-
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////
-// CLabel functions
-/////////////////////////////////////////////////////////////////////
-
 CLabel::CLabel(CTrack *track) : IFloopyObj(track)
 {
-//	m_pButtonLoop = new CLoopButton(track);
-//	m_pButtonCache = new CCacheButton(track);
 	m_pPathCtrl = new CPathCtrl(this, track->GetInput());
-//	m_pPathCtrl = new CPathCtrl(track->GetSource());
 }
 
 CLabel::~CLabel()
 {
-//	delete m_pButtonLoop;
-//	delete m_pButtonCache;
 	delete m_pPathCtrl;
 }
 
@@ -128,8 +57,10 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 	}
 
 	dc.SetTextForeground( track->GetForeColor() );
-	wxFont font = dc.GetFont();
-	font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
+	wxFont oldFont = dc.GetFont();
+	wxFont font(9, wxSWISS, wxNORMAL, wxBOLD);
+	//wxFont font = oldFont;
+	//font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
 	//font.SetPointSize(GetHeight() / 4);
 	font.SetPointSize( 9 );
 	dc.SetFont(font);
@@ -166,20 +97,24 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 	drawLoopSign(dc,  wxRect(5, top+height-n-2, n, n));
 	drawCacheSign(dc, wxRect(n+5+1, top+height-n-2, n, n));
 */
-	wxRect rcTmp = rc;
-	int tmpHeight = height/3;
-	if(tmpHeight>25)
-		tmpHeight = 25;
-	rcTmp.SetY(top+height - tmpHeight);
-	rcTmp.SetHeight(tmpHeight);
-	m_pPathCtrl->DrawBG(dc, rcTmp);
+	wxRect rcTmp = getPathRect(rc);
+	if(rcTmp.GetHeight() >= 25)
+		m_pPathCtrl->DrawBG(dc, rcTmp);
 
 
+	dc.SetFont(oldFont);
 	dc.SetPen(oldpen);
 	dc.SetBrush( oldBrush );
 }
 
 void CLabel::DrawFore(wxDC& dc, wxRect& rc)
+{
+	wxRect rcTmp = getPathRect(rc);
+	if(rcTmp.GetHeight() >= 25)
+		m_pPathCtrl->DrawFore(dc, rcTmp);
+}
+
+wxRect CLabel::getPathRect(wxRect& rc)
 {
 	int top    = rc.GetTop()+1;
 	int height = rc.GetHeight()-2;
@@ -190,7 +125,8 @@ void CLabel::DrawFore(wxDC& dc, wxRect& rc)
 		tmpHeight = 25;
 	rcTmp.SetY(top+height - tmpHeight);
 	rcTmp.SetHeight(tmpHeight);
-	m_pPathCtrl->DrawFore(dc, rcTmp);
+
+	return rcTmp;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -202,18 +138,6 @@ void CLabel::DrawFore(wxDC& dc, wxRect& rc)
 bool CLabel::HitTest(int y)
 {
 	return m_rcLabel.Inside(1, y);
-}
-
-void CLabel::drawLoopSign(wxDC& dc, wxRect& rc)
-{
-//	m_pButtonLoop->DrawBG(dc, rc);
-//	m_pButtonLoop->DrawFore(dc, rc);
-}
-
-void CLabel::drawCacheSign(wxDC& dc, wxRect& rc)
-{
-//	m_pButtonCache->DrawBG(dc, rc);
-//	m_pButtonCache->DrawFore(dc, rc);
 }
 
 void CLabel::Select(bool selected)
@@ -248,9 +172,9 @@ IFloopyObj *CLabel::GetChild(int index)
 	return m_pPathCtrl;
 }
 
-void CLabel::Move(int dx, int dy)
+void CLabel::Move(int WXUNUSED(dx), int dy)
 {
-
+	// Move the whole track up
 }
 
 IFloopyObj *CLabel::GetSelectedObj()

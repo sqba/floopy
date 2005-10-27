@@ -40,6 +40,8 @@ void CSampleRuler::OnDraw(wxDC &dc)
 
 	int right = m_pTracks->GetWidth();
 
+	wxFont oldFont = dc.GetFont();
+
 	dc.SetFont( *wxSWISS_FONT );
 
 	int w=0, h=0;
@@ -74,4 +76,6 @@ void CSampleRuler::OnDraw(wxDC &dc)
 		dc.SetPen(*wxWHITE_PEN);
 		dc.DrawLine(x+1, iLineTop, x+1, iLineBottom);
 	}
+
+	dc.SetFont(oldFont);
 }

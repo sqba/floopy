@@ -114,6 +114,13 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 	if(!m_bFirst)
 		width -= CORNER_LENGTH;
 
+	wxFont oldFont = dc.GetFont();
+	wxFont font(7, wxSWISS, wxNORMAL, wxNORMAL);
+	font.SetWeight(IsSelected() ? wxBOLD : wxNORMAL);
+	font.SetStyle(IsSelected() ? wxITALIC : wxNORMAL );
+	font.SetPointSize( 7 );
+	dc.SetFont( font );
+
 	int w=0, h=0;
 	dc.GetTextExtent(csName, &w, &h);
 	if(h<rc.GetHeight())
@@ -127,6 +134,8 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 		int y = rc.GetY() + rc.GetHeight()/2 - h/2;
 		dc.DrawText( csName, x, y );
 	}
+
+	dc.SetFont( oldFont );
 }
 
 void CPathItem::Select(bool selected)
@@ -150,6 +159,11 @@ void CPathItem::Select(bool selected)
 			}
 		}
 	}
+}
+
+void CPathItem::Move(int dx, int WXUNUSED(dy))
+{
+	// Move
 }
 
 

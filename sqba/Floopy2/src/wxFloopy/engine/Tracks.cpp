@@ -128,7 +128,7 @@ void CTracks::DrawFore(wxDC& dc)
 //! \param size [in] labels panel dimensions
 //! \return void
 /////////////////////////////////////////////////////////////////////////////
-void CTracks::DrawLabels(wxDC& dc, wxSize size)
+/*void CTracks::DrawLabels(wxDC& dc, wxSize size)
 {
 	wxFont oldFont = dc.GetFont();
 
@@ -151,7 +151,7 @@ void CTracks::DrawLabels(wxDC& dc, wxSize size)
 	}
 
 	dc.SetFont(oldFont);
-}
+}*/
 
 CTrack *CTracks::addTrack(IFloopySoundInput *input, int level)
 {

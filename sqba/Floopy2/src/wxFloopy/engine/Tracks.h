@@ -183,7 +183,7 @@ public:
 
 	int GetTrackCount()							{ return m_tracks.GetCount(); }
 
-	void DrawLabels(wxDC& dc, wxSize size);
+//	void DrawLabels(wxDC& dc, wxSize size);
 
 	bool RemoveTrack(CTrack *track);
 

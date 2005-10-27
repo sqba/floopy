@@ -28,6 +28,8 @@ public:
 
 	void Select(bool selected);
 
+	void Move(int dx, int WXUNUSED(dy));
+
 	wxCursor GetCursor() { return wxCursor(m_pInput!=NULL ? wxCURSOR_HAND : *wxSTANDARD_CURSOR); }
 
 public:
