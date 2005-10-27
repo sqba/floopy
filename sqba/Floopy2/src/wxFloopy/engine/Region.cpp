@@ -327,12 +327,15 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 		int l = origLen;
 
 		if(i==0 && start!=0)
-			l = origLen-start;
+			l = origLen - start;
+
+		if(l < 0)
+			l = 0;
 		
 		int x1 = prev;
-		int x2 = prev+l;
+		int x2 = prev + l;
 
-		if(prev+origLen < right)
+		if(x2<right && x1!=x2)
 		{
 			// Horizontal top
 			points[n++] = wxPoint(x1, y1);

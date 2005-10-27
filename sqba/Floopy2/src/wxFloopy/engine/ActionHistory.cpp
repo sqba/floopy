@@ -12,6 +12,8 @@ CActionHistory::CActionHistory()
 {
 	m_pActions		= NULL;
 	m_pLastAction	= NULL;
+	m_bChanged		= FALSE;
+	m_iCount		= 0;
 }
 
 CActionHistory::~CActionHistory()
@@ -138,6 +140,9 @@ void CActionHistory::add(CActionHistory::tAction *action)
 	}
 	m_pLastAction = action;
 	m_pActions = action;
+
+	m_bChanged = true;
+	m_iCount++;
 }
 
 bool CActionHistory::exec(CActionHistory::tAction *a, bool bRedo)

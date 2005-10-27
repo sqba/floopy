@@ -241,7 +241,9 @@ public:
 
 	void SetDrawPreview(bool bDrawPreview);
 
-	CActionHistory *GetActionHistory() { return m_pActionHistory; }
+	CActionHistory *GetActionHistory()			{ return m_pActionHistory; }
+
+	bool IsChanged();
 
 	static IFloopySoundInput *FindComponentByName(IFloopySoundInput*, char*);
 	static char *GetComponentName(IFloopySoundInput*);

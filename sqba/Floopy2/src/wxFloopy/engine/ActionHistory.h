@@ -47,6 +47,7 @@ public:
 
 	bool UndoLastAction();
 	bool RedoLastAction();
+	bool FileChanged()		{ return m_bChanged; }
 
 	//bool RemoveObject(IFloopyObj *obj);
 
@@ -57,6 +58,8 @@ private:
 private:
 	tAction *m_pActions;
 	tAction *m_pLastAction;
+	bool m_bChanged;
+	int m_iCount;
 };
 
 #endif // !defined(AFX_ACTIONHISTORY_H__2D7E64BD_E15A_4491_9EC6_6759FE4311BD__INCLUDED_)

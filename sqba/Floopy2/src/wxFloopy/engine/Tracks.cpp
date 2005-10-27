@@ -1087,6 +1087,13 @@ void CTracks::SetDrawPreview(bool bDrawPreview)
 }
 
 
+bool CTracks::IsChanged()
+{
+	return m_pActionHistory->FileChanged();
+	//return IFloopyObj::IsChanged();
+}
+
+
 
 
 int CTracks::GetPropertyCount()

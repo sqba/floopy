@@ -89,11 +89,15 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 			if(y>top && y<bottom)
 			{
 				if(m_bAfterTrack && offset>=0)
-					x += start-offset;
+					x += start - offset;
 				
 				x /= m_iSamplesPerPixel;
 
-				if(x > left)
+				if(x <= left)
+					prevX = left;
+				else if(x >= right)
+					y = prevY;
+				else
 				{
 					dc.DrawLine(prevX, prevY, x, prevY);	// Horizontal line
 					dc.DrawLine(x, prevY, x, y);			// Vertical line
@@ -112,10 +116,6 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 					
 					prevX = x;
 				}
-				else
-				{
-					prevX = left;
-				}
 
 				bDrawCircle = true;
 
@@ -123,7 +123,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 			}
 		}
 		pos = m_pInput->GetNextOffset(pos);
-	} while ( pos>0 && pos<end );
+	} while ( pos>0 && pos<end && prevX<right );
 
 	if(bLoaded && prevX<right) // there have been parameters!
 		dc.DrawLine(prevX, prevY, right, prevY);
