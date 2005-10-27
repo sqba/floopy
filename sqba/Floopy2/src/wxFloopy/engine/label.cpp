@@ -98,8 +98,7 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 	drawCacheSign(dc, wxRect(n+5+1, top+height-n-2, n, n));
 */
 	wxRect rcTmp = getPathRect(rc);
-	if(rcTmp.GetHeight() >= 25)
-		m_pPathCtrl->DrawBG(dc, rcTmp);
+	m_pPathCtrl->DrawBG(dc, rcTmp);
 
 
 	dc.SetFont(oldFont);
@@ -110,8 +109,7 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 void CLabel::DrawFore(wxDC& dc, wxRect& rc)
 {
 	wxRect rcTmp = getPathRect(rc);
-	if(rcTmp.GetHeight() >= 25)
-		m_pPathCtrl->DrawFore(dc, rcTmp);
+	m_pPathCtrl->DrawFore(dc, rcTmp);
 }
 
 wxRect CLabel::getPathRect(wxRect& rc)
