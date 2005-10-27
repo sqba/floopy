@@ -152,6 +152,10 @@ SOURCE=.\engine\Menu.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\engine\OffsetBar.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\engine\parameter.cpp
 # End Source File
 # Begin Source File

@@ -590,6 +590,8 @@ bool CTracks::Open(char *filename)
 
 	SetCaretPos( 0 );
 
+	m_pTimelineView->SetFocus();
+
 	return result;
 }
 
@@ -656,7 +658,7 @@ void CTracks::Clear()
 
 bool CTracks::OnKeyDown(wxKeyEvent& event)
 {
-	switch (event.GetKeyCode() )
+	switch( event.GetKeyCode() )
 	{
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
@@ -763,6 +765,11 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		}
 		return true;
 	default:
+		/*{
+			IFloopyObj *obj = GetSelectedObj();
+			if(obj && obj->OnKeyDown(event))
+				return true;
+		}*/
 		/*if(event.GetKeyCode() < m_tracks.GetCount())
 		{
 			DeselectAllTracks();

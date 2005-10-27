@@ -627,6 +627,11 @@ bool CTrack::OnKeyDown(wxKeyEvent& event)
 		return true;
 	default:
 		return GetTracks()->OnKeyDown(event);
+		/*{
+			IFloopyObj *obj = GetSelectedObj();
+			if(obj && obj->OnKeyDown(event))
+				return true;
+		}*/
 	}
 		
 	return false;

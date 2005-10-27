@@ -21,40 +21,33 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CRegion::CRegion(CTrack *track, UINT startSample, UINT endSample)
- : IFloopyObj(track)
+CRegion::CRegion(CTrack *track, UINT start, UINT end) : IFloopyObj(track)
 {
-	m_iStartSample	= startSample;
-	m_iEndSample	= endSample;
+	m_iStartSample		= start;
+	m_iEndSample		= end;
 
-	m_pLeftBorder	= new CBorder(this, true);
-	m_pRightBorder	= new CBorder(this, false);
+	m_pLeftBorder		= new CBorder(this, true);
+	m_pRightBorder		= new CBorder(this, false);
 
-	m_pOffsetBar	= new COffsetBar(this);
-	m_bShowOffsetBar = true;
+	m_pOffsetBar		= new COffsetBar(this);
+	m_bShowOffsetBar	= true;
 
-	m_iPrevStart	= m_iPrevEnd = -1;
+	m_iPrevStart		= m_iPrevEnd = -1;
 
-	m_bEdit			= false;
+	m_bEdit				= false;
 
-	m_iStartOffset	= -1;
-	m_iLengthNotLooped = 0;
+	m_iStartOffset		= -1;
+	m_iLengthNotLooped	= 0;
+
+	m_pDisplay			= new CRegionDisplay(this);
+
+	m_pParameters		= new CParameters(this);
 
 	createMenu();
 
-	wxLog::AddTraceMask(_T("CRegion"));
-
-	m_pDisplay = new CRegionDisplay(this);
-
-	m_pParameters = new CParameters(this);
-
-//	IFloopySoundInput *input = CTracks::FindComponentByName(track->GetInput(), "volume");
-//	if(NULL != input)
-//		loadParameters( input );
-
-//	SetDrawPreview( false );
-
 	Invalidate();
+
+	wxLog::AddTraceMask(_T("CRegion"));
 }
 
 CRegion::~CRegion()
@@ -101,7 +94,7 @@ void CRegion::Remove()
 			assert( track->ResetParamAt(m_iStartSample, TIMELINE_PARAM_MOVETO, value) );
 	}
 
-	if(m_iEndSample - m_iStartSample > getTrack()->GetTracks()->GetSamplesPerPixel())
+	if(m_iEndSample - m_iStartSample > getTracks()->GetSamplesPerPixel())
 	{
 		Invalidate();
 		Refresh();
@@ -290,6 +283,12 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 }
 */
 
+/**
+ * Draws region frame with loop end markers.
+ * @param dc 
+ * @param rc 
+ * @return void
+ */
 void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 {
 	int start = m_iStartOffset;
@@ -462,10 +461,10 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 {
 	int left=0, right=0;
 	calcPos(&left, &right);
-	int width = right - left;
-	int border = (IsSelected() ? 2 : 1);
-	int top    = rc.GetTop() + 1;
-	int height = rc.GetHeight() - 2;
+	int width	= right - left;
+	int border	= (IsSelected() ? 2 : 1);
+	int top		= rc.GetTop() + 1;
+	int height	= rc.GetHeight() - 2;
 
 	if(m_bShowOffsetBar && this->GetHeight()>2*m_pOffsetBar->GetHeight())
 	{
@@ -815,14 +814,118 @@ void CRegion::Update()
 	getTracks()->SetViewUpdatedWhilePlaying(true);
 }
 */
+bool CRegion::setStartPos(int prevPos, int newPos)
+{
+//	if((prevPos >= 0) && (prevPos != newPos))
+	{
+		IFloopySoundInput *track = getTrack()->GetTrack();
+
+		if( !track->MoveParam(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED, newPos) )
+		{
+			if( !track->ResetParamAt(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) )
+				return false;
+			track->EnableAt(newPos, true);
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////
+		//if((m_iPrevStart != m_iStartSample) && (m_iPrevEnd != m_iEndSample))
+		//	track->MoveAllParamsBetween(m_iStartSample, m_iEndSample, m_iStartSample-m_iPrevStart);
+		/////////////////////////////////////////////////////////////////////////////////////////
+
+		float value = 0;
+		if(track->GetParamAt(prevPos, TIMELINE_PARAM_MOVETO, &value))
+		{
+			if( !track->MoveParam(prevPos, TIMELINE_PARAM_MOVETO, value, newPos) )
+			{
+				if( !track->ResetParamAt(prevPos, TIMELINE_PARAM_MOVETO, value) )
+					return false;
+				track->SetParamAt(newPos, TIMELINE_PARAM_MOVETO, value);
+			}
+		}
+
+		m_iStartSample = newPos;
+
+		return true;
+	}
+	return false;
+}
+
+bool CRegion::setEndPos(int prevPos, int newPos)
+{
+//	if((prevPos >= 0.f) && (prevPos != newPos))
+	{
+		IFloopySoundInput *track = getTrack()->GetTrack();
+
+		if( !track->MoveParam(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED, newPos) )
+		{
+			if( !track->ResetParamAt(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) )
+				return false;
+			track->EnableAt(newPos, false);
+		}
+
+		m_iEndSample = newPos;
+
+		return true;
+	}
+	return false;
+}
+
+void CRegion::Update()
+{
+	bool bRefresh = true;
+
+	IFloopySoundInput *track = getTrack()->GetTrack();
+
+	CActionHistory *actionHistory = getTracks()->GetActionHistory();
+
+	if(m_iStartSample < 0)
+		m_iStartSample = 0;
+
+//	bool bOffset	= true;
+//	bool bResize	= (m_iPrevEnd-m_iPrevStart > m_iEndSample-m_iStartSample);
+
+	//setStartPos(m_iPrevStart, m_iStartSample);
+	//setEndPos(m_iPrevEnd, m_iEndSample);
+	if(m_iPrevEnd-m_iPrevStart == m_iEndSample-m_iStartSample)
+	{
+		// Move whole region
+		actionHistory->MoveParam(this, this, m_iPrevStart, 0, 0.f, m_iStartSample);
+	}
+	else
+	{
+		// Move start
+		if((m_iPrevStart >= 0) && (m_iPrevStart != m_iStartSample))
+			actionHistory->MoveParam(this, this, m_iPrevStart, 1, 0.f, m_iStartSample);
+
+		// Move end
+		if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))
+			actionHistory->MoveParam(this, this, m_iPrevEnd, 2, 0.f, m_iEndSample);
+	}
+
+	m_iPrevStart = m_iPrevEnd = -1;
+
+	m_bEdit = false;
+
+//	if(!bOffset || bResize)
+	{
+		Invalidate();
+		Refresh();
+	}
+
+	getTrack()->InvalidateRegions( this );
+
+	getTracks()->SetChanged( true );
+
+	getTracks()->SetViewUpdatedWhilePlaying(true);
+}
 
 
 
 void CRegion::CancelUpdate()
 {
-	m_iStartSample = m_iPrevStart;
-	m_iEndSample = m_iPrevEnd;
-	m_iPrevStart = m_iPrevEnd = -1;
+	m_iStartSample	= m_iPrevStart;
+	m_iEndSample	= m_iPrevEnd;
+	m_iPrevStart	= m_iPrevEnd = -1;
 }
 
 bool CRegion::OnKeyDown(wxKeyEvent& event)
@@ -831,12 +934,16 @@ bool CRegion::OnKeyDown(wxKeyEvent& event)
 	{
 	case WXK_RIGHT:
 	case WXK_NUMPAD_RIGHT:
+	case '>':
+	case '.':
 		Move(+1, 0);
 		Update();
 		Refresh();
 		return true;
 	case WXK_LEFT:
 	case WXK_NUMPAD_LEFT:
+	case '<':
+	case ',':
 		Move(-1, 0);
 		Update();
 		Refresh();
@@ -882,6 +989,11 @@ bool CRegion::OnKeyDown(wxKeyEvent& event)
 		return true;
 	default:
 		return getTrack()->OnKeyDown(event);
+		/*{
+			IFloopyObj *obj = GetSelectedObj();
+			if(obj && obj->OnKeyDown(event))
+				return true;
+		}*/
 	}
 	
 	return false;
@@ -1380,158 +1492,16 @@ void CRegion::CBorder::Move(int dx, int WXUNUSED(dy))
 
 
 
-/////////////////////////////////////////////////////////////////////
-// COffsetBar functions
-/////////////////////////////////////////////////////////////////////
-int CRegion::COffsetBar::GetHeight()
-{
-	return 15;
-}
-
-void CRegion::COffsetBar::Move(int dx, int WXUNUSED(dy))
-{
-	// Move start offset
-	CRegion *pRegion = getRegion();
-	CTrack  *pTrack = (CTrack*)pRegion->GetParent();
-	CTracks *pTracks = (CTracks*)pTrack->GetParent();
-
-//	SOUNDFORMAT *fmt = pTracks->GetInput()->GetFormat();
-//	int channels = fmt->channels;
-
-	//int start = pRegion->GetStartOffset();
-	int spp = pTracks->GetSamplesPerPixel();
-	int newOffset = m_iStart - dx*spp;
-
-	if(newOffset >= 0)
-		pRegion->SetStartOffset( newOffset );
-}
-
-void CRegion::COffsetBar::DrawBG(wxDC &dc, wxRect &rc)
-{
-	int left	= rc.GetLeft();
-	int top		= rc.GetTop();
-	int width	= rc.GetWidth();
-	int height	= this->GetHeight();
-	int right	= left + width;
-	int bottom	= rc.GetBottom();
-
-	if(false)
-		DrawAquaRect(dc, wxRect(left, top, width, height), 2);
-	else
-		DrawRect3D(dc, wxRect(left, top, width, height));
-}
-
-void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
-{
-	CRegion *pRegion = getRegion();
-	CTracks *pTracks = (CTracks*)pRegion->GetParent()->GetParent();
-
-	int pix		= pTracks->GetPixelsPerSecond();
-	int iStep	= pTracks->CalcStep( MIN_DISTANCE );
-
-	int left	= rc.GetLeft() + 1;
-	int top		= rc.GetTop();
-	int right	= left + rc.GetWidth() - 1;
-	int height	= this->GetHeight() - 1;
-	int bottom	= top + height;
-	int iMiddle	= top + height/2;
-
-	int iLineTop1 = iMiddle + 1;
-	int iLineTop2 = iMiddle + (height/3);
-
-	int iLineTop = top;
-	int iLineBottom = top + height;
-
-	//dc.SetFont( *wxSWISS_FONT );
-	wxFont font(7, wxSWISS, wxNORMAL, wxLIGHT);
-	dc.SetFont( font );
-
-	int w=0, h=0;
-	wxString csLabel("00:00:000");
-	dc.GetTextExtent(csLabel, &w, &h);
-	int iTextTop = iLineTop1 - (h - h/3);
-
-	int start = pRegion->GetStartOffset();
-	int spp = pTracks->GetSamplesPerPixel();
-	
-	if(start >= 0)
-	{
-		m_iStart = start;
-		start /= spp;
-	}
-	else
-	{
-		///////////////////////////////////////////////////////
-		// Ovde treba uzeti kraj prethodnog regiona + razmak!!!
-		///////////////////////////////////////////////////////
-		CRegion *prev = getPrevRegion();
-		if(NULL != prev)
-		{
-			CRegion	*region	= getRegion();
-			int prevEndOffset = prev->GetEndOffset();
-			int dist = region->GetStartPos() - prev->GetEndPos();
-			start = prevEndOffset + dist;
-		}
-		else
-			start = pRegion->GetStartPos();
-		m_iStart = start;
-		start /= spp;
-	}
 
-	int pos = start;
 
-	for(int x=left; x<right; x+=iStep)
-	{
-		//if((x/iStep)%4 == 0)
-		//Optimization: x%a == x&(a-1) for binary numbers
-		if((((x-left)/iStep)&3) == 0)
-		{
-			iLineTop = iLineTop1;
 
-			if(x+4+w < right)
-			{
-				float fSeconds = (float)pos / (float)pix;
-				FormatTime(fSeconds, csLabel);
-				dc.DrawText(csLabel, x+4, iTextTop);
-			}
-		}
-		else
-		{
-			iLineTop = iLineTop2;
-		}
 
-		pos += iStep;
 
 
-		dc.SetPen(*wxBLACK_PEN);
-		dc.DrawLine(x, iLineTop, x, iLineBottom);
 
-		dc.SetPen(*wxWHITE_PEN);
-		dc.DrawLine(x+1, iLineTop, x+1, iLineBottom);
-	}
-}
 
-CRegion *CRegion::COffsetBar::getPrevRegion()
-{
-	CRegion	*region	= getRegion();
-	CTrack	*track	= (CTrack*)region->GetParent();
-	CRegion	*prev	= NULL;
-	int start = region->GetStartPos();
-	int max = 0;
 
-	for(int i=0; i<track->GetRegionCount(); i++)
-	{
-		CRegion *tmp = track->GetRegion(i);
-		int end = tmp->GetEndPos();
-		if(end<start && end>=max)
-		{
-			prev = tmp;
-			max = end;
-		}
-	}
 
-	return prev;
-}
 
 
 
@@ -1574,121 +1544,15 @@ CRegion *CRegion::COffsetBar::getPrevRegion()
 
 
 
-
-
-
-
-
-
-
-
-bool CRegion::setStartPos(int prevPos, int newPos)
-{
-//	if((prevPos >= 0) && (prevPos != newPos))
-	{
-		IFloopySoundInput *track = getTrack()->GetTrack();
-
-		if( !track->MoveParam(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED, newPos) )
-		{
-			if( !track->ResetParamAt(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_ENABLED) )
-				return false;
-			track->EnableAt(newPos, true);
-		}
-
-		/////////////////////////////////////////////////////////////////////////////////////////
-		//if((m_iPrevStart != m_iStartSample) && (m_iPrevEnd != m_iEndSample))
-		//	track->MoveAllParamsBetween(m_iStartSample, m_iEndSample, m_iStartSample-m_iPrevStart);
-		/////////////////////////////////////////////////////////////////////////////////////////
-
-		float value = 0;
-		if(track->GetParamAt(prevPos, TIMELINE_PARAM_MOVETO, &value))
-		{
-			if( !track->MoveParam(prevPos, TIMELINE_PARAM_MOVETO, value, newPos) )
-			{
-				if( !track->ResetParamAt(prevPos, TIMELINE_PARAM_MOVETO, value) )
-					return false;
-				track->SetParamAt(newPos, TIMELINE_PARAM_MOVETO, value);
-			}
-		}
-
-		m_iStartSample = newPos;
-
-		return true;
-	}
-	return false;
-}
-
-bool CRegion::setEndPos(int prevPos, int newPos)
-{
-//	if((prevPos >= 0.f) && (prevPos != newPos))
-	{
-		IFloopySoundInput *track = getTrack()->GetTrack();
-
-		if( !track->MoveParam(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED, newPos) )
-		{
-			if( !track->ResetParamAt(prevPos, TIMELINE_PARAM_ENABLE, PARAM_VALUE_DISABLED) )
-				return false;
-			track->EnableAt(newPos, false);
-		}
-
-		m_iEndSample = newPos;
-
-		return true;
-	}
-	return false;
-}
-
-void CRegion::Update()
-{
-	bool bRefresh = true;
-
-	IFloopySoundInput *track = getTrack()->GetTrack();
-
-	CActionHistory *actionHistory = getTracks()->GetActionHistory();
-
-	if(m_iStartSample < 0)
-		m_iStartSample = 0;
-
-//	bool bOffset	= true;
-//	bool bResize	= (m_iPrevEnd-m_iPrevStart > m_iEndSample-m_iStartSample);
-
-	//setStartPos(m_iPrevStart, m_iStartSample);
-	//setEndPos(m_iPrevEnd, m_iEndSample);
-	if(m_iPrevEnd-m_iPrevStart == m_iEndSample-m_iStartSample)
-	{
-		// Move whole region
-		actionHistory->MoveParam(this, this, m_iPrevStart, 0, 0.f, m_iStartSample);
-	}
-	else
-	{
-		// Move start
-		if((m_iPrevStart >= 0) && (m_iPrevStart != m_iStartSample))
-			actionHistory->MoveParam(this, this, m_iPrevStart, 1, 0.f, m_iStartSample);
-
-		// Move end
-		if((m_iPrevEnd >= 0.f) && (m_iPrevEnd != m_iEndSample))
-			actionHistory->MoveParam(this, this, m_iPrevEnd, 2, 0.f, m_iEndSample);
-	}
-
-	m_iPrevStart = m_iPrevEnd = -1;
-
-	m_bEdit = false;
-
-//	if(!bOffset || bResize)
-	{
-		Invalidate();
-		Refresh();
-	}
-
-	getTrack()->InvalidateRegions( this );
-
-	getTracks()->SetChanged( true );
-
-	getTracks()->SetViewUpdatedWhilePlaying(true);
-}
-
-
-
+/**
+ * Called by CActionHistory.
+ * Moves or resizes region depending of the index parameter.
+ * @param offset 
+ * @param index 0:translation, 1:start position, 2:end position
+ * @param value not used
+ * @param newoffset New position
+ * @return true if succesfull
+ */
 bool CRegion::MoveParam(int offset, int index, float value, int newoffset)
 {
 	switch(index)
@@ -1696,9 +1560,9 @@ bool CRegion::MoveParam(int offset, int index, float value, int newoffset)
 	case 0:
 		{
 			Refresh();
-			int len = m_iEndSample-m_iStartSample;
 			if( !setStartPos(offset, newoffset) )
 				return false;
+			int len = m_iEndSample-m_iStartSample;
 			return setEndPos(offset+len, newoffset+len);
 		}
 		return true;
