@@ -15,8 +15,8 @@
 #include "ActionHistory.h"
 
 typedef IFloopySoundEngine* (*CreateProc)(HMODULE);
-#define PROC_NAME "CreateSoundEngine"
-#define PLUG_EXT ".dll"
+#define PROC_NAME	"CreateSoundEngine"
+#define PLUG_EXT	".dll"
 
 //IMPLEMENT_DYNAMIC_CLASS(CTracks, IFloopyObj)
 
@@ -28,31 +28,31 @@ WX_DEFINE_LIST(TracksList);
 
 CTracks::CTracks() : IFloopyObj(NULL)
 {
-	wxLog::AddTraceMask(_T("CTracks"));
-
+	m_iCursorPosition	= 0;
+	m_length			= 120;		// seconds
+	m_iPixelsPerSecond	= 32;
 	m_pMaster			= NULL;
+	m_pEngine			= NULL;
 	m_pTimelineView		= NULL;
 	m_pLabelsView		= NULL;
-	m_length			= 120;	// seconds
-	m_iPixelsPerSecond	= 32;
-	m_pBorder			= new CBorder(this);
-	m_pEngine			= NULL;
-	m_bSnapTo			= true;
-	m_pPlayThread		= new CPlayThread(this);
 	m_pFrame			= NULL;
-	m_iCursorPosition	= 0;
+	m_bSnapTo			= true;
 	m_bChanged			= false;
-	m_bViewUpdatedWhilePlaying = false;
+	m_bViewUpdated		= false;
+	m_bScrollView		= false;
+	m_bDrawPreview		= false;	// Default
 
 	memset(m_filename, 0, sizeof(m_filename));
 
 	m_Timer.SetParent( this );
 
-	m_bDrawPreview		= false;	// Default
-
+	m_pBorder			= new CBorder(this);
+	m_pPlayThread		= new CPlayThread(this);
 	m_pActionHistory	= new CActionHistory();
 
 	createEngine("engine");
+
+	wxLog::AddTraceMask(_T("CTracks"));
 }
 
 CTracks::~CTracks()
@@ -61,7 +61,7 @@ CTracks::~CTracks()
 
 	delete m_pBorder;
 
-	if(m_pPlayThread)
+	if(NULL != m_pPlayThread)
 	{
 		if(m_pPlayThread->IsPlaying())
 			m_pPlayThread->Stop();
@@ -121,44 +121,11 @@ void CTracks::DrawFore(wxDC& dc)
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// DrawLabels
-//! Draws track labels.
-//! \param dc [in] reference to the device context
-//! \param size [in] labels panel dimensions
-//! \return void
-/////////////////////////////////////////////////////////////////////////////
-/*void CTracks::DrawLabels(wxDC& dc, wxSize size)
-{
-	wxFont oldFont = dc.GetFont();
-
-	wxFont fixedFont(12, wxDEFAULT, wxITALIC, wxBOLD);
-	dc.SetFont(fixedFont);
-
-	wxRect rc(0, 0, size.GetWidth(), size.GetHeight());
-
-	TracksList::Node *node = m_tracks.GetFirst();
-	while (node)
-	{
-		CTrack *track = (CTrack*)node->GetData();
-		CLabel *label = track->GetLabel();
-		int height = track->GetHeight();
-		rc.SetHeight( height );
-		label->DrawBG(dc, rc);
-		label->DrawFore(dc, rc);
-		rc.Offset(0, height);
-		node = node->GetNext();
-	}
-
-	dc.SetFont(oldFont);
-}*/
-
 CTrack *CTracks::addTrack(IFloopySoundInput *input, int level)
 {
 	wxLogTrace(_T("CTracks"), _T("Adding new track"));
 
 	CTrack *track = new CTrack( this, input, level );
-
 	UINT r=255, g=255, b=255;
 	input = track->GetInput();
 	if( !input->GetColor(&r, &g, &b) )
@@ -177,15 +144,7 @@ CTrack *CTracks::addTrack(IFloopySoundInput *input, int level)
 		}
 	}
 	track->SetColor(wxColor(r, g, b));
-
-	try
-	{
-		m_tracks.Append( track );
-	}
-	catch(...) {
-		wxLogTrace(_T("CTracks"), _T("addTrack exception"));
-		return NULL;
-	}
+	m_tracks.Append( track );
 	Refresh();
 	return track;
 }
@@ -511,16 +470,22 @@ bool CTracks::createEngine(char *plugin)
 
 	bool result = false;
 
-	if( m_libEngine.Load(filename) ) {
+	if( m_libEngine.Load(filename) )
+	{
 		CreateProc func = (CreateProc)m_libEngine.GetSymbol(_T(PROC_NAME));
-		if ( !func ) {
+		if ( !func )
+		{
 			wxLogTrace(_T("CTrack"), _T("CreateDisplay function not found!"));
-		} else {
-			try {
+		}
+		else {
+			try
+			{
 				m_pEngine = func( NULL );
 				SetEngine(m_pEngine);
 				result = true;
-			} catch(...) {
+			}
+			catch(...)
+			{
 				wxLogTrace(_T("CEngine"), _T("CreateDisplay failed!"));
 				m_libEngine.Unload();
 			}
@@ -631,21 +596,15 @@ void CTracks::loadTracks(IFloopySoundInput *input, int level)
 		for(int i=0; i<count; i++)
 		{
 			IFloopySoundInput *track = m_pMaster->GetSource(i);
-//			loadTracks(track, track, ++level);
 			addTrack(track, 0);
 		}
 
 		return;
 	}
-	else
+	else if( IsFilter(input) )
 	{
-		int type = input->GetType();
-		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
-			loadTracks(((IFloopySoundFilter*)input)->GetSource(), ++level);
+		loadTracks(((IFloopySoundFilter*)input)->GetSource(), ++level);
 	}
-	
-	//if(input->GetType() == TYPE_FLOOPY_SOUND_TRACK)
-	//	addTrack(input, parent, 0);
 }
 
 void CTracks::Clear()
@@ -699,20 +658,17 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 	case WXK_NUMPAD_PAGEUP:
 		{
 			CTrack *track = GetSelectedTrack();
-			if(track)
+			if(track && track->IsSelected())
 			{
-				if(track->IsSelected())
+				int index = GetTrackIndex(track);
+				if(index > 0)
 				{
-					int index = GetTrackIndex(track);
-					if(index > 0)
+					track = GetTrack(index-1);
+					if(track)
 					{
-						track = GetTrack(index-1);
-						if(track)
-						{
-							DeselectAllTracks();
-							track->Select();
-							//track->Refresh();
-						}
+						DeselectAllTracks();
+						track->Select();
+						//track->Refresh();
 					}
 				}
 			}
@@ -723,20 +679,17 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 	case WXK_NUMPAD_PAGEDOWN:
 		{
 			CTrack *track = GetSelectedTrack();
-			if(track)
+			if(track && track->IsSelected())
 			{
-				if(track->IsSelected())
+				int index = GetTrackIndex(track);
+				if(index < (int)m_tracks.GetCount())
 				{
-					int index = GetTrackIndex(track);
-					if(index < (int)m_tracks.GetCount())
+					track = GetTrack(index+1);
+					if(track)
 					{
-						track = GetTrack(index+1);
-						if(track)
-						{
-							DeselectAllTracks();
-							track->Select();
-							//track->Refresh();
-						}
+						DeselectAllTracks();
+						track->Select();
+						//track->Refresh();
 					}
 				}
 			}
@@ -820,9 +773,9 @@ int CTracks::GetClosestGridPos(int pos)
 {
 	if(m_bSnapTo)
 	{
-		int nStep    = CalcStep(MIN_DISTANCE);
-		int nLine = (int)ceil( pos / nStep );
-		int result = nLine * nStep;
+		int nStep	= CalcStep(MIN_DISTANCE);
+		int nLine	= (int)ceil( pos / nStep );
+		int result	= nLine * nStep;
 
 		return result;
 	}
@@ -833,9 +786,9 @@ int CTracks::GetClosestGridPos(int pos)
 int CTracks::CalcStep(int mindist)
 {
 	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-	int freq = fmt->frequency;
-	int pps = m_iPixelsPerSecond;
-	int res = (pps / mindist);
+	int freq	= fmt->frequency;
+	int pps		= m_iPixelsPerSecond;
+	int res		= (pps / mindist);
 
 	if((res % 2 == 0) || (res % 4 == 0))
 		res = res;
@@ -1030,13 +983,13 @@ bool CTracks::IsPaused()
 
 bool CTracks::GetViewUpdatedWhilePlaying()
 {
-	return m_bViewUpdatedWhilePlaying;
+	return m_bViewUpdated;
 }
 
 void CTracks::SetViewUpdatedWhilePlaying(bool bUpdate)
 {
 	if( IsPlaying() )
-		m_bViewUpdatedWhilePlaying = bUpdate;
+		m_bViewUpdated = bUpdate;
 }
 
 
@@ -1098,7 +1051,7 @@ bool CTracks::IsChanged()
 
 int CTracks::GetPropertyCount()
 {
-	return 5;
+	return 6;
 }
 
 bool CTracks::GetPropertyVal(int index, float *value)
@@ -1119,6 +1072,9 @@ bool CTracks::GetPropertyVal(int index, float *value)
 		return true;
 	case 4:
 		*value = (float)GetCaretPos();
+		return true;
+	case 5:
+		*value = (float)m_bScrollView;
 		return true;
 	}
 	return false;
@@ -1143,6 +1099,9 @@ void CTracks::SetPropertyVal(int index, float value)
 	case 4:
 		SetCaretPos((int)value);
 		return;
+	case 5:
+		m_bScrollView = (value != 0.f);
+		return;
 	}
 }
 
@@ -1155,6 +1114,7 @@ char *CTracks::GetPropertyName(int index)
 	case 2: return "Length";
 	case 3: return "SnapToGrid";
 	case 4: return "CaretPos";
+	case 5: return "ScrollWhilePlaying";
 	}
 	return NULL;
 }
@@ -1168,6 +1128,7 @@ char *CTracks::GetPropertyDesc(int index)
 	case 2: return "Project length";
 	case 3: return "Snap to grid";
 	case 4: return "Caret position";
+	case 5: return "Scroll view while playing";
 	}
 	return NULL;
 }
@@ -1181,6 +1142,7 @@ float CTracks::GetPropertyMin(int index)
 	case 2: return 1.f;
 	case 3: return 0.f;
 	case 4: return 0.f;
+	case 5: return 0.f;
 	}
 	return 0.f;
 }
@@ -1194,6 +1156,7 @@ float CTracks::GetPropertyMax(int index)
 	case 2: return 3600.f;
 	case 3: return 1.f;
 	case 4: return 65535.f; //?
+	case 5: return 1.f;
 	}
 	return 0.f;
 }
@@ -1205,6 +1168,7 @@ char *CTracks::GetPropertyUnit(int index)
 	//case 0: return "Db";
 	case 1: return "sec";
 	case 2: return "On/Off";
+	case 5: return "On/Off";
 	}
 	return NULL;
 }
@@ -1218,6 +1182,7 @@ float CTracks::GetPropertyStep(int index)
 	case 2: return 1.f;
 	case 3: return 1.f;
 	case 4: return 1.f;
+	case 5: return 1.f;
 	}
 	return 0.f;
 }
@@ -1241,7 +1206,8 @@ void CTracks::CTimer::Notify()
 	
 	// Mozda je bolje skrolovati konstantnom brzinom
 	// i povremeno vrsiti korekcije
-	//m_pTracks->CenterView( pos );
+	if( m_pTracks->ScrollWhilePlaying() )
+		m_pTracks->CenterView( pos );
 }
 
 
@@ -1259,7 +1225,8 @@ void CTracks::CBorder::Move(int dx, int WXUNUSED(dy))
 bool CTracks::CBorder::OnMouseEvent(wxMouseEvent& event)
 {
 	bool bResult = false;
-	if(event.Dragging() && (0 != m_ptPrev.x)) {
+	if(event.Dragging() && (0 != m_ptPrev.x))
+	{
 		int dx = event.GetX() - m_ptPrev.x;
 		int dy = event.GetY() - m_ptPrev.y;
 		Move(dx, dy);
@@ -1281,8 +1248,40 @@ void CTracks::CBorder::DrawFore(wxDC& dc, wxRect& rc)
 
 
 
+/////////////////////////////////////////////////////////////////////////////
+// DrawLabels
+//! Draws track labels.
+//! \param dc [in] reference to the device context
+//! \param size [in] labels panel dimensions
+//! \return void
+/////////////////////////////////////////////////////////////////////////////
+/*void CTracks::DrawLabels(wxDC& dc, wxSize size)
+{
+	wxFont oldFont = dc.GetFont();
+
+	wxFont fixedFont(12, wxDEFAULT, wxITALIC, wxBOLD);
+	dc.SetFont(fixedFont);
+
+	wxRect rc(0, 0, size.GetWidth(), size.GetHeight());
+
+	TracksList::Node *node = m_tracks.GetFirst();
+	while (node)
+	{
+		CTrack *track = (CTrack*)node->GetData();
+		CLabel *label = track->GetLabel();
+		int height = track->GetHeight();
+		rc.SetHeight( height );
+		label->DrawBG(dc, rc);
+		label->DrawFore(dc, rc);
+		rc.Offset(0, height);
+		node = node->GetNext();
+	}
+
+	dc.SetFont(oldFont);
+}*/
 
 
+/*
 /////////////////////////////////////////////////////////////////////
 // CSelectedEvents functions
 /////////////////////////////////////////////////////////////////////
@@ -1290,3 +1289,4 @@ void CTracks::CSelectedEvents::Move(int dx, int WXUNUSED(dy))
 {
 	getTracks()->MoveSelectedRegions(dx);
 }
+*/

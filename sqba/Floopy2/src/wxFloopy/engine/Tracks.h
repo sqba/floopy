@@ -118,7 +118,7 @@ class CTracks : public IFloopyObj
 	 *
 	 *  
 	 */
-	class CSelectedEvents : public IFloopyObj
+	/*class CSelectedEvents : public IFloopyObj
 	{
 	public:
 		CSelectedEvents(CTracks *tracks) : IFloopyObj(tracks) {}
@@ -128,7 +128,7 @@ class CTracks : public IFloopyObj
 
 	private:
 		inline CTracks *getTracks()	{ return (CTracks*)GetParent(); }
-	};
+	};*/
 
 public:
 	CTracks();
@@ -172,16 +172,26 @@ public:
 	CRulerView *GetTimelineView()				{ return m_pTimelineView; };
 	CRulerView *GetLabelsView()					{ return m_pLabelsView; };
 
-	void SetCaretPos(int samples);
-	int  GetCaretPos();
-
-	int  GetSamplesPerPixel();
-	void SetSamplesPerPixel(int);
-
 	float GetLength()							{ return m_length; }
 	void  SetLength(float len)					{ m_length = len; }
 
 	int GetTrackCount()							{ return m_tracks.GetCount(); }
+	IFloopySoundInput *GetInput()				{ return m_pEngine; }
+	wxStatusBar *GetStatusBar()					{ return m_pFrame->GetStatusBar(); }
+	void SetFrame(wxFrame *pFrame)				{ m_pFrame = pFrame; }
+	char *GetFilename()							{ return m_filename; }
+	int GetPixelsPerSecond()					{ return m_iPixelsPerSecond; }
+	CActionHistory *GetActionHistory()			{ return m_pActionHistory; }
+	bool ScrollWhilePlaying()					{ return m_bScrollView; }
+
+	int  GetSamplesPerPixel();
+	void SetSamplesPerPixel(int);
+
+	void SetCaretPos(int samples);
+	int  GetCaretPos();
+
+	int  GetCursorPosition();
+	void SetCursorPosition(int pos);
 
 //	void DrawLabels(wxDC& dc, wxSize size);
 
@@ -203,8 +213,6 @@ public:
 	bool Save(char *filename);
 	void Clear();
 
-	IFloopySoundInput *GetInput()				{ return m_pEngine; }
-
 	bool OnKeyDown(wxKeyEvent& event);
 	bool OnMouseEvent(wxMouseEvent& event);
 	IFloopyObj *GetSelectedObj();
@@ -222,26 +230,14 @@ public:
 	bool IsPlaying();
 	bool IsPaused();
 
-	int GetCursorPosition();
-	void SetCursorPosition(int pos);
-
 	void SetStatusText(int pos);
-
-	wxStatusBar *GetStatusBar()					{ return m_pFrame->GetStatusBar(); }
-	void SetFrame(wxFrame *pFrame)				{ m_pFrame = pFrame; }
-
-	char *GetFilename()							{ return m_filename; }
 
 	bool GetViewUpdatedWhilePlaying();
 	void SetViewUpdatedWhilePlaying(bool bUpdate);
 
 	void CenterView(int sample);
 
-	int GetPixelsPerSecond() { return m_iPixelsPerSecond; }
-
 	void SetDrawPreview(bool bDrawPreview);
-
-	CActionHistory *GetActionHistory()			{ return m_pActionHistory; }
 
 	bool IsChanged();
 
@@ -270,13 +266,14 @@ private:
 	CTimer				m_Timer;
 	int					m_iStartSample;
 	char				m_filename[MAX_PATH];
-	bool				m_bViewUpdatedWhilePlaying;
+	bool				m_bViewUpdated;
 	CActionHistory		*m_pActionHistory;
 
 	// Properties
 	bool	m_bSnapTo;
 	int		m_iPixelsPerSecond;
 	float	m_length;	// In seconds
+	bool	m_bScrollView;
 };
 
 
