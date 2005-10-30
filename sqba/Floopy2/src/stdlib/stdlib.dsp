@@ -102,7 +102,15 @@ SOURCE=.\8to16bit\Convert8to16bit.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ConvertToFloat\ConvertToFloat.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\echo\Echo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\float2int\Float2Int.cpp
 # End Source File
 # Begin Source File
 
@@ -174,7 +182,15 @@ SOURCE=.\8to16bit\Convert8to16bit.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ConvertToFloat\ConvertToFloat.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\echo\Echo.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\float2int\Float2Int.h
 # End Source File
 # Begin Source File
 

@@ -17,6 +17,9 @@
 
 #define WAVE_FORMAT_PCM				 1	/// Pulse Code Modulation
 
+#define SAMPLE_DATA_TYPE_INTEGER     0
+#define SAMPLE_DATA_TYPE_FLOAT       1
+
 
 //////////////////////////////////////////////////////////////////////
 // Defines from windows.h
@@ -83,7 +86,7 @@ typedef struct SoundFormat
 	WORD	format;			/** Audio data format					*/
 	BYTE	channels;		/** Number of channels: 1-mono, 2-stereo*/
 	DWORD	bitsPerSample;	/** Sample size, in bits				*/
-//	INT		format;			/** Waveform-audio format type			*/
+	INT		sampleDataType;
 } SOUNDFORMAT;
 
 

@@ -156,6 +156,7 @@ void startElement(void *userData, const char *name, const char **atts)
 		{
 			char *source = NULL;
 			char *desc = NULL;
+			char *filename = NULL;
 			
 			for(int i=0; i<n-1; i+=2)
 			{
@@ -163,6 +164,8 @@ void startElement(void *userData, const char *name, const char **atts)
 				{
 					if(0==strcmp(atts[i], "source"))
 						source = (char*)atts[i+1];
+					if(0==strcmp(atts[i], "open"))
+						filename = (char*)atts[i+1];
 					if(0==strcmp(atts[i], "name"))
 						desc = (char*)atts[i+1];
 					if(0==strcmp(atts[i], "color"))
@@ -208,6 +211,9 @@ void startElement(void *userData, const char *name, const char **atts)
 				}
 				else
 					si->gInput = NULL;
+				
+				if(input && filename)
+					input->Open( filename );
 			}
 			else
 			{

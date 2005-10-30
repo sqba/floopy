@@ -11,6 +11,10 @@
 
 #include "../../ifloopy.h"
 
+#define SAMPLE_16BIT	short int
+#define SAMPLE_8BIT		BYTE
+#define FLOAT_32BIT		float //?
+
 class CConvertToFloat : public IFloopySoundFilter
 {
 public:
@@ -27,6 +31,14 @@ public:
 	bool ReadSourceIfDisabled()	{ return false; }
 
 	SOUNDFORMAT *GetFormat();
+
+private:
+	int convert8bitToFloat(SAMPLE_8BIT *in, FLOAT_32BIT *out, int size);
+	int convert16bitToFloat(SAMPLE_16BIT *in, FLOAT_32BIT *out, int size);
+
+private:
+	BYTE *m_pBuffer;
+	int m_nBuffSize;
 };
 
 #endif // !defined(AFX_CONVERTTOFLOAT_H__01B73A29_0D03_4917_B461_1C361C6ACC79__INCLUDED_)

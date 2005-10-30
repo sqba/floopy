@@ -20,6 +20,8 @@
 #include "reverse/reverse.h"
 #include "invert/invert.h"
 #include "performance/performance.h"
+#include "converttofloat/converttofloat.h"
+#include "float2int/float2int.h"
 
 // Output classes
 #include "wavfile/wavfileout.h"
@@ -64,6 +66,10 @@ __declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 		return new CConvert8to16bit();
 	if( 0 == stricmp(name, "performance") )
 		return new CPerformance();
+	if( 0 == stricmp(name, "tofloat") )
+		return new CConvertToFloat();
+	if( 0 == stricmp(name, "float2int") )
+		return new CFloat2Int();
 	//if( 0 == stricmp(name, "wavein") )
 	//	return NULL;
 
@@ -87,7 +93,7 @@ __declspec( dllexport ) IFloopySoundOutput *CreateOutput(char *name, SOUNDFORMAT
 
 __declspec( dllexport ) int GetPluginCount()
 {
-	return 16;
+	return 12;
 }
 
 __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
@@ -157,6 +163,14 @@ __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
 	case 15:
 		name = "performance";
 		*type = TYPE_FLOOPY_SOUND_FILTER;
+		break;
+	case 16:
+		name = "tofloat";
+		*type = TYPE_FLOOPY_SOUND_INPUT;
+		break;
+	case 17:
+		name = "float2int";
+		*type = TYPE_FLOOPY_SOUND_INPUT;
 		break;
 	};
 	return;
