@@ -122,13 +122,21 @@ int CVstWrapper::Read(BYTE *data, int size)
 		if(NULL != m_pInputs[0])
 			delete m_pInputs[0];
 
+		if(NULL != m_pInputs[1])
+			delete m_pInputs[1];
+
 		if(NULL != m_pOutputs[0])
 			delete m_pOutputs[0];
+
+		if(NULL != m_pOutputs[1])
+			delete m_pOutputs[1];
 
 		m_nBuffSize = sampleFrames;
 
 		m_pInputs[0]  = new float[sampleFrames];
+		m_pInputs[1]  = new float[sampleFrames];
 		m_pOutputs[0] = new float[sampleFrames];
+		m_pOutputs[1] = new float[sampleFrames];
 	}
 
 	int len = IFloopySoundFilter::Read(data, size);
