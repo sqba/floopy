@@ -26,8 +26,8 @@ public:
 	CVstWrapper();
 	virtual ~CVstWrapper();
 
-	char *GetName()			{ return "vst.synth"; }
-	char *GetDescription()	{ return "VST synthesizer wrapper"; }
+	char *GetName()			{ return "vst.vst"; }
+	char *GetDescription()	{ return "VST plugin wrapper"; }
 	char *GetVersion()		{ return "0.1"; }
 	char *GetAuthor()		{ return "sqba"; }
 
@@ -57,6 +57,10 @@ private:
 	//AudioEffectX	*m_pPlugin;
 	AEffect		*m_pPlugin;
 	AudioEffectX	*m_pAudioEffect;
+
+	float *m_pOutput[2];
+	float *m_pInput[2];
+	int m_nBuffSize;
 
 	char m_szLastError[100];
 };

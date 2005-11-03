@@ -45,6 +45,17 @@ public:
 	void  SetParamVal(int, float);
 	bool  GetParamVal(int, float*);
 
+	int   GetPropertyCount();
+	//bool  GetPropertyIndex(char *name, int *index);
+	bool  GetPropertyVal(int index, float *value);
+	void  SetPropertyVal(int index, float value);
+	float GetPropertyMin(int index);
+	float GetPropertyMax(int index);
+	float GetPropertyStep(int index);
+	char *GetPropertyName(int index);
+	char *GetPropertyDesc(int index);
+	//char *GetPropertyUnit(int index);
+
 private:
 	bool create(char *name);
 

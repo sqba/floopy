@@ -29,13 +29,13 @@ public:
 	SOUNDFORMAT *GetFormat();
 
 	int Read(BYTE *data, int size);
+	void MoveTo(int samples);
 
 	bool ReadSourceIfDisabled()	{ return false; }
 
 private:
 	inline double frand();
-	void quantizeWithDither(FLOAT_32BIT *pin, SAMPLE_16BIT *piout, int numsamples);
-	void quantize(FLOAT_32BIT *pin, SAMPLE_16BIT *piout, int numsamples);
+	void quantize(FLOAT_32BIT*, SAMPLE_16BIT*, int);
 
 private:
 	BYTE *m_pBuffer;

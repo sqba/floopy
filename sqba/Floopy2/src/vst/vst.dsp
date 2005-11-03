@@ -103,6 +103,18 @@ SOURCE=.\vstwrapper.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\steinberg\AEffect.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\steinberg\aeffectx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\steinberg\audioeffectx.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\vstwrapper.h
 # End Source File
 # End Group

@@ -65,7 +65,16 @@ int CBuzzMachineWrapper::Read(BYTE *data, int size)
 		return 0;
 
 	if( m_pMachine->Work((float*)data, size/4, WM_WRITE) )
+	{
+		float *in = (float*)data;
+		int s = size/4;
+		while(s--)
+		{
+			*in /= 32768.0;
+			in++;
+		}
 		return size;
+	}
 
 	return 0;
 }
@@ -75,14 +84,14 @@ void CBuzzMachineWrapper::Reset()
 	if(NULL != m_pMachine)
 	{
 		/////////////////////////////////////////////
-		BYTE *params = (BYTE*)m_pMachine->GlobalVals;
+		/*BYTE *params = (BYTE*)m_pMachine->GlobalVals;
 		params[0] = 9;
 		params[1] = 40;
 		params[2] = 0;
 		params[3] = 0xC0;
 		int *attributes = m_pMachine->AttrVals;
 		attributes[0] = 500;
-		attributes[1] = 500;
+		attributes[1] = 500;*/
 		/////////////////////////////////////////////
 
 		m_pMachine->Tick();
@@ -149,11 +158,11 @@ bool CBuzzMachineWrapper::create(char *name)
 
 
 	/////////////////////////////////////////////
-	BYTE *params = (BYTE*)m_pMachine->GlobalVals;
+	/*BYTE *params = (BYTE*)m_pMachine->GlobalVals;
 	params[0] = 9;
 	params[1] = 40;
 	params[2] = 0;
-	params[3] = 0xC0;
+	params[3] = 0xC0;*/
 	int *attributes = m_pMachine->AttrVals;
 	attributes[0] = 500;
 	attributes[1] = 500;
@@ -294,4 +303,75 @@ char *CBuzzMachineWrapper::GetParamDesc(int index)
 		return (char*)param->Description;
 	}
 	return NULL;
+}
+
+
+
+
+
+int CBuzzMachineWrapper::GetPropertyCount()
+{
+	if(m_pMachineInfo)
+		return m_pMachineInfo->numAttributes;
+	return 0;
+}
+
+bool CBuzzMachineWrapper::GetPropertyVal(int index, float *value)
+{
+	if(m_pMachine && index<GetPropertyCount())
+	{
+		int *attributes = m_pMachine->AttrVals;
+		*value = (float)attributes[index];
+		return true;
+	}
+	return false;
+}
+
+void CBuzzMachineWrapper::SetPropertyVal(int index, float value)
+{
+	if(m_pMachine && index<GetPropertyCount())
+	{
+		int *attributes = m_pMachine->AttrVals;
+		attributes[index] = (int)value;
+	}
+}
+
+char *CBuzzMachineWrapper::GetPropertyName(int index)
+{
+	if(m_pMachineInfo && index<GetParamCount())
+	{
+		const CMachineAttribute *att = m_pMachineInfo->Attributes[index];
+		return (char*)att->Name;
+	}
+	return NULL;
+}
+
+char *CBuzzMachineWrapper::GetPropertyDesc(int index)
+{
+	return NULL;
+}
+
+float CBuzzMachineWrapper::GetPropertyMin(int index)
+{
+	if(m_pMachineInfo && index<GetParamCount())
+	{
+		const CMachineAttribute *att = m_pMachineInfo->Attributes[index];
+		return (float)att->MinValue;
+	}
+	return 0.f;
+}
+
+float CBuzzMachineWrapper::GetPropertyMax(int index)
+{
+	if(m_pMachineInfo && index<GetParamCount())
+	{
+		const CMachineAttribute *att = m_pMachineInfo->Attributes[index];
+		return (float)att->MaxValue;
+	}
+	return 0.f;
+}
+
+float CBuzzMachineWrapper::GetPropertyStep(int index)
+{
+	return 0.1f;
 }

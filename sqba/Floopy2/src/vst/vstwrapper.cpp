@@ -30,6 +30,13 @@ CVstWrapper::CVstWrapper()
 	m_hinst		= NULL;
 	m_pPlugin	= NULL;
 	m_pAudioEffect = NULL;
+	m_nBuffSize	= 0;
+
+	m_pInput[0] = NULL;
+	m_pInput[1] = NULL;
+
+	m_pOutput[0] = NULL;
+	m_pOutput[1] = NULL;
 
 	// Popraviti error handling u engine-u kada
 	// sledece vrednosti nisu postavljene!
@@ -47,6 +54,18 @@ CVstWrapper::~CVstWrapper()
 
 	if(NULL != m_pPlugin)
 		delete m_pPlugin;
+
+	if(NULL != m_pInput[0])
+		delete m_pInput[0];
+
+	if(NULL != m_pInput[1])
+		delete m_pInput[1];
+
+	if(NULL != m_pOutput[0])
+		delete m_pOutput[0];
+
+	if(NULL != m_pOutput[1])
+		delete m_pOutput[1];
 }
 
 SOUNDFORMAT *CVstWrapper::GetFormat()
@@ -96,6 +115,31 @@ int CVstWrapper::Read(BYTE *data, int size)
 	if(NULL == fmt)
 		return 0;
 
+	int bytes = size/4;
+
+	if(bytes > m_nBuffSize)
+	{
+		if(NULL != m_pInput[0])
+			delete m_pInput[0];
+
+//		if(NULL != m_pInput[1])
+//			delete m_pInput[1];
+
+		if(NULL != m_pOutput[0])
+			delete m_pOutput[0];
+
+//		if(NULL != m_pOutput[1])
+//			delete m_pOutput[1];
+
+		m_nBuffSize = bytes;
+
+		m_pInput[0] = new float[bytes];
+		m_pInput[1] = NULL;//new float[m_nBuffSize];
+
+		m_pOutput[0] = new float[bytes];
+		m_pOutput[1] = NULL;//new float[m_nBuffSize];
+	}
+
 	/*if(NULL != m_pAudioEffect)
 	{
 		VstEvents events[1];
@@ -115,13 +159,35 @@ int CVstWrapper::Read(BYTE *data, int size)
 		m_pAudioEffect->processEvents(events);
 	}*/
 
-	float *outputs[2] = { (float*)data, NULL };
-	float **inputs = NULL;
+	int len = IFloopySoundFilter::Read(data, size);
+
+	float **outputs = m_pOutput;
+	float **inputs = m_pInput;
 
 	//int sampleFrames = size / fmt->channels / 4;
-	int sampleFrames = size / 4;
+	int sampleFrames = len / 4;
 
-	m_pPlugin->process(m_pPlugin, inputs, outputs, sampleFrames);
+	float *left		= m_pInput[0];
+	float *right	= m_pInput[1];
+	float *in = (float*)data;
+	//for(int i=0; i<sampleFrames/2; i++)
+	for(int i=0; i<sampleFrames; i++)
+	{
+		*(left++) = *(in++);
+//		*(right++) = *(in++);
+	}
+
+	m_pPlugin->processReplacing(m_pPlugin, inputs, outputs, sampleFrames);
+
+	left	= outputs[0];
+	right	= outputs[1];
+	float *out = (float*)data;
+	//for(i=0; i<sampleFrames/2; i++)
+	for(i=0; i<sampleFrames; i++)
+	{
+		*(out++) = *(left++);
+//		*(out++) = *(right++);
+	}
 
 	return size;
 }
