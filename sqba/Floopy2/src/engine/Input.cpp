@@ -980,6 +980,7 @@ IFloopySoundInput *CInput::getSource()
 bool CInput::isFilter()
 {
 	int type = m_plugin->GetType();
+	//bool b = (type & TYPE_FLOOPY_SOUND_FILTER);
 	return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
 }
 

@@ -64,6 +64,16 @@ int CBuzzMachineWrapper::Read(BYTE *data, int size)
 	if(NULL == fmt)
 		return 0;
 
+	/*float *in = (float*)data;
+	int s = size/4;
+	while(s--)
+	{
+		*in *= 32768.0;
+		in++;
+	}*/
+
+	//m_pMachine->Work((float*)data, size/4, WM_READ);
+
 	if( m_pMachine->Work((float*)data, size/4, WM_WRITE) )
 	{
 		float *in = (float*)data;
@@ -162,10 +172,10 @@ bool CBuzzMachineWrapper::create(char *name)
 	params[0] = 9;
 	params[1] = 40;
 	params[2] = 0;
-	params[3] = 0xC0;*/
+	params[3] = 0xC0;
 	int *attributes = m_pMachine->AttrVals;
 	attributes[0] = 500;
-	attributes[1] = 500;
+	attributes[1] = 500;*/
 	m_pMachine->Init( m_pDataInput );
 	m_pMachine->Tick();
 	/////////////////////////////////////////////
