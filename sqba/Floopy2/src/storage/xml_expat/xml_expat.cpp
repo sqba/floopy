@@ -521,8 +521,8 @@ void saveXML(tSessionInfo *si, FILE *fp, IFloopySoundInput *input, bool recursiv
 		recursive = false;
 	}
 	else
-		fprintf(fp, "%s<input source='%s' name='%s'", 
-		space, input->GetName(), input->GetDisplayName());
+		fprintf(fp, "%s<input source='%s' name='%s' open='%s'", 
+		space, input->GetName(), input->GetDisplayName(), input->GetPath());
 
 	UINT r=0, g=0, b=0;
 	if( input->GetColor(&r, &g, &b) )

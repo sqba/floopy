@@ -58,8 +58,8 @@ private:
 	AEffect		*m_pPlugin;
 	AudioEffectX	*m_pAudioEffect;
 
-	float *m_pOutput[2];
-	float *m_pInput[2];
+	float *m_pOutputs[2];
+	float *m_pInputs[2];
 	int m_nBuffSize;
 
 	char m_szLastError[100];

@@ -32,11 +32,11 @@ CVstWrapper::CVstWrapper()
 	m_pAudioEffect = NULL;
 	m_nBuffSize	= 0;
 
-	m_pInput[0] = NULL;
-	m_pInput[1] = NULL;
+	m_pInputs[0] = NULL;
+	m_pInputs[1] = NULL;
 
-	m_pOutput[0] = NULL;
-	m_pOutput[1] = NULL;
+	m_pOutputs[0] = NULL;
+	m_pOutputs[1] = NULL;
 
 	// Popraviti error handling u engine-u kada
 	// sledece vrednosti nisu postavljene!
@@ -55,17 +55,17 @@ CVstWrapper::~CVstWrapper()
 	if(NULL != m_pPlugin)
 		delete m_pPlugin;
 
-	if(NULL != m_pInput[0])
-		delete m_pInput[0];
+	if(NULL != m_pInputs[0])
+		delete m_pInputs[0];
 
-	if(NULL != m_pInput[1])
-		delete m_pInput[1];
+	if(NULL != m_pInputs[1])
+		delete m_pInputs[1];
 
-	if(NULL != m_pOutput[0])
-		delete m_pOutput[0];
+	if(NULL != m_pOutputs[0])
+		delete m_pOutputs[0];
 
-	if(NULL != m_pOutput[1])
-		delete m_pOutput[1];
+	if(NULL != m_pOutputs[1])
+		delete m_pOutputs[1];
 }
 
 SOUNDFORMAT *CVstWrapper::GetFormat()
@@ -115,78 +115,46 @@ int CVstWrapper::Read(BYTE *data, int size)
 	if(NULL == fmt)
 		return 0;
 
-	int bytes = size/4;
+	int sampleFrames = size / (fmt->bitsPerSample / 8);
 
-	if(bytes > m_nBuffSize)
+	if(sampleFrames > m_nBuffSize)
 	{
-		if(NULL != m_pInput[0])
-			delete m_pInput[0];
+		if(NULL != m_pInputs[0])
+			delete m_pInputs[0];
 
-//		if(NULL != m_pInput[1])
-//			delete m_pInput[1];
+		if(NULL != m_pOutputs[0])
+			delete m_pOutputs[0];
 
-		if(NULL != m_pOutput[0])
-			delete m_pOutput[0];
+		m_nBuffSize = sampleFrames;
 
-//		if(NULL != m_pOutput[1])
-//			delete m_pOutput[1];
-
-		m_nBuffSize = bytes;
-
-		m_pInput[0] = new float[bytes];
-		m_pInput[1] = NULL;//new float[m_nBuffSize];
-
-		m_pOutput[0] = new float[bytes];
-		m_pOutput[1] = NULL;//new float[m_nBuffSize];
+		m_pInputs[0]  = new float[sampleFrames];
+		m_pOutputs[0] = new float[sampleFrames];
 	}
-
-	/*if(NULL != m_pAudioEffect)
-	{
-		VstEvents events[1];
-		events[0].numEvents = 1;
-		events[0].reserved	= 0;
-		events[0].events[0]->type			= kVstAudioType;
-		events[0].events[0]->byteSize		= 0;
-		events[0].events[0]->deltaFrames	= 0;
-		events[0].events[0]->flags			= 0;
-		memset(events[0].events[0]->data, 0, 16);
-		events[0].events[1]->type			= kVstAudioType;
-		events[0].events[1]->byteSize		= 0;
-		events[0].events[1]->deltaFrames	= 0;
-		events[0].events[1]->flags			= 0;
-		memset(events[0].events[1]->data, 0, 16);
-		
-		m_pAudioEffect->processEvents(events);
-	}*/
 
 	int len = IFloopySoundFilter::Read(data, size);
 
-	float **outputs = m_pOutput;
-	float **inputs = m_pInput;
-
-	//int sampleFrames = size / fmt->channels / 4;
-	int sampleFrames = len / 4;
-
-	float *left		= m_pInput[0];
-	float *right	= m_pInput[1];
-	float *in = (float*)data;
-	//for(int i=0; i<sampleFrames/2; i++)
+	float *inputs	= m_pInputs[0];
+	float *in		= (float*)data;
 	for(int i=0; i<sampleFrames; i++)
 	{
-		*(left++) = *(in++);
-//		*(right++) = *(in++);
+		*inputs = *in;
+		inputs++;
+		in++;
 	}
 
-	m_pPlugin->processReplacing(m_pPlugin, inputs, outputs, sampleFrames);
+	try {
+		m_pPlugin->processReplacing(m_pPlugin, m_pInputs, m_pOutputs, sampleFrames);
+	} catch(...) {
+		return 0;
+	}
 
-	left	= outputs[0];
-	right	= outputs[1];
-	float *out = (float*)data;
-	//for(i=0; i<sampleFrames/2; i++)
+	float *outputs	= m_pOutputs[0];
+	float *out		= (float*)data;
 	for(i=0; i<sampleFrames; i++)
 	{
-		*(out++) = *(left++);
-//		*(out++) = *(right++);
+		*out = *outputs;
+		outputs++;
+		out++;
 	}
 
 	return size;
@@ -264,3 +232,29 @@ char *CVstWrapper::GetParamDesc(int index)
 
 
 
+
+
+
+
+
+
+
+
+	/*if(NULL != m_pAudioEffect)
+	{
+		VstEvents events[1];
+		events[0].numEvents = 1;
+		events[0].reserved	= 0;
+		events[0].events[0]->type			= kVstAudioType;
+		events[0].events[0]->byteSize		= 0;
+		events[0].events[0]->deltaFrames	= 0;
+		events[0].events[0]->flags			= 0;
+		memset(events[0].events[0]->data, 0, 16);
+		events[0].events[1]->type			= kVstAudioType;
+		events[0].events[1]->byteSize		= 0;
+		events[0].events[1]->deltaFrames	= 0;
+		events[0].events[1]->flags			= 0;
+		memset(events[0].events[1]->data, 0, 16);
+		
+		m_pAudioEffect->processEvents(events);
+	}*/

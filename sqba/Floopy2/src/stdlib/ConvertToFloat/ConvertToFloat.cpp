@@ -26,6 +26,7 @@ SOUNDFORMAT *CConvertToFloat::GetFormat()
 {
 	memcpy(&m_format, IFloopySoundFilter::GetFormat(), sizeof(SOUNDFORMAT));
 	m_format.sampleDataType = SAMPLE_DATA_TYPE_FLOAT;
+	m_format.bitsPerSample = 32;
 	return &m_format;
 }
 
@@ -40,7 +41,7 @@ int CConvertToFloat::Read(BYTE *data, int size)
 
 	int bytes = size;
 
-	switch(fmt->bitsPerSample)
+	/*switch(fmt->bitsPerSample)
 	{
 	case 8:
 		bytes /= 4;
@@ -48,7 +49,9 @@ int CConvertToFloat::Read(BYTE *data, int size)
 	case 16:
 		bytes /= 2;
 		break;
-	}
+	}*/
+
+	bytes /= (32 / fmt->bitsPerSample);
 
 	if(bytes > m_nBuffSize)
 	{
