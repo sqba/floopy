@@ -213,7 +213,18 @@ void startElement(void *userData, const char *name, const char **atts)
 					si->gInput = NULL;
 				
 				if(input && filename)
-					input->Open( filename );
+				{
+					char tmp[MAX_PATH] = {0};
+					if(strchr(filename, ':'))	// Absolute path!
+						memcpy(tmp, filename, strlen(filename));
+					else
+					{
+						memcpy(tmp, si->gPath, strlen(si->gPath));
+						strcat(tmp, "\\");
+						strcat(tmp, filename);
+					}
+					input->Open( tmp );
+				}
 			}
 			else
 			{
