@@ -31,6 +31,7 @@ public:
 		virtual ~CPoint() {}
 	
 		int GetType()	{ return FLOOPY_PARAMETER; }
+		bool GetName(wxString &str);
 
 		wxCursor GetCursor();
 
@@ -56,6 +57,7 @@ public:
 	virtual ~CParameter();
 
 	int GetType()	{ return FLOOPY_PARAMETER; }
+	bool GetName(wxString &str);
 
 	void Refresh();
 	//void Invalidate();

@@ -7,6 +7,7 @@
 #include "rulers/sampleruler.h"
 #include "../engine/track.h"
 #include "../engine/region.h"
+#include "wx/tooltip.h"
 
 
 BEGIN_EVENT_TABLE(CTimelineView, CCaretView)
@@ -19,6 +20,9 @@ END_EVENT_TABLE()
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
+
+
+wxToolTip			*gToolTip;
 
 
 CTimelineView::CTimelineView(CRulerView* parent, wxScrolledWindow *labels, CTracks *tracks)
@@ -161,6 +165,17 @@ void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 	else if(obj)
 	{
 		SetCursor( obj->GetCursor() );
+
+		wxString name;
+		if(obj->GetName(name))
+		{
+			m_pTracks->GetStatusBar()->SetStatusText(name, 2);
+
+			//wxToolTip *tip = wxWindow::GetToolTip();
+			wxToolTip *tip = gToolTip;
+			if(NULL != tip)
+				tip->SetTip(name);
+		}
 
 //		if(obj->OnMouseEvent(event2))
 //			return;
@@ -330,4 +345,10 @@ void CTimelineView::Init()
 	m_ptPrev.x = m_ptPrev.y = 0;
 	
 	SetCursor( wxCURSOR_PENCIL );
+
+	wxToolTip *tip = new wxToolTip("object");
+	wxToolTip::Enable(true);
+	wxToolTip::SetDelay(500);
+	gToolTip = tip;
+	SetToolTip( tip );
 }

@@ -41,6 +41,17 @@ CParameter::~CParameter()
 		delete m_pSelectedPoint;
 }
 
+bool CParameter::GetName(wxString &str)
+{
+	char *name = m_pInput->GetParamName(m_index);
+	if(NULL != name)
+	{
+		str.Printf("%s", name);
+		return true;
+	}
+	return false;
+}
+
 void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 {
 	m_iSamplesPerPixel = m_pTracks->GetSamplesPerPixel();
@@ -509,4 +520,9 @@ bool CParameter::CPoint::OnMouseEvent(wxMouseEvent& event)
 void CParameter::CPoint::Refresh()
 {
 	m_pParameter->Refresh();
+}
+
+bool CParameter::CPoint::GetName(wxString &str)
+{
+	return m_pParameter->GetName(str);
 }

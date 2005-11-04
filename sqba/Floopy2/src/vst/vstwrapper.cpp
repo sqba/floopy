@@ -230,6 +230,13 @@ void CVstWrapper::SetParamVal(int index, float value)
 
 char *CVstWrapper::GetParamName(int index)
 {
+	static char name[100];
+	memset(name, 0, 100);
+	if(NULL != m_pAudioEffect)
+	{
+		m_pAudioEffect->getParameterName(index, name);
+		return name;
+	}
 	return NULL;
 }
 
