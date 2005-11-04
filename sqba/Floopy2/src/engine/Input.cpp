@@ -605,6 +605,7 @@ bool CInput::GetParamAt(int offset, int index, float *value)
 		{
 			try {
 				m_plugin->GetParamVal(index, value);
+				return true;
 			} catch(...) {
 				*value = 0.f;
 				return false;
