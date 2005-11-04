@@ -52,7 +52,71 @@ SOUNDFORMAT *CBuzzMachineWrapper::GetFormat()
 
 bool CBuzzMachineWrapper::Open(char *filename)
 {
-	return create(filename);
+	m_hinst = LoadLibraryA( filename );
+	if(NULL == m_hinst)
+	{
+		sprintf(m_szLastError, "File '%s' not found.\n\0", filename);
+		return false;
+	}
+
+	CreateMachine func = (CreateMachine)GetProcAddress(m_hinst, "CreateMachine"); 
+	if(NULL == func)
+	{
+		sprintf(m_szLastError, "Function 'CreateMachine' not found in library '%s'.\n\0", filename);
+		return false;
+	}
+
+	m_pMachine = func();
+	if(NULL == m_pMachine)
+	{
+		sprintf(m_szLastError, "Plugin not created by function 'CreateMachine'.\n\0");
+		return false;
+	}
+
+
+
+
+	GetInfo getInfo = (GetInfo)GetProcAddress(m_hinst, "GetInfo"); 
+	if(NULL == getInfo)
+	{
+		sprintf(m_szLastError, "Function 'GetInfo' not found in library '%s'.\n\0", filename);
+		return false;
+	}
+
+	m_pMachineInfo = getInfo();
+	if(NULL == m_pMachineInfo)
+	{
+		sprintf(m_szLastError, "Plugin not created by function 'GetInfo'.\n\0");
+		return false;
+	}
+
+
+
+
+	m_pMachine->pMasterInfo = &m_MasterInfo;
+
+	m_pMachine->pCB = m_pCallbacks;
+	m_pMachine->Init( m_pDataInput );
+
+
+
+	/////////////////////////////////////////////
+	/*BYTE *params = (BYTE*)m_pMachine->GlobalVals;
+	params[0] = 9;
+	params[1] = 40;
+	params[2] = 0;
+	params[3] = 0xC0;
+	int *attributes = m_pMachine->AttrVals;
+	attributes[0] = 500;
+	attributes[1] = 500;*/
+	loadDefaults();
+	m_pMachine->Init( m_pDataInput );
+	m_pMachine->Tick();
+	/////////////////////////////////////////////
+
+
+
+	return true;
 }
 
 int CBuzzMachineWrapper::Read(BYTE *data, int size)
@@ -115,74 +179,6 @@ void CBuzzMachineWrapper::MoveTo(int offset)
 	{
 		Reset();
 	}
-}
-
-bool CBuzzMachineWrapper::create(char *name)
-{
-	m_hinst = LoadLibraryA( name );
-	if(NULL == m_hinst)
-	{
-		sprintf(m_szLastError, "File '%s' not found.\n\0", name);
-		return false;
-	}
-
-	CreateMachine func = (CreateMachine)GetProcAddress(m_hinst, "CreateMachine"); 
-	if(NULL == func)
-	{
-		sprintf(m_szLastError, "Function 'CreateMachine' not found in library '%s'.\n\0", name);
-		return false;
-	}
-
-	m_pMachine = func();
-	if(NULL == m_pMachine)
-	{
-		sprintf(m_szLastError, "Plugin not created by function 'CreateMachine'.\n\0");
-		return false;
-	}
-
-
-
-
-	GetInfo getInfo = (GetInfo)GetProcAddress(m_hinst, "GetInfo"); 
-	if(NULL == getInfo)
-	{
-		sprintf(m_szLastError, "Function 'GetInfo' not found in library '%s'.\n\0", name);
-		return false;
-	}
-
-	m_pMachineInfo = getInfo();
-	if(NULL == m_pMachineInfo)
-	{
-		sprintf(m_szLastError, "Plugin not created by function 'GetInfo'.\n\0");
-		return false;
-	}
-
-
-
-
-	m_pMachine->pMasterInfo = &m_MasterInfo;
-
-	m_pMachine->pCB = m_pCallbacks;
-	m_pMachine->Init( m_pDataInput );
-
-
-
-	/////////////////////////////////////////////
-	/*BYTE *params = (BYTE*)m_pMachine->GlobalVals;
-	params[0] = 9;
-	params[1] = 40;
-	params[2] = 0;
-	params[3] = 0xC0;
-	int *attributes = m_pMachine->AttrVals;
-	attributes[0] = 500;
-	attributes[1] = 500;*/
-	m_pMachine->Init( m_pDataInput );
-	m_pMachine->Tick();
-	/////////////////////////////////////////////
-
-
-
-	return true;
 }
 
 
@@ -384,4 +380,23 @@ float CBuzzMachineWrapper::GetPropertyMax(int index)
 float CBuzzMachineWrapper::GetPropertyStep(int index)
 {
 	return 0.1f;
+}
+
+
+void CBuzzMachineWrapper::loadDefaults()
+{
+	if(NULL != m_pMachineInfo)
+	{
+		for(int i=0; i<GetParamCount(); i++)
+		{
+			const CMachineParameter *param = m_pMachineInfo->Parameters[i];
+			SetParamVal(i, (float)param->DefValue);
+		}
+
+		for(i=0; i<GetPropertyCount(); i++)
+		{
+			const CMachineAttribute *att = m_pMachineInfo->Attributes[i];
+			SetPropertyVal(i, (float)att->DefValue);
+		}
+	}
 }

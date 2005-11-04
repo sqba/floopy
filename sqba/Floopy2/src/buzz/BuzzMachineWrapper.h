@@ -57,7 +57,7 @@ public:
 	//char *GetPropertyUnit(int index);
 
 private:
-	bool create(char *name);
+	void loadDefaults();
 
 private:
 	HINSTANCE m_hinst;	/** Windows specific, handle to the DLL

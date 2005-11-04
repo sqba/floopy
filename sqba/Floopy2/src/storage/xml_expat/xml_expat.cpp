@@ -408,13 +408,16 @@ void writeProperties(FILE *fp, IFloopySoundInput *input)
 			if(input->GetPropertyVal(i, &propVal))
 			{
 				char *propName = input->GetPropertyName(i);
-				
-				if(!bStart)
-					fprintf(fp, " "); // Separator
-				else
-					bStart = false;
-				
-				fprintf(fp, "%s='%.4f'", propName, propVal);
+
+				if(NULL == strchr(propName, ' '))
+				{
+					if(!bStart)
+						fprintf(fp, " "); // Separator
+					else
+						bStart = false;
+					
+					fprintf(fp, "%s='%.4f'", propName, propVal);
+				}
 			}
 		}
 
