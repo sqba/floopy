@@ -10,8 +10,19 @@ long Callback(AEffect *effect, long opcode,
 {
 	switch(opcode)
 	{
-	case audioMasterVersion:
-		return 1;
+	case audioMasterAutomate:		// index, value, returns 0
+		return 0;
+	case audioMasterVersion:		// VST Version supported (for example 2200 for VST 2.2)
+		return 2;
+	case audioMasterCurrentId:		// Returns the unique id of a plug that's currently loading
+		return 0;
+	case audioMasterIdle:			// Call application idle routine (this will call
+		return 0;					// effEditIdle for all open editors too) 
+	case audioMasterPinConnected:	// Inquire if an input or output is beeing connected;
+		return 0;					// index enumerates input or output counting from zero,
+									// value is 0 for input and != 0 otherwise. note: the
+									// return value is 0 for <true> such that older versions
+									// will always return true.
 	}
 	return 0;
 }
@@ -96,7 +107,7 @@ bool CVstWrapper::Open(char *filename)
 		return false;
 	}
 
-	m_pAudioEffect = (AudioEffectX*)m_pPlugin->object;
+	m_pAudioEffect = (AudioEffect*)m_pPlugin->object;
 
 	m_pPlugin->setParameter(m_pPlugin, 0, 0.5);
 	m_pPlugin->setParameter(m_pPlugin, 1, 0.5);
@@ -230,11 +241,17 @@ void CVstWrapper::SetParamVal(int index, float value)
 
 char *CVstWrapper::GetParamName(int index)
 {
-	static char name[100];
-	memset(name, 0, 100);
+	static char name[9];
+	memset(name, 0, 9);
 	if(NULL != m_pAudioEffect)
 	{
-		m_pAudioEffect->getParameterName(index, name);
+		try {
+			AEffect *a = m_pAudioEffect->getAeffect();
+			if(a->version > 0)
+				m_pAudioEffect->getParameterName(index, name);
+		} catch(...) {
+			int d=1;
+		}
 		return name;
 	}
 	return NULL;

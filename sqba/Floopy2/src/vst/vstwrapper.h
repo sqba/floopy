@@ -56,7 +56,7 @@ private:
 
 	//AudioEffectX	*m_pPlugin;
 	AEffect		*m_pPlugin;
-	AudioEffectX	*m_pAudioEffect;
+	AudioEffect	*m_pAudioEffect;
 
 	float *m_pOutputs[2];
 	float *m_pInputs[2];
