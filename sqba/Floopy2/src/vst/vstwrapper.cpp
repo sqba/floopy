@@ -222,7 +222,7 @@ float CVstWrapper::GetParamStep(int index)
 
 bool CVstWrapper::GetParamVal(int index, float *value)
 {
-	if(NULL != m_pPlugin)
+	if(NULL!=m_pPlugin && index<GetParamCount())
 	{
 		*value = m_pPlugin->getParameter(m_pPlugin, index);
 		return true;
@@ -232,7 +232,7 @@ bool CVstWrapper::GetParamVal(int index, float *value)
 
 void CVstWrapper::SetParamVal(int index, float value)
 {
-	if(NULL != m_pPlugin)
+	if(NULL!=m_pPlugin && index<GetParamCount())
 		m_pPlugin->setParameter(m_pPlugin, index, value);
 
 //	if(NULL != m_pAudioEffect)
@@ -243,7 +243,7 @@ char *CVstWrapper::GetParamName(int index)
 {
 	static char name[9];
 	memset(name, 0, 9);
-	if(NULL != m_pAudioEffect)
+	if(NULL!=m_pAudioEffect && index<GetParamCount())
 	{
 		try {
 			AEffect *a = m_pAudioEffect->getAeffect();

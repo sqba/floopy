@@ -176,6 +176,12 @@ __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
 	return;
 }
 
+
+__declspec( dllexport ) IFloopySoundFilter *CreateConvertor(SOUNDFORMAT fmtIn, SOUNDFORMAT fmtOut)
+{
+	return NULL;
+}
+
 #ifdef __cplusplus
 }
 #endif
