@@ -1,4 +1,4 @@
-// BuzzMachineWrapper.cpp: implementation of the CVstWrapper class.
+// vstwrapper.cpp: implementation of the CVstWrapper class.
 //
 //////////////////////////////////////////////////////////////////////
 
