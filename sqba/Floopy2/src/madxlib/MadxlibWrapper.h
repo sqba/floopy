@@ -42,13 +42,12 @@ public:
 private:
 	char m_szLastError[100];
 
-	FILE	*in_file;
+	FILE	*m_pInFile;
 
 	// Output file and output buffer
 	unsigned char	in_buffer[MADX_INPUT_BUFFER_SIZE + MAD_BUFFER_GUARD];
 	unsigned char	out_buffer[MADX_OUTPUT_BUFFER_SIZE];
     
-	size_t	a;
 	size_t	in_size;
 
 	// Structure necessary to use madxlib

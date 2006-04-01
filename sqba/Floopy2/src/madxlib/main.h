@@ -12,7 +12,7 @@ __declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 	if(!name)
 		return NULL;
 
-	if( 0 == stricmp(name, "machine") )
+	if( 0 == stricmp(name, "decoder") )
 		return new CMadxlibWrapper();
 
 	return NULL;
@@ -33,7 +33,7 @@ __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
 	switch(index)
 	{
 	case 0:
-		name = "machine";
+		name = "decoder";
 		*type = TYPE_FLOOPY_SOUND_INPUT;
 		break;
 	}
