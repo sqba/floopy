@@ -22,7 +22,8 @@ public:
 	void OnDrawBG(wxDC &dc);
 
 protected:
-	CTracks *m_pTracks;
+	CTracks		*m_pTracks;
+	bool		m_bDrawAquaBG;
 };
 
 #endif // !defined(AFX_FLOOPYHRULER_H__4778C646_CA6A_4FD2_8B07_C077DD680589__INCLUDED_)

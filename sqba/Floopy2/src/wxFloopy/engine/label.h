@@ -39,6 +39,8 @@ private:
 private:
 	wxRect		m_rcLabel;
 	CPathCtrl	*m_pPathCtrl;
+
+	bool		m_bDrawAquaBG;
 };
 
 

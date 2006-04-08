@@ -10,6 +10,7 @@
 CLabel::CLabel(CTrack *track) : IFloopyObj(track)
 {
 	m_pPathCtrl = new CPathCtrl(this, track->GetInput());
+	m_bDrawAquaBG = DRAW_AQUA_LABELS;
 }
 
 CLabel::~CLabel()
@@ -35,7 +36,7 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 
 	int left, top, width, height;
 
-	if(DRAW_AQUA_LABELS)
+	if(m_bDrawAquaBG)
 	{
 		// Draw aqua background
 		left   = 0;

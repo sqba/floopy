@@ -416,9 +416,9 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	wxBrush brush(GetBGColor(), wxSOLID);
 
 	if(DRAW_TRANSPARENT_REGION)
-		dc.SetBrush(brush);
-	else
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+	else
+		dc.SetBrush(brush);
 
 	int top    = rc.GetTop() + 1;
 	int height = rc.GetHeight() - 2;

@@ -6,6 +6,7 @@
 #include "../engine/region.h"
 #include "../engine/tracks.h"
 #include "../engine/regiondisplay.h"
+#include "../globals.h"
 
 
 #include <math.h>
@@ -25,10 +26,10 @@ CRegionDisplay::CRegionDisplay(CRegion *region) : IFloopyObj(region)
 	m_pLastPeak		= NULL;
 	m_iPeakCount	= 0;
 
-	m_fdB			= -6.f;
-	m_bDrawDBLines	= true;
-	m_bDrawContour	= false;
-	m_iBufferLength	= 1280;
+	m_fdB			= DB_LINES;
+	m_bDrawDBLines	= DRAW_DB_LINES;
+	m_bDrawContour	= DRAW_WAVE_CONTOUR;
+	m_iBufferLength	= BUFFER_LENGTH;
 }
 
 CRegionDisplay::~CRegionDisplay()

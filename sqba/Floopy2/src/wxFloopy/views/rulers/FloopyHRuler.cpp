@@ -15,6 +15,8 @@ CFloopyHRuler::CFloopyHRuler(CRulerView *parent, CTracks *tracks)
 	m_pTracks = tracks;
 
 	SetWindowStyle(wxNO_BORDER);
+
+	m_bDrawAquaBG = DRAW_AQUA_RULERS;
 }
 
 CFloopyHRuler::~CFloopyHRuler()
@@ -39,7 +41,7 @@ void CFloopyHRuler::OnDrawBG(wxDC &dc)
 	int width = m_pTracks->GetWidth();
 	int height = size.GetHeight();
 
-	if(DRAW_AQUA_RULERS)
+	if(m_bDrawAquaBG)
 		DrawAquaRect(dc, wxRect(0, 0, width, height), 0);
 	else
 		DrawRect3D(dc, wxRect(left, 0, width, height));

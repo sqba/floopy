@@ -6,6 +6,11 @@
 #include "../util/util.h"
 
 
+CRegion::COffsetBar::COffsetBar(CRegion *region) : IFloopyObj(region)
+{
+	m_bDrawAquaBG = DRAW_AQUA_RULERS;
+}
+
 int CRegion::COffsetBar::GetHeight()
 {
 	return 15;
@@ -14,9 +19,9 @@ int CRegion::COffsetBar::GetHeight()
 void CRegion::COffsetBar::Move(int dx, int WXUNUSED(dy))
 {
 	// Move start offset
-	CRegion *pRegion = getRegion();
-	CTrack  *pTrack = (CTrack*)pRegion->GetParent();
-	CTracks *pTracks = (CTracks*)pTrack->GetParent();
+	CRegion *pRegion	= getRegion();
+	CTrack  *pTrack		= (CTrack*)pRegion->GetParent();
+	CTracks *pTracks	= (CTracks*)pTrack->GetParent();
 
 //	SOUNDFORMAT *fmt = pTracks->GetInput()->GetFormat();
 //	int channels = fmt->channels;
@@ -38,7 +43,7 @@ void CRegion::COffsetBar::DrawBG(wxDC &dc, wxRect &rc)
 	int right	= left + width;
 	int bottom	= rc.GetBottom();
 
-	if(DRAW_AQUA_RULERS)
+	if(m_bDrawAquaBG)
 		DrawAquaRect(dc, wxRect(left, top, width, height), 2);
 	else
 		DrawRect3D(dc, wxRect(left, top, width, height));

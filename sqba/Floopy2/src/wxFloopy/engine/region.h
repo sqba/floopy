@@ -47,7 +47,7 @@ public:
 	class COffsetBar : public IFloopyObj
 	{
 	public:
-		COffsetBar(CRegion *region) : IFloopyObj(region) {}
+		COffsetBar(CRegion *region);
 		virtual ~COffsetBar() {}
 
 		int GetType()						{ return FLOOPY_REGION_OFFSET_BAR; }
@@ -63,6 +63,7 @@ public:
 	private:
 		inline CRegion  *getRegion()		{ return (CRegion*)GetParent(); }
 		CRegion *getPrevRegion();
+		bool	m_bDrawAquaBG;
 
 	private:
 		int m_iStart;
