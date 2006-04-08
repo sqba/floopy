@@ -1,5 +1,6 @@
 
 
+#include "../globals.h"
 #include "tracks.h"
 #include "track.h"
 #include "label.h"
@@ -34,7 +35,17 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 
 	int left, top, width, height;
 
-	if(true)
+	if(DRAW_AQUA_LABELS)
+	{
+		// Draw aqua background
+		left   = 0;
+		top    = rc.GetTop();
+		width  = rc.GetWidth()-left;
+		height = rc.GetHeight();
+		//dc.DrawRectangle(left, top, width, height);
+		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2), 4);
+	}
+	else
 	{
 		// Draw background
 		left   = 1;//m_nLevel*4+2;
@@ -44,16 +55,6 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 		//dc.DrawRoundedRectangle(left, top, width, height, 4);
 		//DrawRect3D(dc, wxRect(left, top, width, height));
 		DrawRect3D(dc, rc);
-	}
-	else
-	{
-		// Draw aqua background
-		left   = 0;
-		top    = rc.GetTop();
-		width  = rc.GetWidth()-left;
-		height = rc.GetHeight();
-		//dc.DrawRectangle(left, top, width, height);
-		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2), 4);
 	}
 
 	dc.SetTextForeground( track->GetForeColor() );

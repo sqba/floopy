@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <math.h>
+#include "../globals.h"
 #include "tracks.h"
 #include "track.h"
 #include "region.h"
@@ -14,8 +15,6 @@
 //IMPLEMENT_DYNAMIC_CLASS(CRegion, IFloopyObj)
 
 //WX_DEFINE_LIST(ParameterList);
-
-//#define TRANSPARENT_BACKGROUND
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -416,11 +415,10 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	//wxBrush brush(GetColor(), wxSOLID);
 	wxBrush brush(GetBGColor(), wxSOLID);
 
-#ifndef TRANSPARENT_BACKGROUND
+	if(DRAW_TRANSPARENT_REGION)
 		dc.SetBrush(brush);
-#else
+	else
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-#endif
 
 	int top    = rc.GetTop() + 1;
 	int height = rc.GetHeight() - 2;
@@ -485,9 +483,9 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	//wxColor color = GetColor();
 	wxColor color = GetForeColor();
 
-#ifndef TRANSPARENT_BACKGROUND
-	//color.Set(color.Red()/2, color.Green()/2, color.Blue()/2);
-#endif
+//	if(DRAW_TRANSPARENT_REGION)
+//		color.Set(color.Red()/2, color.Green()/2, color.Blue()/2);
+
 	dc.SetPen(wxPen(color, 1));
 	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
 	CRegionDisplay *disp = m_pDisplay;
