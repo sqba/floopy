@@ -501,7 +501,7 @@ bool CTracks::Open(char *filename)
 {
 	bool result = false;
 
-//	((CTimelineView*)m_pTimelineView)->Init();
+	((CTimelineView*)m_pTimelineView->GetView())->Init();
 
 	::wxSetCursor( *wxHOURGLASS_CURSOR );
 
