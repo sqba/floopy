@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 wxmsw25d_core.lib wxbase25d.lib user32.lib gdi32.lib shell32.lib comdlg32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"libcid.lib" /out:"../../../Debug/wxFloopy.exe" /pdbtype:sept /libpath:"D:\wxWidgets-2.5.2\lib" /libpath:"D:\wxWidgets-2.5.2\contrib\lib"
+# ADD LINK32 wxmsw26d_core.lib wxbase26d.lib user32.lib gdi32.lib shell32.lib comdlg32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcd.lib" /nodefaultlib:"libcid.lib" /out:"../../../Debug/wxFloopy.exe" /pdbtype:sept /libpath:"D:\wxWidgets-2.5.2\lib" /libpath:"D:\wxWidgets-2.5.2\contrib\lib"
 
 !ENDIF 
 
