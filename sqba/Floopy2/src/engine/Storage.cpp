@@ -15,29 +15,25 @@ typedef bool (*StorageProc)(IFloopySoundEngine*, char*);
 
 CStorage::CStorage(IFloopySoundEngine *engine, char *plugin)
 {
-	m_hinst = NULL;
 	m_engine = engine;
 
 	char *filename = new char[strlen(plugin) + 5];
 	strcpy(filename, plugin);
 	strcat(filename, PLUG_EXT);
-	m_hinst = LoadLibraryA(filename);
+
+	LoadPlugin(filename);
 
 	delete[] filename;
 }
 
 CStorage::~CStorage()
 {
-	if(NULL != m_hinst)
-		FreeLibrary(m_hinst);
 }
 
 bool CStorage::Load(char *filename)
 {
-	if(NULL == m_hinst)
-		return false;
+	StorageProc func = (StorageProc)GetFunction(PROC_NAME_LOAD);
 
-	StorageProc func = (StorageProc)GetProcAddress(m_hinst, PROC_NAME_LOAD); 
 	if(NULL == func)
 		return false;
 
@@ -46,10 +42,8 @@ bool CStorage::Load(char *filename)
 
 bool CStorage::Save(char *filename)
 {
-	if(NULL == m_hinst)
-		return false;
+	StorageProc func = (StorageProc)GetFunction(PROC_NAME_SAVE);
 
-	StorageProc func = (StorageProc)GetProcAddress(m_hinst, PROC_NAME_SAVE); 
 	if(NULL == func)
 		return false;
 

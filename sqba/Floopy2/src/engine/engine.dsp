@@ -110,6 +110,10 @@ SOURCE=.\Output.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\PluginLoader.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Storage.cpp
 # End Source File
 # Begin Source File
@@ -135,6 +139,10 @@ SOURCE=.\Input.h
 # Begin Source File
 
 SOURCE=.\Output.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PluginLoader.h
 # End Source File
 # Begin Source File
 

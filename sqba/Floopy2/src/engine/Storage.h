@@ -2,19 +2,19 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_STORAGE_H__D2BE1D70_0029_47BA_9E1D_599A381DB224__INCLUDED_)
-#define AFX_STORAGE_H__D2BE1D70_0029_47BA_9E1D_599A381DB224__INCLUDED_
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+#if !defined(STORAGE_H)
+#define STORAGE_H
 
 #include "../ifloopy.h"
+#include "PluginLoader.h"
 
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-
-class CStorage  
+/*********************************************************************
+ *! \class CStorage
+ *  \brief Storage plugin wrapper.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *********************************************************************/
+class CStorage : CPluginLoader
 {
 public:
 	CStorage(IFloopySoundEngine *engine, char *plugin);
@@ -24,8 +24,7 @@ public:
 	bool Save(char *filename);
 
 private:
-	HINSTANCE m_hinst;
 	IFloopySoundEngine *m_engine;
 };
 
-#endif // !defined(AFX_STORAGE_H__D2BE1D70_0029_47BA_9E1D_599A381DB224__INCLUDED_)
+#endif // !defined(STORAGE_H)

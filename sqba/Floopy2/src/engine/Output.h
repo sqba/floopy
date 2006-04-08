@@ -12,9 +12,7 @@
 #include "../ifloopy.h"
 #include <stdio.h>
 #include "timeline.h"
-
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
+#include "PluginLoader.h"
 
 /**
  * \class COutput
@@ -25,7 +23,7 @@
  *
  * Output plug-in wrapper class.
  */
-class COutput : public IFloopySoundOutput
+class COutput : public IFloopySoundOutput, CPluginLoader
 {
 public:
 	COutput();
@@ -72,7 +70,6 @@ private:
 
 	int m_samplesToBytes;
 	int m_offset;
-	HINSTANCE m_hinst;
 	IFloopySoundOutput *m_plugin;
 	CTimeline m_timeline;
 };

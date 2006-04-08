@@ -17,7 +17,6 @@ typedef IFloopySoundOutput* (*CreateProc)(char*, SOUNDFORMAT);
 
 COutput::COutput()
 {
-	m_hinst				= NULL;
 	m_plugin			= NULL;
 	m_offset			= 0;
 	m_samplesToBytes	= 0;
@@ -27,9 +26,6 @@ COutput::~COutput()
 {
 	if(NULL != m_plugin)
 		delete m_plugin;
-
-	if(NULL != m_hinst)
-		FreeLibrary(m_hinst);
 }
 
 
@@ -81,8 +77,7 @@ bool COutput::Create(char *plugin, SOUNDFORMAT fmt)
 	strcpy(filename, library);
 	strcat(filename, PLUG_EXT);
 	
-	m_hinst = LoadLibraryA(filename);
-	if (NULL == m_hinst)
+	if( !LoadPlugin(filename) )
 	{
 		sprintf(m_szLastError, "File not found: %s.\n\0", filename);
 		delete filename;
@@ -90,7 +85,7 @@ bool COutput::Create(char *plugin, SOUNDFORMAT fmt)
 	}
 	delete filename;
 
-	CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
+	CreateProc func = (CreateProc)GetFunction(PROC_NAME);
 	if(func == NULL)
 	{
 		sprintf(m_szLastError, "Function %s() not found in file: %s.\n\0", PROC_NAME, filename);

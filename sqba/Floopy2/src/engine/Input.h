@@ -10,11 +10,9 @@
 #endif // _MSC_VER > 1000
 
 
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-
 #include "../ifloopy.h"
 #include "timeline.h"
+#include "PluginLoader.h"
 
 
 
@@ -29,7 +27,7 @@
  * Memorizes all parameter changes and the offsets at which they occured.
  * These parameters are then set during execution.
  */
-class CInput : public IFloopySoundMixer
+class CInput : public IFloopySoundMixer, CPluginLoader
 {
 public:
 	CInput(UpdateCallback func);
@@ -164,9 +162,6 @@ private:
 
 	UpdateCallback		m_callback;	/** Pointer to the function called after every
 										parameter change during reading */
-
-	HINSTANCE			m_hinst;	/** Windows specific, handle to the DLL
-										containing the plugin */
 
 	int					m_offset;	/** Current position, in bytes */
 	IFloopySoundInput*	m_plugin;	/** Pointer to the plugin component */

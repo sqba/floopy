@@ -21,7 +21,6 @@ typedef IFloopySoundInput* (*CreateProc)(char *name);
 CInput::CInput(UpdateCallback func)
 {
 	m_callback	= func;
-	m_hinst		= NULL;
 	m_plugin	= NULL;
 
 	m_red = m_green = m_blue = 256; /// Invalid value
@@ -43,9 +42,6 @@ CInput::~CInput()
 	if(NULL != m_plugin)
 		delete m_plugin;
 
-	if(NULL != m_hinst)
-		FreeLibrary(m_hinst);
-
 	if(NULL != m_pDefaultParams)
 		delete[] m_pDefaultParams;
 }
@@ -63,14 +59,13 @@ bool CInput::Create(char *name)
 	getLibraryName(name, library);
 	getPluginName(name, plugin);
 
-	m_hinst = LoadLibraryA( library );
-	if(NULL == m_hinst)
+	if( !LoadPlugin(library) )
 	{
 		sprintf(m_szLastError, "File '%s' not found.\n\0", library);
 		return false;
 	}
 
-	CreateProc func = (CreateProc)GetProcAddress(m_hinst, PROC_NAME); 
+	CreateProc func = (CreateProc)GetFunction(PROC_NAME); 
 	if(NULL == func)
 	{
 		sprintf(m_szLastError, "Function '%s' not found in library '%s'.\n\0",
