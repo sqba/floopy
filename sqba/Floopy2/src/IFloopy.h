@@ -6,9 +6,9 @@
 
 
 #define TIMELINE_PARAM_ENABLE		-1	/// Index of the Enable/Disable parameter
+#define TIMELINE_PARAM_MOVETO		-2	/// Index of the MoveTo parameter
 #define PARAM_VALUE_ENABLED		1000.f	/// Value of the Enable parameter
 #define PARAM_VALUE_DISABLED	2000.f	/// Value of the Disable parameter
-#define TIMELINE_PARAM_MOVETO		-2	/// Index of the MoveTo parameter
 
 #define SIZE_INFINITE				-1	/// Value returned by GetSize() if the source
 										/// is a generator or is looped
