@@ -252,6 +252,10 @@ SOURCE=.\engine\FloopyObj.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\globals.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\views\gridview.h
 # End Source File
 # Begin Source File

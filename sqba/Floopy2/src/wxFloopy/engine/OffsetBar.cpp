@@ -1,4 +1,5 @@
 
+#include "../globals.h"
 #include "tracks.h"
 #include "track.h"
 #include "region.h"
@@ -37,7 +38,7 @@ void CRegion::COffsetBar::DrawBG(wxDC &dc, wxRect &rc)
 	int right	= left + width;
 	int bottom	= rc.GetBottom();
 
-	if(false)
+	if(DRAW_AQUA_RULERS)
 		DrawAquaRect(dc, wxRect(left, top, width, height), 2);
 	else
 		DrawRect3D(dc, wxRect(left, top, width, height));

@@ -2,6 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "../../globals.h"
 #include "FloopyHRuler.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -38,6 +39,8 @@ void CFloopyHRuler::OnDrawBG(wxDC &dc)
 	int width = m_pTracks->GetWidth();
 	int height = size.GetHeight();
 
-	DrawRect3D(dc, wxRect(left, 0, width, height));
-	//DrawAquaRect(dc, wxRect(0, 0, width, height), 0);
+	if(DRAW_AQUA_RULERS)
+		DrawAquaRect(dc, wxRect(0, 0, width, height), 0);
+	else
+		DrawRect3D(dc, wxRect(left, 0, width, height));
 }
