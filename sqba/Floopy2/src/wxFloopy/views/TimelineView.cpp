@@ -22,7 +22,7 @@ END_EVENT_TABLE()
 //////////////////////////////////////////////////////////////////////
 
 
-wxToolTip			*gToolTip;
+wxToolTip *gToolTip;
 
 
 CTimelineView::CTimelineView(CRulerView* parent, wxScrolledWindow *labels, CTracks *tracks)
@@ -41,7 +41,7 @@ CTimelineView::CTimelineView(CRulerView* parent, wxScrolledWindow *labels, CTrac
 	m_pPropsDialog = new CControlDlg( tracks );
 
 	SetTopRuler( new CTimeRuler(parent, tracks) );
-//	SetBottomRuler( new CSampleRuler(parent, tracks) );
+	SetBottomRuler( new CSampleRuler(parent, tracks) );
 
 	wxLog::AddTraceMask(_T("CTimelineView"));
 }

@@ -69,8 +69,8 @@ void CRulerView::ScrollWindow( int dx, int dy, const wxRect *rect )
 void CRulerView::OnSize( wxSizeEvent& event )
 {
 	int cw, ch;
-	//GetClientSize( &cw, &ch );
-	GetVirtualSize( &cw, &ch );
+	GetClientSize( &cw, &ch );
+	//GetVirtualSize( &cw, &ch );
 	//cw = GetSize().GetWidth();
 
 	int viewTop = 0;
