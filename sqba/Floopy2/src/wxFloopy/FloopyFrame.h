@@ -3,6 +3,7 @@
 
 
 #include <wx/dnd.h>
+#include <wx/timer.h>
 
 #include "views/tracksview.h"
 
@@ -10,6 +11,19 @@
 class CFloopyFrame : public wxFrame
 {
 //	DECLARE_DYNAMIC_CLASS(CFloopyFrame)
+
+private:
+	class CTimer : public wxTimer
+	{
+	public:
+		CTimer() : wxTimer() {}
+
+		void Start(CFloopyFrame *frame);
+		void Notify();
+
+	private:
+		CFloopyFrame *m_pFrame;
+	};
 
 private:
 	class CDropTarget : public wxFileDropTarget
@@ -39,6 +53,7 @@ public:
 	bool Save();
 	bool SaveAs();
 	bool Close();
+	void ShowFreeMemory();
 
 private:
 	void OnFullScreen( wxCommandEvent &WXUNUSED(event) );
@@ -62,6 +77,7 @@ private:
 	CDropTarget	*m_pDropTarget;
 	CTracksView	*m_pView;
 	CTracks		*m_pTracks;
+	CTimer		m_Timer;
 
 private:
     DECLARE_EVENT_TABLE()

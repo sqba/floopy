@@ -69,6 +69,8 @@ CFloopyFrame::CFloopyFrame() : wxFrame((wxFrame*)NULL,
 	initToolbar();
 
 	wxFrame::Centre();
+
+	m_Timer.Start(this);
 }
 
 CFloopyFrame::~CFloopyFrame()
@@ -282,4 +284,39 @@ bool CFloopyFrame::Close()
 	else
 		m_pTracks->Clear();
 	return bResult;
+}
+
+void CFloopyFrame::ShowFreeMemory()
+{
+	wxString str;
+	wxMemorySize mem = ::wxGetFreeMemory();
+	wxString ext[] = {"B", "KB", "MB", "GB", "TB"};
+	int i=0;
+	int cnt = sizeof(ext) / sizeof(wxString);
+	while(mem > 1024 && i < cnt)
+	{
+		mem /= 1024;
+		i++;
+	}
+	str.Printf("%d %s free memory", mem, ext[i]);
+	GetStatusBar()->SetStatusText(str, 3);
+}
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+// CTimer functions
+/////////////////////////////////////////////////////////////////////
+void CFloopyFrame::CTimer::Start(CFloopyFrame *frame)
+{
+	m_pFrame = frame;
+	wxTimer::Start(1000, wxTIMER_CONTINUOUS);
+}
+
+void CFloopyFrame::CTimer::Notify()
+{
+	m_pFrame->ShowFreeMemory();
 }
