@@ -110,6 +110,10 @@ SOURCE=.\Output.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\OutputCache.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\PluginLoader.cpp
 # End Source File
 # Begin Source File
@@ -139,6 +143,10 @@ SOURCE=.\Input.h
 # Begin Source File
 
 SOURCE=.\Output.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\OutputCache.h
 # End Source File
 # Begin Source File
 

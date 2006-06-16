@@ -172,6 +172,10 @@ SOURCE=.\engine\PlayThread.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\views\ProjectView.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\util\rect3d.cpp
 # End Source File
 # Begin Source File
@@ -285,6 +289,10 @@ SOURCE=.\engine\PathCtrl.h
 # Begin Source File
 
 SOURCE=.\engine\playthread.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\views\ProjectView.h
 # End Source File
 # Begin Source File
 
