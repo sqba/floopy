@@ -5,8 +5,7 @@
 
 #include "../ifloopy.h"
 
-#include "CVSTHost.h"
-
+#include "Wrapper.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -14,7 +13,13 @@ extern "C" {
 
 __declspec( dllexport ) IFloopySoundInput *CreateInput(char *name)
 {
-	return NULL;//new CVSTHost();
+	if(!name)
+		return NULL;
+
+	if( 0 == stricmp(name, "wrapper") )
+		return new CWrapper();
+
+	return NULL;
 }
 
 __declspec( dllexport ) int GetPluginCount()
@@ -24,8 +29,14 @@ __declspec( dllexport ) int GetPluginCount()
 
 __declspec( dllexport ) void GetPluginInfo(int index, char *name, int *type)
 {
-	name = "VSTHost";
-	*type = TYPE_FLOOPY_SOUND_FILTER;
+	switch(index)
+	{
+	case 0:
+		name = "wrapper";
+		*type = TYPE_FLOOPY_SOUND_INPUT;
+		break;
+	}
+	return;
 }
 
 #ifdef __cplusplus
