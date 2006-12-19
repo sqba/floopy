@@ -18,10 +18,14 @@ typedef IFloopySoundInput* (*CreateProc)(char *name);
 #define PLUG_EXT	".dll"
 
 
-CInput::CInput(UpdateCallback func)
+CInput::CInput(UpdateCallback func, COutputCache *outputCache)
 {
-	m_callback	= func;
-	m_plugin	= NULL;
+	m_callback		= func;
+	m_plugin		= NULL;
+	m_pOutputCache	= outputCache;
+	m_pDefaultParams = NULL;
+	m_bFadeEdges	= true;
+	m_pSignature	= NULL;
 
 	m_red = m_green = m_blue = 256; /// Invalid value
 
@@ -32,9 +36,6 @@ CInput::CInput(UpdateCallback func)
 	m_offset = m_nStartOffset = m_nEndOffset = 0;
 	m_nSkipBytes = m_nSamplesToBytes = 0;
 
-	m_bFadeEdges = true;
-
-	m_pDefaultParams = NULL;
 }
 
 CInput::~CInput()
@@ -44,6 +45,9 @@ CInput::~CInput()
 
 	if(NULL != m_pDefaultParams)
 		delete[] m_pDefaultParams;
+
+	if(NULL != m_pSignature)
+		delete m_pSignature;
 }
 
 /**
@@ -92,6 +96,8 @@ bool CInput::Create(char *name)
 	SetDisplayName(plugin, strlen(tmp));
 
 	loadDefaultParams();
+
+	createSignature();
 
 	return true;
 }
@@ -147,6 +153,7 @@ bool CInput::Open(char *filename)
 		filename = tmp ? tmp+1 : filename;
 		SetDisplayName(filename, strlen(filename));
 		recalcVariables();
+		createSignature();
 		return true;
 	}
 	return false;
@@ -194,10 +201,13 @@ int CInput::Read(BYTE *data, int size)
 	assert(m_nSamplesToBytes > 0);
 	assert(size > 0);
 
+	int result = readFromCache(data, size);
+	if(result > 0)
+		return result;
+
 	int len			= 0;
 	int endpos		= m_offset + size;
 	IFloopySoundInput *src = NULL;
-	int result		= 0;
 
 	if( isEndOfTrack() )
 	{
@@ -253,6 +263,8 @@ int CInput::Read(BYTE *data, int size)
 
 	if(result==0 && len==EOF)
 		result = EOF;
+
+//	gOutputCache->Add(signature, data);
 
 	return result;
 }
@@ -1052,4 +1064,83 @@ void CInput::getPluginName(char *fullname, char *name)
 		strcpy(name, tmp);
 	else
 		strncpy(name, tmp, _MAX_FNAME);
+}
+
+void CInput::createSignature()
+{
+	return;
+
+	if(m_pSignature != NULL)
+	{
+		delete m_pSignature;
+		m_pSignature = NULL;
+	}
+
+	if(m_nSamplesToBytes == 0)
+		return;
+
+	char *inSig	= m_source->GetSignature();
+	char *name	= m_source->GetName();
+	int count	= GetPropertyCount() + GetParamCount();
+	float *fSig = new float[ count ];
+
+	for(int i=0; i<GetPropertyCount(); i++)
+	{
+		float val = 0.f;
+		GetPropertyVal(i, &val);
+		fSig[i] = val;
+	}
+	for(int n=i; n<GetParamCount()+i; n++)
+	{
+		float val = 0.f;
+		GetParamVal(n, &val);
+		fSig[n] = val;
+	}
+
+	char *params = new char[count * 11];
+	memset(params, 0, count * 11);
+	for(i=0; i<count; i++)
+	{
+		char param[11] = {0};
+		sprintf(param, "%f\0", fSig[i]);
+		strncat(params, param, 10);
+	}
+	
+	int pos = GetPosition();
+
+	int len = sizeof(inSig) * sizeof(char)
+		+ sizeof(name) * sizeof(char)
+		+ sizeof(params) * sizeof(char);
+	m_pSignature = new char[len];
+	memset(m_pSignature, 0, len);
+	if(inSig != NULL)
+		strcat(m_pSignature, inSig);
+	strcat(m_pSignature, name);
+	strcat(m_pSignature, params);
+
+	delete fSig;
+	delete params;
+}
+
+/**
+ * Returns the signature of the component, along with it's input signature.
+ */
+char *CInput::GetSignature()
+{
+	return m_pSignature;
+}
+
+/**
+ * Tries to read the buffer from the global cache.
+ */
+int CInput::readFromCache(BYTE *data, int size)
+{
+	char *signature = GetSignature();
+	if(signature != NULL)
+	{
+		int result = m_pOutputCache->Get(signature, GetPosition(), data, size);
+		if(result > 0)
+			return result;
+	}
+	return 0;
 }

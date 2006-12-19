@@ -1,7 +1,7 @@
 
 
-#define DRAW_AQUA_RULERS		false
-#define DRAW_AQUA_LABELS		false
+#define DRAW_AQUA_RULERS		true
+#define DRAW_AQUA_LABELS		true
 #define DRAW_TRANSPARENT_REGION	false
 #define DRAW_DB_LINES			true
 #define DRAW_WAVE_CONTOUR		false

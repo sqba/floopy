@@ -45,6 +45,40 @@ CEngine::CEngine(HMODULE hModule)
 	m_red = m_green = m_blue = 256;
 }
 
+
+CEngine::CEngine(HMODULE hModule, COutputCache *pOutputCache)
+{
+	m_hModule = hModule;
+
+	m_pFirst = m_pLast = NULL;
+	memset(m_szDisplayname,	0, sizeof(m_szDisplayname));
+	memset(m_szLastError,	0, sizeof(m_szLastError));
+	memset(m_szPath,		0, sizeof(m_szPath));
+	memset(m_szFileName,	0, sizeof(m_szFileName));
+
+	m_callback = NULL;
+
+	if(hModule)
+	{
+		GetModuleFileName(hModule, m_szPath, MAX_PATH);
+		char *tmp = strrchr(m_szPath, '\\');
+		if(tmp)
+			*(tmp+1) = '\0';
+	}
+
+	// Default values
+	m_format.frequency = 44100;
+	//m_format.format = 
+	m_format.channels = 2;
+	m_format.bitsPerSample = 16;
+
+	m_red = m_green = m_blue = 256;
+
+	//CEngine(hModule);
+
+	m_pOutputCache = pOutputCache;
+}
+
 CEngine::~CEngine()
 {
 	if(m_source)
@@ -56,6 +90,13 @@ CEngine::~CEngine()
 		tmp = m_pFirst->next;
 		delete m_pFirst;
 		m_pFirst = tmp;
+	}
+
+	if(m_pOutputCache != NULL)// && gEngine == this)
+	{
+		delete m_pOutputCache;
+		m_pOutputCache = NULL;
+		//gEngine = NULL;
 	}
 }
 
@@ -111,7 +152,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 				delete engine;
 				return NULL;
 			}
-			obj = new CInput(m_callback);
+			obj = new CInput(m_callback, m_pOutputCache);
 			if(!((CInput*)obj)->Create(engine))
 			{
 				//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -122,7 +163,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 		}
 		else
 		{
-			obj = new CInput(m_callback);
+			obj = new CInput(m_callback, m_pOutputCache);
 			if(!((CInput*)obj)->Create(path))
 			{
 				//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -154,7 +195,7 @@ IFloopySoundInput *CEngine::CreateInput(char *filename)
 		}
 		strcat(path, filename);
 
-		obj = new CInput(m_callback);
+		obj = new CInput(m_callback, m_pOutputCache);
 		if(!((CInput*)obj)->Create(path))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);

@@ -147,6 +147,22 @@ Package=<4>
 
 ###############################################################################
 
+Project: "vsthost"=".\vsthost\vsthost.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/sqba/Floopy2/src/vsthost", LWDAAAAA
+    .\vsthost
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "wxFloopy"=".\gui\wxFloopy\floopy.dsp" - Package Owner=<4>
 
 Package=<5>

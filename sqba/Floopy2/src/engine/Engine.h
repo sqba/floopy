@@ -13,6 +13,8 @@
 #include <time.h>
 #include "../ifloopy.h"
 #include "timeline.h"
+#include "timeline.h"
+#include "outputcache.h"
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
@@ -37,6 +39,7 @@ class CEngine : public IFloopySoundEngine
 {
 public:
 	CEngine(HMODULE hModule);
+	CEngine(HMODULE hModule, COutputCache *pOutputCache);
 	virtual ~CEngine();
 
 	char *GetName()			{ return "engine"; }
@@ -94,6 +97,7 @@ private:
 	UpdateCallback m_callback;		/** Callback function called on parameter changes while playing */
 	tComponent *m_pFirst, *m_pLast;	/** Linked list of all objects created by the engine */
 	UINT m_red, m_green, m_blue;
+	COutputCache *m_pOutputCache;
 };
 
 #endif // !defined(AFX_ENGINE_H__621A6F07_09D1_41D0_A981_DB32D29DA57A__INCLUDED_)

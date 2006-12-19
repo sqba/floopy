@@ -4,11 +4,13 @@
 
 #include "ProjectView.h"
 
+#include "../engine/track.h"
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CProjectView::CProjectView()
+CProjectView::CProjectView(CRulerView* parent) : CView(parent)
 {
 
 }

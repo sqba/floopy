@@ -13,6 +13,7 @@
 #include "../ifloopy.h"
 #include "timeline.h"
 #include "PluginLoader.h"
+#include "outputcache.h"
 
 
 
@@ -30,7 +31,7 @@
 class CInput : public IFloopySoundMixer, CPluginLoader
 {
 public:
-	CInput(UpdateCallback func);
+	CInput(UpdateCallback func, COutputCache *outputCache);
 	virtual ~CInput();
 
 	bool Create(char *plugin);
@@ -111,6 +112,8 @@ public:
 
 	bool GetLastError(char*, int);
 
+	char *GetSignature();
+
 
 
 	///////////////////////////////////////////
@@ -148,7 +151,9 @@ private:
 	void	getLibraryName(char *fullname, char *name);
 	void	getPluginName(char *fullname, char *name);
 
-	void loadDefaultParams();
+	void	loadDefaultParams();
+	int		readFromCache(BYTE *data, int size);
+	void	createSignature();
 
 private:
 	char m_szDisplayName[50];
@@ -177,6 +182,9 @@ private:
 										and vice versa (bytes/m_nSamplesToBytes) */
 
 	int m_nSkipBytes;				/** Optimization, to avoid calling MoveTo() in the loop */
+
+	COutputCache *m_pOutputCache;
+	char *m_pSignature;
 };
 
 #endif // !defined(AFX_INPUT_H__0D3139FE_D3F2_4CAF_A696_AB92E4A51331__INCLUDED_)

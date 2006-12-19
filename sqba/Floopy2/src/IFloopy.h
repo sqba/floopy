@@ -455,6 +455,11 @@ public:
 		return samples * ( (fmt->bitsPerSample / 8) * fmt->channels );
 	}*/
 
+	/**
+	 * No need to override this one, it is used by the engine, for caching.
+	 */
+	virtual char *GetSignature()			{ return NULL; }
+
 protected:
 	//int m_pos;
 };
@@ -543,6 +548,14 @@ public:
 	virtual bool IsEOF()
 	{
 		return (NULL != m_source ? m_source->IsEOF() : true);
+	}
+
+	/**
+	 * No need to override this one, it is used by the engine, for caching.
+	 */
+	virtual char *GetSignature()
+	{
+		return m_source != NULL ? m_source->GetSignature() : NULL;
 	}
 
 protected:
