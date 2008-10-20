@@ -79,7 +79,7 @@ int COSS::open_audio_device (char *name, int mode)
 	
 	/* Set the sample rate */
 	
-	m_sample_rate = 48000;
+	m_sample_rate = 44100;
 	if (ioctl (fd, SNDCTL_DSP_SPEED, &m_sample_rate) == -1)
 	{
 		perror ("SNDCTL_DSP_SPEED");
@@ -99,4 +99,3 @@ int COSS::open_audio_device (char *name, int mode)
 }
 
 #endif // linux
-

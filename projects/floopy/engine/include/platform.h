@@ -1,8 +1,8 @@
 
 #ifdef linux
-#include "linux.h" 
+#include "platform/linux.h" 
 #endif
 
 #ifdef WIN32
-#include "win32.h" 
+#include "platform/win32.h" 
 #endif

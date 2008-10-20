@@ -12,7 +12,7 @@
 
 CWaveOut::CWaveOut(SOUNDFORMAT fmt) : IFloopySoundOutput(fmt)
 {
-	// initialise the module variables
+	// initialize module variables
 	waveBlocks         = allocateBlocks(BLOCK_SIZE, BLOCK_COUNT);
 	waveFreeBlockCount = BLOCK_COUNT;
 	waveCurrentBlock   = 0;
