@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
-#include "../../ifloopy.h"
+#include "../../engine/include/ifloopy.h"
 
 // some good values for block size and count
 #define BLOCK_SIZE		8192
