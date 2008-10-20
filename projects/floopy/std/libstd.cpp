@@ -26,8 +26,10 @@
 
 // Output classes
 #include "wavfile/wavfileout.h"
-#include "waveout/waveout.h"
 #include "8to16bit/convert8to16bit.h"
+
+#include "waveout/waveout.h"
+#include "oss/oss.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -81,6 +83,10 @@ EXPORTED IFloopySoundOutput *CreateOutput(const char *name, SOUNDFORMAT fmt)
 	if(!name)
 		return NULL;
 
+#ifdef linux
+	if( 0 == stricmp(name, "oss") )
+		return new COSS(fmt);
+#endif
 #ifdef WIN32
 	if( 0 == stricmp(name, "waveout") )
 		return new CWaveOut(fmt);

@@ -30,10 +30,12 @@ public:
 	void Pause();
 	
 private:
-	int open_audio_device (char *name, int mode);
+	int open_audio_device (const char *name, int mode);
 	
 private:
+	int fd_out;
 	int m_sample_rate;
+	int m_num_channels;
 };
 
 #endif /*OSS_H_*/

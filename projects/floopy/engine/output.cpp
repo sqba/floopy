@@ -15,7 +15,6 @@
 
 typedef IFloopySoundOutput* (*CreateProc)(const char*, SOUNDFORMAT);
 #define PROC_NAME "CreateOutput"
-#define PLUG_EXT ".dll"
 
 COutput::COutput()
 {
@@ -76,6 +75,7 @@ bool COutput::Create(const char *plugin, SOUNDFORMAT fmt)
 		library = tmp;
 	}
 	char *filename = new char[strlen(library) + 5];
+	GetLibraryPath(filename);
 	strcpy(filename, library);
 	strcat(filename, PLUG_EXT);
 	
@@ -98,6 +98,30 @@ bool COutput::Create(const char *plugin, SOUNDFORMAT fmt)
 	IFloopySoundOutput::SetDest( m_plugin );
 	m_samplesToBytes = (fmt.bitsPerSample / 8) * fmt.channels;
 	return true;
+}
+
+void COutput::GetLibraryPath(char *buff)
+{
+#ifdef WIN32
+	GetModuleFileName(m_hModule, m_szPath, MAX_PATH);
+#else
+	// Linux specific
+
+	// 1. executable
+	readlink("/proc/self/exe", buff, MAX_PATH);
+
+	// 2. dynamic library
+	//DL_info info;
+    //if (dladdr( &GetLibraryPath, &info ) == 0)
+    //	strcpy(m_szPath, info.dli_fname);
+
+    // 3.
+    // g++ -o executable -Wl,-R -Wl,'$ORIGIN' executable.o libhe
+#endif
+
+	char *tmp = strrchr(buff, PATH_SEP);
+	if(tmp)
+		*(tmp+1) = '\0';
 }
 
 int COutput::Write(BYTE *data, int size)

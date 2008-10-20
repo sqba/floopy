@@ -4,7 +4,7 @@
 #define strnicmp					strncasecmp
 
 // Dynamic library stuff
-// Add linker options: -rdynamic -ldl
+// (add linker options: -rdynamic -ldl)
 #define __USE_GNU					// dladdr, DL_info
 #include <dlfcn.h>
 #define PLUG_PREFIX					"lib"

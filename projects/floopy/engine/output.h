@@ -63,6 +63,7 @@ public:
 
 private:
 	void copyErrorDesc();
+	void GetLibraryPath(char *buff);
 
 private:
 	char m_name[50];

@@ -202,7 +202,7 @@ int main(int argc, char* argv[])
 	int i = 0;
 //	char *outfile = NULL;
 
-	CEngineWrapper *engine = new CEngineWrapper((const char*)"engine");
+	CEngineWrapper *engine = new CEngineWrapper("engine");
 	IFloopySoundOutput *output = NULL;
 	IFloopySoundInput *input = engine;
 
@@ -299,8 +299,8 @@ ERR_EXIT:
 	delete output;
 	delete engine;
 
-	fprintf(stderr, "\nPress enter to exit...");
-	getchar();
+//	fprintf(stderr, "\nPress enter to exit...");
+//	getchar();
 	
 	return 0;
 }
