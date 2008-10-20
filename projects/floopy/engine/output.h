@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "../ifloopy.h"
+#include "include/ifloopy.h"
 #include <stdio.h>
 #include "timeline.h"
 #include "pluginloader.h"

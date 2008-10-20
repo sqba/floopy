@@ -3,8 +3,8 @@
 
 #include <string.h>
 
-#include "../ifloopy.h"
-#include "../platform.h"
+#include "../engine/include/ifloopy.h"
+#include "../engine/include/platform.h"
 
 
 // Input classes

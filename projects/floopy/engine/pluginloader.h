@@ -15,7 +15,7 @@
 #include <windows.h>
 #endif
 
-#include "../platform.h"
+#include "include/platform.h"
 
 /*********************************************************************
  *! \class CPluginLoader

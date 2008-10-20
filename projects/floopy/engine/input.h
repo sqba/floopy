@@ -9,8 +9,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "../platform.h"
-#include "../ifloopy.h"
+#include "include/platform.h"
+#include "include/ifloopy.h"
 #include "timeline.h"
 #include "pluginloader.h"
 #include "outputcache.h"

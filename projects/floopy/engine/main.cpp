@@ -3,7 +3,7 @@
 
 #include "engine.h"
 #include "globals.h"
-#include "../platform.h"
+#include "include/platform.h"
 
 /*
 bool APIENTRY DllMain( HANDLE hModule, 

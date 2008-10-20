@@ -12,7 +12,7 @@
 #include <time.h>
 #include <stdio.h>
 
-#include "../../ifloopy.h"
+#include "../../engine/include/ifloopy.h"
 
 class CPerformance : public IFloopySoundFilter  
 {

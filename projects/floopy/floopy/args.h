@@ -1,6 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
-#include "../platform.h"
+#include "../engine/include/platform.h"
 
 /**
  * Vraca numericku vrednost parametra komandne linije.

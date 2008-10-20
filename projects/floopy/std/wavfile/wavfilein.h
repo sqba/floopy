@@ -4,8 +4,8 @@
 #include <stdio.h>	// FILE
 #include <stdlib.h>	// _MAX_PATH
 
-#include "../../ifloopy.h"
-#include "../../platform.h"
+#include "../../engine/include/ifloopy.h"
+#include "../../engine/include/platform.h"
 
 class CWavFileIn : public IFloopySoundInput
 {

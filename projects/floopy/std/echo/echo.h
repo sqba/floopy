@@ -9,7 +9,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "../../ifloopy.h"
+#include "../../engine/include/ifloopy.h"
 
 class CEcho : public IFloopySoundFilter
 {

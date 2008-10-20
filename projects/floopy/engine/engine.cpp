@@ -11,7 +11,7 @@
 #include "storage.h"
 #include "input.h"
 #include "output.h"
-#include "../platform.h"
+#include "include/platform.h"
 
 #define ERR_STR_FILENOTFOUND	"File '%s' not found."
 

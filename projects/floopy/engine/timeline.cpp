@@ -4,7 +4,7 @@
 
 #include "timeline.h"
 
-#include "../ifloopy.h"
+#include "include/ifloopy.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

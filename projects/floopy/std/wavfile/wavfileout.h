@@ -19,8 +19,8 @@
 #include <tchar.h>
 #endif
 
-#include "../../ifloopy.h"
-#include "../../platform.h"
+#include "../../engine/include/ifloopy.h"
+#include "../../engine/include/platform.h"
 #include "headers.h"
 
 class CWavFileOut : public IFloopySoundOutput

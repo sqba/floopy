@@ -10,7 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include <assert.h>
-#include "../../ifloopy.h"
+#include "../../engine/include/ifloopy.h"
 
 class CConvert8to16bit : public IFloopySoundFilter  
 {

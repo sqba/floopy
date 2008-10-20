@@ -5,7 +5,7 @@
 #if !defined(STORAGE_H)
 #define STORAGE_H
 
-#include "../ifloopy.h"
+#include "include/ifloopy.h"
 #include "pluginloader.h"
 
 /*********************************************************************

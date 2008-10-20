@@ -1,7 +1,7 @@
 #ifndef _FLOOPY_REVERSE_H_
 #define _FLOOPY_REVERSE_H_
 
-#include "../../ifloopy.h"
+#include "../../engine/include/ifloopy.h"
 
 class CReverse : public IFloopySoundFilter  
 {

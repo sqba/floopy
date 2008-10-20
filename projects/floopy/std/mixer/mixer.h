@@ -12,7 +12,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <assert.h>
-#include "../../ifloopy.h"
+#include "../../engine/include/ifloopy.h"
 
 class CMixer : public IFloopySoundMixer
 {

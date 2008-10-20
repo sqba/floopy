@@ -9,8 +9,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "../ifloopy.h"
-#include "../platform.h"
+#include "../engine/include/ifloopy.h"
+#include "../engine/include/platform.h"
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers

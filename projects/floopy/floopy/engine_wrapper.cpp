@@ -4,7 +4,7 @@
 
 #include "engine_wrapper.h"
 #include <stdio.h>
-#include "../platform.h"
+#include "../engine/include/platform.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

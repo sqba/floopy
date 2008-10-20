@@ -11,11 +11,11 @@
 
 #include <stdio.h>
 #include <time.h>
-#include "../ifloopy.h"
+#include "include/ifloopy.h"
+#include "include/platform.h"
 #include "timeline.h"
 #include "timeline.h"
 #include "outputcache.h"
-#include "../platform.h"
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers

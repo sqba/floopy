@@ -7,7 +7,7 @@
 #include "output.h"
 #include <assert.h>
 #include <string.h>
-#include "../platform.h"
+#include "include/platform.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

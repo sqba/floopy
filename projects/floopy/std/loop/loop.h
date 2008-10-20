@@ -1,7 +1,7 @@
 #ifndef _FLOOPY_LOOP_H_
 #define _FLOOPY_LOOP_H_
 
-#include "../../ifloopy.h"
+#include "../../engine/include/ifloopy.h"
 
 class CLoop : public IFloopySoundFilter
 {
