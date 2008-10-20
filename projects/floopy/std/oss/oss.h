@@ -1,4 +1,4 @@
-#ifndef WIN32
+#ifdef linux
 
 #ifndef OSS_H_
 #define OSS_H_
@@ -38,4 +38,4 @@ private:
 
 #endif /*OSS_H_*/
 
-#endif // WIN32
+#endif // linux

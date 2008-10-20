@@ -1,4 +1,4 @@
-#ifndef WIN32
+#ifdef linux
 
 #include "oss.h"
 
@@ -98,4 +98,5 @@ int COSS::open_audio_device (char *name, int mode)
 	return fd;
 }
 
-#endif // WIN32
+#endif // linux
+
