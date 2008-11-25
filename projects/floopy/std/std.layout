@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="8to16bit/convert8to16bit.h" open="0" top="0" tabpos="1">
+		<Cursor position="412" topLine="0" />
+	</File>
+	<File name="cache/cache.h" open="0" top="0" tabpos="2">
+		<Cursor position="351" topLine="0" />
+	</File>
+	<File name="converttofloat/converttofloat.h" open="0" top="0" tabpos="3">
+		<Cursor position="387" topLine="0" />
+	</File>
+	<File name="echo/echo.h" open="0" top="0" tabpos="4">
+		<Cursor position="347" topLine="0" />
+	</File>
+	<File name="float2int/float2int.h" open="0" top="0" tabpos="5">
+		<Cursor position="367" topLine="0" />
+	</File>
+	<File name="invert/invert.h" open="0" top="0" tabpos="6">
+		<Cursor position="355" topLine="0" />
+	</File>
+	<File name="libstd.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="2343" topLine="57" />
+	</File>
+	<File name="loop/loop.h" open="0" top="0" tabpos="8">
+		<Cursor position="68" topLine="0" />
+	</File>
+	<File name="mixer/mixer.h" open="0" top="0" tabpos="9">
+		<Cursor position="411" topLine="0" />
+	</File>
+	<File name="mono2stereo/mono2stereo.h" open="0" top="0" tabpos="10">
+		<Cursor position="375" topLine="0" />
+	</File>
+	<File name="oss/oss.h" open="0" top="0" tabpos="19">
+		<Cursor position="291" topLine="0" />
+	</File>
+	<File name="performance/performance.h" open="0" top="0" tabpos="17">
+		<Cursor position="416" topLine="0" />
+	</File>
+	<File name="playrgn/playregion.h" open="0" top="0" tabpos="11">
+		<Cursor position="392" topLine="0" />
+	</File>
+	<File name="reverse/reverse.h" open="0" top="0" tabpos="16">
+		<Cursor position="74" topLine="0" />
+	</File>
+	<File name="tonegen/tonegen.h" open="0" top="0" tabpos="12">
+		<Cursor position="269" topLine="0" />
+	</File>
+	<File name="track/track.h" open="0" top="0" tabpos="15">
+		<Cursor position="351" topLine="0" />
+	</File>
+	<File name="volume/volume.h" open="0" top="0" tabpos="13">
+		<Cursor position="355" topLine="0" />
+	</File>
+	<File name="wavfile/wavfilein.h" open="0" top="0" tabpos="14">
+		<Cursor position="172" topLine="0" />
+	</File>
+	<File name="wavfile/wavfileout.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="789" topLine="10" />
+	</File>
+	<File name="wavfile/wavfileout.h" open="0" top="0" tabpos="18">
+		<Cursor position="583" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>
