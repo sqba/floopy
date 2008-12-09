@@ -19,8 +19,8 @@
 	<File name="invert/invert.h" open="0" top="0" tabpos="6">
 		<Cursor position="355" topLine="0" />
 	</File>
-	<File name="libstd.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="2488" topLine="62" />
+	<File name="libstd.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="2488" topLine="0" />
 	</File>
 	<File name="loop/loop.h" open="0" top="0" tabpos="8">
 		<Cursor position="68" topLine="0" />
@@ -55,10 +55,10 @@
 	<File name="wavfile/wavfilein.h" open="0" top="0" tabpos="14">
 		<Cursor position="172" topLine="0" />
 	</File>
-	<File name="wavfile/wavfileout.cpp" open="1" top="0" tabpos="2">
+	<File name="wavfile/wavfileout.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="718" topLine="0" />
 	</File>
-	<File name="wavfile/wavfileout.h" open="1" top="1" tabpos="4">
-		<Cursor position="794" topLine="0" />
+	<File name="wavfile/wavfileout.h" open="0" top="0" tabpos="3">
+		<Cursor position="490" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>

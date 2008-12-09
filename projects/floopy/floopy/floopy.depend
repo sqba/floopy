@@ -1,37 +1,37 @@
 # depslib dependency file v1.0
-1227649980 source:/home/sqba/projects/floopy/floopy/engine_wrapper.cpp
+1227649980 source:/home/sqba/Projects/floopy/floopy/engine_wrapper.cpp
 	"engine_wrapper.h"
 	<stdio.h>
 	"../platform.h"
 
-1227649980 /home/sqba/projects/floopy/floopy/engine_wrapper.h
+1227649980 /home/sqba/Projects/floopy/floopy/engine_wrapper.h
 	"../ifloopy.h"
 	"../platform.h"
 	<windows.h>
 
-1227649980 /home/sqba/projects/floopy/ifloopy.h
+1227649980 /home/sqba/Projects/floopy/ifloopy.h
 	<memory.h>
 	<bits/wordsize.h>
 
-1227649980 /home/sqba/projects/floopy/platform.h
+1227649980 /home/sqba/Projects/floopy/platform.h
 	"platform/linux.h"
 	"platform/win32.h"
 
-1227649978 /home/sqba/projects/floopy/platform/linux.h
+1227649978 /home/sqba/Projects/floopy/platform/linux.h
 	<dlfcn.h>
 	<limits.h>
 	<unistd.h>
 
-1227649978 /home/sqba/projects/floopy/platform/win32.h
+1227649978 /home/sqba/Projects/floopy/platform/win32.h
 
-1227649980 source:/home/sqba/projects/floopy/floopy/floopy.cpp
+1227649980 source:/home/sqba/Projects/floopy/floopy/floopy.cpp
 	<stdio.h>
 	<time.h>
 	<assert.h>
 	"engine_wrapper.h"
 	"args.h"
 
-1227649980 /home/sqba/projects/floopy/floopy/args.h
+1227649980 /home/sqba/Projects/floopy/floopy/args.h
 	<math.h>
 	<stdlib.h>
 	"../platform.h"

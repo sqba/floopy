@@ -2,9 +2,9 @@
 #define PLUG_PREFIX					""
 #define PLUG_EXT					".dll"
 #define LIB_HANDLE					HMODULE
-#define PLUGIN_OPEN(filename)		LoadLibraryA(filename)
-#define PLUGIN_LOAD(handle, func)	GetProcAddress(handle, func)
-#define PLUGIN_CLOSE(handle)		FreeLibrary(handle)
+#define PLUGIN_OPEN(p)				LoadLibraryA(p)
+#define PLUGIN_LOAD(h, p)			GetProcAddress(h, f)
+#define PLUGIN_CLOSE(h)				FreeLibrary(h)
 #define EXPORTED					__declspec( dllexport )
 
 // File system

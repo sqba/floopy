@@ -10,9 +10,9 @@
 #define PLUG_PREFIX					"lib"
 #define PLUG_EXT					".so"
 #define LIB_HANDLE					void*
-#define PLUGIN_OPEN(filename)		dlopen( filename, RTLD_LAZY )
-#define PLUGIN_LOAD(handle, func)	dlsym( handle, func )
-#define PLUGIN_CLOSE(handle)		dlclose( handle )
+#define PLUGIN_OPEN(p)				dlopen( p, RTLD_LAZY )
+#define PLUGIN_LOAD(h, f)			dlsym( h, f )
+#define PLUGIN_CLOSE(h)				dlclose( h )
 #define EXPORTED					extern
 
 // File system
