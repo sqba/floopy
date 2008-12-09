@@ -1,7 +1,7 @@
 
 #include <string.h>
 
-#include "SvgFileOut.h"
+#include "svg.h"
 #include "../platform.h"
 
 #ifdef __cplusplus
