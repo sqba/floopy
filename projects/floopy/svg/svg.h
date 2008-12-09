@@ -16,7 +16,7 @@ public:
 	int Write(BYTE *data, int size);
 	void Close();
 
-	const char *GetName()			{ return "svgfile.svgout"; }
+	const char *GetName()			{ return "svg.svgout"; }
 	const char *GetDescription()	{ return "SVG Out"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()		    { return "sqba"; }

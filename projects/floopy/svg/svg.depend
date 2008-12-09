@@ -27,10 +27,11 @@
 	<string.h>
 	"SvgFileOut.h"
 
-1228808555 source:/home/sqba/Projects/floopy/svg/main.cpp
+1228853278 source:/home/sqba/Projects/floopy/svg/main.cpp
 	<string.h>
-	"SvgFileOut.h"
+	"../ifloopy.h"
 	"../platform.h"
+	"svg.h"
 
 1227649980 /home/sqba/Projects/floopy/platform.h
 	"platform/linux.h"
@@ -42,4 +43,12 @@
 	<unistd.h>
 
 1228806013 /home/sqba/Projects/floopy/platform/win32.h
+
+1228853447 /home/sqba/Projects/floopy/svg/svg.h
+	<stdio.h>
+	"../ifloopy.h"
+
+1228813394 source:/home/sqba/Projects/floopy/svg/svg.cpp
+	<math.h>
+	"svg.h"
 

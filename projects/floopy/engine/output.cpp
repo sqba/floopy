@@ -76,6 +76,7 @@ bool COutput::Create(const char *plugin, SOUNDFORMAT fmt)
 	}
 	char filename[MAX_PATH] = {0};
 	GetLibraryPath(filename);
+	strcat(filename, PLUG_PREFIX);
 	strcat(filename, library);
 	strcat(filename, PLUG_EXT);
 

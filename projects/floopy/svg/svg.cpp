@@ -18,7 +18,7 @@
 
 #ifdef _PLAIN_SVG_
 
-static char *xml1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n\
+const char *xml1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n\
 <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\"\n\
 \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\n\
 <!-- Created with Inkscape (http://www.inkscape.org/) -->\n\
@@ -46,12 +46,12 @@ static char *xml1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?
   </metadata>\n\
   <path d=\"";
 
-static char *xml2 = "\" id=\"path909\"\n\
+const char *xml2 = "\" id=\"path909\"\n\
         style=\"stroke:#000000;stroke-opacity:1.0000000;\" />\n</svg>\n";
 
 #else
 
-static char *xml1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n\
+const char *xml1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n\
 <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\"\n\
 \"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\n\
 <!-- Created with Inkscape (http://www.inkscape.org/) -->\n\
@@ -105,7 +105,7 @@ static char *xml1 = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?
      style=\"fill:none;fill-opacity:0.75000000;fill-rule:evenodd;stroke:#3929af;stroke-width:1.0000000pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000;\"\n\
      d=\"";
 
-static char *xml2 = "\" id=\"path909\" />\n</svg>\n";
+const char *xml2 = "\" id=\"path909\" />\n</svg>\n";
 
 #endif
 
@@ -242,7 +242,7 @@ void CSvgFileOut::Close()
 		return;
 
 
-	fprintf(m_pFile, "%s", xml2);
+//	fprintf(m_pFile, "%s", xml2);
 
 	width = (int)peakcount;
 	fseek(m_pFile, 0, SEEK_SET);

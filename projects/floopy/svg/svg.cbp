@@ -39,9 +39,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="SvgFileOut.cpp" />
-		<Unit filename="SvgFileOut.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="svg.cpp" />
+		<Unit filename="svg.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

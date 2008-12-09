@@ -1,19 +1,21 @@
 
 #include <string.h>
 
-#include "svg.h"
+#include "../ifloopy.h"
 #include "../platform.h"
+
+#include "svg.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-EXPORTED IFloopySoundInput *CreateInput(char *name)
+EXPORTED IFloopySoundInput *CreateInput(const char *name)
 {
 	return NULL;
 }
 
-EXPORTED IFloopySoundOutput *CreateOutput(char *name, SOUNDFORMAT fmt)
+EXPORTED IFloopySoundOutput *CreateOutput(const char *name, SOUNDFORMAT fmt)
 {
 	if(!name)
 		return NULL;
