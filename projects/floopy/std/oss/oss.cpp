@@ -8,15 +8,15 @@ COSS::COSS(SOUNDFORMAT fmt) : IFloopySoundOutput(fmt)
 	m_num_channels	= 2;
 
 	/*
-	Use /dev/dsp as the default device because the system administrator 
+	Use /dev/dsp as the default device because the system administrator
 	may select the device using the ossctl program or some other methods
 	*/
 	const char *name_out = "/dev/dsp";
-  
+
 	/*
-	It's mandatory to use O_WRONLY in programs that do only playback. 
+	It's mandatory to use O_WRONLY in programs that do only playback.
 	Other modes may cause increased resource (memory) usage in the driver.
-	It may also prevent other applications from using the same device for 
+	It may also prevent other applications from using the same device for
 	recording at the same time.
 	*/
 	fd_out = open_audio_device(name_out, O_WRONLY);
@@ -51,18 +51,18 @@ void COSS::Pause()
 int COSS::open_audio_device (const char *name, int mode)
 {
 	int tmp, fd;
-	
+
 	if ((fd = open (name, mode, 0)) == -1)
 	{
 		perror (name);
 		exit (-1);
 	}
 	/*
-	Setup the device. Note that it's important to set the sample format, 
-	number of channels and sample rate exactly in this order. Some 
+	Setup the device. Note that it's important to set the sample format,
+	number of channels and sample rate exactly in this order. Some
 	devices depend on the order.
 	*/
-	
+
 	/* Set the sample format */
 	tmp = AFMT_S16_NE;            /* Native 16 bits */
 	if (ioctl (fd, SNDCTL_DSP_SETFMT, &tmp) == -1)
@@ -77,7 +77,8 @@ int COSS::open_audio_device (const char *name, int mode)
 	}
 
 	/* Set the number of channels */
-	if (ioctl (fd, SNDCTL_DSP_CHANNELS, &m_num_channels) == -1)
+	tmp = m_num_channels;
+	if (ioctl (fd, SNDCTL_DSP_CHANNELS, &tmp) == -1)
 	{
 		perror ("SNDCTL_DSP_CHANNELS");
 		exit (-1);
@@ -87,23 +88,23 @@ int COSS::open_audio_device (const char *name, int mode)
 		fprintf (stderr, "The device doesn't support %d channels.\n", m_num_channels);
 		exit (-1);
 	}
-	
+
 	/* Set the sample rate */
 	if (ioctl (fd, SNDCTL_DSP_SPEED, &m_sample_rate) == -1)
 	{
 		perror ("SNDCTL_DSP_SPEED");
 		exit (-1);
 	}
-	
+
 	/*
 	No need for error checking because we will automatically adjust the
-	signal based on the actual sample rate. However most application must 
+	signal based on the actual sample rate. However most application must
 	check the value of sample_rate and compare it to the requested rate.
-	Small differences between the rates (10% or less) are normal and the 
-	applications should usually tolerate them. However larger differences 
+	Small differences between the rates (10% or less) are normal and the
+	applications should usually tolerate them. However larger differences
 	may cause annoying pitch problems (Mickey Mouse).
 	*/
-	
+
 	return fd;
 }
 

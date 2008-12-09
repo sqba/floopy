@@ -266,8 +266,8 @@ int main(int argc, char* argv[])
 	fprintf(stdout, "\n");
 
 
-	fprintf(stderr, "\nPress enter to start...");
-	getchar();
+//	fprintf(stderr, "\nPress enter to start...");
+//	getchar();
 
 	fprintf(stderr, "Start: %.3f seconds\n", start);
 	fprintf(stderr, "End:   %.3f seconds\n",

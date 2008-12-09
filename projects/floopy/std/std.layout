@@ -20,7 +20,7 @@
 		<Cursor position="355" topLine="0" />
 	</File>
 	<File name="libstd.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="2488" topLine="0" />
+		<Cursor position="822" topLine="14" />
 	</File>
 	<File name="loop/loop.h" open="0" top="0" tabpos="8">
 		<Cursor position="68" topLine="0" />
@@ -30,6 +30,9 @@
 	</File>
 	<File name="mono2stereo/mono2stereo.h" open="0" top="0" tabpos="10">
 		<Cursor position="375" topLine="0" />
+	</File>
+	<File name="oss/oss.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="1551" topLine="70" />
 	</File>
 	<File name="oss/oss.h" open="0" top="0" tabpos="19">
 		<Cursor position="291" topLine="0" />

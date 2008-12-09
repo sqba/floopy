@@ -19,12 +19,12 @@
 #include <limits.h>					// PATH_MAX, NAME_MAX
 //#define __USE_XOPEN2K				// readlink
 #include <unistd.h>					// readlink
-#define MAX_PATH	PATH_MAX
-#define MAX_FNAME	NAME_MAX
-#define PATH_SEP	'/'
+#define MAX_PATH	                PATH_MAX
+#define MAX_FNAME	                NAME_MAX
+#define PATH_SEP	                '/'
 
 // Default PCM output
-#define PCM_OUT	"libstd.oss"
+#define PCM_OUT                     "libstd.oss"
 
 // Misc
-#define NULL		0
+//#define NULL		0

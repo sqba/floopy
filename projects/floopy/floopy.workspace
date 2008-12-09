@@ -4,5 +4,6 @@
 		<Project filename="engine/engine.cbp" />
 		<Project filename="std/std.cbp" />
 		<Project filename="floopy/floopy.cbp" active="1" />
+		<Project filename="svg/svg.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

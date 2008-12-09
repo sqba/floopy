@@ -439,7 +439,7 @@ const char *CEngine::getPluginName(const char *filename)
 		if(0 == strcmpi(ext, "wav"))
 			return "libstd.wavfile";
 		if(0 == strcmpi(ext, "svg"))
-			return "svgfile.svgout";
+			return "svg.svgout";
 		if(0 == strcmpi(ext, "mp3"))
 			return "mp3file";
 	}
