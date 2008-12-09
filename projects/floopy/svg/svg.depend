@@ -1,0 +1,45 @@
+# depslib dependency file v1.0
+1227683181 source:/home/sqba/projects/floopy/svg/SvgFileOut.cpp
+	<math.h>
+	"SvgFileOut.h"
+
+1227683242 /home/sqba/projects/floopy/svg/SvgFileOut.h
+	<stdio.h>
+	"../ifloopy.h"
+
+1227649980 /home/sqba/projects/floopy/ifloopy.h
+	<memory.h>
+	<bits/wordsize.h>
+
+1227683460 source:/home/sqba/Projects/floopy/svg/SvgFileOut.cpp
+	<math.h>
+	"SvgFileOut.h"
+
+1227683463 /home/sqba/Projects/floopy/svg/SvgFileOut.h
+	<stdio.h>
+	"../ifloopy.h"
+
+1227649980 /home/sqba/Projects/floopy/ifloopy.h
+	<memory.h>
+	<bits/wordsize.h>
+
+1227683087 source:/home/sqba/Projects/floopy/svg/main.c
+	<string.h>
+	"SvgFileOut.h"
+
+1228808555 source:/home/sqba/Projects/floopy/svg/main.cpp
+	<string.h>
+	"SvgFileOut.h"
+	"../platform.h"
+
+1227649980 /home/sqba/Projects/floopy/platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1228809464 /home/sqba/Projects/floopy/platform/linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1228806013 /home/sqba/Projects/floopy/platform/win32.h
+
