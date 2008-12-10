@@ -33,6 +33,8 @@ public:
 
 	bool CanReadSourceIfDisabled()	{ return false; }
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	inline double frand();
 	void quantize(FLOAT_32BIT*, SAMPLE_16BIT*, int);

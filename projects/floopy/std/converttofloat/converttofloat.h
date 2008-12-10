@@ -33,6 +33,8 @@ public:
 
 	SOUNDFORMAT *GetFormat();
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int convert8bitToFloat(BYTE*, BYTE*, int);
 	int convert16bitToFloat(BYTE*, BYTE*, int);

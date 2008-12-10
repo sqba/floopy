@@ -35,6 +35,8 @@ public:
 
 	int Read(BYTE *data, int size);
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int samplesToBytes();
 	void calcVariables();

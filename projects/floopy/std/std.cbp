@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="../bin/Debug/libstd" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../obj/Debug/" />
+				<Option object_output="../obj/Debug/std" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option parameters="-i bass2.wav -o out.wav" />
@@ -22,7 +22,7 @@
 			</Target>
 			<Target title="Release">
 				<Option output="../bin/Release/libstd" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../obj/Release/" />
+				<Option object_output="../obj/Release/std" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />

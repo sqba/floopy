@@ -321,7 +321,8 @@ IFloopySoundOutput *CEngine::CreateOutput(const char *filename, SOUNDFORMAT fmt)
 		if(!obj->Create(plugin, fmt) || !obj->Open(filename))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
-			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
+			//sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
+			strcpy(m_szLastError, obj->GetLastErrorDesc());
 			delete obj;
 			return NULL;
 		}

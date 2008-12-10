@@ -49,6 +49,8 @@ public:
 	void Flush();
 	void Pause();
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	void resume();
 

@@ -37,6 +37,8 @@ public:
 	const char *GetPropertyDesc(int index);
 	//char *GetPropertyUnit(int index);
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int m_nHeight;
 	int m_nBGRed, m_nBGGreen, m_nBGBlue;

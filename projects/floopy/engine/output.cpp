@@ -7,6 +7,7 @@
 #include "output.h"
 #include <assert.h>
 #include <string.h>
+#include <sstream>
 #include "../platform.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -34,31 +35,31 @@ bool COutput::Create(const char *plugin, SOUNDFORMAT fmt)
 {
 	if(NULL == plugin)
 	{
-		sprintf(m_szLastError, "plugin is NULL.\n\0");
+		sprintf(m_szLastError, "plugin is NULL.\n");
 		return false;
 	}
 
 	if(fmt.bitsPerSample == 0)
 	{
-		sprintf(m_szLastError, "fmt.bitsPerSample == 0.\n\0");
+		sprintf(m_szLastError, "fmt.bitsPerSample == 0.\n");
 		return false;
 	}
 
 	if(fmt.channels == 0)
 	{
-		sprintf(m_szLastError, "fmt.channels == 0.\n\0");
+		sprintf(m_szLastError, "fmt.channels == 0.");
 		return false;
 	}
 
 	if(fmt.format == 0)
 	{
-		sprintf(m_szLastError, "fmt.format == 0.\n\0");
+		sprintf(m_szLastError, "fmt.format == 0.\n");
 		return false;
 	}
 
 	if(fmt.frequency == 0)
 	{
-		sprintf(m_szLastError, "fmt.frequency == 0.\n\0");
+		sprintf(m_szLastError, "fmt.frequency == 0.\n");
 		return false;
 	}
 
@@ -74,22 +75,24 @@ bool COutput::Create(const char *plugin, SOUNDFORMAT fmt)
 		*sep = 0;
 		library = tmp;
 	}
-	char filename[MAX_PATH] = {0};
-	GetLibraryPath(filename);
-	strcat(filename, PLUG_PREFIX);
-	strcat(filename, library);
-	strcat(filename, PLUG_EXT);
+	char path[MAX_PATH] = {0};
+	GetLibraryPath(path);
+    std::ostringstream strPath;
+    strPath << path << PLUG_PREFIX << library << PLUG_EXT;
+    const char *pszPath = strPath.str().c_str();
+    char tmp[MAX_PATH] = {0};
+    strcpy(tmp, pszPath);
 
-	if( !LoadPlugin(filename) )
+	if( !LoadPlugin(tmp) )
 	{
-		sprintf(m_szLastError, "File not found: %s.\n\0", filename);
+		sprintf(m_szLastError, "File not found: %s.\n", tmp);
 		return false;
 	}
 
 	CreateProc func = (CreateProc)GetFunction(PROC_NAME);
 	if(func == NULL)
 	{
-		sprintf(m_szLastError, "Function %s() not found in file: %s.\n\0", PROC_NAME, filename);
+		sprintf(m_szLastError, "Function %s() not found in file: %s.\n", PROC_NAME, tmp);
 		return false;
 	}
 
@@ -147,7 +150,7 @@ bool COutput::Open(const char *filename)
 	bool bResult = false;
 
 	if(NULL == m_plugin)
-		sprintf(m_szLastError, "NULL == m_plugin.\n\0");
+		sprintf(m_szLastError, "NULL == m_plugin.\n");
 	else
 	{
 		bResult = m_plugin->Open( filename );
@@ -163,7 +166,7 @@ void COutput::copyErrorDesc()
 	memset(m_szLastError, 0, sizeof(m_szLastError[0]*sizeof(m_szLastError)));
 
 	if(NULL == m_plugin)
-		sprintf(m_szLastError, "Plugin not created.\n\0");
+		sprintf(m_szLastError, "Plugin not created.\n");
 	else
 	{
 		const char *err = m_plugin->GetLastErrorDesc();
@@ -174,7 +177,7 @@ void COutput::copyErrorDesc()
 
 const char *COutput::GetName()
 {
-	const char *result = "Plugin not created.\n\0";
+	const char *result = "Plugin not created.\n";
 	if(NULL != m_plugin)
 		result = m_plugin->GetName();
 	else

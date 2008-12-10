@@ -19,7 +19,7 @@ public:
 
 	int Write(BYTE *data, int size);
 
-	const char *GetName()			{ return "libstd.oss"; }
+	const char *GetName()			{ return "std.oss"; }
 	const char *GetDescription()	{ return "OSS Out"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }
@@ -28,6 +28,8 @@ public:
 	void Reset();
 	void Flush();
 	void Pause();
+
+	const char *GetLastErrorDesc() { return NULL; }
 
 private:
 	int open_audio_device (const char *name, int mode);

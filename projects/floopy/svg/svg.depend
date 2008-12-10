@@ -19,7 +19,7 @@
 	<stdio.h>
 	"../ifloopy.h"
 
-1227649980 /home/sqba/Projects/floopy/ifloopy.h
+1228855418 /home/sqba/Projects/floopy/ifloopy.h
 	<memory.h>
 	<bits/wordsize.h>
 
@@ -27,8 +27,7 @@
 	<string.h>
 	"SvgFileOut.h"
 
-1228853278 source:/home/sqba/Projects/floopy/svg/main.cpp
-	<string.h>
+1228896256 source:/home/sqba/Projects/floopy/svg/main.cpp
 	"../ifloopy.h"
 	"../platform.h"
 	"svg.h"
@@ -37,18 +36,19 @@
 	"platform/linux.h"
 	"platform/win32.h"
 
-1228809464 /home/sqba/Projects/floopy/platform/linux.h
+1228895864 /home/sqba/Projects/floopy/platform/linux.h
 	<dlfcn.h>
 	<limits.h>
 	<unistd.h>
 
 1228806013 /home/sqba/Projects/floopy/platform/win32.h
 
-1228853447 /home/sqba/Projects/floopy/svg/svg.h
+1228895663 /home/sqba/Projects/floopy/svg/svg.h
 	<stdio.h>
 	"../ifloopy.h"
 
-1228813394 source:/home/sqba/Projects/floopy/svg/svg.cpp
+1228895601 source:/home/sqba/Projects/floopy/svg/svg.cpp
 	<math.h>
+	<string>
 	"svg.h"
 

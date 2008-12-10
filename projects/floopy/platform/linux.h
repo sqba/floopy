@@ -24,7 +24,7 @@
 #define PATH_SEP	                '/'
 
 // Default PCM output
-#define PCM_OUT                     "libstd.oss"
+#define PCM_OUT                     "std.oss"
 
 // Misc
 //#define NULL		0

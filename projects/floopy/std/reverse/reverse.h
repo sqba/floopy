@@ -22,6 +22,8 @@ public:
 	int GetPosition();
 	bool SetSource(IFloopySoundInput*);
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	void reverse(BYTE*, int);
 

@@ -41,6 +41,8 @@ public:
 
 	bool CanReadSourceIfDisabled()	{ return false; }
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int samplesToBytes();
 	bool createBuffer();

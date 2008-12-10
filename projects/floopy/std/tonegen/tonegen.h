@@ -42,6 +42,8 @@ public:
 	float GetParamMin(int index)	{ return 0.f; }
 	const char *GetParamUnit(int index)	{ return(index==0 ? "Hz" : NULL); }
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int m_BytesToSamples;
 	double m_freq, m_step, m_angle, m_max;

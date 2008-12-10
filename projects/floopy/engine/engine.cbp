@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="../bin/Debug/libengine" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../obj/Debug/" />
+				<Option object_output="../obj/Debug/engine" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -20,7 +20,7 @@
 			</Target>
 			<Target title="Release">
 				<Option output="../bin/Release/libengine" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../obj/Release/" />
+				<Option object_output="../obj/Release/engine" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />

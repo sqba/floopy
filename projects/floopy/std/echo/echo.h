@@ -26,6 +26,8 @@ public:
 	void Reset();
 //	void Enable(bool bEnabled);
 
+    const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int read(BYTE *data, int size);
 

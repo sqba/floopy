@@ -4,6 +4,7 @@
 
 #include "engine_wrapper.h"
 #include <stdio.h>
+#include <sstream>
 #include "../platform.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -21,27 +22,7 @@ CEngineWrapper::CEngineWrapper(const char *plugin)
 
 	GetLibraryPath();
 
-	char filename[MAX_PATH] = {0};
-	strcpy(filename, m_szPath);
-	strcat(filename, PLUG_PREFIX);
-	strcat(filename, plugin);
-	strcat(filename, PLUG_EXT);
-	m_hModule = PLUGIN_OPEN(filename);
-
-	if (NULL == m_hModule)
-	{
-		fprintf(stderr, "Error: %s not found.\n", filename);
-		return;
-	}
-	CreateProc func = (CreateProc)PLUGIN_LOAD( m_hModule, PROC_NAME );
-
-	if(func != NULL) {
-		//printf("CreateSoundEngine() found in %s.\n", filename);
-		m_plugin = func( m_hModule );
-		SetSource( m_plugin );
-	}
-	else
-		fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, filename);
+	init( plugin );
 }
 
 CEngineWrapper::~CEngineWrapper()
@@ -54,6 +35,33 @@ CEngineWrapper::~CEngineWrapper()
 
 	if(NULL != m_hModule)
 		PLUGIN_CLOSE( m_hModule );
+}
+
+void CEngineWrapper::init(const char *plugin)
+{
+    std::ostringstream strPath;
+    strPath << m_szPath << PLUG_PREFIX << plugin << PLUG_EXT;
+    const char *pszPath = strPath.str().c_str();
+    char tmp[MAX_PATH] = {0};
+    strcpy(tmp, pszPath);
+
+	m_hModule = PLUGIN_OPEN( tmp );
+
+	if (NULL == m_hModule)
+	{
+		fprintf(stderr, "Error: %s not found.\n", pszPath);
+		return;
+	}
+	CreateProc func = (CreateProc)PLUGIN_LOAD( m_hModule, PROC_NAME );
+
+	if(func != NULL)
+	{
+		//printf("CreateSoundEngine() found in %s.\n", filename);
+		m_plugin = func( m_hModule );
+		SetSource( m_plugin );
+	}
+	else
+		fprintf(stderr, "Error: %s not found in %s.\n", PROC_NAME, pszPath);
 }
 
 void CEngineWrapper::GetLibraryPath()

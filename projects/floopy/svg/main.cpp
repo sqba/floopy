@@ -1,5 +1,5 @@
 
-#include <string.h>
+//#include <string.h>
 
 #include "../ifloopy.h"
 #include "../platform.h"
@@ -36,7 +36,7 @@ EXPORTED void GetPluginInfo(int index, char *name, int *type)
 	switch(index)
 	{
 	case 0:
-		name = "svgout";
+		strcpy(name, "svgout");
 		*type = TYPE_FLOOPY_SOUND_OUTPUT;
 		break;
 	}

@@ -47,6 +47,8 @@ public:
 	const char *GetPropertyDesc(int index);
 	const char *GetPropertyUnit(int index);
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	clock_t	m_ReadTime;
 	int		m_nFrameCount;

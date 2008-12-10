@@ -5,6 +5,7 @@
 //#include <fcntl.h>
 //#include <io.h>
 #include <math.h>
+#include <string>
 
 #include "svg.h"
 
@@ -172,8 +173,10 @@ int CSvgFileOut::Write(BYTE *data, int size)
 	int ch=0;
 
 	static short int min[2]={0}, max[2]={0};
-	static Peak peak[2] = {0};
-	static Peak prev[2] = {0};
+	static Peak peak[2];
+	static Peak prev[2];
+	memset(peak, 0, sizeof(peak));
+	memset(prev, 0, sizeof(prev));
 
 	for(int pos=channels; pos<samples; pos+=channels)
 	{
@@ -242,7 +245,7 @@ void CSvgFileOut::Close()
 		return;
 
 
-//	fprintf(m_pFile, "%s", xml2);
+	fprintf(m_pFile, "%s", xml2);
 
 	width = (int)peakcount;
 	fseek(m_pFile, 0, SEEK_SET);
@@ -261,4 +264,5 @@ void CSvgFileOut::Close()
 
 
 	fclose( m_pFile );
+	m_pFile = NULL;
 }

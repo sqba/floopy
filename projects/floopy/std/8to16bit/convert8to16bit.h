@@ -27,6 +27,8 @@ public:
 
 	bool CanReadSourceIfDisabled()	{ return false; }
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 	SOUNDFORMAT *GetFormat();
 
 //	bool SetSource(IFloopySoundInput *src);

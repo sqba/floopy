@@ -25,6 +25,8 @@ public:
 	//void Reset();
 	//void Flush();
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	FILE *m_pFile;
 	int bitsPerSample, channels;

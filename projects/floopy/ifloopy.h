@@ -346,7 +346,7 @@ public:
 	virtual const char *GetAuthor()			{ return "sqba"; }
 
 			int   GetLastError()		{ return m_nLastError; }
-	virtual const char *GetLastErrorDesc()	{ return NULL; }
+	virtual const char *GetLastErrorDesc() = 0;//	{ return NULL; }
 	//virtual bool  GetLastError(const char *str, int len)	{ return false; }
 
 	/** Do not override in implementations, handled by the engine */
@@ -450,7 +450,7 @@ public:
 
 
 	/**
-	 * Specifies whether the source should be read and passed on 
+	 * Specifies whether the source should be read and passed on
 	 * if this component is disabled. If false then nothing
 	 * will be read.
 	 */

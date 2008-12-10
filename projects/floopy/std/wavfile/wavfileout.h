@@ -39,6 +39,8 @@ public:
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	FILE *m_pFile;
 	RIFF m_riff;

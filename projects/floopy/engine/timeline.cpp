@@ -391,7 +391,6 @@ bool CTimeline::moveParam(CTimeline::tParam *param, int newoffset)
 
 CTimeline::tParam *CTimeline::getFirstParamAt(int offset)
 {
-	int o = 0;
 	CTimeline::tParam *tmp = m_pFirst;
 
 	while(tmp && tmp->offset<offset)
@@ -402,7 +401,6 @@ CTimeline::tParam *CTimeline::getFirstParamAt(int offset)
 
 CTimeline::tParam *CTimeline::getLastParamAt(int offset)
 {
-	int o = 0;
 	CTimeline::tParam *tmp = m_pLast;
 
 	while(tmp && tmp->offset>offset)

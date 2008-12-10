@@ -21,6 +21,8 @@ public:
 	void Reset();
 	bool SetSource(IFloopySoundInput *src);
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int m_nOffset;	/** In bytes */
 };

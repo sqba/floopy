@@ -28,6 +28,8 @@ public:
 
 	SOUNDFORMAT *GetFormat();
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	BYTE *m_pBuffer;
 	int m_nBuffSize;

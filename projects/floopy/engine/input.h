@@ -109,6 +109,7 @@ public:
 
 
 	bool GetLastError(char*, int);
+	const char *GetLastErrorDesc() { return NULL; }
 
 	const char *GetSignature();
 
@@ -132,10 +133,10 @@ public:
 
 private:
 	inline IFloopySoundInput *getSource();
-	inline bool isEngine();
-	inline bool isFilter();
-	inline bool isEndOfTrack();
-	inline bool isMixer();
+	bool isEngine();
+	bool isFilter();
+	bool isEndOfTrack();
+	bool isMixer();
 
 	void	applyParamsAt(int);
 	int		applyPreviousParams(int);

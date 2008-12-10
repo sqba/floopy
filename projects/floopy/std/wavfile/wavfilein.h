@@ -28,6 +28,8 @@ public:
 
 	bool IsEOF();
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int		m_nHeaderLength;
 	int		m_nSamplesToBytes;

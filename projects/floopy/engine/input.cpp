@@ -29,7 +29,7 @@ CInput::CInput(UpdateCallback func, COutputCache *outputCache)
 	memset(m_szDisplayName,	0, 50);
 	memset(m_szLastError,	0, sizeof(m_szLastError));
 	memset(m_szObjPath,		0, sizeof(m_szObjPath));
-	
+
 	m_offset = m_nStartOffset = m_nEndOffset = 0;
 	m_nSkipBytes = m_nSamplesToBytes = 0;
 
@@ -66,7 +66,7 @@ bool CInput::Create(const char *name)
 		return false;
 	}
 
-	CreateProc func = (CreateProc)GetFunction(PROC_NAME); 
+	CreateProc func = (CreateProc)GetFunction(PROC_NAME);
 	if(NULL == func)
 	{
 		sprintf(m_szLastError, "Function '%s' not found in library '%s'.\n",
@@ -128,11 +128,11 @@ void CInput::loadDefaultParams()
 bool CInput::Create(IFloopySoundEngine *src)
 {
 	m_plugin = src;
-	
+
 	IFloopySoundFilter::SetSource(m_plugin);
 
 	Enable( false ); // Default
-	
+
 	const char *name = src->GetDisplayName();
 	if(NULL != name)
 		SetDisplayName(name, strlen(name));
@@ -169,7 +169,7 @@ bool CInput::SetSource(IFloopySoundInput *src)
 	if(NULL!=m_plugin && isFilter())
 	{
 		result = ((IFloopySoundFilter*)m_plugin)->SetSource(src);
-	
+
 		if(result)
 		{
 			recalcSourceVariables();
@@ -320,7 +320,7 @@ void CInput::MoveTo(int samples)
 	int srcPos = 0;
 	int prevOffset = 0;
 	int nextOffset = 1;
-	
+
 	while(m_offset<endOffset) {
 		nextOffset = m_timeline.GetNextOffset(m_offset);
 
@@ -328,7 +328,7 @@ void CInput::MoveTo(int samples)
 			break;
 
 		chunkSize = nextOffset - m_offset;
-		
+
 		if(m_offset+chunkSize > endOffset)
 			chunkSize = endOffset - m_offset;
 
@@ -873,7 +873,7 @@ void CInput::applyParamsAt(int offset)
 }
 
 /**
- * 
+ *
  * @return true if MoveTo has been called.
  * Not the nicest way to tell MoveTo() not to move the source.
  */
@@ -1001,7 +1001,7 @@ bool CInput::isFilter()
 /**
  * @return true if the plugin is another engine.
  */
-inline bool CInput::isEngine()
+bool CInput::isEngine()
 {
 	return(m_source?m_source->GetType()==TYPE_FLOOPY_SOUND_ENGINE:false);
 }
@@ -1059,7 +1059,7 @@ void CInput::getPluginName(const char *fullname, char *name)
 		path++;
 	else
 		path = fullname;
-	
+
 	char *sep = strrchr(path, '.');
 	const char *tmp = sep ? sep+1 : path;
 
@@ -1110,7 +1110,7 @@ void CInput::createSignature()
 		sprintf(param, "%f", fSig[i]);
 		strncat(params, param, 10);
 	}
-	
+
 	//int pos = GetPosition();
 
 	int len = sizeof(inSig) * sizeof(char)

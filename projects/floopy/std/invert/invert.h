@@ -25,6 +25,8 @@ public:
 	int Read(BYTE *data, int size);
 
 	bool CanReadSourceIfDisabled()	{ return true; }
+
+	const char *GetLastErrorDesc() { return NULL; }
 };
 
 #endif // !defined(AFX_INVERT_H__3B73BB16_5525_4827_A7B6_B4341803B836__INCLUDED_)

@@ -47,6 +47,8 @@ public:
 
 	bool CanReadSourceIfDisabled()	{ return false; }
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int sampleSize();
 	void mixBuffers(BYTE *buffers, int count, BYTE *output, int size);

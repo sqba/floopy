@@ -37,6 +37,8 @@ public:
 	void Add(const char *signature, int position, BYTE *buff, int size);
 	int Get(const char *signature, int position, BYTE *buff, int size);
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	CCachedBuffer *m_pHead, *m_pTail;
 };

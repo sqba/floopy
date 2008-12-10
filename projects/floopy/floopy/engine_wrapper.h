@@ -44,8 +44,11 @@ public:
 
 	void Close() { if(m_plugin) m_plugin->Close(); }
 
+	const char *GetLastErrorDesc() { return (m_plugin ? m_plugin->GetLastErrorDesc() : NULL); }
+
 private:
 	void GetLibraryPath();
+	void init(const char *plugin);
 
 private:
 	LIB_HANDLE			m_hModule;

@@ -173,7 +173,7 @@ void process(IFloopySoundInput *input, IFloopySoundOutput *output, int buffSize)
 	DWORD speed = clock() - start;
 
 	if(speed < 1000)
-		fprintf(stderr, "\nFinished in %ld ms\n\n", speed);
+		fprintf(stderr, "\nFinished in %d ms\n\n", speed);
 	else
 		fprintf(stderr, "\nFinished in %.3f sec\n\n", (float)speed / 1000.f);
 
@@ -261,6 +261,8 @@ int main(int argc, char* argv[])
 	//length = fprintf(stdout, "%s < ", output->GetName());
 	if(output)
 		fprintf(stdout, "%s", output->GetName());
+    else
+		fprintf(stderr, "%s", engine->GetLastErrorDesc());
 	//printTree(stdout, engine->GetSource(), 1, false, false);
 	printTree(stdout, engine, 1, false, false);
 	fprintf(stdout, "\n");

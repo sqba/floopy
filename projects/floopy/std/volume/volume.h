@@ -51,6 +51,8 @@ public:
 
 	bool CanReadSourceIfDisabled()		{ return true; }
 
+	const char *GetLastErrorDesc() { return NULL; }
+
 private:
 	int getChannels();
 
