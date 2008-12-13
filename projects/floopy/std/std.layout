@@ -65,12 +65,12 @@
 		<Cursor position="1294" topLine="45" />
 	</File>
 	<File name="wavfile/wavfilein.h" open="1" top="0" tabpos="1">
-		<Cursor position="732" topLine="14" />
+		<Cursor position="732" topLine="0" />
 	</File>
 	<File name="wavfile/wavfileout.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="718" topLine="0" />
 	</File>
 	<File name="wavfile/wavfileout.h" open="1" top="0" tabpos="2">
-		<Cursor position="1191" topLine="20" />
+		<Cursor position="1191" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>
