@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="engine.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="6968" topLine="313" />
+	<File name="engine.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="6968" topLine="397" />
 	</File>
 	<File name="engine.h" open="0" top="0" tabpos="1">
 		<Cursor position="2029" topLine="45" />
@@ -19,8 +19,8 @@
 	<File name="main.cpp" open="0" top="0" tabpos="9">
 		<Cursor position="457" topLine="0" />
 	</File>
-	<File name="output.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="2137" topLine="23" />
+	<File name="output.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="1641" topLine="59" />
 	</File>
 	<File name="output.h" open="0" top="0" tabpos="6">
 		<Cursor position="1474" topLine="48" />
@@ -28,7 +28,7 @@
 	<File name="outputcache.h" open="0" top="0" tabpos="2">
 		<Cursor position="1110" topLine="9" />
 	</File>
-	<File name="pluginloader.cpp" open="1" top="0" tabpos="1">
+	<File name="pluginloader.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="470" topLine="0" />
 	</File>
 	<File name="pluginloader.h" open="0" top="0" tabpos="4">
