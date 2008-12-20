@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="../util/engine_wrapper.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="1069" topLine="26" />
+	</File>
+	<File name="dialogs/controldlg.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="2288" topLine="90" />
+	</File>
+	<File name="engine/actionhistory.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="168" topLine="0" />
+	</File>
+	<File name="engine/actionhistory.h" open="0" top="0" tabpos="0">
+		<Cursor position="390" topLine="0" />
+	</File>
+	<File name="engine/floopyobj.h" open="0" top="0" tabpos="0">
+		<Cursor position="3446" topLine="111" />
+	</File>
+	<File name="engine/label.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="90" topLine="0" />
+	</File>
+	<File name="engine/label.h" open="0" top="0" tabpos="0">
+		<Cursor position="92" topLine="0" />
+	</File>
+	<File name="engine/objtypes.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1991" topLine="63" />
+	</File>
+	<File name="engine/parameter.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="10184" topLine="432" />
+	</File>
+	<File name="engine/parameter.h" open="0" top="0" tabpos="0">
+		<Cursor position="969" topLine="18" />
+	</File>
+	<File name="engine/pathctrl.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="4219" topLine="179" />
+	</File>
+	<File name="engine/pathctrl.h" open="0" top="0" tabpos="0">
+		<Cursor position="953" topLine="30" />
+	</File>
+	<File name="engine/playthread.h" open="0" top="0" tabpos="0">
+		<Cursor position="149" topLine="0" />
+	</File>
+	<File name="engine/region.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="11123" topLine="427" />
+	</File>
+	<File name="engine/region.h" open="0" top="0" tabpos="0">
+		<Cursor position="82" topLine="0" />
+	</File>
+	<File name="engine/regiondisplay.h" open="0" top="0" tabpos="0">
+		<Cursor position="96" topLine="0" />
+	</File>
+	<File name="engine/track.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="11972" topLine="471" />
+	</File>
+	<File name="engine/track.h" open="0" top="0" tabpos="0">
+		<Cursor position="3306" topLine="121" />
+	</File>
+	<File name="engine/tracks.cpp" open="1" top="1" tabpos="1">
+		<Cursor position="11615" topLine="511" />
+	</File>
+	<File name="engine/tracks.h" open="0" top="0" tabpos="4">
+		<Cursor position="805" topLine="43" />
+	</File>
+	<File name="floopyapp.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="291" topLine="12" />
+	</File>
+	<File name="floopycontrol.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="168" topLine="0" />
+	</File>
+	<File name="floopyframe.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="6024" topLine="176" />
+	</File>
+	<File name="floopyframe.h" open="1" top="0" tabpos="3">
+		<Cursor position="764" topLine="20" />
+	</File>
+	<File name="util/aqua.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="20" topLine="0" />
+	</File>
+	<File name="util/format.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="609" topLine="0" />
+	</File>
+	<File name="util/util.h" open="0" top="0" tabpos="3">
+		<Cursor position="135" topLine="0" />
+	</File>
+	<File name="views/caretview.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="156" topLine="0" />
+	</File>
+	<File name="views/gridview.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="153" topLine="0" />
+	</File>
+	<File name="views/labelsview.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="160" topLine="0" />
+	</File>
+	<File name="views/mainview.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="153" topLine="0" />
+	</File>
+	<File name="views/projectview.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="162" topLine="0" />
+	</File>
+	<File name="views/projectview.h" open="0" top="0" tabpos="0">
+		<Cursor position="756" topLine="0" />
+	</File>
+	<File name="views/rulers/floopyhruler.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1194" topLine="8" />
+	</File>
+	<File name="views/rulers/sampleruler.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1530" topLine="26" />
+	</File>
+	<File name="views/rulers/sampleruler.h" open="0" top="0" tabpos="0">
+		<Cursor position="72" topLine="0" />
+	</File>
+	<File name="views/rulers/timeruler.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1377" topLine="33" />
+	</File>
+	<File name="views/rulers/timeruler.h" open="0" top="0" tabpos="0">
+		<Cursor position="66" topLine="0" />
+	</File>
+	<File name="views/rulerview.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="21" topLine="0" />
+	</File>
+	<File name="views/timelineview.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="8751" topLine="311" />
+	</File>
+	<File name="views/tracksview.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="1139" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>
