@@ -1782,11 +1782,11 @@
 	"../util/util.h"
 	"actionhistory.h"
 
-1229347348 /home/sqba/Projects/floopy/wxFloopy/engine/regiondisplay.h
+1229794205 /home/sqba/Projects/floopy/wxFloopy/engine/regiondisplay.h
 	"floopyobj.h"
 	"objtypes.h"
 
-1191183320 source:/home/sqba/Projects/floopy/wxFloopy/engine/regiondisplay.cpp
+1229794248 source:/home/sqba/Projects/floopy/wxFloopy/engine/regiondisplay.cpp
 	"../engine/track.h"
 	"../engine/region.h"
 	"../engine/tracks.h"
@@ -1794,7 +1794,7 @@
 	"../globals.h"
 	<math.h>
 
-1229793897 source:/home/sqba/Projects/floopy/wxFloopy/engine/track.cpp
+1229794350 source:/home/sqba/Projects/floopy/wxFloopy/engine/track.cpp
 	<stdio.h>
 	"track.h"
 	"tracks.h"

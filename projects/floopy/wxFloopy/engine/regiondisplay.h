@@ -37,11 +37,11 @@ public:
 	int   GetPropertyCount();
 	bool  GetPropertyVal(int index, float *value);
 	void  SetPropertyVal(int index, float value);
-	char *GetPropertyName(int index);
-	char *GetPropertyDesc(int index);
+	const char *GetPropertyName(int index);
+	const char *GetPropertyDesc(int index);
 	float GetPropertyMax(int index);
 	float GetPropertyMin(int index);
-	char *GetPropertyUnit(int index);
+	const char *GetPropertyUnit(int index);
 	float GetPropertyStep(int index);
 
 private:

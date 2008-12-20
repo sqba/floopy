@@ -84,7 +84,7 @@ void CRegionDisplay::DrawFore(wxDC& dc, wxRect& rc)
 	}
 
 	//dc.Blit(rc.GetX(), rc.GetY(), width, height, &m_tempDC, 0, 0, wxAND);
-	
+
 	int logicalFunction = m_pRegion->IsSelected() ? wxAND_INVERT : wxAND;
 	dc.Blit(rc.GetX(), rc.GetY(), width, height, &m_tempDC, 0, 0, logicalFunction);
 
@@ -287,7 +287,7 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 	int yscale	= max / height * 2;
 	int count	= m_iPeakCount;
 	int right	= left + width;
-	
+
 	Peak *peak	= m_pFirstPeak;
 
 	for(int i=0; i<start; i++)
@@ -420,7 +420,7 @@ void CRegionDisplay::SetPropertyVal(int index, float value)
 	}
 }
 
-char *CRegionDisplay::GetPropertyName(int index)
+const char *CRegionDisplay::GetPropertyName(int index)
 {
 	switch(index)
 	{
@@ -432,7 +432,7 @@ char *CRegionDisplay::GetPropertyName(int index)
 	return NULL;
 }
 
-char *CRegionDisplay::GetPropertyDesc(int index)
+const char *CRegionDisplay::GetPropertyDesc(int index)
 {
 	switch(index)
 	{
@@ -468,7 +468,7 @@ float CRegionDisplay::GetPropertyMax(int index)
 	return 0.f;
 }
 
-char *CRegionDisplay::GetPropertyUnit(int index)
+const char *CRegionDisplay::GetPropertyUnit(int index)
 {
 	switch(index)
 	{

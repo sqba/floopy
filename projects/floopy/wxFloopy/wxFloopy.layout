@@ -4,10 +4,10 @@
 	<File name="../util/engine_wrapper.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="1069" topLine="26" />
 	</File>
-	<File name="dialogs/controldlg.cpp" open="1" top="0" tabpos="6">
+	<File name="dialogs/controldlg.cpp" open="1" top="0" tabpos="5">
 		<Cursor position="7206" topLine="295" />
 	</File>
-	<File name="dialogs/controldlg.h" open="1" top="0" tabpos="7">
+	<File name="dialogs/controldlg.h" open="0" top="0" tabpos="7">
 		<Cursor position="876" topLine="20" />
 	</File>
 	<File name="engine/actionhistory.cpp" open="0" top="0" tabpos="0">
@@ -19,8 +19,8 @@
 	<File name="engine/floopyobj.h" open="0" top="0" tabpos="0">
 		<Cursor position="3446" topLine="111" />
 	</File>
-	<File name="engine/label.cpp" open="1" top="0" tabpos="9">
-		<Cursor position="3393" topLine="119" />
+	<File name="engine/label.cpp" open="0" top="0" tabpos="9">
+		<Cursor position="432" topLine="0" />
 	</File>
 	<File name="engine/label.h" open="0" top="0" tabpos="0">
 		<Cursor position="92" topLine="0" />
@@ -43,40 +43,43 @@
 	<File name="engine/playthread.h" open="0" top="0" tabpos="0">
 		<Cursor position="149" topLine="0" />
 	</File>
-	<File name="engine/region.cpp" open="1" top="0" tabpos="10">
-		<Cursor position="36904" topLine="1584" />
+	<File name="engine/region.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="13869" topLine="524" />
 	</File>
-	<File name="engine/region.h" open="1" top="0" tabpos="5">
+	<File name="engine/region.h" open="1" top="0" tabpos="4">
 		<Cursor position="3686" topLine="133" />
 	</File>
-	<File name="engine/regiondisplay.h" open="0" top="0" tabpos="0">
-		<Cursor position="96" topLine="0" />
+	<File name="engine/regiondisplay.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="10074" topLine="440" />
 	</File>
-	<File name="engine/track.cpp" open="1" top="0" tabpos="11">
-		<Cursor position="23613" topLine="1042" />
+	<File name="engine/regiondisplay.h" open="1" top="0" tabpos="6">
+		<Cursor position="820" topLine="22" />
 	</File>
-	<File name="engine/track.h" open="1" top="0" tabpos="8">
+	<File name="engine/track.cpp" open="1" top="1" tabpos="8">
+		<Cursor position="18649" topLine="785" />
+	</File>
+	<File name="engine/track.h" open="0" top="0" tabpos="8">
 		<Cursor position="3318" topLine="121" />
 	</File>
 	<File name="engine/tracks.cpp" open="1" top="0" tabpos="1">
 		<Cursor position="20777" topLine="949" />
 	</File>
-	<File name="engine/tracks.h" open="1" top="0" tabpos="4">
+	<File name="engine/tracks.h" open="1" top="0" tabpos="3">
 		<Cursor position="3244" topLine="144" />
 	</File>
 	<File name="floopyapp.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="291" topLine="12" />
 	</File>
-	<File name="floopyapp.h" open="1" top="0" tabpos="12">
+	<File name="floopyapp.h" open="0" top="0" tabpos="12">
 		<Cursor position="196" topLine="0" />
 	</File>
 	<File name="floopycontrol.cpp" open="0" top="0" tabpos="2">
 		<Cursor position="168" topLine="0" />
 	</File>
-	<File name="floopyframe.cpp" open="1" top="0" tabpos="3">
+	<File name="floopyframe.cpp" open="1" top="0" tabpos="2">
 		<Cursor position="7981" topLine="285" />
 	</File>
-	<File name="floopyframe.h" open="1" top="1" tabpos="13">
+	<File name="floopyframe.h" open="0" top="0" tabpos="13">
 		<Cursor position="1657" topLine="20" />
 	</File>
 	<File name="util/aqua.cpp" open="0" top="0" tabpos="5">
