@@ -151,11 +151,11 @@ public:
 	int   GetPropertyCount();
 	bool  GetPropertyVal(int, float*);
 	void  SetPropertyVal(int, float);
-	char *GetPropertyName(int);
-	char *GetPropertyDesc(int);
+	const char *GetPropertyName(int);
+	const char *GetPropertyDesc(int);
 	float GetPropertyMax(int);
 	float GetPropertyMin(int);
-	char *GetPropertyUnit(int);
+	const char *GetPropertyUnit(int);
 	float GetPropertyStep(int);
 
 	int  GetWidth();

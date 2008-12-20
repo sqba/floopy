@@ -278,7 +278,7 @@ void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 	}
 
 	wxString txt;
-	txt.Printf(_T("%.4f %s"), value, m_Unit);
+	txt.Printf(_T("%.4f %s"), value, m_Unit.c_str());
 	m_pLabel->SetLabel( txt );
 
 	obj->Invalidate();
@@ -319,7 +319,7 @@ void CControlDlg::CSliderCtrl::init()
 		m_coeff = 1;
 
 	wxString txt;
-	txt.Printf(_T("%.4f %s"), val, m_Unit);
+	txt.Printf(_T("%.4f %s"), val, m_Unit.c_str());
 	m_pLabel->SetLabel( txt );
 
 	min *= m_coeff;

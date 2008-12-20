@@ -1420,7 +1420,7 @@ void CRegion::SetPropertyVal(int index, float value)
 	}
 }
 
-char *CRegion::GetPropertyName(int index)
+const char *CRegion::GetPropertyName(int index)
 {
 	switch(index)
 	{
@@ -1429,7 +1429,7 @@ char *CRegion::GetPropertyName(int index)
 	return NULL;
 }
 
-char *CRegion::GetPropertyDesc(int index)
+const char *CRegion::GetPropertyDesc(int index)
 {
 	switch(index)
 	{
@@ -1456,7 +1456,7 @@ float CRegion::GetPropertyMax(int index)
 	return 0.f;
 }
 
-char *CRegion::GetPropertyUnit(int index)
+const char *CRegion::GetPropertyUnit(int index)
 {
 	//switch(index)
 	//{
@@ -1610,17 +1610,17 @@ float CRegion::GetParamStep(int index)
 	return 0.f;
 }
 
-char *CRegion::GetParamName(int index)
+const char *CRegion::GetParamName(int index)
 {
 	return NULL;
 }
 
-char *CRegion::GetParamDesc(int index)
+const char *CRegion::GetParamDesc(int index)
 {
 	return NULL;
 }
 
-char *CRegion::GetParamUnit(int index)
+const char *CRegion::GetParamUnit(int index)
 {
 	return NULL;
 }

@@ -1037,7 +1037,7 @@ void CTrack::SetPropertyVal(int index, float value)
 	}
 }
 
-char *CTrack::GetPropertyName(int index)
+const char *CTrack::GetPropertyName(int index)
 {
 	switch(index)
 	{
@@ -1046,7 +1046,7 @@ char *CTrack::GetPropertyName(int index)
 	return NULL;
 }
 
-char *CTrack::GetPropertyDesc(int index)
+const char *CTrack::GetPropertyDesc(int index)
 {
 	switch(index)
 	{
@@ -1073,7 +1073,7 @@ float CTrack::GetPropertyMax(int index)
 	return 0.f;
 }
 
-char *CTrack::GetPropertyUnit(int index)
+const char *CTrack::GetPropertyUnit(int index)
 {
 	//switch(index)
 	//{

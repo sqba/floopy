@@ -968,7 +968,7 @@ void CTracks::SetStatusText(int samples)
 	csTime.Printf(_T("%2.2f:%2.2f:%3.3f"), min, sec, ms);
 
 	wxString str;
-	str.Printf(_T("%d samples / %s"), samples, csTime);
+	str.Printf(_T("%d samples / %s"), samples, csTime.c_str());
 
 	GetStatusBar()->SetStatusText(str, 1);
 }
@@ -1120,7 +1120,7 @@ void CTracks::SetPropertyVal(int index, float value)
 	}
 }
 
-char *CTracks::GetPropertyName(int index)
+const char *CTracks::GetPropertyName(int index)
 {
 	switch(index)
 	{
@@ -1134,7 +1134,7 @@ char *CTracks::GetPropertyName(int index)
 	return NULL;
 }
 
-char *CTracks::GetPropertyDesc(int index)
+const char *CTracks::GetPropertyDesc(int index)
 {
 	switch(index)
 	{
@@ -1176,7 +1176,7 @@ float CTracks::GetPropertyMax(int index)
 	return 0.f;
 }
 
-char *CTracks::GetPropertyUnit(int index)
+const char *CTracks::GetPropertyUnit(int index)
 {
 	switch(index)
 	{

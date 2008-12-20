@@ -84,4 +84,4 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-#endif _FLOOPYFRAME_H
+#endif // _FLOOPYFRAME_H

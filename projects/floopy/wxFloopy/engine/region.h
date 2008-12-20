@@ -140,19 +140,19 @@ public:
 	float GetParamMin(int index);
 	float GetParamMax(int index);
 	float GetParamStep(int index);
-	char *GetParamName(int index);
-	char *GetParamDesc(int index);
-	char *GetParamUnit(int index);
+	const char *GetParamName(int index);
+	const char *GetParamDesc(int index);
+	const char *GetParamUnit(int index);
 
 
 	int   GetPropertyCount();
 	bool  GetPropertyVal(int, float*);
 	void  SetPropertyVal(int, float);
-	char *GetPropertyName(int);
-	char *GetPropertyDesc(int);
+	const char *GetPropertyName(int);
+	const char *GetPropertyDesc(int);
 	float GetPropertyMax(int);
 	float GetPropertyMin(int);
-	char *GetPropertyUnit(int);
+	const char *GetPropertyUnit(int);
 	float GetPropertyStep(int);
 
 	void ShowObjectParameters(IFloopySoundInput *obj, bool show=true);

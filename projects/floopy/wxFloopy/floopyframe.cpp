@@ -219,9 +219,10 @@ bool CFloopyFrame::Open(wxString &filename)
 {
 	if( m_pTracks->Open(filename) )
 	{
-		wxString str;
-		str.Printf(_T("Floopy! - %s"), filename);
-		SetTitle( str );
+//		wxString str;
+//		str.Printf(_T("Floopy! - %s"), filename);
+//		SetTitle( str );
+
 		//m_pTimelineView->RefreshRulers();
 //		m_pTimelineView->SetFocus();
 
@@ -303,7 +304,7 @@ void CFloopyFrame::ShowFreeMemory()
 		mem /= 1024;
 		i++;
 	}
-	str.Printf(_T("%d %s free memory"), mem, ext[i]);
+	str.Printf(_T("%d %s free memory"), mem, ext[i].c_str());
 	GetStatusBar()->SetStatusText(str, 3);
 }
 

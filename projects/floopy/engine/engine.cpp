@@ -363,7 +363,10 @@ bool CEngine::Open(const char *filename)
 		char *sep = strrchr(plugin, '.');
 		if(sep)
 		{
-			strcat(path, filename);
+		    if(strrchr(filename, PATH_SEP))
+                strcpy(path, filename);
+            else
+                strcat(path, filename);
 			m_source = CreateInput(path);
 			bResult = (NULL != m_source);
 		}

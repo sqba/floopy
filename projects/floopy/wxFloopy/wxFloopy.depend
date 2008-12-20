@@ -1547,7 +1547,7 @@
 	"wx/dialog.h"
 	"wx/frame.h"
 
-1229789605 /home/sqba/Projects/floopy/wxFloopy/engine/tracks.h
+1229793695 /home/sqba/Projects/floopy/wxFloopy/engine/tracks.h
 	<wx/log.h>
 	<wx/wxprec.h>
 	<wx/list.h>
@@ -1659,11 +1659,11 @@
 	<wx/dc.h>
 	"engine/tracks.h"
 
-1229346098 source:/home/sqba/Projects/floopy/wxFloopy/dialogs/controldlg.cpp
+1229793829 source:/home/sqba/Projects/floopy/wxFloopy/dialogs/controldlg.cpp
 	"controldlg.h"
 	"../engine/region.h"
 
-1229345849 /home/sqba/Projects/floopy/wxFloopy/engine/region.h
+1229793778 /home/sqba/Projects/floopy/wxFloopy/engine/region.h
 	"floopyobj.h"
 	"objtypes.h"
 
@@ -1683,7 +1683,7 @@
 
 1191183322 /home/sqba/Projects/floopy/wxFloopy/globals.h
 
-1229346203 /home/sqba/Projects/floopy/wxFloopy/engine/track.h
+1229793835 /home/sqba/Projects/floopy/wxFloopy/engine/track.h
 	"../../ifloopy.h"
 	"floopyobj.h"
 	"objtypes.h"
@@ -1751,7 +1751,7 @@
 1229351393 source:/home/sqba/Projects/floopy/wxFloopy/floopycontrol.cpp
 	"floopycontrol.h"
 
-1229784941 source:/home/sqba/Projects/floopy/wxFloopy/floopyframe.cpp
+1229793728 source:/home/sqba/Projects/floopy/wxFloopy/floopyframe.cpp
 	"wx/wxprec.h"
 	"wx/wx.h"
 	"floopyframe.h"
@@ -1771,7 +1771,7 @@
 	"floopyobj.h"
 	"objtypes.h"
 
-1229347393 source:/home/sqba/Projects/floopy/wxFloopy/engine/region.cpp
+1229793885 source:/home/sqba/Projects/floopy/wxFloopy/engine/region.cpp
 	<math.h>
 	"../globals.h"
 	"tracks.h"
@@ -1794,7 +1794,7 @@
 	"../globals.h"
 	<math.h>
 
-1229347604 source:/home/sqba/Projects/floopy/wxFloopy/engine/track.cpp
+1229793897 source:/home/sqba/Projects/floopy/wxFloopy/engine/track.cpp
 	<stdio.h>
 	"track.h"
 	"tracks.h"
@@ -1803,7 +1803,7 @@
 	"../util/util.h"
 	<wx/caret.h>
 
-1229789722 source:/home/sqba/Projects/floopy/wxFloopy/engine/tracks.cpp
+1229793945 source:/home/sqba/Projects/floopy/wxFloopy/engine/tracks.cpp
 	<math.h>
 	<wx/wx.h>
 	<wx/caret.h>
@@ -1901,10 +1901,10 @@
 1229348301 source:/home/sqba/Projects/floopy/wxFloopy/views/tracksview.cpp
 	"tracksview.h"
 
-1191183320 /home/sqba/Projects/floopy/wxFloopy/floopyapp.h
+1229793955 /home/sqba/Projects/floopy/wxFloopy/floopyapp.h
 	<wx/wx.h>
 
-1229785303 /home/sqba/Projects/floopy/wxFloopy/floopyframe.h
+1229793961 /home/sqba/Projects/floopy/wxFloopy/floopyframe.h
 	<wx/dnd.h>
 	<wx/timer.h>
 	"views/tracksview.h"
