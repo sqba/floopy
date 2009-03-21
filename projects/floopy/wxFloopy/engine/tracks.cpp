@@ -427,7 +427,7 @@ void CTracks::SetTimelineView(CRulerView *panel)
 
 int CTracks::GetWidth()
 {
-	return m_length * (float)m_iPixelsPerSecond;
+	return int(m_length * (float)m_iPixelsPerSecond);
 }
 
 void CTracks::SetWidth(int width)
@@ -798,8 +798,8 @@ int CTracks::GetClosestGridPos(int pos)
 
 int CTracks::CalcStep(int mindist)
 {
-	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-	int freq	= fmt->frequency;
+//	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+//	int freq	= fmt->frequency;
 	int pps		= m_iPixelsPerSecond;
 	int res		= (pps / mindist);
 

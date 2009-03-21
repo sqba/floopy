@@ -71,7 +71,7 @@ int COutputCache::CCachedBuffer::Get(const char *signature, int position, BYTE *
 {
 	if(signature == NULL)
 		return 0;
-	int firstNum = atoi( signature );
+//	int firstNum = atoi( signature );
 	//m_Next[firstNum]->Get();
 	return 0;
 }

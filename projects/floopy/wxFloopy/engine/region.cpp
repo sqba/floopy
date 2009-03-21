@@ -466,7 +466,7 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	int left=0, right=0;
 	calcPos(&left, &right);
 	int width	= right - left;
-	int border	= (IsSelected() ? 2 : 1);
+//	int border	= (IsSelected() ? 2 : 1);
 	int top		= rc.GetTop() + 1;
 	int height	= rc.GetHeight() - 2;
 
@@ -876,9 +876,9 @@ bool CRegion::setEndPos(int prevPos, int newPos)
 
 void CRegion::Update()
 {
-	bool bRefresh = true;
+//	bool bRefresh = true;
 
-	IFloopySoundInput *track = getTrack()->GetTrack();
+//	IFloopySoundInput *track = getTrack()->GetTrack();
 
 	CActionHistory *actionHistory = getTracks()->GetActionHistory();
 

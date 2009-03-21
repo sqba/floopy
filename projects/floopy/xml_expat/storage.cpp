@@ -85,7 +85,7 @@ void CStorage::writeProperties(IFloopySoundInput *input)
 {
 	if(input->GetPropertyCount() > 0)
 	{
-		bool bStart = true;
+//		bool bStart = true;
 
 		writeIndentation();
 		fprintf(m_pFile, "<properties>\n");

@@ -116,7 +116,7 @@ void CFloat2Int::quantize(FLOAT_32BIT *in, SAMPLE_16BIT *out, int numsamples)
 }
 
 // returns random value between 0 and 1
-// i got the magic numbers from csound so they should be ok but 
+// i got the magic numbers from csound so they should be ok but
 // I haven't checked them myself
 double CFloat2Int::frand()
 {

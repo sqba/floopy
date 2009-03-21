@@ -147,6 +147,8 @@ public:
 class IFloopyProperty
 {
 public:
+	virtual ~IFloopyProperty() {}
+
 	virtual int   GetPropertyCount()			{ return 0; }
 
 	virtual bool  GetPropertyIndex(const char *name, int *index)	{ return false; }
@@ -326,7 +328,6 @@ class IFloopy : public IFloopyDisplay
 {
 public:
 	IFloopy()							{ m_nLastError = 0; m_pEngine = NULL; }
-	virtual ~IFloopy()					{ }
 
 //	bool Is(int type)
 //	{ int t=this->GetType(); return (t == (type | t)); }

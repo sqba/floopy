@@ -524,8 +524,8 @@ void CTrack::Select(bool sel)
 void CTrack::loadRegions()
 {
 	int start=-1, end=-1;
-	SOUNDFORMAT *fmt = m_pTrack->GetFormat();
-	float freq = (float)fmt->frequency;
+//	SOUNDFORMAT *fmt = m_pTrack->GetFormat();
+//	float freq = (float)fmt->frequency;
 
 	m_pTrack->Reset();
 
@@ -968,7 +968,7 @@ int CTrack::GetCaretPos()
 	int pos = GetTracks()->GetCaretPos();
 
 	float value = 0;
-	int offset = 0;
+//	int offset = 0;
 	if(m_pTrack->GetParamAt(pos, TIMELINE_PARAM_MOVETO, &value))
 		pos -= (int)value;
 	else

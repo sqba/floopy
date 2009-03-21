@@ -29,7 +29,7 @@ void CFloopyHRuler::OnDrawBG(wxDC &dc)
 {
 	// Background and frame
 	wxSize size = this->GetClientSize();
-	int left=0, top=0;
+	int left=0;//, top=0;
 /*
 	int xScrollUnits=0, yScrollUnits=0;
 	m_owner->GetViewStart(&left, &top);

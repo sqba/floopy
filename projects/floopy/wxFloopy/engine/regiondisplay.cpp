@@ -44,7 +44,7 @@ void CRegionDisplay::DrawBG(wxDC& dc, wxRect& rc)
 
 	SOUNDFORMAT *fmt	= m_pInput->GetFormat();
 	int channels		= fmt->channels;
-	int width			= rc.GetWidth();
+//	int width			= rc.GetWidth();
 	int height			= rc.GetHeight() / channels;
 
 	wxRect rcChannel(rc);
@@ -238,9 +238,9 @@ void CRegionDisplay::drawDBLines(wxDC& dc, wxRect& rc)
 	if(0.f == m_fdB)
 		return;
 
-	SOUNDFORMAT *fmt = m_pInput->GetFormat();
+//	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 
-	int top		= rc.GetTop();
+//	int top		= rc.GetTop();
 	int left	= rc.GetX();
 	int width	= rc.GetWidth();
 	int height	= rc.GetHeight();
@@ -285,7 +285,7 @@ void CRegionDisplay::drawPeaks(wxDC& dc, wxRect& rc, int start)
 	int middle	= rc.GetY() + height/2;
 	int max		= getMaxSampleValue();
 	int yscale	= max / height * 2;
-	int count	= m_iPeakCount;
+//	int count	= m_iPeakCount;
 	int right	= left + width;
 
 	Peak *peak	= m_pFirstPeak;

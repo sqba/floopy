@@ -34,7 +34,7 @@ __declspec( dllexport ) bool Save(IFloopySoundEngine *engine, char *filename)
 
 
 
-#define MAX_PATH          260
+//#define MAX_PATH          260
 
 //#include "expat/xmlparse/xmlparse.h"
 #include <expat.h>
@@ -242,8 +242,8 @@ void startElement(void *userData, const char *name, const char **atts)
 		int n = XML_GetSpecifiedAttributeCount(parser);
 		if(n > 0)
 		{
-			char *source = NULL;
-			char *desc = NULL;
+//			char *source = NULL;
+//			char *desc = NULL;
 
 			IFloopySoundInput *input = si->gInput;
 

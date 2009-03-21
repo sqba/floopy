@@ -157,7 +157,7 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 	int nextOffset	= 0;
 	float value		= 0.f;
 	float valuePrev	= 0.f;
-	float valueNext = 0.f;
+//	float valueNext = 0.f;
 
 	int bottom	= m_pRegion->GetTop() + m_pRegion->GetHeight();
 

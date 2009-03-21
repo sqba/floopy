@@ -40,8 +40,8 @@ void CRegion::COffsetBar::DrawBG(wxDC &dc, wxRect &rc)
 	int top		= rc.GetTop();
 	int width	= rc.GetWidth();
 	int height	= this->GetHeight();
-	int right	= left + width;
-	int bottom	= rc.GetBottom();
+//	int right	= left + width;
+//	int bottom	= rc.GetBottom();
 
 	if(m_bDrawAquaBG)
 	{
@@ -67,7 +67,7 @@ void CRegion::COffsetBar::DrawFore(wxDC &dc, wxRect &rc)
 	int top		= rc.GetTop();
 	int right	= left + rc.GetWidth() - 1;
 	int height	= this->GetHeight() - 1;
-	int bottom	= top + height;
+//	int bottom	= top + height;
 	int iMiddle	= top + height/2;
 
 	int iLineTop1 = iMiddle + 1;

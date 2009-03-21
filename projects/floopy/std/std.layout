@@ -13,6 +13,9 @@
 	<File name="echo/echo.h" open="0" top="0" tabpos="4">
 		<Cursor position="737" topLine="6" />
 	</File>
+	<File name="float2int/float2Int.cpp" open="0" top="0" tabpos="20">
+		<Cursor position="2081" topLine="87" />
+	</File>
 	<File name="float2int/float2int.h" open="0" top="0" tabpos="5">
 		<Cursor position="999" topLine="15" />
 	</File>
@@ -54,6 +57,9 @@
 	</File>
 	<File name="volume/volume.h" open="0" top="0" tabpos="13">
 		<Cursor position="1670" topLine="30" />
+	</File>
+	<File name="waveout/waveout.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="6761" topLine="229" />
 	</File>
 	<File name="waveout/waveout.h" open="0" top="0" tabpos="0">
 		<Cursor position="1343" topLine="36" />
