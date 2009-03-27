@@ -2,7 +2,7 @@
 <?fileVersion 3.1.0?>
 <ManagedProjectBuildInfo>
   <project id="engine.cdt.managedbuild.target.gnu.so.373857447" name="Shared Library (Gnu)" projectType="cdt.managedbuild.target.gnu.so">
-    <configuration id="cdt.managedbuild.config.gnu.so.debug.1863783548" name="Debug" description="" parent="cdt.managedbuild.config.gnu.so.debug" artifactName="engine" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" artifactExtension="so" cleanCommand="rm -rf">
+    <configuration id="cdt.managedbuild.config.gnu.so.debug.1863783548" name="Debug" description="" parent="cdt.managedbuild.config.gnu.so.debug" artifactName="engine" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" artifactExtension="so" cleanCommand="rm -rf" postbuildStep="cp ${BuildArtifactFileBaseName}.${BuildArtifactFileExt} ../../bin/Debug/${BuildArtifactFileBaseName}.${BuildArtifactFileExt}">
       <toolChain superClass="cdt.managedbuild.toolchain.gnu.so.debug" id="cdt.managedbuild.toolchain.gnu.so.debug.2083387417" name="GCC Tool Chain">
         <tool superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug" id="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug.1120663022" name="GCC C++ Compiler">
           <option superClass="gnu.cpp.compiler.option.other.other" id="gnu.cpp.compiler.option.other.other.1627733710" value="-c -fmessage-length=0 -fPIC" valueType="string"/>
@@ -23,5 +23,6 @@
         <tool superClass="cdt.managedbuild.tool.gnu.assembler.so.release" id="cdt.managedbuild.tool.gnu.assembler.so.release.1970021650" name="GCC Assembler"/>
       </toolChain>
     </configuration>
+    <macros/>
   </project>
 </ManagedProjectBuildInfo>

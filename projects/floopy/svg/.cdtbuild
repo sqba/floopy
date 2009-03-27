@@ -2,7 +2,7 @@
 <?fileVersion 3.1.0?>
 <ManagedProjectBuildInfo>
   <project id="svg.cdt.managedbuild.target.gnu.so.1885408821" name="Shared Library (Gnu)" projectType="cdt.managedbuild.target.gnu.so">
-    <configuration id="cdt.managedbuild.config.gnu.so.debug.1116602992" name="Debug" description="" parent="cdt.managedbuild.config.gnu.so.debug" artifactName="svg" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" artifactExtension="so" cleanCommand="rm -rf">
+    <configuration id="cdt.managedbuild.config.gnu.so.debug.1116602992" name="Debug" description="" parent="cdt.managedbuild.config.gnu.so.debug" artifactName="svg" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" artifactExtension="so" cleanCommand="rm -rf" postbuildStep="cp ${BuildArtifactFileBaseName}.${BuildArtifactFileExt} ../../bin/Debug/${BuildArtifactFileBaseName}.${BuildArtifactFileExt}">
       <toolChain superClass="cdt.managedbuild.toolchain.gnu.so.debug" id="cdt.managedbuild.toolchain.gnu.so.debug.640283215" name="GCC Tool Chain">
         <tool superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug" id="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug.552133995" name="GCC C++ Compiler">
           <option superClass="gnu.cpp.compiler.option.other.other" id="gnu.cpp.compiler.option.other.other.1480024911" value="-c -fmessage-length=0 -fPIC" valueType="string"/>

@@ -2,7 +2,7 @@
 <?fileVersion 3.1.0?>
 <ManagedProjectBuildInfo>
   <project id="floopy.cdt.managedbuild.target.gnu.exe.982240692" name="Executable (Gnu)" projectType="cdt.managedbuild.target.gnu.exe">
-    <configuration id="cdt.managedbuild.config.gnu.exe.debug.1991085538" name="Debug" description="" parent="cdt.managedbuild.config.gnu.exe.debug" artifactName="floopy" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" cleanCommand="rm -rf">
+    <configuration id="cdt.managedbuild.config.gnu.exe.debug.1991085538" name="Debug" description="" parent="cdt.managedbuild.config.gnu.exe.debug" artifactName="floopy" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" cleanCommand="rm -rf" postbuildStep="cp ${BuildArtifactFileBaseName} ../../bin/Debug/${BuildArtifactFileBaseName}">
       <toolChain superClass="cdt.managedbuild.toolchain.gnu.exe.debug" id="cdt.managedbuild.toolchain.gnu.exe.debug.663665653" name="GCC Tool Chain">
         <tool superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1524727953" name="GCC C++ Compiler">
           <option superClass="gnu.cpp.compiler.option.other.other" id="gnu.cpp.compiler.option.other.other.1124589679" value="-c -fmessage-length=0" valueType="string"/>
