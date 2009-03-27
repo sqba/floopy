@@ -1,0 +1,47 @@
+# depslib dependency file v1.0
+1238150716 source:/home/sqba/Projects/floopy/xml_xerces/main.cpp
+	"../ifloopy.h"
+	"../platform.h"
+	<stdio.h>
+
+1237471100 /home/sqba/Projects/floopy/ifloopy.h
+	<memory.h>
+	<bits/wordsize.h>
+
+1234814296 /home/sqba/Projects/floopy/platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1234814296 /home/sqba/Projects/floopy/platform/linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1234814296 /home/sqba/Projects/floopy/platform/win32.h
+
+1238150664 source:/home/sqba/Projects/floopy/xml_xerces/storage.cpp
+	"storage.h"
+	<xercesc/util/PlatformUtils.hpp>
+	<xercesc/dom/DOM.hpp>
+	<xercesc/dom/DOMDocument.hpp>
+	<xercesc/dom/DOMDocumentType.hpp>
+	<xercesc/dom/DOMElement.hpp>
+	<xercesc/dom/DOMImplementation.hpp>
+	<xercesc/dom/DOMImplementationLS.hpp>
+	<xercesc/dom/DOMNodeIterator.hpp>
+	<xercesc/dom/DOMNodeList.hpp>
+	<xercesc/dom/DOMText.hpp>
+	<xercesc/parsers/XercesDOMParser.hpp>
+	<xercesc/util/XMLUni.hpp>
+	<xercesc/util/PlatformUtils.hpp>
+	<xercesc/parsers/XercesDOMParser.hpp>
+	<xercesc/dom/DOM.hpp>
+	<xercesc/sax/HandlerBase.hpp>
+	<xercesc/util/XMLString.hpp>
+	<xercesc/util/PlatformUtils.hpp>
+	<iostream>
+
+1238141722 /home/sqba/Projects/floopy/xml_xerces/storage.h
+	"../ifloopy.h"
+	"../platform.h"
+

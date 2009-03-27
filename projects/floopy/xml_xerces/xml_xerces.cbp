@@ -2,48 +2,50 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="floopy" />
+		<Option title="xml_xerces" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/Debug/floopy" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../obj/Debug/floopy" />
-				<Option type="1" />
+				<Option output="../bin/Debug/libxml_xerces" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../obj/Debug/xml_xerces" />
+				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option parameters="-i ../bin/Debug/samples/acid/acid.xml -o ../bin/Debug/acid.svg" />
 				<Option host_application="floopy" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-fPIC" />
 				</Compiler>
 				<Linker>
-					<Add option="-ldl" />
+					<Add library="xerces-c" />
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/Release/floopy" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../obj/Release/floopy" />
-				<Option type="1" />
+				<Option output="../bin/Release/libxml_xerces" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../obj/Release/xml_xerces" />
+				<Option type="3" />
 				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-fPIC" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-ldl" />
+					<Add library="xerces-c" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="args.h" />
-		<Unit filename="engine_wrapper.cpp" />
-		<Unit filename="engine_wrapper.h" />
-		<Unit filename="floopy.cpp" />
+		<Unit filename="main.cpp" />
+		<Unit filename="storage.cpp" />
+		<Unit filename="storage.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

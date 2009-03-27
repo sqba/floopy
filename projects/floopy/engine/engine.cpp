@@ -15,6 +15,8 @@
 
 #define ERR_STR_FILENOTFOUND	"File '%s' not found."
 
+#define DEFAULT_XML_STORAGE		"xml_xerces"
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -154,7 +156,7 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 		}
 		strcat(path, plugin);
 
-		if(0==strcmpi(plugin, "xml_expat"))
+		if(0==strcmpi(plugin, DEFAULT_XML_STORAGE))
 		{
 			CEngine *engine = new CEngine(m_hModule);
 			if(!engine->Open(filename))
@@ -372,6 +374,7 @@ bool CEngine::Open(const char *filename)
 		}
 		else
 		{
+			strcat(path, PLUG_PREFIX);
 			strcat(path, plugin);
 
 			CStorage storage(this, path);
@@ -437,7 +440,7 @@ const char *CEngine::getPluginName(const char *filename)
 		//if(0 == strcmpi(ext, "test"))
 		//	return "test";
 		if(0 == strcmpi(ext, "xml"))
-			return "xml_expat";
+			return DEFAULT_XML_STORAGE;
 		//if(0 == strcmpi(ext, "hz"))
 		//	return "libstd.tonegen";
 		if(0 == strcmpi(ext, "wav"))

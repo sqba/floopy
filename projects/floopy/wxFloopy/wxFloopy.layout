@@ -4,6 +4,9 @@
 	<File name="../util/engine_wrapper.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="796" topLine="26" />
 	</File>
+	<File name="../util/engine_wrapper.h" open="0" top="0" tabpos="0">
+		<Cursor position="1193" topLine="12" />
+	</File>
 	<File name="dialogs/controldlg.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="7316" topLine="301" />
 	</File>
@@ -61,20 +64,20 @@
 	<File name="engine/regiondisplay.h" open="0" top="0" tabpos="6">
 		<Cursor position="820" topLine="22" />
 	</File>
-	<File name="engine/track.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="699" topLine="16" />
+	<File name="engine/track.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="649" topLine="16" />
 	</File>
 	<File name="engine/track.h" open="0" top="0" tabpos="8">
 		<Cursor position="3318" topLine="121" />
 	</File>
-	<File name="engine/tracks.cpp" open="0" top="0" tabpos="13">
-		<Cursor position="17126" topLine="782" />
+	<File name="engine/tracks.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="13376" topLine="594" />
 	</File>
 	<File name="engine/tracks.h" open="0" top="0" tabpos="3">
 		<Cursor position="3244" topLine="144" />
 	</File>
 	<File name="floopyapp.cpp" open="0" top="0" tabpos="4">
-		<Cursor position="291" topLine="12" />
+		<Cursor position="291" topLine="14" />
 	</File>
 	<File name="floopyapp.h" open="0" top="0" tabpos="12">
 		<Cursor position="196" topLine="0" />
@@ -83,10 +86,10 @@
 		<Cursor position="168" topLine="0" />
 	</File>
 	<File name="floopyframe.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="7981" topLine="285" />
+		<Cursor position="6042" topLine="199" />
 	</File>
 	<File name="floopyframe.h" open="0" top="0" tabpos="13">
-		<Cursor position="1657" topLine="20" />
+		<Cursor position="1169" topLine="44" />
 	</File>
 	<File name="util/aqua.cpp" open="0" top="0" tabpos="14">
 		<Cursor position="633" topLine="12" />
@@ -107,7 +110,7 @@
 		<Cursor position="153" topLine="0" />
 	</File>
 	<File name="views/labelsview.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="160" topLine="0" />
+		<Cursor position="1381" topLine="20" />
 	</File>
 	<File name="views/mainview.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="153" topLine="0" />

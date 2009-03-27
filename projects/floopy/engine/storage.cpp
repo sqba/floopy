@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "storage.h"
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -20,7 +21,8 @@ CStorage::CStorage(IFloopySoundEngine *engine, const char *plugin)
 	strcpy(filename, plugin);
 	strcat(filename, PLUG_EXT);
 
-	LoadPlugin(filename);
+	bool bStorageLoaded = LoadPlugin(filename);
+	assert( bStorageLoaded );
 
 	delete[] filename;
 }
