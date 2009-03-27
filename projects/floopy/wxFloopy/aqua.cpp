@@ -3,7 +3,7 @@
 
 #include "engine/tracks.h"
 
-void DrawAquaRect(wxDC& dc, wxRect& rc, int radius = 3)
+inline void DrawAquaRect(wxDC& dc, wxRect& rc, int radius = 3)
 {
 	int left	= rc.GetX();
 	int top		= rc.GetTop();

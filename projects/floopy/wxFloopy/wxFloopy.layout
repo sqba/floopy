@@ -4,8 +4,8 @@
 	<File name="../util/engine_wrapper.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="796" topLine="26" />
 	</File>
-	<File name="../util/engine_wrapper.h" open="0" top="0" tabpos="0">
-		<Cursor position="1193" topLine="12" />
+	<File name="../util/engine_wrapper.h" open="1" top="0" tabpos="2">
+		<Cursor position="1193" topLine="14" />
 	</File>
 	<File name="dialogs/controldlg.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="7316" topLine="301" />
@@ -70,8 +70,8 @@
 	<File name="engine/track.h" open="0" top="0" tabpos="8">
 		<Cursor position="3318" topLine="121" />
 	</File>
-	<File name="engine/tracks.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="13376" topLine="594" />
+	<File name="engine/tracks.cpp" open="1" top="1" tabpos="1">
+		<Cursor position="11615" topLine="512" />
 	</File>
 	<File name="engine/tracks.h" open="0" top="0" tabpos="3">
 		<Cursor position="3244" topLine="144" />
@@ -85,11 +85,11 @@
 	<File name="floopycontrol.cpp" open="0" top="0" tabpos="2">
 		<Cursor position="168" topLine="0" />
 	</File>
-	<File name="floopyframe.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="6042" topLine="199" />
+	<File name="floopyframe.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="6024" topLine="202" />
 	</File>
-	<File name="floopyframe.h" open="0" top="0" tabpos="13">
-		<Cursor position="1169" topLine="44" />
+	<File name="floopyframe.h" open="1" top="0" tabpos="4">
+		<Cursor position="741" topLine="21" />
 	</File>
 	<File name="util/aqua.cpp" open="0" top="0" tabpos="14">
 		<Cursor position="633" topLine="12" />
