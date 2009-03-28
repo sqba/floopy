@@ -1,7 +1,5 @@
-
-#ifndef _XML_STORAGE_H_
-#define _XML_STORAGE_H_
-
+#ifndef CSTORAGE_H_
+#define CSTORAGE_H_
 
 #include "../ifloopy.h"
 #include "../platform.h"
@@ -29,4 +27,4 @@ private:
 	int m_iIndent;
 };
 
-#endif // _XML_STORAGE_H_
+#endif /*CSTORAGE_H_*/

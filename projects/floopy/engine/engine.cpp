@@ -15,7 +15,7 @@
 
 #define ERR_STR_FILENOTFOUND	"File '%s' not found."
 
-#define DEFAULT_XML_STORAGE		"xml_xerces"
+#define DEFAULT_XML_STORAGE		"xml"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

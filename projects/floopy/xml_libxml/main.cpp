@@ -1,3 +1,7 @@
+// Install dependencies
+// apt-get install libxml++2.6-dev libxml++2.6-doc 
+// sudo apt-get install libgtkmm-2.4-dev
+
 
 #include "../ifloopy.h"
 #include "../platform.h"
