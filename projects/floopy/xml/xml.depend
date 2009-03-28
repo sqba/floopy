@@ -1,0 +1,61 @@
+# depslib dependency file v1.0
+1238263086 source:/home/sqba/Projects/floopy/xml/main.cpp
+	"../ifloopy.h"
+	"../platform.h"
+	"tinyxml/tinyxml.h"
+
+1237471100 /home/sqba/Projects/floopy/ifloopy.h
+	<memory.h>
+	<bits/wordsize.h>
+
+1234814296 /home/sqba/Projects/floopy/platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1238181448 /home/sqba/Projects/floopy/platform/linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1234814296 /home/sqba/Projects/floopy/platform/win32.h
+
+1178491283 /home/sqba/Projects/floopy/xml/tinyxml/tinyxml.h
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<string>
+	<iostream>
+	<sstream>
+	"tinystr.h"
+
+1178491283 /home/sqba/Projects/floopy/xml/tinyxml/tinystr.h
+	<assert.h>
+	<string.h>
+
+1178491283 source:/home/sqba/Projects/floopy/xml/tinyxml/tinystr.cpp
+	"tinystr.h"
+
+1178491283 source:/home/sqba/Projects/floopy/xml/tinyxml/tinyxml.cpp
+	<ctype.h>
+	<sstream>
+	<iostream>
+	"tinyxml.h"
+
+1178491283 source:/home/sqba/Projects/floopy/xml/tinyxml/tinyxmlerror.cpp
+	"tinyxml.h"
+
+1178491283 source:/home/sqba/Projects/floopy/xml/tinyxml/tinyxmlparser.cpp
+	<ctype.h>
+	<stddef.h>
+	"tinyxml.h"
+	<windows.h>
+
+1178491283 source:/home/sqba/Projects/floopy/xml/tinyxml/xmltest.cpp
+	<iostream>
+	<sstream>
+	<stdio.h>
+	<crtdbg.h>
+	"tinyxml.h"
+

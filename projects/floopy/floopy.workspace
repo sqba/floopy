@@ -6,7 +6,8 @@
 		<Project filename="floopy/floopy.cbp" />
 		<Project filename="svg/svg.cbp" />
 		<Project filename="xml_expat/xml_expat.cbp" />
-		<Project filename="wxFloopy/wxFloopy.cbp" active="1" />
+		<Project filename="wxFloopy/wxFloopy.cbp" />
 		<Project filename="xml_xerces/xml_xerces.cbp" />
+		<Project filename="xml/xml.cbp" active="1" />
 	</Workspace>
 </CodeBlocks_workspace_file>
