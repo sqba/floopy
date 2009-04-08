@@ -6,7 +6,7 @@
 #define STORAGE_H
 
 #include "../ifloopy.h"
-#include "pluginloader.h"
+#include "../common/loader.h"
 
 /*********************************************************************
  *! \class CStorage
@@ -17,7 +17,7 @@
 class CStorage : CPluginLoader
 {
 public:
-	CStorage(IFloopySoundEngine *engine, const char *plugin);
+	CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *plugin);
 	virtual ~CStorage();
 
 	bool Load(const char *filename);

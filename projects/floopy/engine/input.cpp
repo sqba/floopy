@@ -15,7 +15,7 @@ typedef IFloopySoundInput* (*CreateProc)(const char *name);
 //////////////////////////////////////////////////////////////////////
 
 
-CInput::CInput(UpdateCallback func, COutputCache *outputCache)
+CInput::CInput(LIB_HANDLE hModule, UpdateCallback func, COutputCache *outputCache) : CPluginLoader(hModule)
 {
 	m_callback		= func;
 	m_plugin		= NULL;

@@ -305,7 +305,7 @@ public:
 	virtual const char *GetDisplayName()					{ return NULL; }
 
 	/** Do not override in implementations, handled by the engine */
-	virtual void  SetDisplayName(const char *name, int len){ }
+	virtual void  SetDisplayName(const char *name, int len){ } // remove len!!!
 
 	/** Do not override in implementations, handled by the engine */
 	virtual bool GetColor(UINT *red, UINT *green, UINT *blue) { return false; }

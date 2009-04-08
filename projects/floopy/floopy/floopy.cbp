@@ -40,6 +40,8 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="../common/loader.cpp" />
+		<Unit filename="../common/loader.h" />
 		<Unit filename="args.h" />
 		<Unit filename="engine_wrapper.cpp" />
 		<Unit filename="engine_wrapper.h" />

@@ -41,6 +41,8 @@
 		<Linker>
 			<Add option="-ldl" />
 		</Linker>
+		<Unit filename="../common/loader.cpp" />
+		<Unit filename="../common/loader.h" />
 		<Unit filename="engine.cpp" />
 		<Unit filename="engine.h" />
 		<Unit filename="globals.h" />
@@ -51,8 +53,6 @@
 		<Unit filename="output.h" />
 		<Unit filename="outputcache.cpp" />
 		<Unit filename="outputcache.h" />
-		<Unit filename="pluginloader.cpp" />
-		<Unit filename="pluginloader.h" />
 		<Unit filename="storage.cpp" />
 		<Unit filename="storage.h" />
 		<Unit filename="timeline.cpp" />

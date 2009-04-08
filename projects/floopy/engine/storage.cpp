@@ -13,7 +13,7 @@ typedef bool (*StorageProc)(IFloopySoundEngine*, const char*);
 #define PROC_NAME_LOAD "Load"
 #define PROC_NAME_SAVE "Save"
 
-CStorage::CStorage(IFloopySoundEngine *engine, const char *plugin)
+CStorage::CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *plugin) : CPluginLoader(hModule)
 {
 	m_engine = engine;
 

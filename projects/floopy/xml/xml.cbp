@@ -11,6 +11,8 @@
 				<Option object_output="../obj/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
+				<Option parameters="-i ../bin/Debug/samples/acid/acid.xml" />
+				<Option host_application="floopy" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>

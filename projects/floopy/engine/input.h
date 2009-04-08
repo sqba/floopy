@@ -12,7 +12,7 @@
 #include "../platform.h"
 #include "../ifloopy.h"
 #include "timeline.h"
-#include "pluginloader.h"
+#include "../common/loader.h"
 #include "outputcache.h"
 
 /**
@@ -29,7 +29,7 @@
 class CInput : public IFloopySoundMixer, CPluginLoader
 {
 public:
-	CInput(UpdateCallback func, COutputCache *outputCache);
+	CInput(LIB_HANDLE hModule, UpdateCallback func, COutputCache *outputCache);
 	virtual ~CInput();
 
 	bool Create(const char *plugin);

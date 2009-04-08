@@ -17,7 +17,7 @@
 typedef IFloopySoundOutput* (*CreateProc)(const char*, SOUNDFORMAT);
 #define PROC_NAME "CreateOutput"
 
-COutput::COutput()
+COutput::COutput(LIB_HANDLE hModule) : CPluginLoader(hModule)
 {
 	m_plugin			= NULL;
 	m_offset			= 0;

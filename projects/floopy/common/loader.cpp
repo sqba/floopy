@@ -2,14 +2,15 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pluginloader.h"
+#include "loader.h"
 #include "../platform.h"
+#include <string.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CPluginLoader::CPluginLoader()
+CPluginLoader::CPluginLoader(LIB_HANDLE hModule)
 {
 
 }
@@ -22,7 +23,10 @@ CPluginLoader::~CPluginLoader()
 
 bool CPluginLoader::LoadPlugin(const char *fileName)
 {
+//	char path[MAX_PATH] = {0};
+//	printf("Loading \'%s\': ");
 	m_hinst = PLUGIN_OPEN(fileName);
+//	printf("%s\n", m_hinst?"OK":"FAILED");
 	return (0 != m_hinst);
 }
 
@@ -36,4 +40,28 @@ void *CPluginLoader::GetFunction(const char *funcName)
 		return func;
 
 	return 0;
+}
+
+void CPluginLoader::get_library_path(LIB_HANDLE hModule, char *buff, int len)
+{
+#ifdef WIN32
+	GetModuleFileName(m_hModule, buff, len);
+#else
+	// Linux specific
+
+	// 1. executable
+	readlink("/proc/self/exe", buff, len);
+
+	// 2. dynamic library
+	//DL_info info;
+    //if (dladdr( &GetLibraryPath, &info ) == 0)
+    //	strcpy(m_szPath, info.dli_fname);
+
+    // 3.
+    // g++ -o executable -Wl,-R -Wl,'$ORIGIN' executable.o libhe
+#endif
+
+	char *tmp = strrchr(buff, PATH_SEP);
+	if(tmp)
+		*(tmp+1) = '\0';
 }

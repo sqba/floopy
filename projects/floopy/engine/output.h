@@ -12,7 +12,7 @@
 #include "../ifloopy.h"
 #include <stdio.h>
 #include "timeline.h"
-#include "pluginloader.h"
+#include "../common/loader.h"
 
 /**
  * \class COutput
@@ -26,7 +26,7 @@
 class COutput : public IFloopySoundOutput, CPluginLoader
 {
 public:
-	COutput();
+	COutput(LIB_HANDLE hModule);
 	virtual ~COutput();
 
 	bool Create(const char *plugin, SOUNDFORMAT fmt);

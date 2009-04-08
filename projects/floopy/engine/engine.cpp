@@ -165,7 +165,7 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 				delete engine;
 				return NULL;
 			}
-			obj = new CInput(m_callback, m_pOutputCache);
+			obj = new CInput(m_hModule, m_callback, m_pOutputCache);
 			if(!((CInput*)obj)->Create(engine))
 			{
 				//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -176,7 +176,7 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 		}
 		else
 		{
-			obj = new CInput(m_callback, m_pOutputCache);
+			obj = new CInput(m_hModule, m_callback, m_pOutputCache);
 			if(!((CInput*)obj)->Create(path))
 			{
 				//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -206,9 +206,11 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 			if(path[strlen(path)-1] != PATH_SEP)
 				path[strlen(path)] = PATH_SEP;
 		}
+		strcat(path, PLUG_PREFIX);
 		strcat(path, filename);
+		strcat(path, PLUG_EXT);
 
-		obj = new CInput(m_callback, m_pOutputCache);
+		obj = new CInput(m_hModule, m_callback, m_pOutputCache);
 		if(!((CInput*)obj)->Create(path))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -319,7 +321,7 @@ IFloopySoundOutput *CEngine::CreateOutput(const char *filename, SOUNDFORMAT fmt)
 	const char *plugin = getPluginName(filename);
 	if(plugin)
 	{
-		obj = new COutput();
+		obj = new COutput(m_hModule);
 		if(!obj->Create(plugin, fmt) || !obj->Open(filename))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -331,7 +333,7 @@ IFloopySoundOutput *CEngine::CreateOutput(const char *filename, SOUNDFORMAT fmt)
 	}
 	else
 	{
-		obj = new COutput();
+		obj = new COutput(m_hModule);
 		if(!obj->Create(filename, fmt))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
@@ -377,7 +379,7 @@ bool CEngine::Open(const char *filename)
 			strcat(path, PLUG_PREFIX);
 			strcat(path, plugin);
 
-			CStorage storage(this, path);
+			CStorage storage(m_hModule, this, path);
 			bResult = storage.Load(filename);
 		}
 
@@ -399,7 +401,7 @@ bool CEngine::Save(const char *filename)
 	const char *name = getPluginName(filename);
 	if(name)
 	{
-		CStorage storage(this, name);
+		CStorage storage(m_hModule, this, name);
 		result = storage.Save(filename);
 		//if(!result)
 		//	storage.GetLastError(m_szLastError, strlen(m_szLastError));

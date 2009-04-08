@@ -19,7 +19,7 @@
 
 /*********************************************************************
  *! \class CPluginLoader
- *  \brief Platform dependant library function loader.
+ *  \brief Platform independent library function loader.
  *  \author Filip Pavlovic
  *  \version 0.0
  *  \date 08. April 2006.
@@ -27,12 +27,14 @@
 class CPluginLoader
 {
 public:
-	CPluginLoader();
+	CPluginLoader(LIB_HANDLE hModule);
 	virtual ~CPluginLoader();
 
-protected:
 	bool LoadPlugin(const char *fileName);
 	void *GetFunction(const char *funcName);
+
+private:
+	void get_library_path(LIB_HANDLE hModule, char *buff, int len);
 
 private:
 	LIB_HANDLE m_hinst;

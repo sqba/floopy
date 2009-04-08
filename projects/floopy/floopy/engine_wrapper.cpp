@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <sstream>
 #include "../platform.h"
+#include "../common/loader.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -39,6 +40,8 @@ CEngineWrapper::~CEngineWrapper()
 
 void CEngineWrapper::init(const char *plugin)
 {
+	CPluginLoader loader(NULL);
+
     std::ostringstream strPath;
     strPath << m_szPath << PLUG_PREFIX << plugin << PLUG_EXT;
     const char *pszPath = strPath.str().c_str();

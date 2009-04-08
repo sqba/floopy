@@ -31,12 +31,6 @@
 	<File name="outputcache.h" open="0" top="0" tabpos="2">
 		<Cursor position="1110" topLine="9" />
 	</File>
-	<File name="pluginloader.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="556" topLine="14" />
-	</File>
-	<File name="pluginloader.h" open="0" top="0" tabpos="4">
-		<Cursor position="713" topLine="2" />
-	</File>
 	<File name="storage.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="710" topLine="16" />
 	</File>
