@@ -11,6 +11,7 @@
 
 #include "../ifloopy.h"
 #include "../platform.h"
+#include "../common/loader.h"
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
@@ -48,12 +49,13 @@ public:
 
 private:
 	void GetLibraryPath();
-	void init(const char *plugin);
+	bool init(const char *plugin);
 
 private:
 	LIB_HANDLE			m_hModule;
 	IFloopySoundEngine	*m_plugin;
 	char				m_szPath[MAX_PATH];
+	CLoader				m_Loader;
 };
 
 #endif // !defined(AFX_ENGINE_H__2971634E_ED26_4A50_ABC1_123ADF851EA5__INCLUDED_)

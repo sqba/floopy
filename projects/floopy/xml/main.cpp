@@ -1,5 +1,5 @@
 // Install dependencies
-// apt-get install libxml++2.6-dev libxml++2.6-doc 
+// apt-get install libxml++2.6-dev libxml++2.6-doc
 // sudo apt-get install libgtkmm-2.4-dev
 
 
@@ -58,7 +58,7 @@ int dump_attribs_to_stdout(TiXmlElement* pElement, unsigned int indent)
 		i++;
 		pAttrib=pAttrib->Next();
 	}
-	return i;	
+	return i;
 }
 
 void dump_to_stdout( TiXmlNode* pParent, unsigned int indent = 0 )
@@ -108,7 +108,7 @@ void dump_to_stdout( TiXmlNode* pParent, unsigned int indent = 0 )
 		break;
 	}
 	printf( "\n" );
-	for ( pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling()) 
+	for ( pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
 	{
 		dump_to_stdout( pChild, indent+1 );
 	}
@@ -120,10 +120,10 @@ void dump_to_stdout( TiXmlNode* pParent, unsigned int indent = 0 )
 vector<string> tokenize(const string& str,const string& delimiters)
 {
 	vector<string> tokens;
-    	
+
 	// skip delimiters at beginning.
     	string::size_type lastPos = str.find_first_not_of(delimiters, 0);
-    	
+
 	// find first "non-delimiter".
     	string::size_type pos = str.find_first_of(delimiters, lastPos);
 
@@ -131,10 +131,10 @@ vector<string> tokenize(const string& str,const string& delimiters)
     	{
         	// found a token, add it to the vector.
         	tokens.push_back(str.substr(lastPos, pos - lastPos));
-		
+
         	// skip delimiters.  Note the "not_of"
         	lastPos = str.find_first_not_of(delimiters, pos);
-		
+
         	// find next "non-delimiter"
         	pos = str.find_first_of(delimiters, lastPos);
     	}
@@ -207,7 +207,7 @@ int load_children(IFloopySoundEngine *engine, TiXmlElement* pElement, IFloopySou
 
 	int count = 0;
 	TiXmlNode* child;
-	for ( child = pElement->FirstChild(); child != 0; child = child->NextSibling()) 
+	for ( child = pElement->FirstChild(); child != 0; child = child->NextSibling())
 	{
 		TiXmlElement *input = child->FirstChildElement("input");
 		if( load_input( engine, input, parent ) )
@@ -297,21 +297,28 @@ bool load_timeline(TiXmlElement* pElement, IFloopySoundInput *input)
 IFloopySoundInput *load_input(IFloopySoundEngine *engine, TiXmlElement* pParent, IFloopySoundInput *parent)
 {
 	if ( !pParent ) return NULL;
-	
+
 	IFloopySoundInput *input = NULL;
-	
+
 	TiXmlElement* pElement = pParent->FirstChildElement("input");
 	if ( !pElement ) return NULL;
 
 	// check for full path
-	const char *source = pElement->Attribute("source");
-	if( !source ) return NULL;
-	if(0 == stricmp("engine", source))
+	const char *plugin = pElement->Attribute("plugin");
+	if( !plugin ) return NULL;
+	bool bEngine = (0 == stricmp("engine", plugin));
+	if( bEngine )
 		input = engine;
 	else
-		input = engine->CreateInput(source);
+		input = engine->CreateInput(plugin);
 	assert( input );
 	if( !input ) return NULL;
+
+	const char *source = pElement->Attribute("source");
+	if(bEngine && source)
+	{
+		input->Open( source );
+	}
 
 	const char *name = pElement->Attribute("name");
 	if( name )
@@ -328,7 +335,7 @@ IFloopySoundInput *load_input(IFloopySoundEngine *engine, TiXmlElement* pParent,
 	TiXmlElement *pTimeline = pElement->FirstChildElement("timeline");
 	if( pTimeline )
 		load_timeline( pTimeline, engine );
-	
+
 	load_input( engine, pElement, input);
 
 	return input;
@@ -347,18 +354,15 @@ EXPORTED bool Load(IFloopySoundEngine *engine, char *filename)
 
 	TiXmlDocument doc(filename);
 	bool loadOkay = doc.LoadFile();
-	if (loadOkay)
-	{
-//		printf("\n%s:\n", filename);
-//		dump_to_stdout( &doc ); // defined later in the tutorial
-		load_input( engine, doc.RootElement(), NULL );
-	}
-	else
+	if( !loadOkay )
 	{
 		printf("Failed to load file \"%s\"\n", filename);
-	}
-
 	return false;
+	}
+//	printf("\n%s:\n", filename);
+//	dump_to_stdout( &doc ); // defined later in the tutorial
+	load_input( engine, doc.RootElement(), NULL );
+	return true;
 }
 
 EXPORTED bool Save(IFloopySoundEngine *engine, char *filename)
@@ -369,13 +373,13 @@ EXPORTED bool Save(IFloopySoundEngine *engine, char *filename)
 	TiXmlDocument doc;
 	TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "", "" );
 	doc.LinkEndChild( decl );
-	
+
 	TiXmlElement * element = new TiXmlElement( "Hello" );
 	doc.LinkEndChild( element );
-	
+
 	TiXmlText * text = new TiXmlText( "World" );
 	element->LinkEndChild( text );
-	
+
 	doc.SaveFile( filename );
 
 	return false;

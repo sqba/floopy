@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="main.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="1177" topLine="75" />
+	<File name="main.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="2664" topLine="145" />
 	</File>
-	<File name="storage.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="4648" topLine="221" />
+	<File name="storage.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="7167" topLine="326" />
 	</File>
 	<File name="storage.h" open="0" top="0" tabpos="3">
 		<Cursor position="270" topLine="36" />

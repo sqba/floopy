@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="main.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="6553" topLine="285" />
+	<File name="main.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="8188" topLine="340" />
+	</File>
+	<File name="tinyxml/tinyxml.h" open="0" top="0" tabpos="0">
+		<Cursor position="52240" topLine="1415" />
 	</File>
 </CodeBlocks_layout_file>

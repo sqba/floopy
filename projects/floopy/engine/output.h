@@ -23,7 +23,7 @@
  *
  * Output plug-in wrapper class.
  */
-class COutput : public IFloopySoundOutput, CPluginLoader
+class COutput : public IFloopySoundOutput, CLoader
 {
 public:
 	COutput(LIB_HANDLE hModule);

@@ -43,9 +43,9 @@
 		<Unit filename="../common/loader.cpp" />
 		<Unit filename="../common/loader.h" />
 		<Unit filename="args.h" />
-		<Unit filename="engine_wrapper.cpp" />
-		<Unit filename="engine_wrapper.h" />
 		<Unit filename="floopy.cpp" />
+		<Unit filename="../util/engine_wrapper.cpp" />
+		<Unit filename="../util/engine_wrapper.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

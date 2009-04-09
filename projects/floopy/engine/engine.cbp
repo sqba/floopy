@@ -57,6 +57,8 @@
 		<Unit filename="storage.h" />
 		<Unit filename="timeline.cpp" />
 		<Unit filename="timeline.h" />
+		<Unit filename="util.cpp" />
+		<Unit filename="util.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -163,9 +163,9 @@ void startElement(void *userData, const char *name, const char **atts)
 			{
 				if(atts[i])
 				{
-					if(0==strcmp(atts[i], "source"))
+					if(0==strcmp(atts[i], "plugin"))
 						source = (char*)atts[i+1];
-					if(0==strcmp(atts[i], "open"))
+					if(0==strcmp(atts[i], "source"))
 						filename = (char*)atts[i+1];
 					if(0==strcmp(atts[i], "name"))
 						desc = (char*)atts[i+1];

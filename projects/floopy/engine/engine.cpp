@@ -12,8 +12,7 @@
 #include "input.h"
 #include "output.h"
 #include "../platform.h"
-
-#define ERR_STR_FILENOTFOUND	"File '%s' not found."
+#include "util.h"
 
 #define DEFAULT_XML_STORAGE		"xml"
 
@@ -54,7 +53,7 @@ CEngine::CEngine(LIB_HANDLE hModule)
 
 	// Default values
 	m_format.frequency = 44100;
-	//m_format.format =
+	m_format.format = WAVE_FORMAT_PCM;
 	m_format.channels = 2;
 	m_format.bitsPerSample = 16;
 
@@ -81,7 +80,7 @@ CEngine::CEngine(LIB_HANDLE hModule, COutputCache *pOutputCache)
 
 	// Default values
 	m_format.frequency = 44100;
-	//m_format.format =
+	m_format.format = WAVE_FORMAT_PCM;
 	m_format.channels = 2;
 	m_format.bitsPerSample = 16;
 
@@ -142,7 +141,16 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 {
 	IFloopySoundInput *obj = NULL;
 	enumObjType type = TYPE_INPUT;
+/*
+	char plugin[MAX_PATH]	= {0};
+	char library[MAX_FNAME]	= {0};
 
+	get_library_name(name, library);
+	get_plugin_name(name, plugin);
+
+	if( !LoadPlugin(library) )
+		return false;
+*/
 	// Check if a filename has been given
 	const char *plugin = getPluginName(filename);
 	if(plugin)
@@ -177,7 +185,7 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 		else
 		{
 			obj = new CInput(m_hModule, m_callback, m_pOutputCache);
-			if(!((CInput*)obj)->Create(path))
+			if(!((CInput*)obj)->Create(plugin))
 			{
 				//setLastError(ERR_STR_FILENOTFOUND, filename);
 				sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
@@ -195,6 +203,7 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 	}
 	else
 	{
+/*
 		char *tmp = strrchr(filename, PATH_SEP);
 		if(tmp)
 			filename = tmp+1;
@@ -209,18 +218,54 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 		strcat(path, PLUG_PREFIX);
 		strcat(path, filename);
 		strcat(path, PLUG_EXT);
-
+*/
 		obj = new CInput(m_hModule, m_callback, m_pOutputCache);
-		if(!((CInput*)obj)->Create(path))
+		if(!((CInput*)obj)->Create(filename))
 		{
 			//setLastError(ERR_STR_FILENOTFOUND, filename);
-			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
+			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
 			delete obj;
 			return NULL;
 		}
 	}
 
 	add(obj, type);
+	return obj;
+}
+
+IFloopySoundOutput *CEngine::CreateOutput(const char *filename, SOUNDFORMAT fmt)
+{
+	COutput *obj = NULL;
+
+	// Check if a filename has been given
+	const char *plugin = getPluginName(filename);
+	if(plugin)
+	{
+		obj = new COutput(m_hModule);
+		if(!obj->Create(plugin, fmt) || !obj->Open(filename))
+		{
+			//setLastError(ERR_STR_FILENOTFOUND, filename);
+			//sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
+			strcpy(m_szLastError, obj->GetLastErrorDesc());
+			delete obj;
+			return NULL;
+		}
+	}
+	else
+	{
+		obj = new COutput(m_hModule);
+		if(!obj->Create(filename, fmt))
+		{
+			//setLastError(ERR_STR_FILENOTFOUND, filename);
+			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
+			delete obj;
+			return NULL;
+		}
+		// And what if the component doesn's have the output interface?
+	}
+
+	add(obj, TYPE_OUTPUT);
+
 	return obj;
 }
 
@@ -233,7 +278,7 @@ IFloopySoundInput *CEngine::CreateTrack(const char *name)
 		return NULL;
 	SOUNDFORMAT *pfmt2 = input->GetFormat();
 
-	//if(fmt1.format != pfmt2->format)
+	//if(fmt1->format != pfmt2->format)
 	//{
 	//	return NULL;
 	//}
@@ -313,42 +358,6 @@ IFloopySoundInput *CEngine::CreateTrack(const char *name)
 	return input;
 }
 
-IFloopySoundOutput *CEngine::CreateOutput(const char *filename, SOUNDFORMAT fmt)
-{
-	COutput *obj = NULL;
-
-	// Check if a filename has been given
-	const char *plugin = getPluginName(filename);
-	if(plugin)
-	{
-		obj = new COutput(m_hModule);
-		if(!obj->Create(plugin, fmt) || !obj->Open(filename))
-		{
-			//setLastError(ERR_STR_FILENOTFOUND, filename);
-			//sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
-			strcpy(m_szLastError, obj->GetLastErrorDesc());
-			delete obj;
-			return NULL;
-		}
-	}
-	else
-	{
-		obj = new COutput(m_hModule);
-		if(!obj->Create(filename, fmt))
-		{
-			//setLastError(ERR_STR_FILENOTFOUND, filename);
-			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
-			delete obj;
-			return NULL;
-		}
-		// And what if the component doesn's have the output interface?
-	}
-
-	add(obj, TYPE_OUTPUT);
-
-	return obj;
-}
-
 bool CEngine::Open(const char *filename)
 {
 	bool bResult = false;
@@ -376,10 +385,7 @@ bool CEngine::Open(const char *filename)
 		}
 		else
 		{
-			strcat(path, PLUG_PREFIX);
-			strcat(path, plugin);
-
-			CStorage storage(m_hModule, this, path);
+			CStorage storage(m_hModule, this, plugin);
 			bResult = storage.Load(filename);
 		}
 

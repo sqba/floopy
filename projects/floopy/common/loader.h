@@ -1,4 +1,4 @@
-// PluginLoader.h: interface for the CPluginLoader class.
+// PluginLoader.h: interface for the CLoader class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -17,27 +17,34 @@
 
 #include "../platform.h"
 
+#define ERR_STR_FILENOTFOUND	"File '%s' not found.\n"
+#define ERR_STR_FUNCNOTFOUND	"Function '%s' not found.\n"
+#define ERR_STR_LIBNOTLOADED	"Library not loaded.\n"
+
 /*********************************************************************
- *! \class CPluginLoader
+ *! \class CLoader
  *  \brief Platform independent library function loader.
  *  \author Filip Pavlovic
  *  \version 0.0
  *  \date 08. April 2006.
  *********************************************************************/
-class CPluginLoader
+class CLoader
 {
 public:
-	CPluginLoader(LIB_HANDLE hModule);
-	virtual ~CPluginLoader();
+	CLoader();
+	CLoader(LIB_HANDLE hModule);
+	virtual ~CLoader();
 
 	bool LoadPlugin(const char *fileName);
 	void *GetFunction(const char *funcName);
+	LIB_HANDLE GetHandle() { return m_hPlugin; }
 
 private:
 	void get_library_path(LIB_HANDLE hModule, char *buff, int len);
 
 private:
-	LIB_HANDLE m_hinst;
+	LIB_HANDLE m_hModule;	/// Main application handle
+	LIB_HANDLE m_hPlugin;	/// Plugin library handle
 };
 
 #endif // !defined(PLUGIN_LOADER_H)

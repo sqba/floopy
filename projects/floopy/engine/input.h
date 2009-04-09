@@ -26,7 +26,7 @@
  * Memorizes all parameter changes and the offsets at which they occured.
  * These parameters are then set during execution.
  */
-class CInput : public IFloopySoundMixer, CPluginLoader
+class CInput : public IFloopySoundMixer, CLoader
 {
 public:
 	CInput(LIB_HANDLE hModule, UpdateCallback func, COutputCache *outputCache);
@@ -146,9 +146,6 @@ private:
 	void	recalcVariables();
 	void	recalcSourceVariables();
 	int		skipChunk(int);
-
-	void	getLibraryName(const char *fullname, char *name);
-	void	getPluginName(const char *fullname, char *name);
 
 	void	loadDefaultParams();
 	int		readFromCache(BYTE *data, int size);

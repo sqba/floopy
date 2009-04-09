@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sstream>
 #include "../platform.h"
+#include "util.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -17,7 +18,7 @@
 typedef IFloopySoundOutput* (*CreateProc)(const char*, SOUNDFORMAT);
 #define PROC_NAME "CreateOutput"
 
-COutput::COutput(LIB_HANDLE hModule) : CPluginLoader(hModule)
+COutput::COutput(LIB_HANDLE hModule) : CLoader(hModule)
 {
 	m_plugin			= NULL;
 	m_offset			= 0;
@@ -31,9 +32,9 @@ COutput::~COutput()
 }
 
 
-bool COutput::Create(const char *plugin, SOUNDFORMAT fmt)
+bool COutput::Create(const char *name, SOUNDFORMAT fmt)
 {
-	if(NULL == plugin)
+	if(NULL == name)
 	{
 		sprintf(m_szLastError, "plugin is NULL.\n");
 		return false;
@@ -62,7 +63,7 @@ bool COutput::Create(const char *plugin, SOUNDFORMAT fmt)
 		sprintf(m_szLastError, "fmt.frequency == 0.\n");
 		return false;
 	}
-
+/*
 	const char *library = plugin;
 
 	char *sep = strrchr(plugin, '.');
@@ -82,17 +83,23 @@ bool COutput::Create(const char *plugin, SOUNDFORMAT fmt)
     const char *pszPath = strPath.str().c_str();
     char tmp[MAX_PATH] = {0};
     strcpy(tmp, pszPath);
+*/
+	char plugin[MAX_PATH]	= {0};
+	char library[MAX_FNAME]	= {0};
 
-	if( !LoadPlugin(tmp) )
+	get_library_name(name, library);
+	get_plugin_name(name, plugin);
+
+	if( !LoadPlugin(library) )
 	{
-		sprintf(m_szLastError, "File not found: %s.\n", tmp);
+//		sprintf(m_szLastError, "File not found: %s.\n", tmp);
 		return false;
 	}
 
 	CreateProc func = (CreateProc)GetFunction(PROC_NAME);
 	if(func == NULL)
 	{
-		sprintf(m_szLastError, "Function %s() not found in file: %s.\n", PROC_NAME, tmp);
+//		sprintf(m_szLastError, "Function %s() not found in file: %s.\n", PROC_NAME, tmp);
 		return false;
 	}
 

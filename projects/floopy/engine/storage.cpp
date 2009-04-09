@@ -13,18 +13,12 @@ typedef bool (*StorageProc)(IFloopySoundEngine*, const char*);
 #define PROC_NAME_LOAD "Load"
 #define PROC_NAME_SAVE "Save"
 
-CStorage::CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *plugin) : CPluginLoader(hModule)
+CStorage::CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *plugin) : CLoader(hModule)
 {
 	m_engine = engine;
 
-	char *filename = new char[strlen(plugin) + 5];
-	strcpy(filename, plugin);
-	strcat(filename, PLUG_EXT);
-
-	bool bStorageLoaded = LoadPlugin(filename);
+	bool bStorageLoaded = LoadPlugin(plugin);
 	assert( bStorageLoaded );
-
-	delete[] filename;
 }
 
 CStorage::~CStorage()
@@ -33,6 +27,8 @@ CStorage::~CStorage()
 
 bool CStorage::Load(const char *filename)
 {
+	assert( filename );
+
 	StorageProc func = (StorageProc)GetFunction(PROC_NAME_LOAD);
 
 	if(NULL == func)
@@ -43,6 +39,8 @@ bool CStorage::Load(const char *filename)
 
 bool CStorage::Save(const char *filename)
 {
+	assert( filename );
+
 	StorageProc func = (StorageProc)GetFunction(PROC_NAME_SAVE);
 
 	if(NULL == func)

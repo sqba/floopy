@@ -23,7 +23,7 @@
 		<Cursor position="796" topLine="0" />
 	</File>
 	<File name="libstd.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="942" topLine="28" />
+		<Cursor position="1439" topLine="55" />
 	</File>
 	<File name="loop/loop.h" open="0" top="0" tabpos="8">
 		<Cursor position="606" topLine="0" />
@@ -68,7 +68,7 @@
 		<Cursor position="0" topLine="11" />
 	</File>
 	<File name="wavfile/wavfilein.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="1294" topLine="45" />
+		<Cursor position="2044" topLine="64" />
 	</File>
 	<File name="wavfile/wavfilein.h" open="0" top="0" tabpos="1">
 		<Cursor position="732" topLine="0" />

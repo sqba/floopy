@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <string.h>
 #include "input.h"
+#include "util.h"
 
 typedef IFloopySoundInput* (*CreateProc)(const char *name);
 #define PROC_NAME	"CreateInput"
@@ -15,7 +16,7 @@ typedef IFloopySoundInput* (*CreateProc)(const char *name);
 //////////////////////////////////////////////////////////////////////
 
 
-CInput::CInput(LIB_HANDLE hModule, UpdateCallback func, COutputCache *outputCache) : CPluginLoader(hModule)
+CInput::CInput(LIB_HANDLE hModule, UpdateCallback func, COutputCache *outputCache) : CLoader(hModule)
 {
 	m_callback		= func;
 	m_plugin		= NULL;
@@ -57,14 +58,11 @@ bool CInput::Create(const char *name)
 	char plugin[MAX_PATH]	= {0};
 	char library[MAX_FNAME]	= {0};
 
-	getLibraryName(name, library);
-	getPluginName(name, plugin);
+	get_library_name(name, library);
+	get_plugin_name(name, plugin);
 
 	if( !LoadPlugin(library) )
-	{
-		sprintf(m_szLastError, "File '%s' not found.\n", library);
 		return false;
-	}
 
 	CreateProc func = (CreateProc)GetFunction(PROC_NAME);
 	if(NULL == func)
@@ -1025,48 +1023,6 @@ bool CInput::isMixer()
 bool CInput::isEndOfTrack()
 {
 	return(m_nEndOffset>0 && m_offset>=m_nEndOffset && !CanReadSourceIfDisabled());
-}
-
-/**
- * Extracts the library name from full plugin name (library.plugin).
- * @param fullname pointer to buffer containing full plugin name.
- * @param name pointer to the buffer to receive the library name.
- * @return void.
- */
-void CInput::getLibraryName(const char *fullname, char *name)
-{
-	char *sep = strrchr(fullname, '.');
-	int len = sep ? sep-fullname : strlen(fullname);
-
-	int extlen = strlen(PLUG_EXT);
-	if( len >= MAX_PATH-extlen-1 )
-		len = MAX_PATH-extlen-1;
-
-	strncpy(name, fullname, len);
-	strcat(name, PLUG_EXT);
-}
-
-/**
- * Extracts the plugin name from full plugin name (library.plugin).
- * @param fullname pointer to buffer containing full plugin name.
- * @param name pointer to the buffer to receive the plugin name.
- * @return void.
- */
-void CInput::getPluginName(const char *fullname, char *name)
-{
-	const char *path = strrchr(fullname, PATH_SEP);
-	if(path)
-		path++;
-	else
-		path = fullname;
-
-	char *sep = strrchr(path, '.');
-	const char *tmp = sep ? sep+1 : path;
-
-	if( strlen(tmp) <= MAX_FNAME )
-		strcpy(name, tmp);
-	else
-		strncpy(name, tmp, MAX_FNAME);
 }
 
 void CInput::createSignature()

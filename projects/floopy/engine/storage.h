@@ -14,7 +14,7 @@
  *  \author Filip Pavlovic
  *  \version 0.0
  *********************************************************************/
-class CStorage : CPluginLoader
+class CStorage : CLoader
 {
 public:
 	CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *plugin);
