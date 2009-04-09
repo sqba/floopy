@@ -136,6 +136,8 @@ void printTree(FILE *fp, IFloopySoundInput *input, int level, bool bTree, bool b
 void process(IFloopySoundInput *input, IFloopySoundOutput *output, int buffSize)
 {
 	int samples = input->GetSize();
+	if(0 == samples)
+		return;
 	fprintf(stderr, "Reading %d samples...\n\n", samples);
 
 	SOUNDFORMAT *fmt = input->GetFormat();
