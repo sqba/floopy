@@ -44,6 +44,8 @@
 		<Unit filename="../common/loader.h" />
 		<Unit filename="args.h" />
 		<Unit filename="floopy.cpp" />
+		<Unit filename="../ifloopy.h" />
+		<Unit filename="../platform.h" />
 		<Unit filename="../util/engine_wrapper.cpp" />
 		<Unit filename="../util/engine_wrapper.h" />
 		<Extensions>

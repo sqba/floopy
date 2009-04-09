@@ -39,6 +39,8 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../ifloopy.h" />
+		<Unit filename="../platform.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="svg.cpp" />
 		<Unit filename="svg.h" />

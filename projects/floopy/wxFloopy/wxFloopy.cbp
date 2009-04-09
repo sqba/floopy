@@ -39,6 +39,8 @@
 		</Linker>
 		<Unit filename="../common/loader.cpp" />
 		<Unit filename="../common/loader.h" />
+		<Unit filename="../ifloopy.h" />
+		<Unit filename="../platform.h" />
 		<Unit filename="../util/engine_wrapper.cpp" />
 		<Unit filename="../util/engine_wrapper.h" />
 		<Unit filename="dialogs/controldlg.cpp" />
