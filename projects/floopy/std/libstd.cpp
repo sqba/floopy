@@ -8,6 +8,7 @@
 
 
 // Input classes
+#include "xml/xml.h"
 #include "cache/cache.h"
 #include "echo/echo.h"
 #include "loop/loop.h"
@@ -100,6 +101,13 @@ EXPORTED IFloopySoundOutput *CreateOutput(const char *name, SOUNDFORMAT fmt)
 	return NULL;
 }
 
+EXPORTED IFloopyEngineStorage *CreateStorage(const char *name)
+{
+	if( 0 == stricmp(name, "xml") )
+		return new CXml();
+		return NULL;
+}
+
 EXPORTED int GetPluginCount()
 {
 	return 12;
@@ -180,6 +188,10 @@ EXPORTED void GetPluginInfo(int index, const char *name, int *type)
 	case 17:
 		name = "float2int";
 		*type = TYPE_FLOOPY_SOUND_INPUT;
+		break;
+	case 18:
+		name = "xml";
+		*type = TYPE_FLOOPY_ENGINE_STORAGE;
 		break;
 	};
 	return;

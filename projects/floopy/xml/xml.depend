@@ -1,12 +1,12 @@
 # depslib dependency file v1.0
-1239274591 source:/home/sqba/Projects/floopy/xml/main.cpp
+1239307294 source:/home/sqba/Projects/floopy/xml/main.cpp
+	<string>
+	<vector>
 	"../ifloopy.h"
 	"../platform.h"
 	"tinyxml/tinyxml.h"
-	<string>
-	<vector>
 
-1238850432 /home/sqba/Projects/floopy/ifloopy.h
+1239313591 /home/sqba/Projects/floopy/ifloopy.h
 	<memory.h>
 	<bits/wordsize.h>
 

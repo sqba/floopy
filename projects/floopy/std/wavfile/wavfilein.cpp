@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <string.h>
+#include <assert.h>
 
 #include "wavfilein.h"
 
@@ -48,17 +49,20 @@ bool CWavFileIn::Open(const char *filename)
 {
 	m_pFile = fopen(filename, "rb");
 	if(NULL == m_pFile)
+	{
+		fprintf(stderr, "File '%s' not found.", filename);
 		return false;
+	}
 
 	chunk_hdr hdr;
 
 	while( !feof(m_pFile) )
 	{
 		memset(&hdr, 0, sizeof(chunk_hdr));
-		
+
 		if(fread( &hdr, sizeof(chunk_hdr), 1, m_pFile ) <= 0)
 			break;
-		
+
 		if(0 == strncmp("RIFF", hdr.id, 4))
 		{
 			char wave_id[4] = {0};
@@ -133,6 +137,7 @@ void CWavFileIn::MoveTo(int samples)
 
 void CWavFileIn::Reset()
 {
+	assert(m_pFile);
 	fseek(m_pFile, m_nHeaderLength, SEEK_SET);
 }
 

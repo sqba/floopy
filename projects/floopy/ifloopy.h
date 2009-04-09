@@ -100,13 +100,15 @@ typedef struct SoundFormat
 } SOUNDFORMAT;
 
 
-#define TYPE_FLOOPY					0x00010000								/** IFloopy				*/
-#define TYPE_FLOOPY_SOUND_INPUT		(TYPE_FLOOPY|0x00000001L)				/** IFloopySoundInput	*/
-#define TYPE_FLOOPY_SOUND_FILTER	(TYPE_FLOOPY_SOUND_INPUT|0x00000002L)	/** IFloopySoundFilter	*/
-#define TYPE_FLOOPY_SOUND_MIXER		(TYPE_FLOOPY_SOUND_FILTER|0x00000004L)	/** IFloopySoundMixer	*/
-#define TYPE_FLOOPY_SOUND_ENGINE	(TYPE_FLOOPY_SOUND_FILTER|0x00000008L)	/** IFloopySoundEngine	*/
-#define TYPE_FLOOPY_SOUND_TRACK		(TYPE_FLOOPY_SOUND_FILTER|0x00000010L)	/** Just a track (for the GUI) */
-#define TYPE_FLOOPY_SOUND_OUTPUT	(TYPE_FLOOPY|0x00000020L)				/** IFloopySound		*/
+#define TYPE_FLOOPY_ENGINE_STORAGE	0x00100000								/** IFloopyEngineStorage		*/
+#define TYPE_FLOOPY_OBJECT			0x00010000								/** IFloopyObject				*/
+#define TYPE_FLOOPY					(TYPE_FLOOPY_OBJECT|0x00000001L)		/** IFloopy						*/
+#define TYPE_FLOOPY_SOUND_INPUT		(TYPE_FLOOPY|0x00000002L)				/** IFloopySoundInput			*/
+#define TYPE_FLOOPY_SOUND_OUTPUT	(TYPE_FLOOPY|0x00000004L)				/** IFloopySound				*/
+#define TYPE_FLOOPY_SOUND_FILTER	(TYPE_FLOOPY_SOUND_INPUT|0x00000008L)	/** IFloopySoundFilter			*/
+#define TYPE_FLOOPY_SOUND_MIXER		(TYPE_FLOOPY_SOUND_FILTER|0x00000016L)	/** IFloopySoundMixer			*/
+#define TYPE_FLOOPY_SOUND_ENGINE	(TYPE_FLOOPY_SOUND_FILTER|0x00000032L)	/** IFloopySoundEngine			*/
+#define TYPE_FLOOPY_SOUND_TRACK		(TYPE_FLOOPY_SOUND_FILTER|0x00000064L)	/** Just a track (for the GUI)	*/
 
 
 
@@ -134,6 +136,35 @@ public:
 
 
 /*********************************************************************
+ *! \class IFloopyObject
+ *  \brief
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 09. april 2009.
+ *
+ *  Not to be directly overriden in implementations.
+ *
+ *
+ *********************************************************************/
+class IFloopyObject
+{
+	/**
+	 * Returns class type identificator.
+	 * Used for runtime class identification.
+	 * Do not override in implementations!!!
+	 * @return class type identificator.
+	 */
+	virtual int GetType()					{ return TYPE_FLOOPY_OBJECT; }
+
+	// Component description
+	virtual const char *GetName()			{ return "IFloopyObject"; }
+	virtual const char *GetDescription()	{ return "IFloopyObject interface"; }
+	virtual const char *GetVersion()		{ return "0.1"; }
+	virtual const char *GetAuthor()			{ return "sqba"; }
+};
+
+
+/*********************************************************************
  *! \class IFloopyProperty
  *  \brief Functions for manipulating component's properties.
  *  \author Filip Pavlovic
@@ -144,7 +175,7 @@ public:
  *
  *  Properties are not connected to the timeline.
  *********************************************************************/
-class IFloopyProperty
+class IFloopyProperty : public IFloopyObject
 {
 public:
 	virtual ~IFloopyProperty() {}
@@ -332,12 +363,6 @@ public:
 //	bool Is(int type)
 //	{ int t=this->GetType(); return (t == (type | t)); }
 
-	/**
-	 * Returns class type identificator.
-	 * Used for runtime class identification.
-	 * Do not override in implementations!!!
-	 * @return class type identificator.
-	 */
 	virtual int GetType()				{ return TYPE_FLOOPY; }
 
 	// Component description
@@ -782,5 +807,33 @@ public:
 */
 };
 
+
+
+
+/*********************************************************************
+ *! \class IFloopyEngineStorage
+ *  \brief Floopy engine stoirage interface.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 09. april 2009
+ *
+ *  Floopy engine storage interface.
+ *********************************************************************/
+class IFloopyEngineStorage : public IFloopyObject
+{
+public:
+	int GetType()					{ return TYPE_FLOOPY_ENGINE_STORAGE; }
+
+	const char *GetName()			{ return "IFloopyEngineStorage"; }
+	const char *GetDescription()	{ return "IFloopyEngineStorage interface"; }
+
+	/**
+	 * Creates a sound source or filter.
+	 * @param name Component name (without extension).
+	 */
+	virtual bool Load(IFloopySoundEngine *engine, const char *filename) = 0;
+	virtual bool Save(IFloopySoundEngine *engine, const char *filename) = 0;
+	virtual const char *GetExtension() = 0;
+};
 
 #endif //_IFLOOPY_H_

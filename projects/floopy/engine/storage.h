@@ -17,7 +17,7 @@
 class CStorage : CLoader
 {
 public:
-	CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *plugin);
+	CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *name);
 	virtual ~CStorage();
 
 	bool Load(const char *filename);
@@ -25,6 +25,7 @@ public:
 
 private:
 	IFloopySoundEngine *m_engine;
+	IFloopyEngineStorage *m_plugin;
 };
 
 #endif // !defined(STORAGE_H)

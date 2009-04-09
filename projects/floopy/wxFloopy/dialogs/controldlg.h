@@ -18,17 +18,17 @@
 #include "../engine/tracks.h"
 
 
-class CControlDlg : public wxDialog  
+class CControlDlg : public wxDialog
 {
 private:
-	class CSliderCtrl : public wxSlider  
+	class CSliderCtrl : public wxSlider
 	{
 	public:
 		CSliderCtrl(CControlDlg*, IFloopy*, int, bool, wxStaticText*);
 		virtual ~CSliderCtrl();
 
 		void OnScroll(wxScrollEvent &evt);
-	
+
 		void Update();
 
 	private:
@@ -38,7 +38,7 @@ private:
 		int				m_index;
 		bool			m_bProperty;
 		wxStaticText	*m_pLabel;
-		IFloopy			*m_pInput;
+		IFloopy	*m_pInput;
 		wxString		m_Unit;
 		int				m_coeff;
 

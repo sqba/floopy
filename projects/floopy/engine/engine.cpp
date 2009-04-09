@@ -14,7 +14,8 @@
 #include "../platform.h"
 #include "util.h"
 
-#define DEFAULT_XML_STORAGE		"xml"
+#define DEFAULT_XML_STORAGE		"std.xml"
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -365,28 +366,36 @@ bool CEngine::Open(const char *filename)
 	const char *plugin = getPluginName(filename);
 	if(plugin)
 	{
-		char path[MAX_PATH] = {0};
-		if (strlen(m_szPath) > 0)
-		{
-			strcpy(path, m_szPath);
-			if(path[strlen(path)-1] != PATH_SEP)
-				path[strlen(path)-1] = PATH_SEP;
-		}
-
-		char *sep = strrchr(plugin, '.');
-		if(sep)
-		{
-		    if(strrchr(filename, PATH_SEP))
-                strcpy(path, filename);
-            else
-                strcat(path, filename);
-			m_source = CreateInput(path);
-			bResult = (NULL != m_source);
-		}
-		else
+		if(0==strcmpi(plugin, DEFAULT_XML_STORAGE))
 		{
 			CStorage storage(m_hModule, this, plugin);
 			bResult = storage.Load(filename);
+		}
+		else
+		{
+			char path[MAX_PATH] = {0};
+			if (strlen(m_szPath) > 0)
+			{
+				strcpy(path, m_szPath);
+				if(path[strlen(path)-1] != PATH_SEP)
+					path[strlen(path)-1] = PATH_SEP;
+			}
+
+			char *sep = strrchr(plugin, '.');
+			if(sep)
+			{
+				if(strrchr(filename, PATH_SEP))
+					strcpy(path, filename);
+				else
+					strcat(path, filename);
+				m_source = CreateInput(path);
+				bResult = (NULL != m_source);
+			}
+			else
+			{
+				CStorage storage(m_hModule, this, plugin);
+				bResult = storage.Load(filename);
+			}
 		}
 
 		if(bResult)
@@ -452,7 +461,7 @@ const char *CEngine::getPluginName(const char *filename)
 		//if(0 == strcmpi(ext, "hz"))
 		//	return "libstd.tonegen";
 		if(0 == strcmpi(ext, "wav"))
-			return "libstd.wavfile";
+			return "std.wavfile";
 		if(0 == strcmpi(ext, "svg"))
 			return "svg.svgout";
 		if(0 == strcmpi(ext, "mp3"))

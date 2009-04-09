@@ -11,7 +11,7 @@
 				<Option object_output="../obj/Debug/svg" />
 				<Option type="3" />
 				<Option compiler="gcc" />
-				<Option parameters="-i bass1.wav -o bass1.svg" />
+				<Option parameters="-i ../bin/Debug/samples/BLOWIT01.WAV -o ../bin/Debug/acid.svg" />
 				<Option host_application="floopy" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />

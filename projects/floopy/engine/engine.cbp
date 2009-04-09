@@ -59,6 +59,8 @@
 		<Unit filename="timeline.h" />
 		<Unit filename="util.cpp" />
 		<Unit filename="util.h" />
+		<Unit filename="../ifloopy.h" />
+		<Unit filename="../platform.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

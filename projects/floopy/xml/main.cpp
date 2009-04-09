@@ -1,16 +1,397 @@
-// Install dependencies
-// apt-get install libxml++2.6-dev libxml++2.6-doc
-// sudo apt-get install libgtkmm-2.4-dev
-
-
-#include "../ifloopy.h"
-#include "../platform.h"
-//#include "storage.h"
-#include "tinyxml/tinyxml.h"
 
 #include <string>
 #include <vector>
+#include "../ifloopy.h"
+#include "../platform.h"
+#include "tinyxml/tinyxml.h"
+
+
 using namespace std;
+
+char g_szPath[MAX_PATH] = {0};
+IFloopySoundEngine *g_pEngine = NULL;
+
+
+vector<string> tokenize(const string& str,const string& delimiters)
+{
+	vector<string> tokens;
+
+	// skip delimiters at beginning.
+	string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+
+	// find first "non-delimiter".
+	string::size_type pos = str.find_first_of(delimiters, lastPos);
+
+	while (string::npos != pos || string::npos != lastPos)
+	{
+		// found a token, add it to the vector.
+		tokens.push_back(str.substr(lastPos, pos - lastPos));
+
+		// skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of(delimiters, pos);
+
+		// find next "non-delimiter"
+		pos = str.find_first_of(delimiters, lastPos);
+	}
+
+	return tokens;
+}
+
+bool IsFilter(IFloopySoundInput *input)
+{
+	int type = input->GetType();
+	return(type == (TYPE_FLOOPY_SOUND_FILTER | type));
+}
+
+bool IsMixer(IFloopySoundInput *input)
+{
+	int type = input->GetType();
+	return(type == (TYPE_FLOOPY_SOUND_MIXER | type));
+}
+
+void get_library_path(LIB_HANDLE hModule, char *buff, int len)
+{
+#ifdef WIN32
+	GetModuleFileName(hModule, buff, len);
+#else
+	// Linux specific
+
+	// 1. executable
+	readlink("/proc/self/exe", buff, len);
+
+	// 2. dynamic library
+	//DL_info info;
+    //if (dladdr( &GetLibraryPath, &info ) == 0)
+    //	strcpy(m_szPath, info.dli_fname);
+
+    // 3.
+    // g++ -o executable -Wl,-R -Wl,'$ORIGIN' executable.o libhe
+#endif
+
+	char *tmp = strrchr(buff, PATH_SEP);
+	if(tmp)
+		*(tmp+1) = '\0';
+}
+
+void set_color(IFloopySoundInput *input, TiXmlElement* pElement)
+{
+	const char *str = pElement->Attribute("color");
+	if( !str )
+		return;
+
+	UINT r=0, g=0, b=0;
+	char seps[] = ",";
+	char color[12] = {0};
+	strncpy(color, str, 12);
+	char *token = strtok( color, seps );
+	int i=0;
+	while( token != NULL )
+	{
+		switch(i)
+		{
+		case 0:	r = atoi(token);	break;
+		case 1:	g = atoi(token);	break;
+		case 2:	b = atoi(token);	break;
+		}
+		token = strtok( NULL, seps );
+		i++;
+	}
+	if(r<256 && g<256 && b<256)
+		input->SetColor(r, g, b);
+}
+
+void set_param(IFloopySoundInput *input, float offset, const char *param, float value)
+{
+	SOUNDFORMAT *fmt = input->GetFormat();
+	float freq = (float)fmt->frequency;
+
+	offset *= freq;
+
+	if(0==stricmp(param, "ON"))
+	{
+		input->SetParamAt(offset, TIMELINE_PARAM_ENABLE, 0.f);
+	}
+	else if(0==stricmp(param, "RESET"))
+	{
+		input->SetParamAt(offset, TIMELINE_PARAM_MOVETO, 0.f);
+	}
+	else if(0==stricmp(param, "MOVETO"))
+	{
+		value *= freq;
+		input->SetParamAt(offset, TIMELINE_PARAM_MOVETO, value);
+	}
+	else
+	{
+		int iParam = atoi(param);
+		input->SetParamAt(offset, iParam, value);
+	}
+}
+
+bool set_timeline(IFloopySoundInput *input, TiXmlElement* pElement)
+{
+	if( !pElement )
+		return false;
+
+	TiXmlElement *pTimeline = pElement->FirstChildElement("timeline");
+	if( !pTimeline )
+		return false;
+
+	const char *data = pTimeline->GetText();
+	if( !data )
+		return false;
+
+	string str(data);
+	vector<string> tokens = tokenize(str, ",");
+	vector<string>::iterator it1, it2;
+	for( it1=tokens.begin(); it1<tokens.end(); it1++ )
+ 	{
+		vector<string> tokens2 = tokenize(*it1, ":");
+		const char *time = tokens2[0].c_str();
+		const char *param = tokens2[1].c_str();
+		const char *value = tokens2.size()>2 ? tokens2[2].c_str() : "";
+
+//		printf("%s : %s (%s)\n", time, param, value);
+
+		float offset = atof(time);
+		float val = atof(value);
+		set_param(input, offset, param, val);
+ 	}
+
+	return true;
+}
+
+bool set_properties(IFloopySoundInput *input, TiXmlElement* pElement)
+{
+	TiXmlElement *pProperties = pElement->FirstChildElement("properties");
+	if( !pProperties )
+		return false;
+
+	TiXmlAttribute* pAttrib = pElement->FirstAttribute();
+	while (pAttrib)
+	{
+		int index;
+		const char *name = pAttrib->Name();
+		if( input->GetPropertyIndex(name, &index) )
+		{
+			//float value = (float)atof( pAttrib->Value() );
+			double value;
+			if( pAttrib->QueryDoubleValue(&value) == TIXML_SUCCESS)
+			{
+				input->SetPropertyVal(index, value);
+			}
+		}
+		pAttrib = pAttrib->Next();
+	}
+
+	return true;
+}
+
+bool open_source(IFloopySoundInput *input, TiXmlElement* pElement)
+{
+	const char *source = pElement->Attribute("source");
+	if( !source )
+		return true;
+
+	char path[MAX_PATH] = {0};
+	strcpy(path, g_szPath);
+	strcat(path, source);
+	return input->Open( path );
+}
+
+bool set_name(IFloopySoundInput *input, TiXmlElement* pElement)
+{
+	const char *name = pElement->Attribute("name");
+	if( !name )
+		return false;
+	input->SetDisplayName(name, strlen(name));
+	return true;
+}
+
+IFloopySoundInput *create_input(IFloopySoundInput *parent, TiXmlElement* pElement)
+{
+	IFloopySoundInput *input = NULL;
+
+	// check for full path
+	const char *plugin = pElement->Attribute("plugin");
+	if( !plugin )
+		return NULL;
+
+	bool bRoot = ((0 == stricmp("engine", plugin)) && (NULL == parent));
+
+	input = bRoot ? g_pEngine : g_pEngine->CreateInput(plugin);
+
+	assert( input );
+
+	return input;
+}
+
+IFloopySoundInput *load_input(IFloopySoundInput *parent, TiXmlElement* pElement)
+{
+	if ( !pElement )
+		return NULL;
+
+	IFloopySoundInput *input = create_input(parent, pElement);
+
+	if( !open_source(input, pElement) )
+		return NULL;
+
+	set_properties(input, pElement);
+	set_name(input, pElement);
+	set_color(input, pElement);
+	set_timeline(input, pElement);
+
+	if( IsMixer(input) )
+	{
+		TiXmlNode *pChild = NULL;
+		while(pChild = pElement->IterateChildren("input", pChild))
+		{
+			TiXmlElement *pTmpElement = pChild->ToElement();
+			if( pTmpElement )
+			{
+				IFloopySoundInput *src = load_input(input, pTmpElement);
+				if(src);
+					((IFloopySoundMixer*)input)->AddSource( src );
+			}
+		}
+	}
+	else if( IsFilter(input) )
+	{
+		TiXmlElement *pInput = pElement->FirstChildElement("input");
+		if( pInput )
+		{
+			IFloopySoundInput *src = load_input(input, pInput);
+			if( src );
+				((IFloopySoundFilter*)input)->SetSource( src );
+		}
+	}
+
+	return input;
+}
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+EXPORTED bool Load(IFloopySoundEngine *engine, char *filename)
+{
+	TiXmlDocument doc(filename);
+	if( !doc.LoadFile() )
+	{
+		fprintf(stderr, "Failed to load file '%s'\n", filename);
+		return false;
+	}
+
+	g_pEngine = engine;
+	strcpy(g_szPath, filename);
+	char *tmp = strrchr(g_szPath, PATH_SEP);
+	if(tmp)
+		*(tmp+1) = '\0';
+
+	TiXmlElement* pElement = doc.FirstChildElement("input");
+	if ( !pElement )
+		return NULL;
+
+	load_input( NULL, pElement );
+
+	return true;
+}
+
+EXPORTED bool Save(IFloopySoundEngine *engine, char *filename)
+{
+	TiXmlDocument doc;
+	TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "", "" );
+	doc.LinkEndChild( decl );
+
+	TiXmlElement * element = new TiXmlElement( "Hello" );
+	doc.LinkEndChild( element );
+
+	TiXmlText * text = new TiXmlText( "World" );
+	element->LinkEndChild( text );
+
+	doc.SaveFile( filename );
+
+	return false;
+}
+
+EXPORTED char *GetExtension()
+{
+	return "XML";
+}
+#ifdef __cplusplus
+}
+#endif
+
+
+
+
+
+
+
+
+
+
+
+/*
+vector<string> tokenize(const string& str,const string& delimiters)
+{
+ vector<string> tokens;
+ string::size_type delimPos = 0, tokenPos = 0, pos = 0;
+
+ if(str.length()<1)  return tokens;
+ while(1){
+   delimPos = str.find_first_of(delimiters, pos);
+   tokenPos = str.find_first_not_of(delimiters, pos);
+
+   if(string::npos != delimPos){
+     if(string::npos != tokenPos){
+       if(tokenPos<delimPos){
+         tokens.push_back(str.substr(pos,delimPos-pos));
+       }else{
+         tokens.push_back("");
+       }
+     }else{
+       tokens.push_back("");
+     }
+     pos = delimPos+1;
+   } else {
+     if(string::npos != tokenPos){
+       tokens.push_back(str.substr(pos));
+     } else {
+       tokens.push_back("");
+     }
+     break;
+   }
+ }
+ return tokens;
+}
+*/
+
+
+/*
+IFloopySoundInput *load_input(IFloopySoundEngine *engine, TiXmlElement* pElement, IFloopySoundInput *parent);
+int load_children(IFloopySoundEngine *engine, TiXmlElement* pElement, IFloopySoundInput *parent)
+{
+	if ( !pElement ) return false;
+
+	int count = 0;
+	TiXmlNode* child;
+	for ( child = pElement->FirstChild(); child != 0; child = child->NextSibling())
+	{
+		TiXmlElement *input = child->FirstChildElement("input");
+		if( load_input( engine, input, parent ) )
+		{
+			count++;
+		}
+	}
+
+	return count;
+}
+*/
+
+
+
+
+
 
 
 
@@ -114,281 +495,3 @@ void dump_to_stdout( TiXmlNode* pParent, unsigned int indent = 0 )
 	}
 }
 */
-
-
-
-vector<string> tokenize(const string& str,const string& delimiters)
-{
-	vector<string> tokens;
-
-	// skip delimiters at beginning.
-    	string::size_type lastPos = str.find_first_not_of(delimiters, 0);
-
-	// find first "non-delimiter".
-    	string::size_type pos = str.find_first_of(delimiters, lastPos);
-
-    	while (string::npos != pos || string::npos != lastPos)
-    	{
-        	// found a token, add it to the vector.
-        	tokens.push_back(str.substr(lastPos, pos - lastPos));
-
-        	// skip delimiters.  Note the "not_of"
-        	lastPos = str.find_first_not_of(delimiters, pos);
-
-        	// find next "non-delimiter"
-        	pos = str.find_first_of(delimiters, lastPos);
-    	}
-
-	return tokens;
-}
-/*
-vector<string> tokenize(const string& str,const string& delimiters)
-{
- vector<string> tokens;
- string::size_type delimPos = 0, tokenPos = 0, pos = 0;
-
- if(str.length()<1)  return tokens;
- while(1){
-   delimPos = str.find_first_of(delimiters, pos);
-   tokenPos = str.find_first_not_of(delimiters, pos);
-
-   if(string::npos != delimPos){
-     if(string::npos != tokenPos){
-       if(tokenPos<delimPos){
-         tokens.push_back(str.substr(pos,delimPos-pos));
-       }else{
-         tokens.push_back("");
-       }
-     }else{
-       tokens.push_back("");
-     }
-     pos = delimPos+1;
-   } else {
-     if(string::npos != tokenPos){
-       tokens.push_back(str.substr(pos));
-     } else {
-       tokens.push_back("");
-     }
-     break;
-   }
- }
- return tokens;
-}
-*/
-
-
-
-
-IFloopySoundInput *load_input(IFloopySoundEngine *engine, TiXmlElement* pElement, IFloopySoundInput *parent);
-
-void load_color(const char *str, UINT *r, UINT *g, UINT *b)
-{
-	char seps[] = ",";
-	char color[12] = {0};
-	strncpy(color, str, 12);
-	char *token = strtok( color, seps );
-	int i=0;
-	while( token != NULL )
-	{
-		switch(i)
-		{
-		case 0:	*r = atoi(token);	break;
-		case 1:	*g = atoi(token);	break;
-		case 2:	*b = atoi(token);	break;
-		}
-		token = strtok( NULL, seps );
-		i++;
-	}
-}
-/*
-int load_children(IFloopySoundEngine *engine, TiXmlElement* pElement, IFloopySoundInput *parent)
-{
-	if ( !pElement ) return false;
-
-	int count = 0;
-	TiXmlNode* child;
-	for ( child = pElement->FirstChild(); child != 0; child = child->NextSibling())
-	{
-		TiXmlElement *input = child->FirstChildElement("input");
-		if( load_input( engine, input, parent ) )
-		{
-			count++;
-		}
-	}
-
-	return count;
-}
-*/
-bool load_timeline(TiXmlElement* pElement, IFloopySoundInput *input)
-{
-	if ( !pElement ) return false;
-
-	const char *data = pElement->GetText ();
-	if( !data ) return false;
-/*
-	char seps[]   = ":,";
-	char *token = strtok( data, seps );
-	int i=0;
-	int param=0;
-	SOUNDFORMAT *fmt = input->GetFormat();
-	int freq = fmt->frequency;
-	int offset = 0;
-
-	while( token != NULL )
-	{
-		switch(i)
-		{
-		case 0:
-			offset = atof(token) * (float)freq;
-			i++;
-			break;
-		case 1:
-			if(isalpha(*token))
-			{
-				if(token[0]=='o' || token[0]=='O')
-				{
-					input->EnableAt(offset, (0==strncmp(token, "ON", 2)));
-					i=0;
-				}
-				else if(0==strncmp(token, "RESET", 5))
-				{
-					input->SetParamAt(offset, -2, 0.f);
-					i=0;
-				}
-				else if(0==strncmp(token, "MOVETO", 6))
-				{
-					param = TIMELINE_PARAM_MOVETO;
-					i++;
-				}
-			}
-			else
-			{
-				param = atoi(token);
-				i++;
-			}
-			break;
-		case 2:
-			if(param == -1)
-				input->EnableAt(offset, (0==strncmp(token, "ON", 2)));
-			else
-				input->SetParamAt(offset, param, (float)atof(token));
-			i=0;
-			break;
-		}
-		token = strtok( NULL, seps );
-	}
-*/
-
-	string str(data);
-	vector<string> tokens = tokenize(str, ",");
-	vector<string>::iterator it1, it2;
-	for( it1=tokens.begin(); it1<tokens.end(); it1++ )
- 	{
-		vector<string> tokens2 = tokenize(*it1, ":");
-		const char *time = tokens2[0].c_str();
-		const char *param = tokens2[1].c_str();
-		const char *value = tokens2.size()>2 ? tokens2[2].c_str() : "";
-		printf("%s : %s (%s)\n", time, param, value);
- 	}
-
-	return false;
-}
-
-IFloopySoundInput *load_input(IFloopySoundEngine *engine, TiXmlElement* pParent, IFloopySoundInput *parent)
-{
-	if ( !pParent ) return NULL;
-
-	IFloopySoundInput *input = NULL;
-
-	TiXmlElement* pElement = pParent->FirstChildElement("input");
-	if ( !pElement ) return NULL;
-
-	// check for full path
-	const char *plugin = pElement->Attribute("plugin");
-	if( !plugin ) return NULL;
-	bool bEngine = (0 == stricmp("engine", plugin));
-	if( bEngine )
-		input = engine;
-	else
-		input = engine->CreateInput(plugin);
-	assert( input );
-	if( !input ) return NULL;
-
-	const char *source = pElement->Attribute("source");
-	if(bEngine && source)
-	{
-		input->Open( source );
-	}
-
-	const char *name = pElement->Attribute("name");
-	if( name )
-		input->SetDisplayName(name, strlen(name));
-
-	const char *color = pElement->Attribute("color");
-	if( color )
-	{
-		UINT r, g, b;
-		load_color(color, &r, &g, &b);
-		input->SetColor(r, g, b);
-	}
-
-	TiXmlElement *pTimeline = pElement->FirstChildElement("timeline");
-	if( pTimeline )
-		load_timeline( pTimeline, engine );
-
-	load_input( engine, pElement, input);
-
-	return input;
-}
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-EXPORTED bool Load(IFloopySoundEngine *engine, char *filename)
-{
-//	CStorage *pStorage;
-//	pStorage = new CStorage( engine );
-//	bool bResult = pStorage->Load( filename );
-//	return bResult;
-
-	TiXmlDocument doc(filename);
-	bool loadOkay = doc.LoadFile();
-	if( !loadOkay )
-	{
-		printf("Failed to load file \"%s\"\n", filename);
-	return false;
-	}
-//	printf("\n%s:\n", filename);
-//	dump_to_stdout( &doc ); // defined later in the tutorial
-	load_input( engine, doc.RootElement(), NULL );
-	return true;
-}
-
-EXPORTED bool Save(IFloopySoundEngine *engine, char *filename)
-{
-	// same as write_simple_doc1 but add each node
-	// as early as possible into the tree.
-
-	TiXmlDocument doc;
-	TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "", "" );
-	doc.LinkEndChild( decl );
-
-	TiXmlElement * element = new TiXmlElement( "Hello" );
-	doc.LinkEndChild( element );
-
-	TiXmlText * text = new TiXmlText( "World" );
-	element->LinkEndChild( text );
-
-	doc.SaveFile( filename );
-
-	return false;
-}
-
-EXPORTED char *GetExtension()
-{
-	return "XML";
-}
-#ifdef __cplusplus
-}
-#endif
