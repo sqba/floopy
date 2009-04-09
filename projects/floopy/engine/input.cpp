@@ -443,7 +443,7 @@ int CInput::GetPrevOffset(int offset, int index)
 void CInput::Enable(bool bEnable)
 {
 	m_timeline.EnableAt(m_offset, bEnable);
-	IFloopy::Enable(bEnable);
+	IFloopyObject::Enable(bEnable);
 	recalcVariables();
 }
 
@@ -833,7 +833,7 @@ void CInput::applyParamsAt(int offset)
 	if(bResult || offset==0)
 	{
 		bool bEnable = bResult ? PARAM_VALUE_DISABLED!=value : false;
-		IFloopy::Enable( bEnable );
+		IFloopyObject::Enable( bEnable );
 		m_plugin->Enable( bEnable );
 
 		// Optimization: skipChunk did not call MoveTo so
@@ -887,7 +887,7 @@ int CInput::applyPreviousParams(int offset)
 	if(bResult || prevOffset==0)
 	{
 		bool bEnable = bResult ? ( PARAM_VALUE_DISABLED != value ) : false;
-		IFloopy::Enable( bEnable );
+		IFloopyObject::Enable( bEnable );
 		m_plugin->Enable(bEnable);
 	}
 
@@ -978,7 +978,7 @@ IFloopySoundInput *CInput::getSource()
 {
 	if( GetBypass() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
-	else if( IFloopy::IsEnabled() )
+	else if( IFloopyObject::IsEnabled() )
 		return m_plugin;
 	else if( CanReadSourceIfDisabled() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();

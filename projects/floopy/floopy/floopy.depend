@@ -1,1 +1,50 @@
 # depslib dependency file v1.0
+1239278074 source:/home/sqba/Projects/floopy/common/loader.cpp
+	<string.h>
+	<stdio.h>
+	"loader.h"
+	"../platform.h"
+
+1239278058 /home/sqba/Projects/floopy/common/loader.h
+	<windows.h>
+	"../platform.h"
+
+1234814296 /home/sqba/Projects/floopy/platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1238181448 /home/sqba/Projects/floopy/platform/linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1234814296 /home/sqba/Projects/floopy/platform/win32.h
+
+1239285257 source:/home/sqba/Projects/floopy/floopy/floopy.cpp
+	<stdio.h>
+	<time.h>
+	<assert.h>
+	"../util/engine_wrapper.h"
+	"args.h"
+
+1239268595 /home/sqba/Projects/floopy/util/engine_wrapper.h
+	"../ifloopy.h"
+	"../platform.h"
+	"../common/loader.h"
+	<windows.h>
+
+1239314777 /home/sqba/Projects/floopy/ifloopy.h
+	<memory.h>
+	<bits/wordsize.h>
+
+1234814296 /home/sqba/Projects/floopy/floopy/args.h
+	<math.h>
+	<stdlib.h>
+	"../platform.h"
+
+1239269158 source:/home/sqba/Projects/floopy/util/engine_wrapper.cpp
+	"engine_wrapper.h"
+	<stdio.h>
+	<sstream>
+	"../platform.h"
+

@@ -30,7 +30,7 @@ enum enumObjType { TYPE_INPUT, TYPE_OUTPUT, TYPE_ENGINE };
  */
 struct tComponent
 {
-	IFloopy	*obj;	/** Pointer to the object itself	*/
+	IFloopyObject	*obj;	/** Pointer to the object itself	*/
 	tComponent		*prev;	/** Pointer to the next object		*/
 	tComponent		*next;	/** Pointer to the previous object	*/
 	enumObjType		type;	/** Object type						*/
@@ -56,9 +56,9 @@ public:
 	IFloopySoundInput  *CreateTrack(const char *plugin);
 	IFloopySoundOutput *CreateOutput(const char *plugin, SOUNDFORMAT fmt);
 
-//	bool SetParamAt(IFloopy *obj, int offset, int index, float value);
-//	bool ResetParamAt(IFloopy *obj, int offset, int index);
-//	bool EnableAt(IFloopy *obj, int offset, bool bEnable);
+//	bool SetParamAt(IFloopyObject *obj, int offset, int index, float value);
+//	bool ResetParamAt(IFloopyObject *obj, int offset, int index);
+//	bool EnableAt(IFloopyObject *obj, int offset, bool bEnable);
 
 	const char *GetDisplayName();
 	void SetDisplayName(const char *name, int len);
@@ -84,7 +84,7 @@ private:
 //	int samplesToBytes();
 	const char *getPluginName(const char *filename);
 //	enumObjType createObject(char *filename);
-	tComponent *add(IFloopy *comp, enumObjType type);
+	tComponent *add(IFloopyObject *comp, enumObjType type);
 	void saveChildEngines();
 	//void setLastError(char *err, char *str);
 	void GetLibraryPath();

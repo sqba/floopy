@@ -113,7 +113,7 @@ CEngine::~CEngine()
 	}
 }
 
-tComponent *CEngine::add(IFloopy *obj, enumObjType type)
+tComponent *CEngine::add(IFloopyObject *obj, enumObjType type)
 {
 	obj->SetEngine( this );
 
@@ -628,7 +628,7 @@ enumObjType CEngine::createObject(char *filename)
 */
 
 /*
-bool CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
+bool CEngine::SetParamAt(IFloopyObject *obj, int offset, int index, float value)
 {
 	tComponent *tmp = m_pFirst;
 	while(tmp)
@@ -647,7 +647,7 @@ bool CEngine::SetParamAt(IFloopy *obj, int offset, int index, float value)
 	}
 }
 
-bool CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
+bool CEngine::ResetParamAt(IFloopyObject *obj, int offset, int index)
 {
 	tComponent *tmp = m_pFirst;
 	while(tmp)
@@ -667,7 +667,7 @@ bool CEngine::ResetParamAt(IFloopy *obj, int offset, int index)
 	return false;
 }
 
-void CEngine::EnableAt(IFloopy *obj, int offset, bool bEnable)
+void CEngine::EnableAt(IFloopyObject *obj, int offset, bool bEnable)
 {
 	tComponent *tmp = m_pFirst;
 	while(tmp)

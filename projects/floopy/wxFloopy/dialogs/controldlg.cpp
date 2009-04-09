@@ -93,7 +93,7 @@ void CControlDlg::init(IFloopyObj *obj, bool property)
 	m_pObject	= obj;
 	m_bProperty	= property;
 
-	IFloopy *input = obj->GetInput();
+	IFloopyObject *input = obj->GetInput();
 	if(NULL == input)
 		return;
 
@@ -103,7 +103,7 @@ void CControlDlg::init(IFloopyObj *obj, bool property)
 	load2( obj );
 }
 
-void CControlDlg::load(IFloopy *obj)
+void CControlDlg::load(IFloopyObject *obj)
 {
 	int count = m_bProperty ? obj->GetPropertyCount() : obj->GetParamCount();
 
@@ -128,7 +128,7 @@ void CControlDlg::load(IFloopy *obj)
 	int type = obj->GetType();
 	if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
 	{
-		IFloopy *src = ((IFloopySoundFilter*)obj)->GetSource();
+		IFloopyObject *src = ((IFloopySoundFilter*)obj)->GetSource();
 		if(NULL != src)
 			load(src);
 	}
@@ -162,7 +162,7 @@ void CControlDlg::load2(IFloopyObj *obj)
 	int type = obj->GetType();
 	if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
 	{
-		IFloopy *src = ((IFloopySoundFilter*)obj)->GetSource();
+		IFloopyObject *src = ((IFloopySoundFilter*)obj)->GetSource();
 		if(NULL != src)
 			load(src);
 	}
@@ -221,7 +221,7 @@ void CControlDlg::Update()
 
 
 CControlDlg::CSliderCtrl::CSliderCtrl(CControlDlg* parent,
-									  IFloopy *input,
+									  IFloopyObject *input,
 									  int index,
 									  bool property,
 									  wxStaticText* label)
@@ -268,7 +268,7 @@ void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 			CRegion *region = (CRegion*)obj;
 			float val = 0.f;
 			int end = region->GetEndPos();
-			//IFloopy *input = region->GetInput();
+			//IFloopyObject *input = region->GetInput();
 			m_pInput->GetParamAt(end, m_index, &val);
 			m_pInput->SetParamAt(sample, m_index, value);
 			m_pInput->SetParamAt(end, m_index, val);

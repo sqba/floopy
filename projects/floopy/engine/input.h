@@ -62,7 +62,7 @@ public:
 	const char *GetPropertyUnit(int index)			{ return m_plugin->GetPropertyUnit(index); }
 	float GetPropertyStep(int index)				{ return m_plugin->GetPropertyStep(index); }
 
-	int GetType()									{ return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
+	int GetType()									{ return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY_OBJECT); }
 
 	const char *GetPath()							{ return isEngine() ? m_source->GetPath() : m_szObjPath; }
 

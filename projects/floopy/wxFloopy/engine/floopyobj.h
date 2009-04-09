@@ -52,7 +52,7 @@ private:
  *  \author Filip Pavlovic
  *  \version 0.0
  *********************************************************************/
-class IFloopyObj : public IFloopy
+class IFloopyObj : public IFloopyObject
 {
 public:
 	IFloopyObj(IFloopyObj *parent = NULL)

@@ -22,7 +22,7 @@ private:
 		action_type type;
 		tAction *prev;
 		tAction *next;
-		IFloopy *obj;
+		IFloopyObject *obj;
 		IFloopyObj *caller;
 		int offset;
 		int index;
@@ -40,10 +40,10 @@ public:
 
 	// Izbaciti IFloopyTimeline::MoveAllParamsBetween
 
-	bool EnableAt(IFloopyObj *caller, IFloopy *obj, int offset, bool bEnable);
-	bool SetParamAt(IFloopyObj *caller, IFloopy *obj, int offset, int index, float value);
-	bool ResetParamAt(IFloopyObj *caller, IFloopy *obj, int offset, int index, float value);
-	bool MoveParam(IFloopyObj *caller, IFloopy *obj, int offset, int index, float value, int newoffset);
+	bool EnableAt(IFloopyObj *caller, IFloopyObject *obj, int offset, bool bEnable);
+	bool SetParamAt(IFloopyObj *caller, IFloopyObject *obj, int offset, int index, float value);
+	bool ResetParamAt(IFloopyObj *caller, IFloopyObject *obj, int offset, int index, float value);
+	bool MoveParam(IFloopyObj *caller, IFloopyObject *obj, int offset, int index, float value, int newoffset);
 
 	bool UndoLastAction();
 	bool RedoLastAction();
