@@ -778,7 +778,7 @@ void CTrack::SetLooped(bool bLooped)
 				return; // No need
 
 			IFloopySoundEngine *engine = (IFloopySoundEngine*)GetTracks()->GetInput();
-			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateInput("stdlib.loop");
+			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateInput("std.loop");
 			if(loop)
 			{
 				loop->EnableAt(0, true);
@@ -839,7 +839,7 @@ void CTrack::SetReverse(bool bReverse)
 			assert(engine != NULL);
 			if(NULL != engine)
 			{
-				IFloopySoundFilter *reverse = (IFloopySoundFilter*)engine->CreateInput("stdlib.reverse");
+				IFloopySoundFilter *reverse = (IFloopySoundFilter*)engine->CreateInput("std.reverse");
 				if(NULL != reverse)
 				{
 					reverse->EnableAt(0, true);

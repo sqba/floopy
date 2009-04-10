@@ -10,8 +10,8 @@
 	<File name="args.h" open="0" top="0" tabpos="3">
 		<Cursor position="53" topLine="0" />
 	</File>
-	<File name="floopy.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="3187" topLine="98" />
+	<File name="floopy.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="2872" topLine="122" />
 	</File>
 	<File name="../util/engine_wrapper.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="312" topLine="2" />

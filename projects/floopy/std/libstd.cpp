@@ -85,13 +85,13 @@ EXPORTED IFloopySoundOutput *CreateOutput(const char *name, SOUNDFORMAT fmt)
 	if(!name)
 		return NULL;
 
-#ifdef linux
-	if( 0 == stricmp(name, "oss") )
-		return new COSS(fmt);
-#endif
-#ifdef WIN32
 	if( 0 == stricmp(name, "waveout") )
+#ifdef linux
+		return new COSS(fmt);
+#elif WIN32
 		return new CWaveOut(fmt);
+#else
+		return NULL;
 #endif
 
 	if( 0 == stricmp(name, "wavfile") )

@@ -31,8 +31,8 @@
 	<File name="invert/invert.h" open="0" top="0" tabpos="6">
 		<Cursor position="796" topLine="0" />
 	</File>
-	<File name="libstd.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="179" topLine="0" />
+	<File name="libstd.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="2314" topLine="74" />
 	</File>
 	<File name="loop/loop.h" open="0" top="0" tabpos="8">
 		<Cursor position="606" topLine="0" />
@@ -43,11 +43,11 @@
 	<File name="mono2stereo/mono2stereo.h" open="0" top="0" tabpos="10">
 		<Cursor position="885" topLine="1" />
 	</File>
-	<File name="oss/oss.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="1551" topLine="70" />
+	<File name="oss/oss.cpp" open="1" top="1" tabpos="7">
+		<Cursor position="565" topLine="0" />
 	</File>
-	<File name="oss/oss.h" open="0" top="0" tabpos="19">
-		<Cursor position="636" topLine="8" />
+	<File name="oss/oss.h" open="1" top="0" tabpos="6">
+		<Cursor position="328" topLine="7" />
 	</File>
 	<File name="performance/performance.h" open="0" top="0" tabpos="17">
 		<Cursor position="1442" topLine="21" />

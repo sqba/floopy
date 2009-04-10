@@ -542,7 +542,7 @@ bool CTracks::Open(wxString &filename)
 			{
 				if(!m_pMaster)
 				{
-					m_pMaster = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
+					m_pMaster = (IFloopySoundMixer*)m_pEngine->CreateInput("std.mixer");
 					m_pMaster->Enable(true);
 					m_pEngine->SetSource( m_pMaster );
 				}
