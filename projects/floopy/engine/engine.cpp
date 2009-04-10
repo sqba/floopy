@@ -23,73 +23,12 @@
 
 CEngine::CEngine(LIB_HANDLE hModule)
 {
-	m_pOutputCache = NULL;
-
-	m_hModule = hModule;
-
-	m_pFirst = m_pLast = NULL;
-	memset(m_szDisplayname,	0, sizeof(m_szDisplayname));
-	memset(m_szLastError,	0, sizeof(m_szLastError));
-	memset(m_szPath,		0, sizeof(m_szPath));
-	memset(m_szFileName,	0, sizeof(m_szFileName));
-
-	m_callback = NULL;
-
-	if(hModule)
-	{
-		// Linux specific
-		// 1. executable
-		//int r = readlink("/proc/self/exe", exePath, MAXPATHLEN);
-		// 2. dynamic library
-	    //DL_info info;
-	    //if (dladdr( &CEngine, &info ) == 0)
-        //	return info.dli_fname;
-        // 3.
-        // g++ -o executable -Wl,-R -Wl,'$ORIGIN' executable.o libhe
-
-		//GetModuleFileName(hModule, m_szPath, MAX_PATH);
-
-		GetLibraryPath();
-	}
-
-	// Default values
-	m_format.frequency = 44100;
-	m_format.format = WAVE_FORMAT_PCM;
-	m_format.channels = 2;
-	m_format.bitsPerSample = 16;
-
-	m_red = m_green = m_blue = 256;
+	init(hModule, NULL);
 }
 
 CEngine::CEngine(LIB_HANDLE hModule, COutputCache *pOutputCache)
 {
-	m_hModule = hModule;
-
-	m_pFirst = m_pLast = NULL;
-	memset(m_szDisplayname,	0, sizeof(m_szDisplayname));
-	memset(m_szLastError,	0, sizeof(m_szLastError));
-	memset(m_szPath,		0, sizeof(m_szPath));
-	memset(m_szFileName,	0, sizeof(m_szFileName));
-
-	m_callback = NULL;
-
-	if(hModule)
-	{
-		//GetModuleFileName(hModule, m_szPath, MAX_PATH);
-		GetLibraryPath();
-	}
-
-	// Default values
-	m_format.frequency = 44100;
-	m_format.format = WAVE_FORMAT_PCM;
-	m_format.channels = 2;
-	m_format.bitsPerSample = 16;
-
-	m_red = m_green = m_blue = 256;
-
-	//CEngine(hModule);
-
-	m_pOutputCache = pOutputCache;
+	init(hModule, pOutputCache);
 }
 
 CEngine::~CEngine()
@@ -105,12 +44,33 @@ CEngine::~CEngine()
 		m_pFirst = tmp;
 	}
 
-	if(m_pOutputCache != NULL)// && gEngine == this)
+	if(m_pOutputCache != NULL)
 	{
 		delete m_pOutputCache;
 		m_pOutputCache = NULL;
-		//gEngine = NULL;
 	}
+}
+
+void CEngine::init(LIB_HANDLE hModule, COutputCache *pOutputCache)
+{
+	m_hModule = hModule;
+	m_pOutputCache = pOutputCache;
+
+	m_pFirst = m_pLast = NULL;
+
+	memset(m_szDisplayname,	0, sizeof(m_szDisplayname));
+	memset(m_szLastError,	0, sizeof(m_szLastError));
+	memset(m_szFileName,	0, sizeof(m_szFileName));
+
+	m_callback = NULL;
+
+	// Default values
+	m_format.frequency		= 44100;
+	m_format.format			= WAVE_FORMAT_PCM;
+	m_format.channels		= 2;
+	m_format.bitsPerSample	= 16;
+
+	m_red = m_green = m_blue = 256;
 }
 
 tComponent *CEngine::add(IFloopyObject *obj, enumObjType type)
@@ -142,29 +102,11 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 {
 	IFloopySoundInput *obj = NULL;
 	enumObjType type = TYPE_INPUT;
-/*
-	char plugin[MAX_PATH]	= {0};
-	char library[MAX_FNAME]	= {0};
 
-	get_library_name(name, library);
-	get_plugin_name(name, plugin);
-
-	if( !LoadPlugin(library) )
-		return false;
-*/
 	// Check if a filename has been given
 	const char *plugin = getPluginName(filename);
 	if(plugin)
 	{
-		char path[MAX_PATH] = {0};
-		if(strlen(m_szPath) > 0)
-		{
-			strcpy(path, m_szPath);
-			if(path[strlen(path)-1] != PATH_SEP)
-				path[strlen(path)] = PATH_SEP;
-		}
-		strcat(path, plugin);
-
 		if(0==strcmpi(plugin, DEFAULT_XML_STORAGE))
 		{
 			CEngine *engine = new CEngine(m_hModule);
@@ -178,7 +120,8 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 			if(!((CInput*)obj)->Create(engine))
 			{
 				//setLastError(ERR_STR_FILENOTFOUND, filename);
-				sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
+				sprintf(m_szLastError, "Failed to create engine input");
+				delete engine;
 				delete obj;
 				return NULL;
 			}
@@ -189,7 +132,7 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 			if(!((CInput*)obj)->Create(plugin))
 			{
 				//setLastError(ERR_STR_FILENOTFOUND, filename);
-				sprintf(m_szLastError, ERR_STR_FILENOTFOUND, path);
+				sprintf(m_szLastError, ERR_STR_FILENOTFOUND, plugin);
 				delete obj;
 				return NULL;
 			}
@@ -204,22 +147,6 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 	}
 	else
 	{
-/*
-		char *tmp = strrchr(filename, PATH_SEP);
-		if(tmp)
-			filename = tmp+1;
-
-		char path[MAX_PATH] = {0};
-		if(strlen(m_szPath) > 0)
-		{
-			strcpy(path, m_szPath);
-			if(path[strlen(path)-1] != PATH_SEP)
-				path[strlen(path)] = PATH_SEP;
-		}
-		strcat(path, PLUG_PREFIX);
-		strcat(path, filename);
-		strcat(path, PLUG_EXT);
-*/
 		obj = new CInput(m_hModule, m_callback, m_pOutputCache);
 		if(!((CInput*)obj)->Create(filename))
 		{
@@ -236,33 +163,32 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 
 IFloopySoundOutput *CEngine::CreateOutput(const char *filename, SOUNDFORMAT fmt)
 {
-	COutput *obj = NULL;
+	COutput *obj = new COutput(m_hModule);
+	if(NULL == obj)
+		return NULL;
 
 	// Check if a filename has been given
 	const char *plugin = getPluginName(filename);
-	if(plugin)
+	if( !plugin )
 	{
-		obj = new COutput(m_hModule);
-		if(!obj->Create(plugin, fmt) || !obj->Open(filename))
-		{
-			//setLastError(ERR_STR_FILENOTFOUND, filename);
-			//sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
-			strcpy(m_szLastError, obj->GetLastErrorDesc());
-			delete obj;
-			return NULL;
-		}
-	}
-	else
-	{
-		obj = new COutput(m_hModule);
-		if(!obj->Create(filename, fmt))
-		{
-			//setLastError(ERR_STR_FILENOTFOUND, filename);
-			sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
-			delete obj;
-			return NULL;
-		}
+		plugin = filename;
+		filename = NULL;
 		// And what if the component doesn's have the output interface?
+	}
+
+	if(!obj->Create(plugin, fmt))
+	{
+		//setLastError(ERR_STR_FILENOTFOUND, filename);
+		sprintf(m_szLastError, ERR_STR_FILENOTFOUND, filename);
+		delete obj;
+		return NULL;
+	}
+
+	if( filename && !obj->Open(filename) )
+	{
+		strcpy(m_szLastError, obj->GetLastErrorDesc());
+		delete obj;
+		return NULL;
 	}
 
 	add(obj, TYPE_OUTPUT);
@@ -373,22 +299,10 @@ bool CEngine::Open(const char *filename)
 		}
 		else
 		{
-			char path[MAX_PATH] = {0};
-			if (strlen(m_szPath) > 0)
-			{
-				strcpy(path, m_szPath);
-				if(path[strlen(path)-1] != PATH_SEP)
-					path[strlen(path)-1] = PATH_SEP;
-			}
-
 			char *sep = strrchr(plugin, '.');
 			if(sep)
 			{
-				if(strrchr(filename, PATH_SEP))
-					strcpy(path, filename);
-				else
-					strcat(path, filename);
-				m_source = CreateInput(path);
+				m_source = CreateInput( filename );
 				bResult = (NULL != m_source);
 			}
 			else
@@ -454,8 +368,6 @@ const char *CEngine::getPluginName(const char *filename)
 	{
 		ext += 1;
 
-		//if(0 == strcmpi(ext, "test"))
-		//	return "test";
 		if(0 == strcmpi(ext, "xml"))
 			return DEFAULT_XML_STORAGE;
 		//if(0 == strcmpi(ext, "hz"))
@@ -532,7 +444,6 @@ int CEngine::EmptyBuffer(BYTE *data, int size)
 	return 0;
 }
 
-
 bool CEngine::GetColor(UINT *r, UINT *g, UINT *b)
 {
 	if(m_red<256 && m_green<256 && m_blue<256)
@@ -551,140 +462,3 @@ void CEngine::SetColor(UINT r, UINT g, UINT b)
 	m_green	= g;
 	m_blue	= b;
 }
-
-void CEngine::GetLibraryPath()
-{
-#ifdef WIN32
-	GetModuleFileName(m_hModule, m_szPath, MAX_PATH);
-#else
-	// Linux specific
-
-	// 1. executable
-	readlink("/proc/self/exe", m_szPath, MAX_PATH);
-
-	// 2. dynamic library
-	//DL_info info;
-    //if (dladdr( &GetLibraryPath, &info ) == 0)
-    //	strcpy(m_szPath, info.dli_fname);
-
-    // 3.
-    // g++ -o executable -Wl,-R -Wl,'$ORIGIN' executable.o libhe
-#endif
-
-	char *tmp = strrchr(m_szPath, PATH_SEP);
-	if(tmp)
-		*(tmp+1) = '\0';
-}
-/*
-int CEngine::GetSize()
-{
-	int stb = samplesToBytes();
-	CInput *src = (CInput*)GetSource();
-	int start = src->getStartOffset();
-	int end = src->getEndOffset();
-	return (end - start) / stb;
-}
-
-int CEngine::samplesToBytes()
-{
-	SOUNDFORMAT *fmt = GetFormat();
-	//assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
-		return (fmt->bitsPerSample / 8) * fmt->channels;
-	else
-		return 0;
-}
-
-int CEngine::GetLastError()
-{
-	return 0;
-}
-
-bool CEngine::GetLastError(char *str, int len)
-{
-	int l = sizeof(m_szLastError);
-	memcpy(str, m_szLastError, (len>l?l:len));
-	return true;
-}
-
-void CEngine::setLastError(char *err, char *str)
-{
-	memset(m_szLastError, 0, sizeof(m_szLastError));
-	sprintf(m_szLastError, err, str);
-}
-
-void CEngine::dump(FILE *fp)
-{
-	tComponent *tmp = m_pFirst;
-	while(tmp)
-	{
-		tmp->obj->dump(fp);
-		tmp = tmp->next;
-	}
-}
-*/
-/*
-enumObjType CEngine::createObject(char *filename)
-{
-}
-*/
-
-/*
-bool CEngine::SetParamAt(IFloopyObject *obj, int offset, int index, float value)
-{
-	tComponent *tmp = m_pFirst;
-	while(tmp)
-	{
-		if(obj == tmp->obj)
-		{
-			switch(tmp->type)
-			{
-			case TYPE_INPUT:
-				CInput *input = (CInput*)obj;
-				input->SetParamAt(offset, index, value);
-			}
-			return;
-		}
-		tmp = tmp->next;
-	}
-}
-
-bool CEngine::ResetParamAt(IFloopyObject *obj, int offset, int index)
-{
-	tComponent *tmp = m_pFirst;
-	while(tmp)
-	{
-		if(obj == tmp->obj)
-		{
-			switch(tmp->type)
-			{
-			case TYPE_INPUT:
-				CInput *input = (CInput*)obj;
-				return input->ResetParamAt(offset, index);
-			}
-			return false;
-		}
-		tmp = tmp->next;
-	}
-	return false;
-}
-
-void CEngine::EnableAt(IFloopyObject *obj, int offset, bool bEnable)
-{
-	tComponent *tmp = m_pFirst;
-	while(tmp)
-	{
-		if(obj == tmp->obj)
-		{
-			switch(tmp->type)
-			{
-			case TYPE_INPUT:
-				CInput *input = (CInput*)obj;
-				input->EnableAt(offset, bEnable);
-			}
-			return;
-		}
-		tmp = tmp->next;
-	}
-}
-*/

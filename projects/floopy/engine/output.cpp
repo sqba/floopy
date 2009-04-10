@@ -63,27 +63,7 @@ bool COutput::Create(const char *name, SOUNDFORMAT fmt)
 		sprintf(m_szLastError, "fmt.frequency == 0.\n");
 		return false;
 	}
-/*
-	const char *library = plugin;
 
-	char *sep = strrchr(plugin, '.');
-	if(sep)
-	{
-		char tmp[MAX_PATH] = {0};
-		strcpy(tmp, plugin);
-		char *sep = strrchr(tmp, '.');
-		plugin = sep+1;
-		*sep = 0;
-		library = tmp;
-	}
-	char path[MAX_PATH] = {0};
-	GetLibraryPath(path);
-    std::ostringstream strPath;
-    strPath << path << PLUG_PREFIX << library << PLUG_EXT;
-    const char *pszPath = strPath.str().c_str();
-    char tmp[MAX_PATH] = {0};
-    strcpy(tmp, pszPath);
-*/
 	char plugin[MAX_PATH]	= {0};
 	char library[MAX_FNAME]	= {0};
 
@@ -107,30 +87,6 @@ bool COutput::Create(const char *name, SOUNDFORMAT fmt)
 	IFloopySoundOutput::SetDest( m_plugin );
 	m_samplesToBytes = (fmt.bitsPerSample / 8) * fmt.channels;
 	return true;
-}
-
-void COutput::GetLibraryPath(char *buff)
-{
-#ifdef WIN32
-	GetModuleFileName(m_hModule, m_szPath, MAX_PATH);
-#else
-	// Linux specific
-
-	// 1. executable
-	readlink("/proc/self/exe", buff, MAX_PATH);
-
-	// 2. dynamic library
-	//DL_info info;
-    //if (dladdr( &GetLibraryPath, &info ) == 0)
-    //	strcpy(m_szPath, info.dli_fname);
-
-    // 3.
-    // g++ -o executable -Wl,-R -Wl,'$ORIGIN' executable.o libhe
-#endif
-
-	char *tmp = strrchr(buff, PATH_SEP);
-	if(tmp)
-		*(tmp+1) = '\0';
 }
 
 int COutput::Write(BYTE *data, int size)

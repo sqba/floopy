@@ -56,18 +56,12 @@ public:
 	IFloopySoundInput  *CreateTrack(const char *plugin);
 	IFloopySoundOutput *CreateOutput(const char *plugin, SOUNDFORMAT fmt);
 
-//	bool SetParamAt(IFloopyObject *obj, int offset, int index, float value);
-//	bool ResetParamAt(IFloopyObject *obj, int offset, int index);
-//	bool EnableAt(IFloopyObject *obj, int offset, bool bEnable);
-
 	const char *GetDisplayName();
 	void SetDisplayName(const char *name, int len);
 
 	void RegisterUpdateCallback(UpdateCallback func);
 
 	const char *GetLastErrorDesc();
-	//int GetLastError();
-	//bool GetLastError(char *str, int len);
 
 	bool CanReadSourceIfDisabled()	{ return false; }
 
@@ -75,25 +69,19 @@ public:
 
 	int EmptyBuffer(BYTE *data, int size);
 
-//	int GetSize();
-
 	bool GetColor(UINT *r, UINT *g, UINT *b);
 	void SetColor(UINT r, UINT g, UINT b);
 
 private:
-//	int samplesToBytes();
+	void init(LIB_HANDLE hModule, COutputCache *pOutputCache);
 	const char *getPluginName(const char *filename);
-//	enumObjType createObject(char *filename);
 	tComponent *add(IFloopyObject *comp, enumObjType type);
 	void saveChildEngines();
-	//void setLastError(char *err, char *str);
-	void GetLibraryPath();
 
 private:
 	LIB_HANDLE m_hModule;				/** Handle to the module that created the engine */
 	char m_szDisplayname[MAX_FNAME];	/** Engine name, user defined string */
 	char m_szLastError[100];			/** Last error description */
-	char m_szPath[MAX_PATH];			/** Physical location of the engine */
 	char m_szFileName[MAX_PATH];		/** File name, set after succesfull call to Open() */
 	CTimeline m_timeline;				/** Parameter changes */
 	UpdateCallback m_callback;			/** Callback function called on parameter changes while playing */
