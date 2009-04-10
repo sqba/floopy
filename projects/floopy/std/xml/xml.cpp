@@ -105,11 +105,19 @@ void CXml::set_param(IFloopySoundInput *input, float offset, const char *param, 
 	SOUNDFORMAT *fmt = input->GetFormat();
 	float freq = (float)fmt->frequency;
 
+	assert( freq );
+
 	offset *= freq;
+
+//	printf("%f:%s:%f\n", offset, param, value);
 
 	if(0==stricmp(param, "ON"))
 	{
-		input->SetParamAt(offset, TIMELINE_PARAM_ENABLE, 0.f);
+		input->EnableAt(offset, true);
+	}
+	else if(0==stricmp(param, "OFF"))
+	{
+		input->EnableAt(offset, false);
 	}
 	else if(0==stricmp(param, "RESET"))
 	{
@@ -150,10 +158,11 @@ bool CXml::set_timeline(IFloopySoundInput *input, TiXmlElement* pElement)
 		const char *param = tokens2[1].c_str();
 		const char *value = tokens2.size()>2 ? tokens2[2].c_str() : "";
 
-//		printf("%s : %s (%s)\n", time, param, value);
-
 		float offset = atof(time);
 		float val = atof(value);
+
+//		printf("%s(%f):%s:%s\n", time, offset, param, value);
+
 		set_param(input, offset, param, val);
  	}
 
@@ -235,11 +244,6 @@ IFloopySoundInput *CXml::load_input(IFloopySoundInput *parent, TiXmlElement* pEl
 	if( !open_source(input, pElement) )
 		return NULL;
 
-	set_properties(input, pElement);
-	set_name(input, pElement);
-	set_color(input, pElement);
-	set_timeline(input, pElement);
-
 	if( IsMixer(input) )
 	{
 		TiXmlNode *pChild = NULL;
@@ -264,6 +268,13 @@ IFloopySoundInput *CXml::load_input(IFloopySoundInput *parent, TiXmlElement* pEl
 				((IFloopySoundFilter*)input)->SetSource( src );
 		}
 	}
+
+	set_properties(input, pElement);
+	set_name(input, pElement);
+	set_color(input, pElement);
+
+	// Timeline has to be set at the end because of the frequency
+	set_timeline(input, pElement);
 
 	return input;
 }

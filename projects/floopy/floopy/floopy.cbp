@@ -11,7 +11,7 @@
 				<Option object_output="../obj/Debug/floopy" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-i ../bin/Debug/samples/acid/acid.xml -o ../bin/Debug/acid.svg" />
+				<Option parameters="-i ../bin/Debug/samples/acid/acid.xml -o ../bin/Debug/acid.svg  -v dump.txt" />
 				<Option host_application="floopy" />
 				<Compiler>
 					<Add option="-g" />

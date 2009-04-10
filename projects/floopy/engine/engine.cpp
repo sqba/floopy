@@ -414,7 +414,7 @@ bool CEngine::Save(const char *filename)
 
 	bool result = false;
 	const char *name = getPluginName(filename);
-	if(name)
+	if( name )
 	{
 		CStorage storage(m_hModule, this, name);
 		result = storage.Save(filename);
@@ -466,6 +466,8 @@ const char *CEngine::getPluginName(const char *filename)
 			return "svg.svgout";
 		if(0 == strcmpi(ext, "mp3"))
 			return "mp3file";
+		if(0 == strcmpi(ext, "txt"))
+			return "std.dump";
 	}
 	return NULL;
 }

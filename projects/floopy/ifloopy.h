@@ -148,6 +148,7 @@ public:
  *********************************************************************/
 class IFloopyBase
 {
+public:
 	/**
 	 * Returns class type identificator.
 	 * Used for runtime class identification.

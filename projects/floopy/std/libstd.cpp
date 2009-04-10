@@ -8,6 +8,7 @@
 
 
 // Input classes
+#include "dump/dump.h"
 #include "xml/xml.h"
 #include "cache/cache.h"
 #include "echo/echo.h"
@@ -105,7 +106,9 @@ EXPORTED IFloopyEngineStorage *CreateStorage(const char *name)
 {
 	if( 0 == stricmp(name, "xml") )
 		return new CXml();
-		return NULL;
+	if( 0 == stricmp(name, "dump") )
+		return new CDump();
+	return NULL;
 }
 
 EXPORTED int GetPluginCount()

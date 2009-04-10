@@ -11,7 +11,7 @@
 				<Option object_output="../obj/Debug/std" />
 				<Option type="3" />
 				<Option compiler="gcc" />
-				<Option parameters="-i bass2.wav -o out.wav" />
+				<Option parameters="-i ../bin/Debug/samples/acid/acid.xml -v dump" />
 				<Option host_application="floopy" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
@@ -47,6 +47,8 @@
 		<Unit filename="cache/cache.h" />
 		<Unit filename="converttofloat/converttofloat.cpp" />
 		<Unit filename="converttofloat/converttofloat.h" />
+		<Unit filename="dump/dump.cpp" />
+		<Unit filename="dump/dump.h" />
 		<Unit filename="echo/echo.cpp" />
 		<Unit filename="echo/echo.h" />
 		<Unit filename="float2int/float2Int.cpp" />

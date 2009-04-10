@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
+	<File name="../ifloopy.h" open="0" top="0" tabpos="0">
+		<Cursor position="9621" topLine="255" />
+	</File>
 	<File name="8to16bit/convert8to16bit.h" open="0" top="0" tabpos="1">
 		<Cursor position="907" topLine="4" />
 	</File>
@@ -9,6 +12,12 @@
 	</File>
 	<File name="converttofloat/converttofloat.h" open="0" top="0" tabpos="3">
 		<Cursor position="1016" topLine="10" />
+	</File>
+	<File name="dump/dump.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="1433" topLine="51" />
+	</File>
+	<File name="dump/dump.h" open="0" top="0" tabpos="1">
+		<Cursor position="572" topLine="0" />
 	</File>
 	<File name="echo/echo.h" open="0" top="0" tabpos="4">
 		<Cursor position="737" topLine="1" />
@@ -23,7 +32,7 @@
 		<Cursor position="796" topLine="0" />
 	</File>
 	<File name="libstd.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="1439" topLine="55" />
+		<Cursor position="179" topLine="0" />
 	</File>
 	<File name="loop/loop.h" open="0" top="0" tabpos="8">
 		<Cursor position="606" topLine="0" />
@@ -78,5 +87,8 @@
 	</File>
 	<File name="wavfile/wavfileout.h" open="0" top="0" tabpos="2">
 		<Cursor position="1191" topLine="0" />
+	</File>
+	<File name="xml/xml.cpp" open="1" top="1" tabpos="2">
+		<Cursor position="2413" topLine="99" />
 	</File>
 </CodeBlocks_layout_file>
