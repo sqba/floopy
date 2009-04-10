@@ -49,30 +49,6 @@ bool CXml::IsMixer(IFloopySoundInput *input)
 	return(type == (TYPE_FLOOPY_SOUND_MIXER | type));
 }
 
-void CXml::get_library_path(LIB_HANDLE hModule, char *buff, int len)
-{
-#ifdef WIN32
-	GetModuleFileName(hModule, buff, len);
-#else
-	// Linux specific
-
-	// 1. executable
-	readlink("/proc/self/exe", buff, len);
-
-	// 2. dynamic library
-	//DL_info info;
-    //if (dladdr( &GetLibraryPath, &info ) == 0)
-    //	strcpy(m_szPath, info.dli_fname);
-
-    // 3.
-    // g++ -o executable -Wl,-R -Wl,'$ORIGIN' executable.o libhe
-#endif
-
-	char *tmp = strrchr(buff, PATH_SEP);
-	if(tmp)
-		*(tmp+1) = '\0';
-}
-
 void CXml::set_color(IFloopySoundInput *input, TiXmlElement* pElement)
 {
 	const char *str = pElement->Attribute("color");
