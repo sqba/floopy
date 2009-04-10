@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 	end   = GetArg(argc, argv, "e", 0.f);
 	if(start > 0.f && end > 0.f)
 	{
-		input = engine->CreateInput("libstd.playrgn");
+		input = engine->CreateInput("std.playrgn");
 		if(!input)
 		{
 			fprintf(stderr, "libstd.playrgn not found!\n");

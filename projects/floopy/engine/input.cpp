@@ -31,7 +31,6 @@ CInput::CInput(LIB_HANDLE hModule, UpdateCallback func, COutputCache *outputCach
 
 	m_offset = m_nStartOffset = m_nEndOffset = 0;
 	m_nSkipBytes = m_nSamplesToBytes = 0;
-
 }
 
 CInput::~CInput()

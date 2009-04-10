@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1239400130 source:/home/sqba/Projects/floopy/common/loader.cpp
+1239405002 source:/home/sqba/Projects/floopy/common/loader.cpp
 	<assert.h>
 	<string.h>
 	<stdio.h>
 	"loader.h"
+	"util.h"
 	"../platform.h"
 
 1239400116 /home/sqba/Projects/floopy/common/loader.h
@@ -1894,4 +1895,10 @@
 
 1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/tracksview.cpp
 	"tracksview.h"
+
+1239403840 /home/sqba/Projects/floopy/common/util.h
+
+1239404749 source:/home/sqba/Projects/floopy/common/util.cpp
+	<string.h>
+	"../platform.h"
 

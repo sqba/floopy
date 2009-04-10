@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "loader.h"
+#include "util.h"
 #include "../platform.h"
 
 
@@ -41,9 +42,16 @@ bool CLoader::LoadPlugin(const char *fileName)
 	char sep[2] = {PATH_SEP, 0};
 
 	get_library_path(m_hModule, path, MAX_PATH);
+
+	char library[MAX_FNAME]	= {0};
+	get_library_name(fileName, library);
+
+//	char plugin[MAX_PATH]	= {0};
+//	get_plugin_name(fileName, plugin);
+
 	strcat(path, sep);
 	strcat(path, PLUG_PREFIX);
-	strcat(path, fileName);
+	strcat(path, library);
 	strcat(path, PLUG_EXT);
 
 //	printf("Loading \'%s\': ");

@@ -2,7 +2,7 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
 	<File name="../common/loader.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="766" topLine="13" />
+		<Cursor position="1366" topLine="39" />
 	</File>
 	<File name="../common/loader.h" open="0" top="0" tabpos="0">
 		<Cursor position="406" topLine="15" />
@@ -11,12 +11,12 @@
 		<Cursor position="53" topLine="0" />
 	</File>
 	<File name="floopy.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="4292" topLine="144" />
+		<Cursor position="3187" topLine="98" />
 	</File>
 	<File name="../util/engine_wrapper.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="312" topLine="2" />
 	</File>
 	<File name="../util/engine_wrapper.h" open="0" top="0" tabpos="2">
-		<Cursor position="1664" topLine="19" />
+		<Cursor position="991" topLine="19" />
 	</File>
 </CodeBlocks_layout_file>

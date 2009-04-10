@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
+	<File name="../common/loader.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1093" topLine="32" />
+	</File>
 	<File name="../util/engine_wrapper.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="796" topLine="8" />
 	</File>

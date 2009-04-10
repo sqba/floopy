@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="../common/loader.cpp" open="0" top="0" tabpos="2">
+	<File name="../common/loader.cpp" open="1" top="0" tabpos="2">
 		<Cursor position="739" topLine="18" />
 	</File>
-	<File name="../common/loader.h" open="1" top="0" tabpos="1">
-		<Cursor position="1186" topLine="25" />
+	<File name="../common/loader.h" open="0" top="0" tabpos="1">
+		<Cursor position="984" topLine="25" />
 	</File>
-	<File name="engine.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="8050" topLine="435" />
+	<File name="../common/util.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="461" topLine="18" />
+	</File>
+	<File name="engine.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="2211" topLine="97" />
 	</File>
 	<File name="engine.h" open="0" top="0" tabpos="9">
 		<Cursor position="2184" topLine="62" />
@@ -16,41 +19,38 @@
 	<File name="globals.h" open="0" top="0" tabpos="0">
 		<Cursor position="109" topLine="0" />
 	</File>
-	<File name="input.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="409" topLine="2" />
+	<File name="input.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="1405" topLine="48" />
 	</File>
 	<File name="input.h" open="0" top="0" tabpos="5">
-		<Cursor position="5091" topLine="110" />
+		<Cursor position="5091" topLine="56" />
 	</File>
 	<File name="main.cpp" open="0" top="0" tabpos="9">
 		<Cursor position="457" topLine="0" />
 	</File>
 	<File name="output.cpp" open="0" top="0" tabpos="5">
-		<Cursor position="1373" topLine="48" />
+		<Cursor position="3675" topLine="179" />
 	</File>
 	<File name="output.h" open="0" top="0" tabpos="9">
-		<Cursor position="1552" topLine="33" />
+		<Cursor position="1552" topLine="27" />
 	</File>
 	<File name="outputcache.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="1628" topLine="40" />
+		<Cursor position="543" topLine="49" />
 	</File>
 	<File name="outputcache.h" open="0" top="0" tabpos="2">
 		<Cursor position="1110" topLine="9" />
 	</File>
-	<File name="storage.cpp" open="0" top="0" tabpos="7">
-		<Cursor position="370" topLine="0" />
+	<File name="storage.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="649" topLine="9" />
 	</File>
 	<File name="storage.h" open="0" top="0" tabpos="8">
-		<Cursor position="517" topLine="3" />
+		<Cursor position="602" topLine="3" />
 	</File>
 	<File name="timeline.cpp" open="0" top="0" tabpos="11">
-		<Cursor position="541" topLine="356" />
+		<Cursor position="541" topLine="396" />
 	</File>
 	<File name="timeline.h" open="0" top="0" tabpos="0">
-		<Cursor position="0" topLine="17" />
-	</File>
-	<File name="util.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="273" topLine="0" />
+		<Cursor position="0" topLine="33" />
 	</File>
 	<File name="../ifloopy.h" open="0" top="0" tabpos="1">
 		<Cursor position="24728" topLine="795" />

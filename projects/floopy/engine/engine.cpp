@@ -12,7 +12,7 @@
 #include "input.h"
 #include "output.h"
 #include "../platform.h"
-#include "util.h"
+#include "../common/util.h"
 
 #define DEFAULT_XML_STORAGE		"std.xml"
 

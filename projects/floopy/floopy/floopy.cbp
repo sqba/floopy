@@ -11,7 +11,7 @@
 				<Option object_output="../obj/Debug/floopy" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-i ../bin/Debug/samples/acid/acid.xml -o ../bin/Debug/acid.svg  -v stdout.txt" />
+				<Option parameters="-i ../bin/Debug/samples/acid/acid.xml -o ../bin/Debug/acid.svg  -v stdout.txt -s 2 -e 5" />
 				<Option host_application="floopy" />
 				<Compiler>
 					<Add option="-g" />
@@ -42,6 +42,8 @@
 		</Compiler>
 		<Unit filename="../common/loader.cpp" />
 		<Unit filename="../common/loader.h" />
+		<Unit filename="../common/util.cpp" />
+		<Unit filename="../common/util.h" />
 		<Unit filename="args.h" />
 		<Unit filename="floopy.cpp" />
 		<Unit filename="../ifloopy.h" />

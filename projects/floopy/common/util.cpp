@@ -10,6 +10,14 @@
  */
 void get_library_name(const char *fullname, char *name)
 {
+	strcpy(name, fullname);
+	char *sep = strrchr(name, '.');
+	if( sep )
+		*sep = 0;
+//	sep = strrchr(name, PATH_SEP);
+//	if( sep )
+//		*sep = 0;
+/*
 	char *sep = strrchr(fullname, '.');
 	int len = sep ? sep-fullname : strlen(fullname);
 
@@ -19,6 +27,7 @@ void get_library_name(const char *fullname, char *name)
 
 	strncpy(name, fullname, len);
 //	strcat(name, PLUG_EXT);
+*/
 }
 
 /**

@@ -43,6 +43,8 @@
 		</Linker>
 		<Unit filename="../common/loader.cpp" />
 		<Unit filename="../common/loader.h" />
+		<Unit filename="../common/util.cpp" />
+		<Unit filename="../common/util.h" />
 		<Unit filename="engine.cpp" />
 		<Unit filename="engine.h" />
 		<Unit filename="globals.h" />
@@ -57,8 +59,6 @@
 		<Unit filename="storage.h" />
 		<Unit filename="timeline.cpp" />
 		<Unit filename="timeline.h" />
-		<Unit filename="util.cpp" />
-		<Unit filename="util.h" />
 		<Unit filename="../ifloopy.h" />
 		<Unit filename="../platform.h" />
 		<Extensions>
