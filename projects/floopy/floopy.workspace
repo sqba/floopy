@@ -5,7 +5,6 @@
 		<Project filename="std/std.cbp" />
 		<Project filename="floopy/floopy.cbp" active="1" />
 		<Project filename="svg/svg.cbp" />
-		<Project filename="xml_expat/xml_expat.cbp" />
 		<Project filename="wxFloopy/wxFloopy.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

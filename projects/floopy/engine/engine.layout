@@ -16,7 +16,7 @@
 	<File name="globals.h" open="0" top="0" tabpos="0">
 		<Cursor position="109" topLine="0" />
 	</File>
-	<File name="input.cpp" open="1" top="0" tabpos="3">
+	<File name="input.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="4729" topLine="223" />
 	</File>
 	<File name="input.h" open="0" top="0" tabpos="5">
@@ -49,7 +49,7 @@
 	<File name="util.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="273" topLine="0" />
 	</File>
-	<File name="../ifloopy.h" open="1" top="0" tabpos="1">
+	<File name="../ifloopy.h" open="0" top="0" tabpos="1">
 		<Cursor position="24728" topLine="795" />
 	</File>
 </CodeBlocks_layout_file>
