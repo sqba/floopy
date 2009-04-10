@@ -37,15 +37,14 @@ public:
 	virtual ~CLoader();
 
 	bool LoadPlugin(const char *fileName);
-	void *GetFunction(const char *funcName);
-	LIB_HANDLE GetHandle() { return m_hPlugin; }
 
 	IFloopySoundInput *CreateInput(const char *name);
-	IFloopySoundEngine *CreateEngine(LIB_HANDLE hModule);
-	IFloopyEngineStorage *CreateStorage(const char *name);
+	IFloopySoundEngine *CreateEngine();
 	IFloopySoundOutput *CreateOutput(const char *name, SOUNDFORMAT fmt);
+	IFloopyEngineStorage *CreateStorage(const char *name);
 
 private:
+	void *get_function(const char *funcName);
 	void get_library_path(LIB_HANDLE hModule, char *buff, int len);
 
 private:

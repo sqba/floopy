@@ -50,6 +50,8 @@ bool CLoader::LoadPlugin(const char *fileName)
 
 	m_hPlugin = PLUGIN_OPEN(path);
 
+	assert( m_hPlugin );
+
 	if(0 == m_hPlugin)
 	{
 		fprintf(stderr, ERR_STR_FILENOTFOUND, path);
@@ -61,18 +63,57 @@ bool CLoader::LoadPlugin(const char *fileName)
 	return true;
 }
 
-void *CLoader::GetFunction(const char *funcName)
+IFloopySoundInput *CLoader::CreateInput(const char *name)
 {
+	CreateInputProc func = (CreateInputProc)get_function("CreateInput");
+	assert( func );
+	IFloopySoundInput *result = func( name );
+	assert( result );
+	return result;
+}
+
+IFloopySoundEngine *CLoader::CreateEngine()
+{
+	CreateEngineProc func = (CreateEngineProc)get_function("CreateSoundEngine");
+	assert( func );
+	IFloopySoundEngine *result = func( m_hPlugin );
+	assert( result );
+	return result;
+}
+
+IFloopyEngineStorage *CLoader::CreateStorage(const char *name)
+{
+	CreateStorageProc func = (CreateStorageProc)get_function("CreateStorage");
+	assert( func );
+	IFloopyEngineStorage *result = func( name );
+	assert( result );
+	return result;
+}
+
+IFloopySoundOutput *CLoader::CreateOutput(const char *name, SOUNDFORMAT fmt)
+{
+	CreateOutputProc func = (CreateOutputProc)get_function("CreateOutput");
+	assert( func );
+	IFloopySoundOutput *result = func(name, fmt);
+	assert( result );
+	return result;
+}
+
+void *CLoader::get_function(const char *name)
+{
+	assert( m_hPlugin );
+
 	if (0 == m_hPlugin)
 	{
 		fprintf(stderr, ERR_STR_LIBNOTLOADED);
 		return 0;
 	}
 
-	void *func = PLUGIN_LOAD(m_hPlugin, funcName);
+	void *func = PLUGIN_LOAD(m_hPlugin, name);
+	assert( func );
 	if(func == 0)
 	{
-		fprintf(stderr, ERR_STR_FUNCNOTFOUND, funcName);
+		fprintf(stderr, ERR_STR_FUNCNOTFOUND, name);
 		return 0;
 	}
 
@@ -101,40 +142,4 @@ void CLoader::get_library_path(LIB_HANDLE hModule, char *buff, int len)
 	char *tmp = strrchr(buff, PATH_SEP);
 	if(tmp)
 		*(tmp+1) = '\0';
-}
-
-IFloopySoundInput *CLoader::CreateInput(const char *name)
-{
-	CreateInputProc func = (CreateInputProc)GetFunction("CreateInput");
-	assert( func );
-	IFloopySoundInput *result = func( name );
-	assert( result );
-	return result;
-}
-
-IFloopySoundEngine *CLoader::CreateEngine(LIB_HANDLE hModule)
-{
-	CreateEngineProc func = (CreateEngineProc)GetFunction("CreateSoundEngine");
-	assert( func );
-	IFloopySoundEngine *result = func( hModule );
-	assert( result );
-	return result;
-}
-
-IFloopyEngineStorage *CLoader::CreateStorage(const char *name)
-{
-	CreateStorageProc func = (CreateStorageProc)GetFunction("CreateStorage");
-	assert( func );
-	IFloopyEngineStorage *result = func( name );
-	assert( result );
-	return result;
-}
-
-IFloopySoundOutput *CLoader::CreateOutput(const char *name, SOUNDFORMAT fmt)
-{
-	CreateOutputProc func = (CreateOutputProc)GetFunction("CreateOutput");
-	assert( func );
-	IFloopySoundOutput *result = func(name, fmt);
-	assert( result );
-	return result;
 }

@@ -104,7 +104,7 @@ IFloopySoundInput *CEngine::CreateInput(const char *filename)
 	enumObjType type = TYPE_INPUT;
 
 	// Check if a filename has been given
-	const char *plugin = getPluginName(filename);
+	const char *plugin = get_plugin_name(filename);
 	if(plugin)
 	{
 		if(0==strcmpi(plugin, DEFAULT_XML_STORAGE))
@@ -168,7 +168,7 @@ IFloopySoundOutput *CEngine::CreateOutput(const char *filename, SOUNDFORMAT fmt)
 		return NULL;
 
 	// Check if a filename has been given
-	const char *plugin = getPluginName(filename);
+	const char *plugin = get_plugin_name(filename);
 	if( !plugin )
 	{
 		plugin = filename;
@@ -289,7 +289,7 @@ bool CEngine::Open(const char *filename)
 {
 	bool bResult = false;
 
-	const char *plugin = getPluginName(filename);
+	const char *plugin = get_plugin_name(filename);
 	if(plugin)
 	{
 		if(0==strcmpi(plugin, DEFAULT_XML_STORAGE))
@@ -327,7 +327,7 @@ bool CEngine::Save(const char *filename)
 		return false;
 
 	bool result = false;
-	const char *name = getPluginName(filename);
+	const char *name = get_plugin_name(filename);
 	if( name )
 	{
 		CStorage storage(m_hModule, this, name);
@@ -361,17 +361,15 @@ void CEngine::saveChildEngines()
 	}
 }
 
-const char *CEngine::getPluginName(const char *filename)
+const char *CEngine::get_plugin_name(const char *filename)
 {
 	char *ext = strrchr(filename, '.');
 	if(ext)
 	{
-		ext += 1;
+		ext++;
 
 		if(0 == strcmpi(ext, "xml"))
 			return DEFAULT_XML_STORAGE;
-		//if(0 == strcmpi(ext, "hz"))
-		//	return "libstd.tonegen";
 		if(0 == strcmpi(ext, "wav"))
 			return "std.wavfile";
 		if(0 == strcmpi(ext, "svg"))
@@ -380,6 +378,8 @@ const char *CEngine::getPluginName(const char *filename)
 			return "mp3file";
 		if(0 == strcmpi(ext, "txt"))
 			return "std.dump";
+		//if(0 == strcmpi(ext, "hz"))
+		//	return "libstd.tonegen";
 	}
 	return NULL;
 }

@@ -74,7 +74,7 @@ public:
 
 private:
 	void init(LIB_HANDLE hModule, COutputCache *pOutputCache);
-	const char *getPluginName(const char *filename);
+	const char *get_plugin_name(const char *filename);
 	tComponent *add(IFloopyObject *comp, enumObjType type);
 	void saveChildEngines();
 

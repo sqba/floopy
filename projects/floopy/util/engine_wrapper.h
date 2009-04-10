@@ -52,9 +52,7 @@ private:
 	bool init(const char *plugin);
 
 private:
-	LIB_HANDLE			m_hModule;
 	IFloopySoundEngine	*m_plugin;
-	char				m_szPath[MAX_PATH];
 	CLoader				m_Loader;
 };
 
