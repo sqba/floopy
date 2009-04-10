@@ -2,10 +2,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <assert.h>
 #include <string.h>
 #include <stdio.h>
 #include "loader.h"
 #include "../platform.h"
+
+
+typedef IFloopySoundInput* (*CreateInputProc)(const char *name);
+typedef IFloopySoundEngine* (*CreateEngineProc)(LIB_HANDLE hModule);
+typedef IFloopyEngineStorage* (*CreateStorageProc)(const char*);
+typedef IFloopySoundOutput* (*CreateOutputProc)(const char*, SOUNDFORMAT);
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -93,4 +101,40 @@ void CLoader::get_library_path(LIB_HANDLE hModule, char *buff, int len)
 	char *tmp = strrchr(buff, PATH_SEP);
 	if(tmp)
 		*(tmp+1) = '\0';
+}
+
+IFloopySoundInput *CLoader::CreateInput(const char *name)
+{
+	CreateInputProc func = (CreateInputProc)GetFunction("CreateInput");
+	assert( func );
+	IFloopySoundInput *result = func( name );
+	assert( result );
+	return result;
+}
+
+IFloopySoundEngine *CLoader::CreateEngine(LIB_HANDLE hModule)
+{
+	CreateEngineProc func = (CreateEngineProc)GetFunction("CreateSoundEngine");
+	assert( func );
+	IFloopySoundEngine *result = func( hModule );
+	assert( result );
+	return result;
+}
+
+IFloopyEngineStorage *CLoader::CreateStorage(const char *name)
+{
+	CreateStorageProc func = (CreateStorageProc)GetFunction("CreateStorage");
+	assert( func );
+	IFloopyEngineStorage *result = func( name );
+	assert( result );
+	return result;
+}
+
+IFloopySoundOutput *CLoader::CreateOutput(const char *name, SOUNDFORMAT fmt)
+{
+	CreateOutputProc func = (CreateOutputProc)GetFunction("CreateOutput");
+	assert( func );
+	IFloopySoundOutput *result = func(name, fmt);
+	assert( result );
+	return result;
 }

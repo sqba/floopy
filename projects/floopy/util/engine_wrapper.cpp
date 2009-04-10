@@ -7,13 +7,10 @@
 #include <sstream>
 #include "../platform.h"
 
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-
-typedef IFloopySoundEngine* (*CreateProc)(LIB_HANDLE hModule);
-
-#define PROC_NAME "CreateSoundEngine"
 
 CEngineWrapper::CEngineWrapper(const char *plugin)
 {
@@ -35,13 +32,8 @@ bool CEngineWrapper::init(const char *plugin)
 	if( !m_Loader.LoadPlugin(plugin) )
 		return false;
 
- 	CreateProc func = (CreateProc)m_Loader.GetFunction( PROC_NAME );
-
-	if(0 == func)
-		return false;
-
 	//printf("CreateSoundEngine() found in %s.\n", filename);
-	m_plugin = func( m_Loader.GetHandle() );
+	m_plugin = m_Loader.CreateEngine( m_Loader.GetHandle() );
 	SetSource( m_plugin );
 	return true;
 }

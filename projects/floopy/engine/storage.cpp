@@ -6,12 +6,10 @@
 #include "storage.h"
 #include "util.h"
 
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-
-typedef IFloopyEngineStorage* (*CreateProc)(const char*);
-#define PROC_NAME "CreateStorage"
 
 CStorage::CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *name) : CLoader(hModule)
 {
@@ -31,14 +29,7 @@ CStorage::CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *n
 		return;
 	}
 
-	CreateProc func = (CreateProc)GetFunction(PROC_NAME);
-	if(func == NULL)
-	{
-//		sprintf(m_szLastError, "Function %s() not found in file: %s.\n", PROC_NAME, tmp);
-		return;
-	}
-
-	m_plugin = func( plugin );
+	m_plugin = CreateStorage( plugin );
 }
 
 CStorage::~CStorage()

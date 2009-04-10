@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="../common/loader.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="717" topLine="11" />
+	<File name="../common/loader.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="886" topLine="1" />
 	</File>
-	<File name="../common/loader.h" open="0" top="0" tabpos="1">
-		<Cursor position="434" topLine="12" />
+	<File name="../common/loader.h" open="1" top="0" tabpos="1">
+		<Cursor position="1200" topLine="12" />
 	</File>
 	<File name="engine.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="8937" topLine="0" />
@@ -16,8 +16,8 @@
 	<File name="globals.h" open="0" top="0" tabpos="0">
 		<Cursor position="109" topLine="0" />
 	</File>
-	<File name="input.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="2062" topLine="88" />
+	<File name="input.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="1409" topLine="39" />
 	</File>
 	<File name="input.h" open="0" top="0" tabpos="5">
 		<Cursor position="5091" topLine="110" />
@@ -25,8 +25,8 @@
 	<File name="main.cpp" open="0" top="0" tabpos="9">
 		<Cursor position="457" topLine="0" />
 	</File>
-	<File name="output.cpp" open="0" top="0" tabpos="7">
-		<Cursor position="1938" topLine="115" />
+	<File name="output.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="1373" topLine="48" />
 	</File>
 	<File name="output.h" open="0" top="0" tabpos="9">
 		<Cursor position="1552" topLine="33" />
@@ -37,8 +37,8 @@
 	<File name="outputcache.h" open="0" top="0" tabpos="2">
 		<Cursor position="1110" topLine="9" />
 	</File>
-	<File name="storage.cpp" open="0" top="0" tabpos="6">
-		<Cursor position="1359" topLine="0" />
+	<File name="storage.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="649" topLine="3" />
 	</File>
 	<File name="storage.h" open="0" top="0" tabpos="5">
 		<Cursor position="497" topLine="0" />

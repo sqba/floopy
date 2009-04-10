@@ -1,12 +1,14 @@
 # depslib dependency file v1.0
-1239278074 source:/home/sqba/Projects/floopy/common/loader.cpp
+1239387943 source:/home/sqba/Projects/floopy/common/loader.cpp
+	<assert.h>
 	<string.h>
 	<stdio.h>
 	"loader.h"
 	"../platform.h"
 
-1239278058 /home/sqba/Projects/floopy/common/loader.h
+1239387454 /home/sqba/Projects/floopy/common/loader.h
 	<windows.h>
+	"../ifloopy.h"
 	"../platform.h"
 
 1234814296 /home/sqba/Projects/floopy/platform.h
@@ -20,7 +22,7 @@
 
 1234814296 /home/sqba/Projects/floopy/platform/win32.h
 
-1239269158 source:/home/sqba/Projects/floopy/util/engine_wrapper.cpp
+1239389139 source:/home/sqba/Projects/floopy/util/engine_wrapper.cpp
 	"engine_wrapper.h"
 	<stdio.h>
 	<sstream>

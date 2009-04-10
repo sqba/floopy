@@ -11,12 +11,10 @@
 #include "../platform.h"
 #include "util.h"
 
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-
-typedef IFloopySoundOutput* (*CreateProc)(const char*, SOUNDFORMAT);
-#define PROC_NAME "CreateOutput"
 
 COutput::COutput(LIB_HANDLE hModule) : CLoader(hModule)
 {
@@ -76,14 +74,7 @@ bool COutput::Create(const char *name, SOUNDFORMAT fmt)
 		return false;
 	}
 
-	CreateProc func = (CreateProc)GetFunction(PROC_NAME);
-	if(func == NULL)
-	{
-//		sprintf(m_szLastError, "Function %s() not found in file: %s.\n", PROC_NAME, tmp);
-		return false;
-	}
-
-	m_plugin = func( plugin, fmt );
+	m_plugin = CreateOutput( plugin, fmt );
 	IFloopySoundOutput::SetDest( m_plugin );
 	m_samplesToBytes = (fmt.bitsPerSample / 8) * fmt.channels;
 	return true;

@@ -8,8 +8,6 @@
 #include "input.h"
 #include "util.h"
 
-typedef IFloopySoundInput* (*CreateProc)(const char *name);
-#define PROC_NAME	"CreateInput"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -64,19 +62,10 @@ bool CInput::Create(const char *name)
 	if( !LoadPlugin(library) )
 		return false;
 
-	CreateProc func = (CreateProc)GetFunction(PROC_NAME);
-	if(NULL == func)
-	{
-		sprintf(m_szLastError, "Function '%s' not found in library '%s'.\n",
-			PROC_NAME, library);
-		return false;
-	}
-
-	m_plugin = func( plugin );
+	m_plugin = CreateInput( plugin );
 	if(NULL == m_plugin)
 	{
-		sprintf(m_szLastError, "Plugin '%s' not created by function %s.%s.\n",
-			plugin, library, PROC_NAME);
+		sprintf(m_szLastError, "Plugin '%s' not created.\n", plugin);
 		return false;
 	}
 
