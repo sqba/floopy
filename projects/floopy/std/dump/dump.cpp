@@ -145,9 +145,15 @@ void CDump::dump_indentation()
 bool CDump::Save(IFloopySoundEngine *engine, const char *filename)
 {
 	m_iLevel = 0;
-	m_fp = filename ? fopen(filename, "wt") : stdout;
+	bool bStdout = filename || (0 == stricmp("stdout", filename));
+	m_fp = bStdout ? stdout : fopen(filename, "wt");
 	dump_input( engine );
-	if( filename &&m_fp )
+	if( bStdout && m_fp )
 		fclose( m_fp );
+	if( bStdout )
+	{
+		fprintf(stderr, "\nPress enter to exit...");
+		getchar();
+	}
 	return true;
 }
