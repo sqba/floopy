@@ -17,7 +17,7 @@ public:
 	CEcho();
 	virtual ~CEcho();
 
-	const char *GetName()			{ return "libstd.echo"; }
+	const char *GetName()			{ return "std.echo"; }
 	const char *GetDescription()	{ return "Echo effect"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

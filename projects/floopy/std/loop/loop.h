@@ -8,7 +8,7 @@ class CLoop : public IFloopySoundFilter
 public:
 	CLoop();
 
-	const char *GetName()			{ return "libstd.loop"; }
+	const char *GetName()			{ return "std.loop"; }
 	const char *GetDescription()	{ return "Looping component"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

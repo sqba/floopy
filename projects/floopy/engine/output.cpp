@@ -9,7 +9,7 @@
 #include <string.h>
 #include <sstream>
 #include "../platform.h"
-#include "util.h"
+#include "../common/util.h"
 
 
 //////////////////////////////////////////////////////////////////////

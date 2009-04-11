@@ -23,7 +23,7 @@ public:
 	int Read(BYTE*, int);
 	void Reset();
 
-	const char *GetName()					{ return "libstd.volume"; }
+	const char *GetName()					{ return "std.volume"; }
 	const char *GetDescription()			{ return "Volume control"; }
 	const char *GetVersion()				{ return "0.1"; }
 	const char *GetAuthor()				{ return "sqba"; }

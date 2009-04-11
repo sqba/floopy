@@ -18,7 +18,7 @@ public:
 	CConvert8to16bit();
 	virtual ~CConvert8to16bit();
 
-	const char *GetName()			{ return "libstd.8to16bit"; }
+	const char *GetName()			{ return "std.8to16bit"; }
 	const char *GetDescription()	{ return "Converts 8bit samples to 16bit"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

@@ -21,7 +21,7 @@ public:
 	CFloat2Int();
 	virtual ~CFloat2Int();
 
-	const char *GetName()			{ return "libstd.float2int"; }
+	const char *GetName()			{ return "std.float2int"; }
 	const char *GetDescription()	{ return "Converts float samples to integer"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

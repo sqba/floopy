@@ -4,18 +4,12 @@
 #include <stdio.h>
 #include <time.h>
 #include <assert.h>
-#include "../util/engine_wrapper.h"
+#include "../common/engine_wrapper.h"
 #include "args.h"
 
 
 #define BUFFER_LENGTH	5120 //512
 
-
-bool is_filter(IFloopySoundInput *input)
-{
-	int type = input->GetType();
-	return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
-}
 
 void process(IFloopySoundInput *input, IFloopySoundOutput *output, int buffSize)
 {
@@ -86,6 +80,7 @@ int main(int argc, char* argv[])
 	float start = 0.f;
 	float end = 0.f;
 	int i = 0;
+	float len = 0.f;
 //	char *outfile = NULL;
 
 	CEngineWrapper *engine = new CEngineWrapper("engine");
@@ -112,14 +107,16 @@ int main(int argc, char* argv[])
 		goto ERR_EXIT;
 	}
 
+	len = (float)engine->GetSize() / (float)fmt->frequency;
+
 	start = GetArg(argc, argv, "s", 0.f);
-	end   = GetArg(argc, argv, "e", 0.f);
-	if(start > 0.f && end > 0.f)
+	end   = GetArg(argc, argv, "e", len);
+	if(start > 0.f || end != len)
 	{
 		input = engine->CreateInput("std.playrgn");
 		if(!input)
 		{
-			fprintf(stderr, "libstd.playrgn not found!\n");
+			fprintf(stderr, "std.playrgn not found!\n");
 			return 1;
 		}
 
@@ -134,10 +131,10 @@ int main(int argc, char* argv[])
 	filename = GetArg(argc, argv, "o", PCM_OUT);
 	output   = engine->CreateOutput(filename, *fmt);
 
-	if(output)
-		fprintf(stdout, "%s", output->GetName());
-    else
-		fprintf(stderr, "%s", engine->GetLastErrorDesc());
+//	if(output)
+//		fprintf(stdout, "%s", output->GetName());
+//	else
+//		fprintf(stderr, "%s", engine->GetLastErrorDesc());
 
 //	fprintf(stderr, "\nPress enter to start...");
 //	getchar();

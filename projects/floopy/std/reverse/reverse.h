@@ -9,7 +9,7 @@ public:
 	CReverse();
 	virtual ~CReverse();
 
-	const char *GetName()			{ return "libstd.reverse"; }
+	const char *GetName()			{ return "std.reverse"; }
 	const char *GetDescription()	{ return "Reverse"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

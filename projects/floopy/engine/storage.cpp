@@ -4,7 +4,7 @@
 
 #include <assert.h>
 #include "storage.h"
-#include "util.h"
+#include "../common/util.h"
 
 
 //////////////////////////////////////////////////////////////////////

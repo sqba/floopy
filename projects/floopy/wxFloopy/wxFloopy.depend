@@ -35,7 +35,7 @@
 	"../common/loader.h"
 	<windows.h>
 
-1239355674 /home/sqba/Projects/floopy/ifloopy.h
+1239447312 /home/sqba/Projects/floopy/ifloopy.h
 	<memory.h>
 	<bits/wordsize.h>
 
@@ -1501,7 +1501,7 @@
 1235103093 /usr/include/wx-2.8/wx/gtk/filedlg.h
 	"wx/generic/filedlgg.h"
 
-1234814296 /home/sqba/Projects/floopy/wxFloopy/engine/tracks.h
+1239411671 /home/sqba/Projects/floopy/wxFloopy/engine/tracks.h
 	<wx/log.h>
 	<wx/wxprec.h>
 	<wx/list.h>
@@ -1517,7 +1517,7 @@
 	"../views/rulerview.h"
 	"objtypes.h"
 	"../../platform.h"
-	"../../util/engine_wrapper.h"
+	"../../common/engine_wrapper.h"
 	<wx/wx.h>
 
 1235103092 /usr/include/wx-2.8/wx/wxprec.h
@@ -1896,9 +1896,21 @@
 1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/tracksview.cpp
 	"tracksview.h"
 
-1239403840 /home/sqba/Projects/floopy/common/util.h
+1239446365 /home/sqba/Projects/floopy/common/util.h
 
-1239404749 source:/home/sqba/Projects/floopy/common/util.cpp
+1239446360 source:/home/sqba/Projects/floopy/common/util.cpp
 	<string.h>
 	"../platform.h"
+
+1239411623 source:/home/sqba/Projects/floopy/common/engine_wrapper.cpp
+	"engine_wrapper.h"
+	<stdio.h>
+	<sstream>
+	"../platform.h"
+
+1239411623 /home/sqba/Projects/floopy/common/engine_wrapper.h
+	"../ifloopy.h"
+	"../platform.h"
+	"../common/loader.h"
+	<windows.h>
 

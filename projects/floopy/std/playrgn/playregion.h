@@ -18,7 +18,7 @@ public:
 	CPlayRegion();
 	virtual ~CPlayRegion();
 
-	const char *GetName()			{ return "libstd.playrgn"; }
+	const char *GetName()			{ return "std.playrgn"; }
 	const char *GetDescription()	{ return "Start/Stop At Sample"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

@@ -28,7 +28,7 @@ public:
 	void MoveTo(int samples)		{ if(samples==0) m_angle = 0.0; }
 	void Reset()					{ m_angle = 0.0; }
 
-	const char *GetName()					{ return "libstd.tonegen"; }
+	const char *GetName()					{ return "std.tonegen"; }
 	const char *GetDescription()			{ return "Tone generator"; }
 	const char *GetVersion()				{ return "0.1"; }
 	const char *GetAuthor()				{ return "sqba"; }

@@ -41,8 +41,10 @@ CWavFileIn::CWavFileIn()
 
 CWavFileIn::~CWavFileIn()
 {
-	if(NULL != m_pFile)
+	if( m_pFile )
+	{
 		fclose(m_pFile);
+	}
 }
 
 bool CWavFileIn::Open(const char *filename)
@@ -131,41 +133,47 @@ int CWavFileIn::GetSize()
 
 void CWavFileIn::MoveTo(int samples)
 {
+	assert(m_pFile);
 	int n = samples * m_nSamplesToBytes;
-	fseek(m_pFile, m_nHeaderLength+n, SEEK_SET);
+	int res = fseek(m_pFile, m_nHeaderLength+n, SEEK_SET);
+	assert(0 == res);
 }
 
 void CWavFileIn::Reset()
 {
+//	static int count = 0;
+//	printf("CWavFileIn::Reset(%d)\n", count++);
+//	assert(count < 28);
 	assert(m_pFile);
-	fseek(m_pFile, m_nHeaderLength, SEEK_SET);
+	int res = fseek(m_pFile, m_nHeaderLength, SEEK_SET);
+	assert(0 == res);
 }
 
 int CWavFileIn::Read(BYTE *data, int size)
 {
-	if(NULL != m_pFile)
-	{
-		long pos = ftell(m_pFile);
-		if(pos+(long)size > (long)(m_iDataSize+m_nHeaderLength))
-		{
-			size = m_iDataSize + m_nHeaderLength - pos;
-		}
+	if( !m_pFile )
+		return 0;
 
-		return fread( data, 1, size, m_pFile );
+	long pos = ftell(m_pFile);
+	if(pos+(long)size > (long)(m_iDataSize+m_nHeaderLength))
+	{
+		size = m_iDataSize + m_nHeaderLength - pos;
 	}
-	return 0;
+
+	return fread( data, 1, size, m_pFile );
 }
 
 int CWavFileIn::GetPosition()
 {
-	if(NULL != m_pFile)
-		return (ftell(m_pFile) - m_nHeaderLength) / m_nSamplesToBytes;
-	return EOF;
+	if( !m_pFile )
+		return EOF;
+	long pos = ftell(m_pFile);
+	return (pos - m_nHeaderLength) / m_nSamplesToBytes;
 }
 
 void CWavFileIn::Close()
 {
-	if(NULL != m_pFile)
+	if( m_pFile )
 	{
 		fclose(m_pFile);
 		m_pFile = NULL;
@@ -174,7 +182,5 @@ void CWavFileIn::Close()
 
 bool CWavFileIn::IsEOF()
 {
-	if(NULL != m_pFile)
-		return( 0 != feof(m_pFile) );
-	return true;
+	return (m_pFile ? 0!=feof(m_pFile) : true);
 }

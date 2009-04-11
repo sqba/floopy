@@ -19,7 +19,7 @@ public:
 
 	int GetType()				{ return TYPE_FLOOPY_SOUND_TRACK; }
 
-	const char *GetName()			{ return "libstd.track"; }
+	const char *GetName()			{ return "std.track"; }
 	const char *GetDescription()	{ return "Audio track"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

@@ -1,6 +1,7 @@
 
 //#include <string.h>
 #include "dump.h"
+#include "../../common/util.h"
 
 
 CDump::CDump()
@@ -87,14 +88,14 @@ void CDump::dump_timeline(IFloopyTimeline *obj)
 
 void CDump::dump_info(IFloopyDisplay *obj)
 {
-	int type = obj->GetType();
+	//int type = obj->GetType();
 	const char *name = obj->GetName();
 	const char *desc = obj->GetDescription();
 	const char *ver = obj->GetVersion();
 	const char *auth = obj->GetAuthor();
 
 	dump_indentation();
-	fprintf(m_fp, "%s, %s, %s, %s\n", name, desc, ver, auth);
+	fprintf(m_fp, "*%s, %s, %s, %s\n", name, desc, ver, auth);
 }
 
 void CDump::dump_inputs(IFloopySoundMixer *obj)
@@ -109,27 +110,17 @@ void CDump::dump_inputs(IFloopySoundMixer *obj)
 void CDump::dump_input(IFloopySoundInput *obj)
 {
 	dump_info( obj );
-	dump_properties( obj );
-	dump_parameters( obj );
-	dump_timeline( obj );
+//	m_iLevel++;
+//	dump_properties( obj );
+//	dump_parameters( obj );
+//	dump_timeline( obj );
 	m_iLevel++;
-	if(	is_mixer(obj) )
+	if(	obj->is_mixer() )
 		dump_inputs( (IFloopySoundMixer*)obj );
-	else if( is_filter(obj) )
+	else if( obj->is_filter() )
 		dump_input( ((IFloopySoundFilter*)obj)->GetSource() );
+//	m_iLevel = 2;
 	m_iLevel--;
-}
-
-bool CDump::is_filter(IFloopySoundInput *input)
-{
-	int type = input->GetType();
-	return(type == (TYPE_FLOOPY_SOUND_FILTER | type));
-}
-
-bool CDump::is_mixer(IFloopySoundInput *input)
-{
-	int type = input->GetType();
-	return(type == (TYPE_FLOOPY_SOUND_MIXER | type));
 }
 
 void CDump::dump_indentation()

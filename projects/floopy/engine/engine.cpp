@@ -229,7 +229,7 @@ IFloopySoundInput *CEngine::CreateTrack(const char *name)
 
 	if(fmt1->bitsPerSample == 16 && pfmt2->bitsPerSample == 8)
 	{
-		IFloopySoundFilter *conv = (IFloopySoundFilter*)CreateInput("libstd.8to16bit");
+		IFloopySoundFilter *conv = (IFloopySoundFilter*)CreateInput("std.8to16bit");
 		if(conv)
 		{
 			conv->SetSource(input);
@@ -250,7 +250,7 @@ IFloopySoundInput *CEngine::CreateTrack(const char *name)
 
 	if(SIZE_INFINITE != input->GetSize())
 	{
-		IFloopySoundFilter *loop = (IFloopySoundFilter*)CreateInput("libstd.loop");
+		IFloopySoundFilter *loop = (IFloopySoundFilter*)CreateInput("std.loop");
 		if(loop)
 		{
 			loop->SetSource(input);
@@ -258,14 +258,14 @@ IFloopySoundInput *CEngine::CreateTrack(const char *name)
 		}
 	}
 
-	IFloopySoundFilter *volume = (IFloopySoundFilter*)CreateInput("libstd.volume");
+	IFloopySoundFilter *volume = (IFloopySoundFilter*)CreateInput("std.volume");
 	if(volume)
 	{
 		volume->SetSource(input);
 		input = volume;
 	}
 
-	IFloopySoundFilter *track = (IFloopySoundFilter*)CreateInput("libstd.track");
+	IFloopySoundFilter *track = (IFloopySoundFilter*)CreateInput("std.track");
 	if(track)
 	{
 		track->SetSource(input);
@@ -274,7 +274,7 @@ IFloopySoundInput *CEngine::CreateTrack(const char *name)
 
 	if((fmt1->channels == 2) && (pfmt2->channels == 1))
 	{
-		IFloopySoundFilter *filter = (IFloopySoundFilter*)CreateInput("libstd.mono2stereo");
+		IFloopySoundFilter *filter = (IFloopySoundFilter*)CreateInput("std.mono2stereo");
 		if(filter)
 		{
 			filter->SetSource(input);
@@ -379,7 +379,7 @@ const char *CEngine::get_plugin_name(const char *filename)
 		if(0 == strcmpi(ext, "txt"))
 			return "std.dump";
 		//if(0 == strcmpi(ext, "hz"))
-		//	return "libstd.tonegen";
+		//	return "std.tonegen";
 	}
 	return NULL;
 }

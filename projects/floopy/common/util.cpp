@@ -1,6 +1,7 @@
 
 #include <string.h>
 #include "../platform.h"
+//#include "../ifloopy.h"
 
 /**
  * Extracts the library name from full plugin name (library.plugin).
@@ -52,4 +53,3 @@ void get_plugin_name(const char *fullname, char *name)
 	else
 		strncpy(name, tmp, MAX_FNAME);
 }
-

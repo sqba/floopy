@@ -20,7 +20,7 @@ public:
 	CPerformance();
 	virtual ~CPerformance();
 
-	const char *GetName()			{ return "libstd.performance"; }
+	const char *GetName()			{ return "std.performance"; }
 	const char *GetDescription()	{ return "Performance measuring"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

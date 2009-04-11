@@ -24,7 +24,7 @@ public:
 	CCache();
 	virtual ~CCache();
 
-	const char *GetName()			{ return "libstd.cache"; }
+	const char *GetName()			{ return "std.cache"; }
 	const char *GetDescription()	{ return "Stores entire source input in memory"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }
@@ -32,9 +32,9 @@ public:
 	int Read(BYTE *data, int size);
 	bool SetSource(IFloopySoundInput *src);
 
-	void MoveTo(int samples)	{ m_nPosition = samples * samplesToBytes(); }
-	int GetPosition()			{ return m_nPosition / samplesToBytes(); }
-	void Reset()				{ m_nPosition = 0; }
+	void MoveTo(int samples);//	{ m_nPosition = samples * samplesToBytes(); }
+	int GetPosition();//			{ return m_nPosition / samplesToBytes(); }
+	void Reset();//				{ m_nPosition = 0; }
 	void Close();
 
 	int GetSize();

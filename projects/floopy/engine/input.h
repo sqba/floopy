@@ -11,8 +11,9 @@
 
 #include "../platform.h"
 #include "../ifloopy.h"
-#include "timeline.h"
 #include "../common/loader.h"
+#include "../common/util.h"
+#include "timeline.h"
 #include "outputcache.h"
 
 /**
@@ -64,7 +65,7 @@ public:
 
 	int GetType()									{ return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY_OBJECT); }
 
-	const char *GetPath()							{ return isEngine() ? m_source->GetPath() : m_szObjPath; }
+	const char *GetPath()							{ return m_plugin->is_engine() ? m_source->GetPath() : m_szObjPath; }
 
 	const char *GetDisplayName()					{ return m_szDisplayName; }
 	void SetDisplayName(const char*, int);
@@ -133,10 +134,8 @@ public:
 
 private:
 	inline IFloopySoundInput *getSource();
-	bool isEngine();
-	bool isFilter();
+
 	bool isEndOfTrack();
-	bool isMixer();
 
 	void	applyParamsAt(int);
 	int		applyPreviousParams(int);

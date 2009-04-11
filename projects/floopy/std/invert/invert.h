@@ -17,7 +17,7 @@ public:
 	CInvert();
 	virtual ~CInvert();
 
-	const char *GetName()			{ return "libstd.invert"; }
+	const char *GetName()			{ return "std.invert"; }
 	const char *GetDescription()	{ return "Invert"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

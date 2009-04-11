@@ -24,7 +24,7 @@
 
 #include "../../platform.h"
 
-#include "../../util/engine_wrapper.h"
+#include "../../common/engine_wrapper.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop

@@ -27,7 +27,7 @@ public:
 	CMixer();
 	virtual ~CMixer();
 
-	const char *GetName()			{ return "libstd.mixer"; }
+	const char *GetName()			{ return "std.mixer"; }
 	const char *GetDescription()	{ return "Mixer Component"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

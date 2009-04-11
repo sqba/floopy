@@ -101,8 +101,8 @@ typedef struct SoundFormat
 
 
 #define TYPE_FLOOPY_ENGINE_STORAGE	0x00100000								/** IFloopyEngineStorage		*/
-#define TYPE_FLOOPY_BASE			0x00010000								/** IFloopyObject				*/
-#define TYPE_FLOOPY_OBJECT			(TYPE_FLOOPY_BASE|0x00000001L)			/** IFloopyObject						*/
+#define TYPE_FLOOPY_BASE			0x00010000								/** IFloopyBase					*/
+#define TYPE_FLOOPY_OBJECT			(TYPE_FLOOPY_BASE|0x00000001L)			/** IFloopyObject				*/
 #define TYPE_FLOOPY_SOUND_INPUT		(TYPE_FLOOPY_OBJECT|0x00000002L)		/** IFloopySoundInput			*/
 #define TYPE_FLOOPY_SOUND_OUTPUT	(TYPE_FLOOPY_OBJECT|0x00000004L)		/** IFloopySound				*/
 #define TYPE_FLOOPY_SOUND_FILTER	(TYPE_FLOOPY_SOUND_INPUT|0x00000008L)	/** IFloopySoundFilter			*/
@@ -136,7 +136,7 @@ public:
 
 
 /*********************************************************************
- *! \class IFloopyObject
+ *! \class IFloopyBase
  *  \brief
  *  \author Filip Pavlovic
  *  \version 0.0
@@ -497,6 +497,24 @@ public:
 	 */
 	virtual const char *GetSignature()			{ return NULL; }
 
+	bool is_filter()
+	{
+		int type = GetType();
+		return(type == (TYPE_FLOOPY_SOUND_FILTER | type));
+	}
+
+	bool is_mixer()
+	{
+		int type = GetType();
+		return(type == (TYPE_FLOOPY_SOUND_MIXER | type));
+	}
+
+	bool is_engine()
+	{
+		int type = GetType();
+		return(type == (TYPE_FLOOPY_SOUND_ENGINE | type));
+	}
+
 protected:
 	//int m_pos;
 };
@@ -792,13 +810,6 @@ public:
 	virtual int EmptyBuffer(BYTE *data, int size) { return 0; }
 
 /*
-	// Utility functions
-	bool IsFilter(IFloopySoundInput *input)
-	{
-		int type = input->GetType();
-		return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
-	}
-
 	// Utility
 	int CalcNumberOfSamples(int bytes)
 	{

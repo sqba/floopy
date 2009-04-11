@@ -25,8 +25,6 @@ private:
 	bool set_timeline(IFloopySoundInput *input, TiXmlElement* pElement);
 	void set_param(IFloopySoundInput *input, float offset, const char *param, float value);
 	void set_color(IFloopySoundInput *input, TiXmlElement* pElement);
-	bool IsMixer(IFloopySoundInput *input);
-	bool IsFilter(IFloopySoundInput *input);
 	std::vector<std::string> tokenize(const std::string& str,const std::string& delimiters);
 
 private:

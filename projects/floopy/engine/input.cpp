@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <string.h>
 #include "input.h"
-#include "util.h"
 
 
 //////////////////////////////////////////////////////////////////////
@@ -152,13 +151,13 @@ bool CInput::SetSource(IFloopySoundInput *src)
 {
 	bool result = false;
 
-	if(NULL!=m_plugin && isFilter())
+	if(NULL!=m_plugin && m_plugin->is_filter())
 	{
 		result = ((IFloopySoundFilter*)m_plugin)->SetSource(src);
 
 		if(result)
 		{
-			recalcSourceVariables();
+//			recalcSourceVariables();
 			recalcVariables();
 		}
 	}
@@ -168,7 +167,7 @@ bool CInput::SetSource(IFloopySoundInput *src)
 
 IFloopySoundInput *CInput::GetSource()
 {
-	if( isFilter() )
+	if( m_plugin->is_filter() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	return NULL;
 }
@@ -199,7 +198,7 @@ int CInput::Read(BYTE *data, int size)
 	}
 	else if( GetBypass() )
 	{
-		if( isEngine() || NULL == (src=GetSource()) )
+		if( m_plugin->is_engine() || NULL == (src=GetSource()) )
 		{
 			skipChunk(size);
 			result = 0;
@@ -212,7 +211,7 @@ int CInput::Read(BYTE *data, int size)
 			result = len;
 		}
 	}
-	else if(isEngine() && endpos<=m_nStartOffset)
+	else if(m_plugin->is_engine() && endpos<=m_nStartOffset)
 	{
 		m_offset += size;
 		result = 0;
@@ -272,7 +271,7 @@ void CInput::MoveTo(int samples)
 
 	int offset = applyPreviousParams( m_offset );
 
-	if( isEngine() && m_nStartOffset>0)
+	if( m_plugin->is_engine() && m_nStartOffset>0)
 	{
 		if( m_offset >= m_nStartOffset )
 			offset -= (m_nStartOffset / m_nSamplesToBytes);
@@ -347,7 +346,7 @@ int CInput::GetSize()
 
 	int size = 0;
 
-	if( GetBypass() && isFilter() )
+	if( GetBypass() && m_plugin->is_filter() )
 	{
 		IFloopySoundInput *src = this->GetSource();
 		size = src->GetSize();
@@ -379,7 +378,7 @@ int CInput::GetSize()
 
 int CInput::GetSourceSize()
 {
-	if(NULL!=m_plugin && isFilter())
+	if(NULL!=m_plugin && m_plugin->is_filter())
 		return ((IFloopySoundFilter*)m_plugin)->GetSourceSize();
 	return 0;
 }
@@ -659,14 +658,14 @@ bool CInput::ClearAllParams()
 
 bool CInput::GetBypass()
 {
-	if( isFilter() )
+	if( m_plugin->is_filter() )
 		return ((IFloopySoundFilter*)m_plugin)->GetBypass();
 	return false;
 }
 
 void CInput::SetBypass(bool bBypass)
 {
-	if( isFilter() )
+	if( m_plugin->is_filter() )
 		((IFloopySoundFilter*)m_plugin)->SetBypass(bBypass);
 }
 
@@ -702,7 +701,7 @@ void CInput::SetColor(UINT r, UINT g, UINT b)
 
 int CInput::AddSource(IFloopySoundInput *src)
 {
-	if( isMixer() )
+	if( m_plugin->is_mixer() )
 		return ((IFloopySoundMixer*)m_plugin)->AddSource(src);
 	else if( SetSource(src) )
 		return 0;
@@ -712,9 +711,9 @@ int CInput::AddSource(IFloopySoundInput *src)
 
 IFloopySoundInput *CInput::GetSource(int index)
 {
-	if( isMixer() )
+	if( m_plugin->is_mixer() )
 		return ((IFloopySoundMixer*)m_plugin)->GetSource(index);
-	else if( isFilter() )
+	else if( m_plugin->is_filter() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	else
 		return false;
@@ -722,7 +721,7 @@ IFloopySoundInput *CInput::GetSource(int index)
 
 bool CInput::RemoveSource(IFloopySoundInput *src)
 {
-	if( isMixer() )
+	if( m_plugin->is_mixer() )
 		return ((IFloopySoundMixer*)m_plugin)->RemoveSource(src);
 	else
 		return false;
@@ -730,7 +729,7 @@ bool CInput::RemoveSource(IFloopySoundInput *src)
 
 int CInput::GetInputCount()
 {
-	if( isMixer() )
+	if( m_plugin->is_mixer() )
 		return ((IFloopySoundMixer*)m_plugin)->GetInputCount();
 	else if(NULL!=GetSource())
 		return 1;
@@ -753,7 +752,7 @@ void CInput::SetDisplayName(const char *name, int len)
 
 bool CInput::CanReadSourceIfDisabled()
 {
-	return (isFilter() ? m_plugin->CanReadSourceIfDisabled() : false);
+	return (m_plugin->is_filter() ? m_plugin->CanReadSourceIfDisabled() : false);
 }
 
 
@@ -783,14 +782,25 @@ void CInput::recalcSourceVariables()
 	IFloopySoundInput *src = this->GetSource();
 	if(src)
 	{
-		if(src->GetType() == TYPE_FLOOPY_SOUND_MIXER)
+		if( src->is_mixer() )
 		{
 			IFloopySoundMixer *mixer = (IFloopySoundMixer*)src;
 			for(int i=0; i<mixer->GetInputCount(); i++)
-				mixer->GetSource(i)->Reset();
+			{
+				src = mixer->GetSource(i);
+				int pos = src->GetPosition();
+				src->Reset();
+				if( pos )
+					src->MoveTo( pos );
+			}
 		}
 		else
+		{
+			int pos = src->GetPosition();
 			src->Reset();
+			if( pos )
+				src->MoveTo( pos );
+		}
 	}
 }
 
@@ -972,34 +982,6 @@ IFloopySoundInput *CInput::getSource()
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	else
 		return NULL;
-}
-
-/**
- * @return true the plugin has it's own source.
- */
-bool CInput::isFilter()
-{
-	int type = m_plugin->GetType();
-	//bool b = (type & TYPE_FLOOPY_SOUND_FILTER);
-	return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
-}
-
-/**
- * @return true if the plugin is another engine.
- */
-bool CInput::isEngine()
-{
-	return(m_source?m_source->GetType()==TYPE_FLOOPY_SOUND_ENGINE:false);
-}
-
-/**
- * @return true the plugin has several sources.
- */
-bool CInput::isMixer()
-{
-	if(NULL != m_plugin)
-		return (m_plugin->GetType() == TYPE_FLOOPY_SOUND_MIXER);
-	return false;
 }
 
 /**

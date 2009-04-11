@@ -141,9 +141,9 @@ bool CCache::createBuffer()
 			m_nSize = 1024;//size * samplesToBytes();
 
 			int buffsize = m_nSize;
-			
+
 			m_pBuffer = new BYTE[m_nSize];
-			
+
 			if(m_pBuffer)
 			{
 				memset(m_pBuffer, 0, buffsize);
@@ -153,7 +153,7 @@ bool CCache::createBuffer()
 				//size = (1024 < m_nSize ? 1024 : m_nSize);
 				BYTE *pbuff = m_pBuffer;
 				int len = 0;
-				
+
 				int read = 0;
 				int n=0;
 				do
@@ -227,4 +227,19 @@ void CCache::loadSourceParams(IFloopySoundInput *src)
 		}
 		tmp = tmp->next;
 	}
+}
+
+void CCache::MoveTo(int samples)
+{
+	m_nPosition = samples * samplesToBytes();
+}
+
+int CCache::GetPosition()
+{
+	return m_nPosition / samplesToBytes();
+}
+
+void CCache::Reset()
+{
+	m_nPosition = 0;
 }

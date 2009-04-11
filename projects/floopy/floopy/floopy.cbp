@@ -11,7 +11,7 @@
 				<Option object_output="../obj/Debug/floopy" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-i ../bin/Debug/samples/acid/acid.xml -o ../bin/Debug/acid.svg  -v stdout.txt -s 2 -e 5" />
+				<Option parameters="-i ../bin/Debug/samples/acid/test.xml -o ../bin/Debug/test.svg  -s 1" />
 				<Option host_application="floopy" />
 				<Compiler>
 					<Add option="-g" />
@@ -40,6 +40,8 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="../common/engine_wrapper.cpp" />
+		<Unit filename="../common/engine_wrapper.h" />
 		<Unit filename="../common/loader.cpp" />
 		<Unit filename="../common/loader.h" />
 		<Unit filename="../common/util.cpp" />
@@ -48,8 +50,6 @@
 		<Unit filename="floopy.cpp" />
 		<Unit filename="../ifloopy.h" />
 		<Unit filename="../platform.h" />
-		<Unit filename="../util/engine_wrapper.cpp" />
-		<Unit filename="../util/engine_wrapper.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

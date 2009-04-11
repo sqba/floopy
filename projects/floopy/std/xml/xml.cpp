@@ -1,5 +1,6 @@
 
 #include "xml.h"
+#include "../../common/util.h"
 
 
 CXml::CXml()
@@ -35,18 +36,6 @@ std::vector<std::string> CXml::tokenize(const std::string& str,const std::string
 	}
 
 	return tokens;
-}
-
-bool CXml::IsFilter(IFloopySoundInput *input)
-{
-	int type = input->GetType();
-	return(type == (TYPE_FLOOPY_SOUND_FILTER | type));
-}
-
-bool CXml::IsMixer(IFloopySoundInput *input)
-{
-	int type = input->GetType();
-	return(type == (TYPE_FLOOPY_SOUND_MIXER | type));
 }
 
 void CXml::set_color(IFloopySoundInput *input, TiXmlElement* pElement)
@@ -220,8 +209,9 @@ IFloopySoundInput *CXml::load_input(IFloopySoundInput *parent, TiXmlElement* pEl
 	if( !open_source(input, pElement) )
 		return NULL;
 
-	if( IsMixer(input) )
+	if( input->is_mixer() )
 	{
+		IFloopySoundMixer *mixer = (IFloopySoundMixer*)input;
 		TiXmlNode *pChild = NULL;
 		while(pChild = pElement->IterateChildren("input", pChild))
 		{
@@ -230,11 +220,11 @@ IFloopySoundInput *CXml::load_input(IFloopySoundInput *parent, TiXmlElement* pEl
 			{
 				IFloopySoundInput *src = load_input(input, pTmpElement);
 				if(src);
-					((IFloopySoundMixer*)input)->AddSource( src );
+					mixer->AddSource( src );
 			}
 		}
 	}
-	else if( IsFilter(input) )
+	else if( input->is_filter() )
 	{
 		TiXmlElement *pInput = pElement->FirstChildElement("input");
 		if( pInput )

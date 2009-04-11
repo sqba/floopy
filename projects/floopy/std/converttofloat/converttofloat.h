@@ -21,7 +21,7 @@ public:
 	CConvertToFloat();
 	virtual ~CConvertToFloat();
 
-	const char *GetName()			{ return "libstd.tofloat"; }
+	const char *GetName()			{ return "std.tofloat"; }
 	const char *GetDescription()	{ return "Converts to float"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

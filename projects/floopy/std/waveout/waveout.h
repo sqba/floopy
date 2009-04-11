@@ -39,7 +39,7 @@ public:
 
 	int Write(BYTE *data, int size);
 
-	const char *GetName()			{ return "libstd.waveout"; }
+	const char *GetName()			{ return "std.waveout"; }
 	const char *GetDescription()	{ return "Wave Out"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

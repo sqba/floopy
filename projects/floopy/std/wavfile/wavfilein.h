@@ -13,7 +13,7 @@ public:
 	CWavFileIn();
 	virtual ~CWavFileIn();
 
-	const char *GetName()			{ return (m_pFile ? m_filename : "libstd.wavfile"); }
+	const char *GetName()			{ return (m_pFile ? m_filename : "std.wavfile"); }
 	const char *GetDescription()	{ return "WAV file reader"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }

@@ -15,10 +15,7 @@ public:
 	const char *GetExtension() { return ""; }
 
 private:
-	bool is_filter(IFloopySoundInput *input);
-	bool is_mixer(IFloopySoundInput *input);
 	void dump_indentation();
-
 	void dump_properties(IFloopyProperty *obj);
 	void dump_timeline(IFloopyTimeline *obj);
 	void dump_timeline(IFloopyTimeline *obj, int param);
