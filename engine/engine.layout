@@ -1,41 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="..\common\loader.cpp" open="1" top="0" tabpos="14">
+	<File name="../common/loader.cpp" open="0" top="0" tabpos="14">
 		<Cursor position="1127" topLine="30" />
 	</File>
-	<File name="..\common\loader.h" open="0" top="0" tabpos="1">
+	<File name="../common/loader.h" open="0" top="0" tabpos="1">
 		<Cursor position="984" topLine="25" />
 	</File>
-	<File name="..\common\util.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="1129" topLine="0" />
+	<File name="../common/util.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="1289" topLine="13" />
 	</File>
-	<File name="..\common\util.h" open="0" top="0" tabpos="0">
+	<File name="../common/util.h" open="0" top="0" tabpos="0">
 		<Cursor position="114" topLine="0" />
 	</File>
-	<File name="engine.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="552" topLine="0" />
+	<File name="engine.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="9108" topLine="411" />
 	</File>
 	<File name="engine.h" open="0" top="0" tabpos="9">
-		<Cursor position="1747" topLine="14" />
+		<Cursor position="2022" topLine="48" />
 	</File>
 	<File name="globals.h" open="0" top="0" tabpos="0">
 		<Cursor position="109" topLine="0" />
 	</File>
-	<File name="input.cpp" open="0" top="0" tabpos="3">
-		<Cursor position="2805" topLine="101" />
+<<<<<<< .mine
+	<File name="input.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="5116" topLine="239" />
+=======
+	<File name="input.cpp" open="1" top="1" tabpos="3">
+		<Cursor position="12564" topLine="623" />
+>>>>>>> .r158
 	</File>
-	<File name="input.h" open="0" top="0" tabpos="2">
-		<Cursor position="6125" topLine="146" />
+	<File name="input.h" open="0" top="0" tabpos="1">
+		<Cursor position="3611" topLine="76" />
 	</File>
 	<File name="main.cpp" open="0" top="0" tabpos="9">
 		<Cursor position="457" topLine="2" />
 	</File>
-	<File name="output.cpp" open="0" top="0" tabpos="4">
-		<Cursor position="1707" topLine="66" />
+<<<<<<< .mine
+	<File name="output.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="1970" topLine="81" />
+=======
+	<File name="output.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="1519" topLine="61" />
+>>>>>>> .r158
 	</File>
-	<File name="output.h" open="0" top="0" tabpos="5">
-		<Cursor position="912" topLine="20" />
+	<File name="output.h" open="0" top="0" tabpos="9">
+		<Cursor position="943" topLine="25" />
 	</File>
 	<File name="outputcache.cpp" open="0" top="0" tabpos="9">
 		<Cursor position="1169" topLine="35" />
@@ -55,10 +65,7 @@
 	<File name="timeline.h" open="0" top="0" tabpos="0">
 		<Cursor position="0" topLine="33" />
 	</File>
-	<File name="..\ifloopy.h" open="1" top="0" tabpos="1">
-		<Cursor position="18232" topLine="567" />
-	</File>
-	<File name="..\platform.h" open="1" top="0" tabpos="0">
-		<Cursor position="0" topLine="0" />
+	<File name="../ifloopy.h" open="1" top="1" tabpos="1">
+		<Cursor position="21775" topLine="708" />
 	</File>
 </CodeBlocks_layout_file>

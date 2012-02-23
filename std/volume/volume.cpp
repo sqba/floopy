@@ -95,6 +95,11 @@ int CVolume::Read(BYTE *data, int size)
 		return 0;
 }
 
+int CVolume::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 void CVolume::Reset()
 {
 	m_master[LEFT] = m_master[RIGHT] = 100;

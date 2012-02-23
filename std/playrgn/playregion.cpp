@@ -52,6 +52,11 @@ int CPlayRegion::Read(BYTE *data, int size)
 	return read;
 }
 
+int CPlayRegion::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 int CPlayRegion::GetSize()
 {
 	calcVariables();

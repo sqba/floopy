@@ -26,11 +26,12 @@ public:
 	const char *GetAuthor()			{ return "sqba"; }
 
 	int Read(BYTE *data, int size);
-	int GetSize();
+	int Read2(BYTE **data, int channels, int samples);
 	void MoveTo(int samples);
-	int GetSourceSize();
 	void Reset();
+	int GetSourceSize();
 	bool Open(char *filename);
+	int GetSize();
 	void Close();
 
 	bool CanReadSourceIfDisabled()	{ return true; }

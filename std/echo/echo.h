@@ -23,6 +23,7 @@ public:
 	const char *GetAuthor()			{ return "sqba"; }
 
 	int Read(BYTE *data, int size);
+	int Read2(BYTE **data, int channels, int samples);
 	void Reset();
 //	void Enable(bool bEnabled);
 

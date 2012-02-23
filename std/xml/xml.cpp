@@ -177,7 +177,7 @@ bool CXml::set_name(IFloopySoundInput *input, TiXmlElement* pElement)
 	const char *name = pElement->Attribute("name");
 	if( !name )
 		return false;
-	input->SetDisplayName( name );
+	input->SetDisplayName(name, strlen(name));
 	return true;
 }
 

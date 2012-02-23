@@ -38,6 +38,7 @@ public:
 	virtual ~CWaveOut();
 
 	int Write(BYTE *data, int size);
+	int Write2(BYTE **data, int channels, int samples);
 
 	const char *GetName()			{ return "std.waveout"; }
 	const char *GetDescription()	{ return "Wave Out"; }

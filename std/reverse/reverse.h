@@ -17,9 +17,10 @@ public:
 	bool CanReadSourceIfDisabled()	{ return true; }
 
 	int Read(BYTE*, int);
-	int GetPosition();
+	int Read2(BYTE**, int, int);
 	void MoveTo(int);
 	void Reset();
+	int GetPosition();
 	bool SetSource(IFloopySoundInput*);
 
 	const char *GetLastErrorDesc() { return NULL; }

@@ -75,7 +75,7 @@ bool CInput::Create(const char *name)
 
 	char *tmp = strrchr(plugin, PATH_SEP);
 	tmp = tmp ? ++tmp : plugin;
-	SetDisplayName( plugin );
+	SetDisplayName(plugin, strlen(tmp));
 
 	loadDefaultParams();
 
@@ -120,7 +120,7 @@ bool CInput::Create(IFloopySoundEngine *src)
 
 	const char *name = src->GetDisplayName();
 	if(NULL != name)
-		SetDisplayName( name );
+		SetDisplayName(name, strlen(name));
 
 	loadDefaultParams();
 
@@ -131,9 +131,9 @@ bool CInput::Open(const char *filename)
 {
 	if(NULL!=m_plugin && m_plugin->Open(filename))
 	{
-		const char *tmp = strrchr(filename, '\\');
+		char *tmp = strrchr(filename, '\\');
 		filename = tmp ? tmp+1 : filename;
-		SetDisplayName( filename );
+		SetDisplayName(filename, strlen(filename));
 		recalcVariables();
 		createSignature();
 		return true;
@@ -170,53 +170,6 @@ IFloopySoundInput *CInput::GetSource()
 	if( m_plugin->is_filter() )
 		return ((IFloopySoundFilter*)m_plugin)->GetSource();
 	return NULL;
-}
-
-/**
- * Returns the size of the track source.
- * @return number of samples
- */
-int CInput::GetSize()
-{
-	recalcVariables();
-
-	int size = 0;
-
-	if( GetBypass() && m_plugin->is_filter() )
-	{
-		IFloopySoundInput *src = this->GetSource();
-		size = src->GetSize();
-	}
-	else if(NULL != m_plugin)
-	{
-		size = m_plugin->GetSize();
-
-		if(m_nSamplesToBytes > 0)
-		{
-			if(m_nEndOffset > 0)
-				size = m_nEndOffset / m_nSamplesToBytes;
-			else
-				size += m_nStartOffset / m_nSamplesToBytes;
-		}
-
-		if( m_plugin->CanReadSourceIfDisabled() )
-		{
-			int srcSize = GetSourceSize();
-			if(srcSize > size)
-				size = srcSize;
-		}
-	}
-
-	//size = size > 0 ? size : -1;
-
-	return size;
-}
-
-int CInput::GetSourceSize()
-{
-	if(NULL!=m_plugin && m_plugin->is_filter())
-		return ((IFloopySoundFilter*)m_plugin)->GetSourceSize();
-	return 0;
 }
 
 /**
@@ -296,6 +249,11 @@ int CInput::Read(BYTE *data, int size)
 //	gOutputCache->Add(signature, data);
 
 	return result;
+}
+
+int CInput::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
 }
 
 /**
@@ -383,6 +341,53 @@ void CInput::MoveTo(int samples)
 */
 }
 
+/**
+ * Returns the size of the track source.
+ * @return number of samples
+ */
+int CInput::GetSize()
+{
+	recalcVariables();
+
+	int size = 0;
+
+	if( GetBypass() && m_plugin->is_filter() )
+	{
+		IFloopySoundInput *src = this->GetSource();
+		size = src->GetSize();
+	}
+	else if(NULL != m_plugin)
+	{
+		size = m_plugin->GetSize();
+
+		if(m_nSamplesToBytes > 0)
+		{
+			if(m_nEndOffset > 0)
+				size = m_nEndOffset / m_nSamplesToBytes;
+			else
+				size += m_nStartOffset / m_nSamplesToBytes;
+		}
+
+		if( m_plugin->CanReadSourceIfDisabled() )
+		{
+			int srcSize = GetSourceSize();
+			if(srcSize > size)
+				size = srcSize;
+		}
+	}
+
+	//size = size > 0 ? size : -1;
+
+	return size;
+}
+
+int CInput::GetSourceSize()
+{
+	if(NULL!=m_plugin && m_plugin->is_filter())
+		return ((IFloopySoundFilter*)m_plugin)->GetSourceSize();
+	return 0;
+}
+
 void CInput::Reset()
 {
 	m_offset = 0;
@@ -418,6 +423,7 @@ int CInput::GetNextOffset(int offset, int index)
 
 int CInput::GetPrevOffset(int offset, int index)
 {
+	offset *= m_nSamplesToBytes;
 	int prev = m_timeline.GetPrevOffset(offset, index);
 	return (prev > 0 ? prev/m_nSamplesToBytes : 0);
 }
@@ -743,9 +749,10 @@ bool CInput::MoveAllParamsBetween(int start, int end, int offset)
 											offset*m_nSamplesToBytes );
 }
 
-void CInput::SetDisplayName(const char *name)
+void CInput::SetDisplayName(const char *name, int len)
 {
-	strcpy(m_szDisplayName, name);
+	memset(m_szDisplayName, 0, 50);
+	memcpy(m_szDisplayName, name, (len<50?len:50));
 }
 
 bool CInput::CanReadSourceIfDisabled()
@@ -778,27 +785,27 @@ void CInput::recalcVariables()
 void CInput::recalcSourceVariables()
 {
 	IFloopySoundInput *src = this->GetSource();
-	if(NULL == src)
-		return;
-
-	if( src->is_mixer() )
+	if(src)
 	{
-		IFloopySoundMixer *mixer = (IFloopySoundMixer*)src;
-		for(int i=0; i<mixer->GetInputCount(); i++)
+		if( src->is_mixer() )
 		{
-			src = mixer->GetSource(i);
+			IFloopySoundMixer *mixer = (IFloopySoundMixer*)src;
+			for(int i=0; i<mixer->GetInputCount(); i++)
+			{
+				src = mixer->GetSource(i);
+				int pos = src->GetPosition();
+				src->Reset();
+				if( pos )
+					src->MoveTo( pos );
+			}
+		}
+		else
+		{
 			int pos = src->GetPosition();
 			src->Reset();
 			if( pos )
 				src->MoveTo( pos );
 		}
-	}
-	else
-	{
-		int pos = src->GetPosition();
-		src->Reset();
-		if( pos )
-			src->MoveTo( pos );
 	}
 }
 
