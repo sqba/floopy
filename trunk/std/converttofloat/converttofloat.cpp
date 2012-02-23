@@ -85,11 +85,6 @@ int CConvertToFloat::Read(BYTE *data, int size)
 	return result;
 }
 
-int CConvertToFloat::Read2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}
-
 int CConvertToFloat::convert8bitToFloat(BYTE *inBuff, BYTE *outBuff, int inBytes)
 {
 	if(inBytes > 0)

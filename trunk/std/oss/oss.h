@@ -17,15 +17,14 @@ public:
 	COSS(SOUNDFORMAT fmt);
 	virtual ~COSS();
 
+	int GetPosition();
 	int Write(BYTE *data, int size);
-	int Write2(BYTE **data, int channels, int samples);
 
 	const char *GetName()			{ return "std.oss"; }
 	const char *GetDescription()	{ return "OSS Out"; }
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }
 
-	int GetPosition();
 	void Reset();
 	void Flush();
 	void Pause();

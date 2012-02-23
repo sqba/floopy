@@ -30,15 +30,13 @@ public:
 	const char *GetAuthor()			{ return "sqba"; }
 
 	int Read(BYTE *data, int size);
-	int Read2(BYTE **data, int channels, int samples);
+	int GetPosition();//			{ return m_nPosition / samplesToBytes(); }
+	int GetSize();
+	void MoveTo(int samples);//	{ m_nPosition = samples * samplesToBytes(); }
 	bool SetSource(IFloopySoundInput *src);
 
-	void MoveTo(int samples);//	{ m_nPosition = samples * samplesToBytes(); }
-	int GetPosition();//			{ return m_nPosition / samplesToBytes(); }
 	void Reset();//				{ m_nPosition = 0; }
 	void Close();
-
-	int GetSize();
 
 	bool CanReadSourceIfDisabled()	{ return false; }
 

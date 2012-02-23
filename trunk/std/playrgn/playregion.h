@@ -29,12 +29,11 @@ public:
 	const char *GetParamName(int index);
 	const char *GetParamDesc(int index);
 
-	int GetSize();
-	void MoveTo(int samples);
 	void Reset();
 
 	int Read(BYTE *data, int size);
-	int Read2(BYTE **data, int channels, int samples);
+	int GetSize();
+	void MoveTo(int samples);
 
 	const char *GetLastErrorDesc() { return NULL; }
 

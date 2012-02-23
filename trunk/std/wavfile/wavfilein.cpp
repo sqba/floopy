@@ -126,19 +126,6 @@ bool CWavFileIn::Open(const char *filename)
 	return true;
 }
 
-int CWavFileIn::GetSize()
-{
-	return m_size; // In samples!
-}
-
-void CWavFileIn::MoveTo(int samples)
-{
-	assert(m_pFile);
-	int n = samples * m_nSamplesToBytes;
-	int res = fseek(m_pFile, m_nHeaderLength+n, SEEK_SET);
-	assert(0 == res);
-}
-
 void CWavFileIn::Reset()
 {
 //	static int count = 0;
@@ -155,17 +142,26 @@ int CWavFileIn::Read(BYTE *data, int size)
 		return 0;
 
 	long pos = ftell(m_pFile);
-	if(pos+(long)size > (long)(m_iDataSize+m_nHeaderLength))
+	long len = m_iDataSize + m_nHeaderLength;
+	if(pos+(long)size > len)
 	{
-		size = m_iDataSize + m_nHeaderLength - pos;
+		size = len - pos;
 	}
 
 	return fread( data, 1, size, m_pFile );
 }
 
-int CWavFileIn::Read2(BYTE **data, int channels, int samples)
+int CWavFileIn::GetSize()
 {
-	return 0;
+	return m_size; // In samples!
+}
+
+void CWavFileIn::MoveTo(int samples)
+{
+	assert(m_pFile);
+	int n = samples * m_nSamplesToBytes;
+	int res = fseek(m_pFile, m_nHeaderLength+n, SEEK_SET);
+	assert(0 == res);
 }
 
 int CWavFileIn::GetPosition()
@@ -188,4 +184,48 @@ void CWavFileIn::Close()
 bool CWavFileIn::IsEOF()
 {
 	return (m_pFile ? 0!=feof(m_pFile) : true);
+}
+
+int CWavFileIn::split_channels(BYTE *input, int len, BYTE **output, int channels, int samples)
+{
+	SOUNDFORMAT *fmt = GetFormat();
+	if(!fmt || !fmt->bitsPerSample || !fmt->channels)
+		return 0;
+
+	switch(fmt->bitsPerSample)
+	{
+		case 8:
+			{
+				split_channels2(input, len, output, channels, samples);
+			}
+			break;
+		case 16:
+			{
+				split_channels2(input, len, (WORD**)output, channels, samples);
+			}
+			break;
+	}
+
+	return 0;
+}
+
+template<typename T>
+int CWavFileIn::split_channels2(BYTE *input, int len, T **output, int channels, int samples)
+{
+	SOUNDFORMAT *fmt = GetFormat();
+	if(!fmt || !fmt->channels)
+		return 0;
+
+	T *sample = (T*)input;
+	T *end_sample = sample + len/sizeof(T) - 1;
+	int index = 0;
+	do {
+		int channel = 0;
+		do {
+			output[channel++][index] = *(sample++);
+		} while(channel<fmt->channels && channel<channels);
+		index++;
+	} while(sample!=end_sample && index<samples);
+
+	return 0;
 }

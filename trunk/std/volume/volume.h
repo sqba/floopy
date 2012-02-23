@@ -21,7 +21,6 @@ public:
 	virtual ~CVolume();
 
 	int Read(BYTE*, int);
-	int Read2(BYTE**, int, int);
 	void Reset();
 
 	const char *GetName()					{ return "std.volume"; }

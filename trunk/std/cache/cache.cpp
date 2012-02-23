@@ -24,27 +24,6 @@ CCache::~CCache()
 		clearBuffer();
 }
 
-int CCache::Read(BYTE *data, int size)
-{
-	if( (bufferIsEmpty() && !createBuffer()) || passedTheEnd() || sourceParameterChanged() )
-		return EOF;
-
-	// Last chunk
-	if( (m_nPosition + size) > m_nSize )
-		size = m_nSize - m_nPosition;
-
-	memcpy(data, m_pBuffer+m_nPosition, size);
-
-	m_nPosition += size;
-
-	return size;
-}
-
-int CCache::Read2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}
-
 bool CCache::SetSource(IFloopySoundInput *src)
 {
 	if(	createBuffer() )
@@ -65,6 +44,38 @@ void CCache::Close()
 	IFloopySoundFilter::Close();
 }
 
+int CCache::samplesToBytes()
+{
+	SOUNDFORMAT *fmt = GetFormat();
+	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
+		return (fmt->bitsPerSample / 8) * fmt->channels;
+	else
+		return 0;
+}
+
+void CCache::clearBuffer()
+{
+	delete[] m_pBuffer;
+	m_pBuffer = NULL;
+	m_nSize = 0;
+}
+
+int CCache::Read(BYTE *data, int size)
+{
+	if( (bufferIsEmpty() && !createBuffer()) || passedTheEnd() || sourceParameterChanged() )
+		return EOF;
+
+	// Last chunk
+	if( (m_nPosition + size) > m_nSize )
+		size = m_nSize - m_nPosition;
+
+	memcpy(data, m_pBuffer+m_nPosition, size);
+
+	m_nPosition += size;
+
+	return size;
+}
+
 int CCache::GetSize()
 {
 	int size = IFloopySoundFilter::GetSize();
@@ -80,22 +91,6 @@ int CCache::GetSize()
 	}
 
 	return size;
-}
-
-int CCache::samplesToBytes()
-{
-	SOUNDFORMAT *fmt = GetFormat();
-	if((fmt->bitsPerSample > 0) && (fmt->channels > 0))
-		return (fmt->bitsPerSample / 8) * fmt->channels;
-	else
-		return 0;
-}
-
-void CCache::clearBuffer()
-{
-	delete[] m_pBuffer;
-	m_pBuffer = NULL;
-	m_nSize = 0;
 }
 
 bool CCache::createBuffer()
@@ -196,6 +191,16 @@ bool CCache::createBuffer()
 	return (m_nSize > 0);
 }
 
+void CCache::MoveTo(int samples)
+{
+	m_nPosition = samples * samplesToBytes();
+}
+
+int CCache::GetPosition()
+{
+	return m_nPosition / samplesToBytes();
+}
+
 bool CCache::sourceParameterChanged()
 {
 	if(bufferIsEmpty())
@@ -232,16 +237,6 @@ void CCache::loadSourceParams(IFloopySoundInput *src)
 		}
 		tmp = tmp->next;
 	}
-}
-
-void CCache::MoveTo(int samples)
-{
-	m_nPosition = samples * samplesToBytes();
-}
-
-int CCache::GetPosition()
-{
-	return m_nPosition / samplesToBytes();
 }
 
 void CCache::Reset()

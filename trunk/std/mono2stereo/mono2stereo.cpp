@@ -61,11 +61,6 @@ int CMono2Stereo::Read(BYTE *data, int size)
 	return len * 2;
 }
 
-int CMono2Stereo::Read2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}
-
 SOUNDFORMAT *CMono2Stereo::GetFormat()
 {
 	memcpy(&m_format, IFloopySoundFilter::GetFormat(), sizeof(SOUNDFORMAT));

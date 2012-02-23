@@ -13,11 +13,10 @@ public:
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }
 
-	int GetSize()				{ return SIZE_INFINITE; }
 	bool CanReadSourceIfDisabled()	{ return false; }
 
 	int Read(BYTE*, int);
-	int Read2(BYTE**, int, int);
+	int GetSize()				{ return SIZE_INFINITE; }
 	void MoveTo(int);
 	void Reset();
 	bool SetSource(IFloopySoundInput *src);

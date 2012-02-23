@@ -31,11 +31,6 @@ int COSS::Write(BYTE *data, int size)
 	return write (fd_out, data, size);
 }
 
-int COSS::Write2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}
-
 int COSS::GetPosition()
 {
 	return 0;

@@ -245,7 +245,7 @@ public:
 	bool IsChanged();
 
 	static IFloopySoundInput *FindComponentByName(IFloopySoundInput*, char*);
-	static char *GetComponentName(IFloopySoundInput*);
+	static const char *GetComponentName(IFloopySoundInput*);
 	static bool IsFilter(IFloopySoundInput*);
 
 	const char* GetLastErrorDesc()         { return NULL; }

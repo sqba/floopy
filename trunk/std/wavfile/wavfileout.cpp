@@ -73,11 +73,6 @@ int CWavFileOut::Write(BYTE *data, int size)
 	return written;
 }
 
-int CWavFileOut::Write2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}
-
 void CWavFileOut::Close()
 {
 	if(NULL != m_pFile)

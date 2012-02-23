@@ -52,11 +52,6 @@ int CToneGen::Read(BYTE *data, int size)
 	return size;
 }
 
-int CToneGen::Read2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}
-
 bool CToneGen::GetParamVal(int index, float *value)
 {
 	switch(index)

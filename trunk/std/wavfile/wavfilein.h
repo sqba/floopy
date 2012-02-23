@@ -19,17 +19,20 @@ public:
 	const char *GetAuthor()			{ return "sqba"; }
 
 	bool Open(const char*);
-	int  GetSize();
-	void MoveTo(int);
 	void Reset();
 	int  Read(BYTE*, int);
-	int  Read2(BYTE**, int, int);
-	void Close();
+	int  GetSize();
+	void MoveTo(int);
 	int  GetPosition();
+	void Close();
 
 	bool IsEOF();
 
 	const char *GetLastErrorDesc() { return NULL; }
+
+private:
+	int  split_channels(BYTE*, int, BYTE**, int, int);
+	template<typename T> int  split_channels2(BYTE*, int, T**, int, int);
 
 private:
 	int		m_nHeaderLength;

@@ -66,9 +66,32 @@ int CReverse::Read(BYTE *data, int size)
 	return len;
 }
 
-int CReverse::Read2(BYTE **data, int channels, int samples)
+void CReverse::MoveTo(int samples)
 {
-	return 0;
+	int size = IFloopySoundFilter::GetSize();
+
+//	assert(samples <= size);
+
+	if(SIZE_INFINITE != size)
+	{
+		if(size >= samples)
+			samples = size - samples;
+		else if(samples > size)
+			samples = 0;
+	}
+
+	assert(m_nPosition >= 0);
+	assert(m_nPosition <= size);
+
+	m_nPosition = samples;
+
+	IFloopySoundFilter::MoveTo(samples);
+}
+
+int CReverse::GetPosition()
+{
+	int size = IFloopySoundFilter::GetSize();
+	return size - m_nPosition;
 }
 
 void CReverse::reverse(BYTE *data, int size)
@@ -92,39 +115,11 @@ void CReverse::reverse(BYTE *data, int size)
 	}
 }
 
-void CReverse::MoveTo(int samples)
-{
-	int size = IFloopySoundFilter::GetSize();
-
-//	assert(samples <= size);
-
-	if(SIZE_INFINITE != size)
-	{
-		if(size >= samples)
-			samples = size - samples;
-		else if(samples > size)
-			samples = 0;
-	}
-
-	assert(m_nPosition >= 0);
-	assert(m_nPosition <= size);
-
-	m_nPosition = samples;
-
-	IFloopySoundFilter::MoveTo(samples);
-}
-
 void CReverse::Reset()
 {
 	int size = IFloopySoundFilter::GetSize();
 	m_nPosition = size;
 	IFloopySoundFilter::MoveTo(size);
-}
-
-int CReverse::GetPosition()
-{
-	int size = IFloopySoundFilter::GetSize();
-	return size - m_nPosition;
 }
 
 bool CReverse::SetSource(IFloopySoundInput *src)
