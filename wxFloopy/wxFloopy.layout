@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="..\common\loader.cpp" open="1" top="0" tabpos="0">
-		<Cursor position="1093" topLine="32" />
+	<File name="..\common\loader.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="2698" topLine="111" />
+	</File>
+	<File name="..\common\util.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="41" topLine="0" />
+	</File>
+	<File name="..\platform\win32.h" open="1" top="0" tabpos="1">
+		<Cursor position="200" topLine="0" />
 	</File>
 	<File name="dialogs\controldlg.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="4502" topLine="191" />
 	</File>
-	<File name="dialogs\controldlg.h" open="0" top="0" tabpos="2">
-		<Cursor position="1436" topLine="33" />
+	<File name="dialogs\controldlg.h" open="1" top="1" tabpos="2">
+		<Cursor position="348" topLine="2" />
 	</File>
 	<File name="engine\actionhistory.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="2180" topLine="53" />
@@ -16,8 +22,8 @@
 	<File name="engine\actionhistory.h" open="0" top="0" tabpos="4">
 		<Cursor position="1219" topLine="8" />
 	</File>
-	<File name="engine\floopyobj.h" open="0" top="0" tabpos="5">
-		<Cursor position="1050" topLine="0" />
+	<File name="engine\floopyobj.h" open="1" top="0" tabpos="3">
+		<Cursor position="1836" topLine="77" />
 	</File>
 	<File name="engine\label.cpp" open="0" top="0" tabpos="9">
 		<Cursor position="432" topLine="0" />

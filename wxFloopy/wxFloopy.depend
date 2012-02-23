@@ -1927,10 +1927,26 @@
 	<limits.h>
 	<unistd.h>
 
-1263520502 e:\floopy\platform\win32.h
+1330031257 e:\floopy\platform\win32.h
 
 1263520041 e:\floopy\common\loader.h
 	<windows.h>
 	"../ifloopy.h"
+	"../platform.h"
+
+1330031280 source:e:\floopy\common\loader.cpp
+	<assert.h>
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	"loader.h"
+	"util.h"
+	"../platform.h"
+
+1263520026 e:\floopy\common\util.h
+
+1330031304 source:e:\floopy\common\util.cpp
+	<string.h>
+	<stdlib.h>
 	"../platform.h"
 

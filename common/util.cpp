@@ -1,5 +1,6 @@
 
 #include <string.h>
+#include <stdlib.h>
 #include "../platform.h"
 //#include "../ifloopy.h"
 
@@ -48,8 +49,8 @@ void get_plugin_name(const char *fullname, char *name)
 	const char *sep = strrchr(path, '.');
 	const char *tmp = sep ? sep+1 : path;
 
-	if( strlen(tmp) <= MAX_FNAME )
+	if( strlen(tmp) <= _MAX_FNAME )
 		strcpy(name, tmp);
 	else
-		strncpy(name, tmp, MAX_FNAME);
+		strncpy(name, tmp, _MAX_FNAME);
 }

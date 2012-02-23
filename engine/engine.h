@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 #include "../ifloopy.h"
 #include "../platform.h"
 #include "timeline.h"
@@ -81,9 +82,9 @@ private:
 
 private:
 	LIB_HANDLE m_hModule;				/** Handle to the module that created the engine */
-	char m_szDisplayname[MAX_FNAME];	/** Engine name, user defined string */
+	char m_szDisplayname[_MAX_FNAME];	/** Engine name, user defined string */
 	char m_szLastError[100];			/** Last error description */
-	char m_szFileName[MAX_PATH];		/** File name, set after succesfull call to Open() */
+	char m_szFileName[_MAX_PATH];		/** File name, set after succesfull call to Open() */
 	CTimeline m_timeline;				/** Parameter changes */
 	UpdateCallback m_callback;			/** Callback function called on parameter changes while playing */
 	tComponent *m_pFirst, *m_pLast;		/** Linked list of all objects created by the engine */

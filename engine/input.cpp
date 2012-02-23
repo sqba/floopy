@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <string.h>
 #include "input.h"
@@ -51,8 +52,8 @@ CInput::~CInput()
  */
 bool CInput::Create(const char *name)
 {
-	char plugin[MAX_PATH]	= {0};
-	char library[MAX_FNAME]	= {0};
+	char plugin[_MAX_PATH]	= {0};
+	char library[_MAX_FNAME]	= {0};
 
 	get_library_name(name, library);
 	get_plugin_name(name, plugin);
