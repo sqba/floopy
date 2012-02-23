@@ -38,7 +38,7 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
 	// if it is then draw mono source.
 	if( CTracks::IsFilter(input) )
 	{
-		const char *tmp = CTracks::GetComponentName(input);
+		char *tmp = CTracks::GetComponentName(input);
 		if(0==strcmpi(tmp, "mono2stereo"))
 			m_pSource = ((IFloopySoundFilter*)input)->GetSource();
 	}
@@ -58,7 +58,7 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
 	if(!name || strlen(name) == 0)
 		name = input->GetName();
 
-	const char *tmp = strrchr(name, '\\');
+	char *tmp = strrchr(name, '\\');
 	if(tmp)
 		name = tmp + 1;
 
