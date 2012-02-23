@@ -1,0 +1,79 @@
+# depslib dependency file v1.0
+1250860257 source:/home/sqba/projects/floopy/trunk/glFloopy/main.c
+	<stdio.h>
+	<stdlib.h>
+	<GL/glx.h>
+	<GL/gl.h>
+	<X11/X.h>
+	<X11/keysym.h>
+	<GL/glut.h>
+	<GL/glu.h>
+
+1250954521 source:/home/sqba/projects/floopy/trunk/glFloopy/main.cpp
+	<string.h>
+	<stdlib.h>
+	<GL/glut.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdio.h>
+	<time.h>
+	<math.h>
+	"engine/engine.h"
+
+1250871745 source:/home/sqba/projects/floopy/trunk/glFloopy/engine/track/region/region.cpp
+
+1250871737 source:/home/sqba/projects/floopy/trunk/glFloopy/engine/track/track.cpp
+
+1250954973 source:/home/sqba/projects/floopy/trunk/glFloopy/engine/engine.cpp
+	"engine.h"
+
+1250954162 /home/sqba/projects/floopy/trunk/glFloopy/engine/engine.h
+	"object.h"
+	"track.h"
+	<vector>
+
+1250872223 /home/sqba/projects/floopy/trunk/glFloopy/engine/track/track.h
+	"region/region.h"
+	<vector>
+
+1250872025 /home/sqba/projects/floopy/trunk/glFloopy/engine/track/region/region.h
+
+1250884233 /home/sqba/projects/floopy/trunk/glFloopy/engine/object.h
+	<GL/gl.h>
+
+1250954333 /home/sqba/projects/floopy/trunk/glFloopy/engine/track.h
+	"object.h"
+	"region.h"
+	<vector>
+
+1250954819 /home/sqba/projects/floopy/trunk/glFloopy/engine/region.h
+	"object.h"
+
+1250932887 source:/home/sqba/projects/floopy/trunk/glFloopy/engine/object.cpp
+	"object.h"
+
+1250954462 source:/home/sqba/projects/floopy/trunk/glFloopy/engine/region.cpp
+	"region.h"
+
+1250954842 source:/home/sqba/projects/floopy/trunk/glFloopy/engine/track.cpp
+	"track.h"
+
+1250954973 source:/media/sqba/sqba/projects/floopy/trunk/glFloopy/engine/engine.cpp
+	"engine.h"
+
+1250954162 /media/sqba/sqba/projects/floopy/trunk/glFloopy/engine/engine.h
+	"object.h"
+	"track.h"
+	<vector>
+
+1250884233 /media/sqba/sqba/projects/floopy/trunk/glFloopy/engine/object.h
+	<GL/gl.h>
+
+1250954333 /media/sqba/sqba/projects/floopy/trunk/glFloopy/engine/track.h
+	"object.h"
+	"region.h"
+	<vector>
+
+1250954819 /media/sqba/sqba/projects/floopy/trunk/glFloopy/engine/region.h
+	"object.h"
+
