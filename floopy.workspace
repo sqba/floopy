@@ -2,9 +2,9 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
 		<Project filename="engine/engine.cbp" />
-		<Project filename="std/std.cbp" />
+		<Project filename="std/std.cbp" active="1" />
 		<Project filename="floopy/floopy.cbp" />
 		<Project filename="svg/svg.cbp" />
-		<Project filename="wxFloopy/wxFloopy.cbp" active="1" />
+		<Project filename="wxFloopy/wxFloopy.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

@@ -109,8 +109,8 @@
 	<File name="volume\volume.h" open="0" top="0" tabpos="29">
 		<Cursor position="511" topLine="4" />
 	</File>
-	<File name="waveout\waveout.cpp" open="1" top="0" tabpos="4">
-		<Cursor position="1342" topLine="28" />
+	<File name="waveout\waveout.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="1504" topLine="27" />
 	</File>
 	<File name="waveout\waveout.h" open="0" top="0" tabpos="31">
 		<Cursor position="1019" topLine="30" />
