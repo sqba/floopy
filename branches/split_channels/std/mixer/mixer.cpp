@@ -113,6 +113,60 @@ int CMixer::GetInputCount()
 	return m_nInputCount;
 }
 
+int CMixer::Read(BYTE *data, int size)
+{
+	if(m_nLengthsSize != m_nInputCount)
+	{
+		if(NULL != m_nLengths)
+			delete[] m_nLengths;
+		m_nLengths = new int[m_nInputCount];
+		m_nLengthsSize = m_nInputCount;
+	}
+
+	if(m_nInputCount>0)
+	{
+		SOUNDFORMAT *fmt = GetFormat();
+		assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
+
+		if(m_nBuffSize != (m_nInputCount*(int)size))
+		{
+			if(NULL != m_pBuffers)
+				delete[] m_pBuffers;
+			m_nBuffSize = m_nInputCount*size;
+			m_pBuffers = new BYTE[m_nBuffSize];
+		}
+		assert(m_nBuffSize > 0);
+		memset(m_pBuffers, 0, m_nBuffSize);	// Fill with silence instead!
+		BYTE *pBuffer = m_pBuffers;
+
+		// Fill source m_pBuffers;
+		inputChannel *channel = m_pFirst;
+		int i=0;
+		while(channel)
+		{
+			m_nLengths[i++] = channel->input->Read(pBuffer, size);
+			pBuffer += size;
+			channel = channel->next;
+		}
+
+		mixBuffers(m_pBuffers, m_nInputCount, data, size);
+	}
+
+	int result = 0;
+	for(int i=0; i<m_nInputCount; i++)
+	{
+		if(m_nLengths[i] > result)
+			result = m_nLengths[i];
+	}
+
+	return result;
+}
+
+int CMixer::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 void CMixer::mixBuffers(BYTE *pBuffers, int buffCount, BYTE *output, int size)
 {
 	SOUNDFORMAT *fmt = GetFormat();
@@ -165,55 +219,6 @@ void CMixer::Close()
 	m_nInputCount = 0;
 }
 
-int CMixer::Read(BYTE *data, int size)
-{
-	if(m_nLengthsSize != m_nInputCount)
-	{
-		if(NULL != m_nLengths)
-			delete[] m_nLengths;
-		m_nLengths = new int[m_nInputCount];
-		m_nLengthsSize = m_nInputCount;
-	}
-
-	if(m_nInputCount>0)
-	{
-		SOUNDFORMAT *fmt = GetFormat();
-		assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-
-		if(m_nBuffSize != (m_nInputCount*(int)size))
-		{
-			if(NULL != m_pBuffers)
-				delete[] m_pBuffers;
-			m_nBuffSize = m_nInputCount*size;
-			m_pBuffers = new BYTE[m_nBuffSize];
-		}
-		assert(m_nBuffSize > 0);
-		memset(m_pBuffers, 0, m_nBuffSize);	// Fill with silence instead!
-		BYTE *pBuffer = m_pBuffers;
-
-		// Fill source m_pBuffers;
-		inputChannel *channel = m_pFirst;
-		int i=0;
-		while(channel)
-		{
-			m_nLengths[i++] = channel->input->Read(pBuffer, size);
-			pBuffer += size;
-			channel = channel->next;
-		}
-
-		mixBuffers(m_pBuffers, m_nInputCount, data, size);
-	}
-
-	int result = 0;
-	for(int i=0; i<m_nInputCount; i++)
-	{
-		if(m_nLengths[i] > result)
-			result = m_nLengths[i];
-	}
-
-	return result;
-}
-
 void CMixer::MoveTo(int samples)
 {
 	inputChannel *channel = m_pFirst;
@@ -222,6 +227,19 @@ void CMixer::MoveTo(int samples)
 		channel->input->MoveTo(samples);
 		channel = channel->next;
 	}
+}
+
+void CMixer::Reset()
+{
+	inputChannel *channel = m_pFirst;
+	while(channel)
+	{
+		channel->input->Reset();
+		channel = channel->next;
+	}
+
+	if(m_nBuffSize > 0)
+		memset(m_pBuffers, 0, m_nBuffSize);
 }
 
 int CMixer::GetSize()
@@ -238,17 +256,4 @@ int CMixer::GetSize()
 	}
 
 	return size;
-}
-
-void CMixer::Reset()
-{
-	inputChannel *channel = m_pFirst;
-	while(channel)
-	{
-		channel->input->Reset();
-		channel = channel->next;
-	}
-
-	if(m_nBuffSize > 0)
-		memset(m_pBuffers, 0, m_nBuffSize);
 }

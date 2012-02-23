@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="..\common\engine_wrapper.h" open="0" top="0" tabpos="0">
+	<File name="../common/engine_wrapper.h" open="0" top="0" tabpos="0">
 		<Cursor position="991" topLine="0" />
 	</File>
-	<File name="..\common\loader.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="2678" topLine="111" />
+	<File name="../common/loader.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1093" topLine="25" />
 	</File>
-	<File name="..\common\loader.h" open="0" top="0" tabpos="0">
+	<File name="../common/loader.h" open="0" top="0" tabpos="0">
 		<Cursor position="406" topLine="15" />
 	</File>
-	<File name="..\common\util.h" open="0" top="0" tabpos="0">
+	<File name="../common/util.h" open="0" top="0" tabpos="0">
 		<Cursor position="244" topLine="0" />
 	</File>
 	<File name="args.h" open="0" top="0" tabpos="3">
 		<Cursor position="53" topLine="0" />
 	</File>
 	<File name="floopy.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="1327" topLine="22" />
+		<Cursor position="2714" topLine="92" />
 	</File>
-	<File name="..\ifloopy.h" open="0" top="0" tabpos="0">
+	<File name="../ifloopy.h" open="0" top="0" tabpos="0">
 		<Cursor position="2946" topLine="90" />
 	</File>
 </CodeBlocks_layout_file>

@@ -1,37 +1,5 @@
 # depslib dependency file v1.0
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/common/engine_wrapper.cpp
-	"engine_wrapper.h"
-	<stdio.h>
-	<sstream>
-	"../platform.h"
-
-1250405339 /media/sqba/sqba/projects/floopy/trunk/common/engine_wrapper.h
-	"../ifloopy.h"
-	"../platform.h"
-	"../common/loader.h"
-	<windows.h>
-
-1250405339 /media/sqba/sqba/projects/floopy/trunk/ifloopy.h
-	<memory.h>
-	<bits/wordsize.h>
-
-1250405339 /media/sqba/sqba/projects/floopy/trunk/platform.h
-	"platform/linux.h"
-	"platform/win32.h"
-
-1250405339 /media/sqba/sqba/projects/floopy/trunk/platform/linux.h
-	<dlfcn.h>
-	<limits.h>
-	<unistd.h>
-
-1250405339 /media/sqba/sqba/projects/floopy/trunk/platform/win32.h
-
-1250405339 /media/sqba/sqba/projects/floopy/trunk/common/loader.h
-	<windows.h>
-	"../ifloopy.h"
-	"../platform.h"
-
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/common/loader.cpp
+1239405165 source:/home/sqba/Projects/floopy/common/loader.cpp
 	<assert.h>
 	<string.h>
 	<stdio.h>
@@ -39,24 +7,50 @@
 	"util.h"
 	"../platform.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/common/util.h
-
-1260168054 source:/media/sqba/sqba/projects/floopy/trunk/common/util.cpp
-	<string.h>
+1239400116 /home/sqba/Projects/floopy/common/loader.h
+	<windows.h>
+	"../ifloopy.h"
 	"../platform.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/dialogs/controldlg.cpp
+1234814296 /home/sqba/Projects/floopy/platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1238181448 /home/sqba/Projects/floopy/platform/linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1234814296 /home/sqba/Projects/floopy/platform/win32.h
+
+1239400338 source:/home/sqba/Projects/floopy/util/engine_wrapper.cpp
+	"engine_wrapper.h"
+	<stdio.h>
+	<sstream>
+	"../platform.h"
+
+1239400565 /home/sqba/Projects/floopy/util/engine_wrapper.h
+	"../ifloopy.h"
+	"../platform.h"
+	"../common/loader.h"
+	<windows.h>
+
+1239904462 /home/sqba/Projects/floopy/ifloopy.h
+	<memory.h>
+	<bits/wordsize.h>
+
+1239314701 source:/home/sqba/Projects/floopy/wxFloopy/dialogs/controldlg.cpp
 	"controldlg.h"
 	"../engine/region.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/dialogs/controldlg.h
+1239314701 /home/sqba/Projects/floopy/wxFloopy/dialogs/controldlg.h
 	<wx/wx.h>
 	<wx/dialog.h>
 	<wx/stattext.h>
 	<wx/slider.h>
 	"../engine/tracks.h"
 
-1250033142 /usr/include/wx-2.8/wx/wx.h
+1235103092 /usr/include/wx-2.8/wx/wx.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/dynarray.h"
@@ -136,7 +130,7 @@
 	"wx/validate.h"
 	"wx/valtext.h"
 
-1250033142 /usr/include/wx-2.8/wx/defs.h
+1235103092 /usr/include/wx-2.8/wx/defs.h
 	"wx/platform.h"
 	"wx/features.h"
 	"wx/version.h"
@@ -147,7 +141,7 @@
 	<unistd.h>
 	"wx/msw/winundef.h"
 
-1250033142 /usr/include/wx-2.8/wx/platform.h
+1235103092 /usr/include/wx-2.8/wx/platform.h
 	<stddef.h>
 	<AvailabilityMacros.h>
 	<unistd.h>
@@ -159,9 +153,9 @@
 	"wx/msw/gccpriv.h"
 	<AvailabilityMacros.h>
 
-1250033142 /usr/lib/wx/include/gtk2-unicode-release-2.8/wx/setup.h
+1235103092 /usr/lib/wx/include/gtk2-unicode-release-2.8/wx/setup.h
 
-1250033142 /usr/include/wx-2.8/wx/chkconf.h
+1235103092 /usr/include/wx-2.8/wx/chkconf.h
 	"wx/palmos/chkconf.h"
 	"wx/msw/wince/chkconf.h"
 	"wx/msw/chkconf.h"
@@ -173,21 +167,21 @@
 	"wx/x11/chkconf.h"
 	"wx/univ/chkconf.h"
 
-1250033142 /usr/include/wx-2.8/wx/features.h
+1235103092 /usr/include/wx-2.8/wx/features.h
 
-1250033142 /usr/include/wx-2.8/wx/version.h
+1235103092 /usr/include/wx-2.8/wx/version.h
 	"wx/cpp.h"
 
-1250033142 /usr/include/wx-2.8/wx/cpp.h
+1235103092 /usr/include/wx-2.8/wx/cpp.h
 
-1250033142 /usr/include/wx-2.8/wx/dlimpexp.h
+1235103092 /usr/include/wx-2.8/wx/dlimpexp.h
 
-1250033142 /usr/include/wx-2.8/wx/debug.h
+1235103092 /usr/include/wx-2.8/wx/debug.h
 	<assert.h>
 	<limits.h>
 	"wx/wxchar.h"
 
-1250033142 /usr/include/wx-2.8/wx/wxchar.h
+1235103092 /usr/include/wx-2.8/wx/wxchar.h
 	"wx/platform.h"
 	"wx/dlimpexp.h"
 	<stdio.h>
@@ -217,18 +211,18 @@
 	<time.h>
 	<string.h>
 
-1250033142 /usr/include/wx-2.8/wx/object.h
+1235103092 /usr/include/wx-2.8/wx/object.h
 	"wx/memory.h"
 	"wx/xti.h"
 	"wx/msw/msvcrt.h"
 
-1250033142 /usr/include/wx-2.8/wx/memory.h
+1235103092 /usr/include/wx-2.8/wx/memory.h
 	"wx/defs.h"
 	"wx/string.h"
 	"wx/msgout.h"
 	<stddef.h>
 
-1250033142 /usr/include/wx-2.8/wx/string.h
+1235103092 /usr/include/wx-2.8/wx/string.h
 	"wx/defs.h"
 	<ctype.h>
 	<stdio.h>
@@ -251,11 +245,11 @@
 	"wx/arrstr.h"
 	"wx/iosfwrap.h"
 
-1250033142 /usr/include/wx-2.8/wx/buffer.h
+1235103092 /usr/include/wx-2.8/wx/buffer.h
 	"wx/wxchar.h"
 	<stdlib.h>
 
-1250033142 /usr/include/wx-2.8/wx/strconv.h
+1235103092 /usr/include/wx-2.8/wx/strconv.h
 	"wx/defs.h"
 	"wx/wxchar.h"
 	"wx/buffer.h"
@@ -263,35 +257,35 @@
 	<stdlib.h>
 	"wx/fontenc.h"
 
-1250033142 /usr/include/wx-2.8/wx/fontenc.h
+1235103092 /usr/include/wx-2.8/wx/fontenc.h
 
-1250033142 /usr/include/wx-2.8/wx/beforestd.h
+1235103092 /usr/include/wx-2.8/wx/beforestd.h
 
-1250033142 /usr/include/wx-2.8/wx/afterstd.h
+1235103092 /usr/include/wx-2.8/wx/afterstd.h
 	"wx/msw/winundef.h"
 
-1250033142 /usr/include/wx-2.8/wx/arrstr.h
+1235103092 /usr/include/wx-2.8/wx/arrstr.h
 	"wx/defs.h"
 	"wx/string.h"
 	"wx/dynarray.h"
 
-1250033142 /usr/include/wx-2.8/wx/dynarray.h
+1235103092 /usr/include/wx-2.8/wx/dynarray.h
 	"wx/defs.h"
 	"wx/beforestd.h"
 	<vector>
 	<algorithm>
 	"wx/afterstd.h"
 
-1250033142 /usr/include/wx-2.8/wx/iosfwrap.h
+1235103092 /usr/include/wx-2.8/wx/iosfwrap.h
 	<iostream.h>
 	<iosfwd>
 	"wx/msw/winundef.h"
 
-1250033142 /usr/include/wx-2.8/wx/msgout.h
+1235103092 /usr/include/wx-2.8/wx/msgout.h
 	"wx/defs.h"
 	"wx/wxchar.h"
 
-1250033142 /usr/include/wx-2.8/wx/xti.h
+1235103092 /usr/include/wx-2.8/wx/xti.h
 	"wx/defs.h"
 	"wx/memory.h"
 	"wx/flags.h"
@@ -303,7 +297,7 @@
 	<typeinfo>
 	"wx/dynarray.h"
 
-1250033142 /usr/include/wx-2.8/wx/hashmap.h
+1235103092 /usr/include/wx-2.8/wx/hashmap.h
 	"wx/string.h"
 	<unordered_map>
 	<tr1/unordered_map>
@@ -311,7 +305,7 @@
 	<hash_map>
 	<stddef.h>
 
-1250033142 /usr/include/wx-2.8/wx/log.h
+1235103092 /usr/include/wx-2.8/wx/log.h
 	"wx/defs.h"
 	"wx/string.h"
 	"wx/arrstr.h"
@@ -321,14 +315,14 @@
 	"wx/generic/logg.h"
 	"wx/cocoa/log.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/logg.h
+1235103093 /usr/include/wx-2.8/wx/generic/logg.h
 
-1250033142 /usr/include/wx-2.8/wx/intl.h
+1235103092 /usr/include/wx-2.8/wx/intl.h
 	"wx/defs.h"
 	"wx/string.h"
 	"wx/fontenc.h"
 
-1250033142 /usr/include/wx-2.8/wx/list.h
+1235103092 /usr/include/wx-2.8/wx/list.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/string.h"
@@ -338,13 +332,13 @@
 	<list>
 	"wx/afterstd.h"
 
-1250033142 /usr/include/wx-2.8/wx/hash.h
+1235103092 /usr/include/wx-2.8/wx/hash.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/list.h"
 	"wx/dynarray.h"
 
-1250033142 /usr/include/wx-2.8/wx/event.h
+1235103092 /usr/include/wx-2.8/wx/event.h
 	"wx/defs.h"
 	"wx/cpp.h"
 	"wx/object.h"
@@ -354,16 +348,16 @@
 	"wx/thread.h"
 	"wx/dynarray.h"
 
-1250033142 /usr/include/wx-2.8/wx/clntdata.h
+1235103092 /usr/include/wx-2.8/wx/clntdata.h
 	"wx/defs.h"
 	"wx/string.h"
 	"wx/hashmap.h"
 	"wx/vector.h"
 
-1250033142 /usr/include/wx-2.8/wx/vector.h
+1235103092 /usr/include/wx-2.8/wx/vector.h
 	"wx/defs.h"
 
-1250033143 /usr/include/wx-2.8/wx/gdicmn.h
+1235103093 /usr/include/wx-2.8/wx/gdicmn.h
 	"wx/defs.h"
 	"wx/list.h"
 	"wx/string.h"
@@ -371,12 +365,12 @@
 	"wx/hashmap.h"
 	"wx/math.h"
 
-1250033142 /usr/include/wx-2.8/wx/math.h
+1235103092 /usr/include/wx-2.8/wx/math.h
 	"wx/defs.h"
 	<math.h>
 	<float.h>
 
-1250033143 /usr/include/wx-2.8/wx/cursor.h
+1235103093 /usr/include/wx-2.8/wx/cursor.h
 	"wx/defs.h"
 	"wx/palmos/cursor.h"
 	"wx/msw/cursor.h"
@@ -391,10 +385,10 @@
 	"wx/os2/cursor.h"
 	"wx/utils.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/cursor.h
+1235103093 /usr/include/wx-2.8/wx/gtk/cursor.h
 	"wx/object.h"
 
-1250033142 /usr/include/wx-2.8/wx/utils.h
+1235103092 /usr/include/wx-2.8/wx/utils.h
 	"wx/object.h"
 	"wx/list.h"
 	"wx/filefn.h"
@@ -406,7 +400,7 @@
 	<unistd.h>
 	<stdio.h>
 
-1250033142 /usr/include/wx-2.8/wx/filefn.h
+1235103092 /usr/include/wx-2.8/wx/filefn.h
 	"wx/list.h"
 	"wx/arrstr.h"
 	"wx/msw/wince/time.h"
@@ -442,19 +436,19 @@
 	<fcntl.h>
 	<sys/types.h>
 
-1250033142 /usr/include/wx-2.8/wx/longlong.h
+1235103092 /usr/include/wx-2.8/wx/longlong.h
 	"wx/defs.h"
 	"wx/string.h"
 	<limits.h>
 	"wx/iosfwrap.h"
 
-1250033142 /usr/include/wx-2.8/wx/platinfo.h
+1235103092 /usr/include/wx-2.8/wx/platinfo.h
 	"wx/string.h"
 
-1250033142 /usr/include/wx-2.8/wx/thread.h
+1235103092 /usr/include/wx-2.8/wx/thread.h
 	"wx/defs.h"
 
-1250033142 /usr/include/wx-2.8/wx/app.h
+1235103092 /usr/include/wx-2.8/wx/app.h
 	"wx/event.h"
 	"wx/build.h"
 	"wx/init.h"
@@ -472,32 +466,32 @@
 	"wx/os2/app.h"
 	"wx/univ/theme.h"
 
-1250033142 /usr/include/wx-2.8/wx/build.h
+1235103092 /usr/include/wx-2.8/wx/build.h
 	"wx/version.h"
 
-1250033142 /usr/include/wx-2.8/wx/init.h
+1235103092 /usr/include/wx-2.8/wx/init.h
 	"wx/defs.h"
 	"wx/wxchar.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/app.h
+1235103093 /usr/include/wx-2.8/wx/gtk/app.h
 
-1250033142 /usr/include/wx-2.8/wx/stream.h
+1235103092 /usr/include/wx-2.8/wx/stream.h
 	"wx/defs.h"
 	<stdio.h>
 	"wx/object.h"
 	"wx/string.h"
 	"wx/filefn.h"
 
-1250033142 /usr/include/wx-2.8/wx/stopwatch.h
+1235103092 /usr/include/wx-2.8/wx/stopwatch.h
 	"wx/defs.h"
 	"wx/longlong.h"
 
-1250033142 /usr/include/wx-2.8/wx/module.h
+1235103092 /usr/include/wx-2.8/wx/module.h
 	"wx/object.h"
 	"wx/list.h"
 	"wx/dynarray.h"
 
-1250033143 /usr/include/wx-2.8/wx/window.h
+1235103093 /usr/include/wx-2.8/wx/window.h
 	"wx/event.h"
 	"wx/list.h"
 	"wx/cursor.h"
@@ -523,7 +517,7 @@
 	"wx/os2/window.h"
 	"wx/univ/window.h"
 
-1250033143 /usr/include/wx-2.8/wx/font.h
+1235103093 /usr/include/wx-2.8/wx/font.h
 	"wx/defs.h"
 	"wx/fontenc.h"
 	"wx/gdiobj.h"
@@ -539,12 +533,12 @@
 	"wx/cocoa/font.h"
 	"wx/os2/font.h"
 
-1250033143 /usr/include/wx-2.8/wx/gdiobj.h
+1235103093 /usr/include/wx-2.8/wx/gdiobj.h
 	"wx/object.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/font.h
+1235103093 /usr/include/wx-2.8/wx/gtk/font.h
 
-1250033143 /usr/include/wx-2.8/wx/colour.h
+1235103093 /usr/include/wx-2.8/wx/colour.h
 	"wx/defs.h"
 	"wx/gdiobj.h"
 	"wx/variant.h"
@@ -560,7 +554,7 @@
 	"wx/cocoa/colour.h"
 	"wx/os2/colour.h"
 
-1250033142 /usr/include/wx-2.8/wx/variant.h
+1235103092 /usr/include/wx-2.8/wx/variant.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/string.h"
@@ -571,7 +565,7 @@
 	"wx/db.h"
 	"wx/iosfwrap.h"
 
-1250033142 /usr/include/wx-2.8/wx/datetime.h
+1235103092 /usr/include/wx-2.8/wx/datetime.h
 	"wx/defs.h"
 	<time.h>
 	"wx/msw/wince/time.h"
@@ -579,7 +573,7 @@
 	"wx/longlong.h"
 	"wx/dynarray.h"
 
-1250033143 /usr/include/wx-2.8/wx/db.h
+1235103092 /usr/include/wx-2.8/wx/db.h
 	"wx/defs.h"
 	"wx/string.h"
 	<afxwin.h>
@@ -596,14 +590,14 @@
 	<sqlext.h>
 	"wx/object.h"
 
-1250033142 /usr/include/wx-2.8/wx/isql.h
+1235103092 /usr/include/wx-2.8/wx/isql.h
 
-1250033142 /usr/include/wx-2.8/wx/isqlext.h
+1235103092 /usr/include/wx-2.8/wx/isqlext.h
 	"wx/isql.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/colour.h
+1235103093 /usr/include/wx-2.8/wx/gtk/colour.h
 
-1250033143 /usr/include/wx-2.8/wx/region.h
+1235103093 /usr/include/wx-2.8/wx/region.h
 	"wx/gdiobj.h"
 	"wx/gdicmn.h"
 	"wx/palmos/region.h"
@@ -617,13 +611,13 @@
 	"wx/cocoa/region.h"
 	"wx/os2/region.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/region.h
+1235103093 /usr/include/wx-2.8/wx/gtk/region.h
 
-1250033143 /usr/include/wx-2.8/wx/validate.h
+1235103093 /usr/include/wx-2.8/wx/validate.h
 	"wx/defs.h"
 	"wx/event.h"
 
-1250033143 /usr/include/wx-2.8/wx/palette.h
+1235103093 /usr/include/wx-2.8/wx/palette.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/gdiobj.h"
@@ -636,13 +630,13 @@
 	"wx/mac/palette.h"
 	"wx/os2/palette.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/paletteg.h
+1235103093 /usr/include/wx-2.8/wx/generic/paletteg.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/gdiobj.h"
 	"wx/gdicmn.h"
 
-1250033143 /usr/include/wx-2.8/wx/accel.h
+1235103093 /usr/include/wx-2.8/wx/accel.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/generic/accel.h"
@@ -654,29 +648,29 @@
 	"wx/generic/accel.h"
 	"wx/os2/accel.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/accel.h
+1235103093 /usr/include/wx-2.8/wx/generic/accel.h
 
-1250033143 /usr/include/wx-2.8/wx/gtk/accel.h
+1235103093 /usr/include/wx-2.8/wx/gtk/accel.h
 	"wx/generic/accel.h"
 
-1250033143 /usr/include/wx-2.8/wx/access.h
+1235103093 /usr/include/wx-2.8/wx/access.h
 	"wx/defs.h"
 	"wx/variant.h"
 	"wx/msw/ole/access.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/window.h
+1235103093 /usr/include/wx-2.8/wx/gtk/window.h
 	"wx/dynarray.h"
 
-1250033142 /usr/include/wx-2.8/wx/containr.h
+1235103092 /usr/include/wx-2.8/wx/containr.h
 
-1250033143 /usr/include/wx-2.8/wx/panel.h
+1235103093 /usr/include/wx-2.8/wx/panel.h
 	"wx/generic/panelg.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/panelg.h
+1235103093 /usr/include/wx-2.8/wx/generic/panelg.h
 	"wx/window.h"
 	"wx/containr.h"
 
-1250033143 /usr/include/wx-2.8/wx/toplevel.h
+1235103093 /usr/include/wx-2.8/wx/toplevel.h
 	"wx/window.h"
 	"wx/iconbndl.h"
 	"wx/palmos/toplevel.h"
@@ -692,13 +686,13 @@
 	"wx/motif/toplevel.h"
 	"wx/univ/toplevel.h"
 
-1250033143 /usr/include/wx-2.8/wx/iconbndl.h
+1235103093 /usr/include/wx-2.8/wx/iconbndl.h
 	"wx/dynarray.h"
 	"wx/gdicmn.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/toplevel.h
+1235103093 /usr/include/wx-2.8/wx/gtk/toplevel.h
 
-1250033143 /usr/include/wx-2.8/wx/frame.h
+1235103093 /usr/include/wx-2.8/wx/frame.h
 	"wx/toplevel.h"
 	"wx/univ/frame.h"
 	"wx/palmos/frame.h"
@@ -710,9 +704,9 @@
 	"wx/cocoa/frame.h"
 	"wx/os2/frame.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/frame.h
+1235103093 /usr/include/wx-2.8/wx/gtk/frame.h
 
-1250033143 /usr/include/wx-2.8/wx/bitmap.h
+1235103093 /usr/include/wx-2.8/wx/bitmap.h
 	"wx/string.h"
 	"wx/gdicmn.h"
 	"wx/colour.h"
@@ -730,9 +724,9 @@
 	"wx/os2/bitmap.h"
 	"wx/generic/mask.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/bitmap.h
+1235103093 /usr/include/wx-2.8/wx/gtk/bitmap.h
 
-1250033143 /usr/include/wx-2.8/wx/image.h
+1235103093 /usr/include/wx-2.8/wx/image.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/string.h"
@@ -751,40 +745,40 @@
 	"wx/imagxpm.h"
 	"wx/imagiff.h"
 
-1250033143 /usr/include/wx-2.8/wx/imagbmp.h
+1235103093 /usr/include/wx-2.8/wx/imagbmp.h
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/imagpng.h
+1235103093 /usr/include/wx-2.8/wx/imagpng.h
 	"wx/defs.h"
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/imaggif.h
+1235103093 /usr/include/wx-2.8/wx/imaggif.h
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/imagpcx.h
+1235103093 /usr/include/wx-2.8/wx/imagpcx.h
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/imagjpeg.h
+1235103093 /usr/include/wx-2.8/wx/imagjpeg.h
 	"wx/defs.h"
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/imagtga.h
+1235103093 /usr/include/wx-2.8/wx/imagtga.h
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/imagtiff.h
+1235103093 /usr/include/wx-2.8/wx/imagtiff.h
 	"wx/defs.h"
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/imagpnm.h
+1235103093 /usr/include/wx-2.8/wx/imagpnm.h
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/imagxpm.h
+1235103093 /usr/include/wx-2.8/wx/imagxpm.h
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/imagiff.h
+1235103093 /usr/include/wx-2.8/wx/imagiff.h
 	"wx/image.h"
 
-1250033143 /usr/include/wx-2.8/wx/dc.h
+1235103093 /usr/include/wx-2.8/wx/dc.h
 	"wx/object.h"
 	"wx/intl.h"
 	"wx/cursor.h"
@@ -810,7 +804,7 @@
 	"wx/os2/dc.h"
 	"wx/dcgraph.h"
 
-1250033143 /usr/include/wx-2.8/wx/brush.h
+1235103092 /usr/include/wx-2.8/wx/brush.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/gdiobj.h"
@@ -825,9 +819,9 @@
 	"wx/cocoa/brush.h"
 	"wx/os2/brush.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/brush.h
+1235103093 /usr/include/wx-2.8/wx/gtk/brush.h
 
-1250033143 /usr/include/wx-2.8/wx/pen.h
+1235103093 /usr/include/wx-2.8/wx/pen.h
 	"wx/defs.h"
 	"wx/palmos/pen.h"
 	"wx/msw/pen.h"
@@ -840,29 +834,29 @@
 	"wx/cocoa/pen.h"
 	"wx/os2/pen.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/pen.h
+1235103093 /usr/include/wx-2.8/wx/gtk/pen.h
 	"wx/gdiobj.h"
 	"wx/gdicmn.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dc.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dc.h
 
-1250033143 /usr/include/wx-2.8/wx/dcgraph.h
+1235103093 /usr/include/wx-2.8/wx/dcgraph.h
 	"wx/geometry.h"
 	"wx/dynarray.h"
 	"wx/graphics.h"
 
-1250033143 /usr/include/wx-2.8/wx/geometry.h
+1235103093 /usr/include/wx-2.8/wx/geometry.h
 	"wx/defs.h"
 	"wx/utils.h"
 	"wx/gdicmn.h"
 	"wx/math.h"
 
-1250033143 /usr/include/wx-2.8/wx/graphics.h
+1235103093 /usr/include/wx-2.8/wx/graphics.h
 	"wx/defs.h"
 	"wx/geometry.h"
 	"wx/dynarray.h"
 
-1250033143 /usr/include/wx-2.8/wx/dcclient.h
+1235103093 /usr/include/wx-2.8/wx/dcclient.h
 	"wx/defs.h"
 	"wx/palmos/dcclient.h"
 	"wx/msw/dcclient.h"
@@ -876,11 +870,11 @@
 	"wx/cocoa/dcclient.h"
 	"wx/os2/dcclient.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dcclient.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dcclient.h
 	"wx/dc.h"
 	"wx/region.h"
 
-1250033143 /usr/include/wx-2.8/wx/dcmemory.h
+1235103093 /usr/include/wx-2.8/wx/dcmemory.h
 	"wx/bitmap.h"
 	"wx/palmos/dcmemory.h"
 	"wx/msw/dcmemory.h"
@@ -894,17 +888,17 @@
 	"wx/cocoa/dcmemory.h"
 	"wx/os2/dcmemory.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dcmemory.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dcmemory.h
 	"wx/dcclient.h"
 
-1250033143 /usr/include/wx-2.8/wx/dcprint.h
+1235103093 /usr/include/wx-2.8/wx/dcprint.h
 	"wx/defs.h"
 	"wx/palmos/dcprint.h"
 	"wx/msw/dcprint.h"
 	"wx/os2/dcprint.h"
 	"wx/mac/dcprint.h"
 
-1250033143 /usr/include/wx-2.8/wx/dcscreen.h
+1235103093 /usr/include/wx-2.8/wx/dcscreen.h
 	"wx/defs.h"
 	"wx/palmos/dcscreen.h"
 	"wx/msw/dcscreen.h"
@@ -918,10 +912,10 @@
 	"wx/cocoa/dcscreen.h"
 	"wx/os2/dcscreen.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dcscreen.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dcscreen.h
 	"wx/dcclient.h"
 
-1250033143 /usr/include/wx-2.8/wx/button.h
+1235103092 /usr/include/wx-2.8/wx/button.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/univ/button.h"
@@ -934,7 +928,7 @@
 	"wx/os2/button.h"
 	"wx/palmos/button.h"
 
-1250033143 /usr/include/wx-2.8/wx/control.h
+1235103093 /usr/include/wx-2.8/wx/control.h
 	"wx/defs.h"
 	"wx/window.h"
 	"wx/univ/control.h"
@@ -947,11 +941,11 @@
 	"wx/cocoa/control.h"
 	"wx/os2/control.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/control.h
+1235103093 /usr/include/wx-2.8/wx/gtk/control.h
 
-1250033143 /usr/include/wx-2.8/wx/gtk/button.h
+1235103093 /usr/include/wx-2.8/wx/gtk/button.h
 
-1250033143 /usr/include/wx-2.8/wx/menuitem.h
+1235103093 /usr/include/wx-2.8/wx/menuitem.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/univ/menuitem.h"
@@ -964,10 +958,10 @@
 	"wx/cocoa/menuitem.h"
 	"wx/os2/menuitem.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/menuitem.h
+1235103093 /usr/include/wx-2.8/wx/gtk/menuitem.h
 	"wx/bitmap.h"
 
-1250033143 /usr/include/wx-2.8/wx/menu.h
+1235103093 /usr/include/wx-2.8/wx/menu.h
 	"wx/defs.h"
 	"wx/list.h"
 	"wx/window.h"
@@ -982,9 +976,9 @@
 	"wx/cocoa/menu.h"
 	"wx/os2/menu.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/menu.h
+1235103093 /usr/include/wx-2.8/wx/gtk/menu.h
 
-1250033143 /usr/include/wx-2.8/wx/icon.h
+1235103093 /usr/include/wx-2.8/wx/icon.h
 	"wx/iconloc.h"
 	"wx/generic/icon.h"
 	"wx/msw/icon.h"
@@ -999,13 +993,13 @@
 	"wx/os2/icon.h"
 	"wx/variant.h"
 
-1250033142 /usr/include/wx-2.8/wx/iconloc.h
+1235103092 /usr/include/wx-2.8/wx/iconloc.h
 	"wx/string.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/icon.h
+1235103093 /usr/include/wx-2.8/wx/generic/icon.h
 	"wx/bitmap.h"
 
-1250033143 /usr/include/wx-2.8/wx/dialog.h
+1235103093 /usr/include/wx-2.8/wx/dialog.h
 	"wx/defs.h"
 	"wx/containr.h"
 	"wx/toplevel.h"
@@ -1019,10 +1013,10 @@
 	"wx/cocoa/dialog.h"
 	"wx/os2/dialog.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dialog.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dialog.h
 	"wx/defs.h"
 
-1250033142 /usr/include/wx-2.8/wx/timer.h
+1235103092 /usr/include/wx-2.8/wx/timer.h
 	"wx/defs.h"
 	"wx/object.h"
 	"wx/longlong.h"
@@ -1038,15 +1032,15 @@
 	"wx/mac/timer.h"
 	"wx/os2/timer.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/timer.h
+1235103093 /usr/include/wx-2.8/wx/gtk/timer.h
 
-1250033143 /usr/include/wx-2.8/wx/generic/timer.h
+1235103093 /usr/include/wx-2.8/wx/generic/timer.h
 
-1250033143 /usr/include/wx-2.8/wx/settings.h
+1235103093 /usr/include/wx-2.8/wx/settings.h
 	"wx/colour.h"
 	"wx/font.h"
 
-1250033143 /usr/include/wx-2.8/wx/msgdlg.h
+1235103093 /usr/include/wx-2.8/wx/msgdlg.h
 	"wx/defs.h"
 	"wx/generic/msgdlgg.h"
 	"wx/generic/msgdlgg.h"
@@ -1060,15 +1054,15 @@
 	"wx/cocoa/msgdlg.h"
 	"wx/os2/msgdlg.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/msgdlgg.h
+1235103093 /usr/include/wx-2.8/wx/generic/msgdlgg.h
 	"wx/defs.h"
 	"wx/dialog.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/msgdlg.h
+1235103093 /usr/include/wx-2.8/wx/gtk/msgdlg.h
 	"wx/defs.h"
 	"wx/dialog.h"
 
-1250033143 /usr/include/wx-2.8/wx/cmndata.h
+1235103093 /usr/include/wx-2.8/wx/cmndata.h
 	"wx/window.h"
 	"wx/font.h"
 	"wx/encinfo.h"
@@ -1076,10 +1070,10 @@
 	"wx/gdicmn.h"
 	"wx/stream.h"
 
-1250033143 /usr/include/wx-2.8/wx/encinfo.h
+1235103093 /usr/include/wx-2.8/wx/encinfo.h
 	"wx/string.h"
 
-1250033143 /usr/include/wx-2.8/wx/dataobj.h
+1235103093 /usr/include/wx-2.8/wx/dataobj.h
 	"wx/defs.h"
 	"wx/string.h"
 	"wx/bitmap.h"
@@ -1110,17 +1104,17 @@
 	"wx/cocoa/dataobj2.h"
 	"wx/os2/dataobj2.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dataform.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dataform.h
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dataobj.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dataobj.h
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dataobj2.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dataobj2.h
 
-1250033143 /usr/include/wx-2.8/wx/ctrlsub.h
+1235103093 /usr/include/wx-2.8/wx/ctrlsub.h
 	"wx/defs.h"
 	"wx/control.h"
 
-1250033143 /usr/include/wx-2.8/wx/bmpbuttn.h
+1235103092 /usr/include/wx-2.8/wx/bmpbuttn.h
 	"wx/defs.h"
 	"wx/bitmap.h"
 	"wx/button.h"
@@ -1133,9 +1127,9 @@
 	"wx/cocoa/bmpbuttn.h"
 	"wx/os2/bmpbuttn.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/bmpbuttn.h
+1235103093 /usr/include/wx-2.8/wx/gtk/bmpbuttn.h
 
-1250033143 /usr/include/wx-2.8/wx/checkbox.h
+1235103092 /usr/include/wx-2.8/wx/checkbox.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/univ/checkbox.h"
@@ -1148,9 +1142,9 @@
 	"wx/os2/checkbox.h"
 	"wx/palmos/checkbox.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/checkbox.h
+1235103093 /usr/include/wx-2.8/wx/gtk/checkbox.h
 
-1250033143 /usr/include/wx-2.8/wx/checklst.h
+1235103092 /usr/include/wx-2.8/wx/checklst.h
 	"wx/listbox.h"
 	"wx/univ/checklst.h"
 	"wx/msw/wince/checklst.h"
@@ -1162,7 +1156,7 @@
 	"wx/cocoa/checklst.h"
 	"wx/os2/checklst.h"
 
-1250033143 /usr/include/wx-2.8/wx/listbox.h
+1235103093 /usr/include/wx-2.8/wx/listbox.h
 	"wx/defs.h"
 	"wx/ctrlsub.h"
 	"wx/univ/listbox.h"
@@ -1174,11 +1168,11 @@
 	"wx/os2/listbox.h"
 	"wx/cocoa/listbox.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/listbox.h
+1235103093 /usr/include/wx-2.8/wx/gtk/listbox.h
 
-1250033143 /usr/include/wx-2.8/wx/gtk/checklst.h
+1235103093 /usr/include/wx-2.8/wx/gtk/checklst.h
 
-1250033143 /usr/include/wx-2.8/wx/choice.h
+1235103093 /usr/include/wx-2.8/wx/choice.h
 	"wx/defs.h"
 	"wx/ctrlsub.h"
 	"wx/univ/choice.h"
@@ -1191,9 +1185,9 @@
 	"wx/cocoa/choice.h"
 	"wx/os2/choice.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/choice.h
+1235103093 /usr/include/wx-2.8/wx/gtk/choice.h
 
-1250033143 /usr/include/wx-2.8/wx/scrolbar.h
+1235103093 /usr/include/wx-2.8/wx/scrolbar.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/univ/scrolbar.h"
@@ -1205,10 +1199,10 @@
 	"wx/cocoa/scrolbar.h"
 	"wx/os2/scrolbar.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/scrolbar.h
+1235103093 /usr/include/wx-2.8/wx/gtk/scrolbar.h
 	"wx/defs.h"
 
-1250033143 /usr/include/wx-2.8/wx/stattext.h
+1235103093 /usr/include/wx-2.8/wx/stattext.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/univ/stattext.h"
@@ -1221,9 +1215,9 @@
 	"wx/os2/stattext.h"
 	"wx/palmos/stattext.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/stattext.h
+1235103093 /usr/include/wx-2.8/wx/gtk/stattext.h
 
-1250033143 /usr/include/wx-2.8/wx/statbmp.h
+1235103093 /usr/include/wx-2.8/wx/statbmp.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/bitmap.h"
@@ -1237,10 +1231,10 @@
 	"wx/cocoa/statbmp.h"
 	"wx/os2/statbmp.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/statbmp.h
+1235103093 /usr/include/wx-2.8/wx/gtk/statbmp.h
 	"wx/icon.h"
 
-1250033143 /usr/include/wx-2.8/wx/statbox.h
+1235103093 /usr/include/wx-2.8/wx/statbox.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/univ/statbox.h"
@@ -1252,9 +1246,9 @@
 	"wx/cocoa/statbox.h"
 	"wx/os2/statbox.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/statbox.h
+1235103093 /usr/include/wx-2.8/wx/gtk/statbox.h
 
-1250033143 /usr/include/wx-2.8/wx/radiobox.h
+1235103093 /usr/include/wx-2.8/wx/radiobox.h
 	"wx/ctrlsub.h"
 	"wx/dynarray.h"
 	"wx/univ/radiobox.h"
@@ -1267,11 +1261,11 @@
 	"wx/os2/radiobox.h"
 	"wx/palmos/radiobox.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/radiobox.h
+1235103093 /usr/include/wx-2.8/wx/gtk/radiobox.h
 	"wx/bitmap.h"
 	"wx/list.h"
 
-1250033143 /usr/include/wx-2.8/wx/radiobut.h
+1235103093 /usr/include/wx-2.8/wx/radiobut.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/univ/radiobut.h"
@@ -1284,9 +1278,9 @@
 	"wx/os2/radiobut.h"
 	"wx/palmos/radiobut.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/radiobut.h
+1235103093 /usr/include/wx-2.8/wx/gtk/radiobut.h
 
-1250033143 /usr/include/wx-2.8/wx/textctrl.h
+1235103093 /usr/include/wx-2.8/wx/textctrl.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/dynarray.h"
@@ -1303,14 +1297,14 @@
 	"wx/cocoa/textctrl.h"
 	"wx/os2/textctrl.h"
 
-1250033142 /usr/include/wx-2.8/wx/ioswrap.h
+1235103092 /usr/include/wx-2.8/wx/ioswrap.h
 	<iostream.h>
 	<iostream>
 	"wx/msw/winundef.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/textctrl.h
+1235103093 /usr/include/wx-2.8/wx/gtk/textctrl.h
 
-1250033143 /usr/include/wx-2.8/wx/slider.h
+1235103093 /usr/include/wx-2.8/wx/slider.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/univ/slider.h"
@@ -1323,9 +1317,9 @@
 	"wx/os2/slider.h"
 	"wx/palmos/slider.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/slider.h
+1235103093 /usr/include/wx-2.8/wx/gtk/slider.h
 
-1250033143 /usr/include/wx-2.8/wx/gauge.h
+1235103093 /usr/include/wx-2.8/wx/gauge.h
 	"wx/defs.h"
 	"wx/control.h"
 	"wx/univ/gauge.h"
@@ -1337,16 +1331,16 @@
 	"wx/cocoa/gauge.h"
 	"wx/os2/gauge.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/gauge.h
+1235103093 /usr/include/wx-2.8/wx/gtk/gauge.h
 
-1250033143 /usr/include/wx-2.8/wx/scrolwin.h
+1235103093 /usr/include/wx-2.8/wx/scrolwin.h
 	"wx/panel.h"
 	"wx/gtk/scrolwin.h"
 	"wx/gtk1/scrolwin.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/scrolwin.h
+1235103093 /usr/include/wx-2.8/wx/gtk/scrolwin.h
 
-1250033143 /usr/include/wx-2.8/wx/dirdlg.h
+1235103093 /usr/include/wx-2.8/wx/dirdlg.h
 	"wx/dialog.h"
 	"wx/generic/dirdlgg.h"
 	"wx/generic/dirdlgg.h"
@@ -1358,13 +1352,13 @@
 	"wx/cocoa/dirdlg.h"
 	"wx/generic/dirdlgg.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/dirdlgg.h
+1235103093 /usr/include/wx-2.8/wx/generic/dirdlgg.h
 	"wx/dialog.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dirdlg.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dirdlg.h
 	"wx/generic/dirdlgg.h"
 
-1250033143 /usr/include/wx-2.8/wx/toolbar.h
+1235103093 /usr/include/wx-2.8/wx/toolbar.h
 	"wx/defs.h"
 	"wx/tbarbase.h"
 	"wx/univ/toolbar.h"
@@ -1378,15 +1372,15 @@
 	"wx/cocoa/toolbar.h"
 	"wx/os2/toolbar.h"
 
-1250033143 /usr/include/wx-2.8/wx/tbarbase.h
+1235103093 /usr/include/wx-2.8/wx/tbarbase.h
 	"wx/defs.h"
 	"wx/bitmap.h"
 	"wx/list.h"
 	"wx/control.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/tbargtk.h
+1235103093 /usr/include/wx-2.8/wx/gtk/tbargtk.h
 
-1250033143 /usr/include/wx-2.8/wx/combobox.h
+1235103093 /usr/include/wx-2.8/wx/combobox.h
 	"wx/defs.h"
 	"wx/textctrl.h"
 	"wx/ctrlsub.h"
@@ -1399,16 +1393,16 @@
 	"wx/cocoa/combobox.h"
 	"wx/os2/combobox.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/combobox.h
+1235103093 /usr/include/wx-2.8/wx/gtk/combobox.h
 
-1250033143 /usr/include/wx-2.8/wx/layout.h
+1235103093 /usr/include/wx-2.8/wx/layout.h
 	"wx/object.h"
 
-1250033143 /usr/include/wx-2.8/wx/sizer.h
+1235103093 /usr/include/wx-2.8/wx/sizer.h
 	"wx/defs.h"
 	"wx/window.h"
 
-1250033143 /usr/include/wx-2.8/wx/mdi.h
+1235103093 /usr/include/wx-2.8/wx/mdi.h
 	"wx/defs.h"
 	"wx/generic/mdig.h"
 	"wx/msw/mdi.h"
@@ -1419,10 +1413,10 @@
 	"wx/cocoa/mdi.h"
 	"wx/generic/mdig.h"
 
-1250033144 /usr/include/wx-2.8/wx/gtk/mdi.h
+1235103093 /usr/include/wx-2.8/wx/gtk/mdi.h
 	"wx/frame.h"
 
-1250033143 /usr/include/wx-2.8/wx/statusbr.h
+1235103093 /usr/include/wx-2.8/wx/statusbr.h
 	"wx/defs.h"
 	"wx/window.h"
 	"wx/list.h"
@@ -1434,41 +1428,41 @@
 	"wx/mac/statusbr.h"
 	"wx/generic/statusbr.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/statusbr.h
+1235103093 /usr/include/wx-2.8/wx/generic/statusbr.h
 	"wx/defs.h"
 	"wx/pen.h"
 	"wx/arrstr.h"
 
-1250033143 /usr/include/wx-2.8/wx/choicdlg.h
+1235103092 /usr/include/wx-2.8/wx/choicdlg.h
 	"wx/generic/choicdgg.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/choicdgg.h
+1235103093 /usr/include/wx-2.8/wx/generic/choicdgg.h
 	"wx/dynarray.h"
 	"wx/dialog.h"
 
-1250033143 /usr/include/wx-2.8/wx/textdlg.h
+1235103093 /usr/include/wx-2.8/wx/textdlg.h
 	"wx/generic/textdlgg.h"
 	"wx/numdlg.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/textdlgg.h
+1235103093 /usr/include/wx-2.8/wx/generic/textdlgg.h
 	"wx/defs.h"
 	"wx/dialog.h"
 	"wx/valtext.h"
 
-1250033143 /usr/include/wx-2.8/wx/valtext.h
+1235103093 /usr/include/wx-2.8/wx/valtext.h
 	"wx/defs.h"
 	"wx/textctrl.h"
 	"wx/validate.h"
 
-1250033143 /usr/include/wx-2.8/wx/numdlg.h
+1235103093 /usr/include/wx-2.8/wx/numdlg.h
 	"wx/defs.h"
 	"wx/generic/numdlgg.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/numdlgg.h
+1235103093 /usr/include/wx-2.8/wx/generic/numdlgg.h
 	"wx/defs.h"
 	"wx/dialog.h"
 
-1250033143 /usr/include/wx-2.8/wx/filedlg.h
+1235103093 /usr/include/wx-2.8/wx/filedlg.h
 	"wx/defs.h"
 	"wx/dialog.h"
 	"wx/arrstr.h"
@@ -1482,32 +1476,32 @@
 	"wx/cocoa/filedlg.h"
 	"wx/os2/filedlg.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/filedlgg.h
+1235103093 /usr/include/wx-2.8/wx/generic/filedlgg.h
 	"wx/listctrl.h"
 	"wx/datetime.h"
 	"wx/filefn.h"
 	"wx/filedlg.h"
 
-1250033143 /usr/include/wx-2.8/wx/listctrl.h
+1235103093 /usr/include/wx-2.8/wx/listctrl.h
 	"wx/defs.h"
 	"wx/listbase.h"
 	"wx/msw/listctrl.h"
 	"wx/mac/carbon/listctrl.h"
 	"wx/generic/listctrl.h"
 
-1250033143 /usr/include/wx-2.8/wx/listbase.h
+1235103093 /usr/include/wx-2.8/wx/listbase.h
 	"wx/colour.h"
 	"wx/font.h"
 	"wx/gdicmn.h"
 	"wx/event.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/listctrl.h
+1235103093 /usr/include/wx-2.8/wx/generic/listctrl.h
 	"wx/textctrl.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/filedlg.h
+1235103093 /usr/include/wx-2.8/wx/gtk/filedlg.h
 	"wx/generic/filedlgg.h"
 
-1260169541 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/tracks.h
+1239411671 /home/sqba/Projects/floopy/wxFloopy/engine/tracks.h
 	<wx/log.h>
 	<wx/wxprec.h>
 	<wx/list.h>
@@ -1526,7 +1520,7 @@
 	"../../common/engine_wrapper.h"
 	<wx/wx.h>
 
-1250033142 /usr/include/wx-2.8/wx/wxprec.h
+1235103092 /usr/include/wx-2.8/wx/wxprec.h
 	"wx/defs.h"
 	"wx/wxchar.h"
 	"wx/msw/wrapwin.h"
@@ -1539,9 +1533,9 @@
 	"wx/mgl/private.h"
 	"wx/wx.h"
 
-1250033142 /usr/include/wx-2.8/wx/listimpl.cpp
+1235103092 /usr/include/wx-2.8/wx/listimpl.cpp
 
-1250033143 /usr/include/wx-2.8/wx/docview.h
+1235103093 /usr/include/wx-2.8/wx/docview.h
 	"wx/defs.h"
 	"wx/list.h"
 	"wx/string.h"
@@ -1550,17 +1544,17 @@
 	"wx/iosfwrap.h"
 	"wx/stream.h"
 
-1250033143 /usr/include/wx-2.8/wx/print.h
+1235103093 /usr/include/wx-2.8/wx/print.h
 	"wx/defs.h"
 	"wx/msw/printwin.h"
 	"wx/mac/printmac.h"
 	"wx/os2/printos2.h"
 	"wx/generic/printps.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/printps.h
+1235103093 /usr/include/wx-2.8/wx/generic/printps.h
 	"wx/prntbase.h"
 
-1250033143 /usr/include/wx-2.8/wx/prntbase.h
+1235103093 /usr/include/wx-2.8/wx/prntbase.h
 	"wx/defs.h"
 	"wx/event.h"
 	"wx/cmndata.h"
@@ -1569,86 +1563,86 @@
 	"wx/dialog.h"
 	"wx/frame.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/floopycontrol.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/floopycontrol.h
 	<wx/wx.h>
 	"engine/floopyobj.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/floopyobj.h
+1239314701 /home/sqba/Projects/floopy/wxFloopy/engine/floopyobj.h
 	<wx/menu.h>
 	<wx/list.h>
 	"../../ifloopy.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/rulerview.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/rulerview.h
 	<wx/window.h>
 	<wx/scrolwin.h>
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/objtypes.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/engine/objtypes.h
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/region.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/engine/region.h
 	"floopyobj.h"
 	"objtypes.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/actionhistory.cpp
+1239314701 source:/home/sqba/Projects/floopy/wxFloopy/engine/actionhistory.cpp
 	"actionhistory.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/actionhistory.h
+1239314701 /home/sqba/Projects/floopy/wxFloopy/engine/actionhistory.h
 	"../../ifloopy.h"
 	"floopyobj.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/label.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/engine/label.cpp
 	"../globals.h"
 	"tracks.h"
 	"track.h"
 	"label.h"
 	"../util/util.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/globals.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/globals.h
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/track.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/engine/track.h
 	"../../ifloopy.h"
 	"floopyobj.h"
 	"objtypes.h"
 	<wx/string.h>
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/label.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/engine/label.h
 	"../../ifloopy.h"
 	"../floopycontrol.h"
 	"floopyobj.h"
 	"objtypes.h"
 	"pathctrl.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/pathctrl.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/engine/pathctrl.h
 	<wx/region.h>
 	<wx/list.h>
 	"floopyobj.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/util/util.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/util/util.h
 	<wx/wx.h>
 	<wx/dc.h>
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/menu.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/engine/menu.cpp
 	"tracks.h"
 	<wx/listimpl.cpp>
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/objtypes.cpp
+1237471554 source:/home/sqba/Projects/floopy/wxFloopy/engine/objtypes.cpp
 	"../globals.h"
 	"tracks.h"
 	"track.h"
 	"region.h"
 	"../util/util.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/parameter.cpp
+1237471247 source:/home/sqba/Projects/floopy/wxFloopy/engine/parameter.cpp
 	"tracks.h"
 	"track.h"
 	"region.h"
 	"parameter.h"
 	"actionhistory.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/parameter.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/engine/parameter.h
 	"floopyobj.h"
 	"objtypes.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/parameters.cpp
+1237471256 source:/home/sqba/Projects/floopy/wxFloopy/engine/parameters.cpp
 	"parameter.h"
 	"tracks.h"
 	"track.h"
@@ -1656,25 +1650,25 @@
 	<wx/wx.h>
 	<wx/listimpl.cpp>
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/pathctrl.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/engine/pathctrl.cpp
 	"pathctrl.h"
 	"track.h"
 	"label.h"
 	<wx/wx.h>
 	<wx/listimpl.cpp>
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/playthread.cpp
+1239405830 source:/home/sqba/Projects/floopy/wxFloopy/engine/playthread.cpp
 	"tracks.h"
 	"track.h"
 	"playthread.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/playthread.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/engine/playthread.h
 	"../../ifloopy.h"
 	"../floopycontrol.h"
 	"floopyobj.h"
 	"objtypes.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/region.cpp
+1237471306 source:/home/sqba/Projects/floopy/wxFloopy/engine/region.cpp
 	<math.h>
 	"../globals.h"
 	"tracks.h"
@@ -1685,11 +1679,11 @@
 	"../util/util.h"
 	"actionhistory.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/regiondisplay.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/engine/regiondisplay.h
 	"floopyobj.h"
 	"objtypes.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/regiondisplay.cpp
+1237471331 source:/home/sqba/Projects/floopy/wxFloopy/engine/regiondisplay.cpp
 	"../engine/track.h"
 	"../engine/region.h"
 	"../engine/tracks.h"
@@ -1697,7 +1691,7 @@
 	"../globals.h"
 	<math.h>
 
-1260169527 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/track.cpp
+1239405846 source:/home/sqba/Projects/floopy/wxFloopy/engine/track.cpp
 	<stdio.h>
 	"track.h"
 	"tracks.h"
@@ -1706,21 +1700,21 @@
 	"../util/util.h"
 	<wx/caret.h>
 
-1250033143 /usr/include/wx-2.8/wx/caret.h
+1235103093 /usr/include/wx-2.8/wx/caret.h
 	"wx/defs.h"
 	"wx/gdicmn.h"
 	"wx/msw/caret.h"
 	"wx/generic/caret.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/caret.h
+1235103093 /usr/include/wx-2.8/wx/generic/caret.h
 	"wx/timer.h"
 	"wx/dc.h"
 	"wx/overlay.h"
 
-1250033143 /usr/include/wx-2.8/wx/overlay.h
+1235103093 /usr/include/wx-2.8/wx/overlay.h
 	"wx/defs.h"
 
-1260169535 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/engine/tracks.cpp
+1239405851 source:/home/sqba/Projects/floopy/wxFloopy/engine/tracks.cpp
 	<math.h>
 	<wx/wx.h>
 	<wx/caret.h>
@@ -1733,13 +1727,13 @@
 	"actionhistory.h"
 	"../../platform.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/timelineview.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/timelineview.h
 	"wx/wxprec.h"
 	"wx/wx.h"
 	"caretview.h"
 	"../dialogs/controldlg.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/caretview.h
+1237471345 /home/sqba/Projects/floopy/wxFloopy/views/caretview.h
 	<wx/log.h>
 	<wx/dc.h>
 	<wx/docview.h>
@@ -1747,11 +1741,11 @@
 	"gridview.h"
 	"../engine/tracks.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/gridview.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/gridview.h
 	"mainview.h"
 	"../engine/tracks.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/mainview.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/mainview.h
 	"wx/wxprec.h"
 	"wx/wx.h"
 	<wx/docview.h>
@@ -1759,21 +1753,21 @@
 	"../engine/tracks.h"
 	"rulerview.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/floopyapp.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/floopyapp.cpp
 	"wx/wxprec.h"
 	"wx/wx.h"
 	"floopyapp.h"
 	"floopyframe.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/floopyapp.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/floopyapp.h
 	<wx/wx.h>
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/floopyframe.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/floopyframe.h
 	<wx/dnd.h>
 	<wx/timer.h>
 	"views/tracksview.h"
 
-1250033143 /usr/include/wx-2.8/wx/dnd.h
+1235103093 /usr/include/wx-2.8/wx/dnd.h
 	"wx/defs.h"
 	"wx/dataobj.h"
 	"wx/cursor.h"
@@ -1786,98 +1780,98 @@
 	"wx/mac/dnd.h"
 	"wx/os2/dnd.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/dnd.h
+1235103093 /usr/include/wx-2.8/wx/gtk/dnd.h
 	"wx/icon.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/tracksview.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/tracksview.h
 	<wx/splitter.h>
 	"labelsview.h"
 	"timelineview.h"
 	"rulerview.h"
 
-1250033143 /usr/include/wx-2.8/wx/splitter.h
+1235103093 /usr/include/wx-2.8/wx/splitter.h
 	"wx/event.h"
 	"wx/generic/splitter.h"
 
-1250033143 /usr/include/wx-2.8/wx/generic/splitter.h
+1235103093 /usr/include/wx-2.8/wx/generic/splitter.h
 	"wx/window.h"
 	"wx/containr.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/labelsview.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/labelsview.h
 	"wx/wxprec.h"
 	"wx/wx.h"
 	<wx/log.h>
 	"mainview.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/floopycontrol.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/floopycontrol.cpp
 	"floopycontrol.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/floopyframe.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/floopyframe.cpp
 	"wx/wxprec.h"
 	"wx/wx.h"
 	"floopyframe.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/util/aqua.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/util/aqua.cpp
 	<wx/dc.h>
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/util/format.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/util/format.cpp
 	"util.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/util/rect3d.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/util/rect3d.cpp
 	<wx/settings.h>
 	"util.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/caretview.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/caretview.cpp
 	"caretview.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/gridview.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/gridview.cpp
 	"gridview.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/labelsview.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/labelsview.cpp
 	"labelsview.h"
 	"../engine/track.h"
 	"../engine/label.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/mainview.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/mainview.cpp
 	"mainview.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/projectview.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/projectview.cpp
 	"projectview.h"
 	"../engine/track.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/projectview.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/projectview.h
 	"wx/wxprec.h"
 	"wx/wx.h"
 	<wx/log.h>
 	"rulerview.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/rulers/floopyhruler.cpp
+1237471403 source:/home/sqba/Projects/floopy/wxFloopy/views/rulers/floopyhruler.cpp
 	"../../globals.h"
 	"floopyhruler.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/rulers/floopyhruler.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/rulers/floopyhruler.h
 	"../rulerview.h"
 	"../../engine/tracks.h"
 	"../../util/util.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/rulers/sampleruler.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/rulers/sampleruler.cpp
 	"sampleruler.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/rulers/sampleruler.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/rulers/sampleruler.h
 	"floopyhruler.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/rulers/timeruler.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/rulers/timeruler.cpp
 	"timeruler.h"
 
-1250405339 /media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/rulers/timeruler.h
+1234814296 /home/sqba/Projects/floopy/wxFloopy/views/rulers/timeruler.h
 	"floopyhruler.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/rulerview.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/rulerview.cpp
 	"rulerview.h"
 	<wx/dcclient.h>
 	<wx/settings.h>
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/timelineview.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/timelineview.cpp
 	"timelineview.h"
 	"rulers/timeruler.h"
 	"rulers/sampleruler.h"
@@ -1885,7 +1879,7 @@
 	"../engine/region.h"
 	"wx/tooltip.h"
 
-1250033143 /usr/include/wx-2.8/wx/tooltip.h
+1235103093 /usr/include/wx-2.8/wx/tooltip.h
 	"wx/defs.h"
 	"wx/msw/tooltip.h"
 	"wx/gtk/tooltip.h"
@@ -1894,11 +1888,389 @@
 	"wx/cocoa/tooltip.h"
 	"wx/os2/tooltip.h"
 
-1250033143 /usr/include/wx-2.8/wx/gtk/tooltip.h
+1235103093 /usr/include/wx-2.8/wx/gtk/tooltip.h
 	"wx/defs.h"
 	"wx/string.h"
 	"wx/object.h"
 
-1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/tracksview.cpp
+1234814296 source:/home/sqba/Projects/floopy/wxFloopy/views/tracksview.cpp
 	"tracksview.h"
 
+1239446365 /home/sqba/Projects/floopy/common/util.h
+
+1239446360 source:/home/sqba/Projects/floopy/common/util.cpp
+	<string.h>
+	"../platform.h"
+
+1239411623 source:/home/sqba/Projects/floopy/common/engine_wrapper.cpp
+	"engine_wrapper.h"
+	<stdio.h>
+	<sstream>
+	"../platform.h"
+
+1239411623 /home/sqba/Projects/floopy/common/engine_wrapper.h
+	"../ifloopy.h"
+	"../platform.h"
+	"../common/loader.h"
+	<windows.h>
+
+<<<<<<< .mine
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/common/engine_wrapper.cpp
+	"engine_wrapper.h"
+	<stdio.h>
+	<sstream>
+	"../platform.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/common/engine_wrapper.h
+	"../ifloopy.h"
+	"../platform.h"
+	"../common/loader.h"
+	<windows.h>
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/ifloopy.h
+	<memory.h>
+	<bits/wordsize.h>
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1246306202 /home/sqba/sqba/projects/floopy/rev82/platform/linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1246306202 /home/sqba/sqba/projects/floopy/rev82/platform/win32.h
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/common/loader.h
+	<windows.h>
+	"../ifloopy.h"
+	"../platform.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/common/loader.cpp
+	<assert.h>
+	<string.h>
+	<stdio.h>
+	"loader.h"
+	"util.h"
+	"../platform.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/common/util.h
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/common/util.cpp
+	<string.h>
+	"../platform.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/dialogs/controldlg.cpp
+	"controldlg.h"
+	"../engine/region.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/dialogs/controldlg.h
+	<wx/wx.h>
+	<wx/dialog.h>
+	<wx/stattext.h>
+	<wx/slider.h>
+	"../engine/tracks.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/tracks.h
+	<wx/log.h>
+	<wx/wxprec.h>
+	<wx/list.h>
+	<wx/listimpl.cpp>
+	<wx/docview.h>
+	<wx/thread.h>
+	<wx/timer.h>
+	<wx/dcmemory.h>
+	<wx/bitmap.h>
+	"../../ifloopy.h"
+	"../floopycontrol.h"
+	"floopyobj.h"
+	"../views/rulerview.h"
+	"objtypes.h"
+	"../../platform.h"
+	"../../common/engine_wrapper.h"
+	<wx/wx.h>
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/floopycontrol.h
+	<wx/wx.h>
+	"engine/floopyobj.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/floopyobj.h
+	<wx/menu.h>
+	<wx/list.h>
+	"../../ifloopy.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/rulerview.h
+	<wx/window.h>
+	<wx/scrolwin.h>
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/objtypes.h
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/region.h
+	"floopyobj.h"
+	"objtypes.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/actionhistory.cpp
+	"actionhistory.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/actionhistory.h
+	"../../ifloopy.h"
+	"floopyobj.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/label.cpp
+	"../globals.h"
+	"tracks.h"
+	"track.h"
+	"label.h"
+	"../util/util.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/globals.h
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/track.h
+	"../../ifloopy.h"
+	"floopyobj.h"
+	"objtypes.h"
+	<wx/string.h>
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/label.h
+	"../../ifloopy.h"
+	"../floopycontrol.h"
+	"floopyobj.h"
+	"objtypes.h"
+	"pathctrl.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/pathctrl.h
+	<wx/region.h>
+	<wx/list.h>
+	"floopyobj.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/util/util.h
+	<wx/wx.h>
+	<wx/dc.h>
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/menu.cpp
+	"tracks.h"
+	<wx/listimpl.cpp>
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/objtypes.cpp
+	"../globals.h"
+	"tracks.h"
+	"track.h"
+	"region.h"
+	"../util/util.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/parameter.cpp
+	"tracks.h"
+	"track.h"
+	"region.h"
+	"parameter.h"
+	"actionhistory.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/parameter.h
+	"floopyobj.h"
+	"objtypes.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/parameters.cpp
+	"parameter.h"
+	"tracks.h"
+	"track.h"
+	"region.h"
+	<wx/wx.h>
+	<wx/listimpl.cpp>
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/pathctrl.cpp
+	"pathctrl.h"
+	"track.h"
+	"label.h"
+	<wx/wx.h>
+	<wx/listimpl.cpp>
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/playthread.cpp
+	"tracks.h"
+	"track.h"
+	"playthread.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/playthread.h
+	"../../ifloopy.h"
+	"../floopycontrol.h"
+	"floopyobj.h"
+	"objtypes.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/region.cpp
+	<math.h>
+	"../globals.h"
+	"tracks.h"
+	"track.h"
+	"region.h"
+	"parameter.h"
+	"regiondisplay.h"
+	"../util/util.h"
+	"actionhistory.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/regiondisplay.h
+	"floopyobj.h"
+	"objtypes.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/regiondisplay.cpp
+	"../engine/track.h"
+	"../engine/region.h"
+	"../engine/tracks.h"
+	"../engine/regiondisplay.h"
+	"../globals.h"
+	<math.h>
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/track.cpp
+	<stdio.h>
+	"track.h"
+	"tracks.h"
+	"region.h"
+	"label.h"
+	"../util/util.h"
+	<wx/caret.h>
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/engine/tracks.cpp
+	<math.h>
+	<wx/wx.h>
+	<wx/caret.h>
+	"tracks.h"
+	"track.h"
+	"label.h"
+	"playthread.h"
+	"../views/timelineview.h"
+	"../../ifloopy.h"
+	"actionhistory.h"
+	"../../platform.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/timelineview.h
+	"wx/wxprec.h"
+	"wx/wx.h"
+	"caretview.h"
+	"../dialogs/controldlg.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/caretview.h
+	<wx/log.h>
+	<wx/dc.h>
+	<wx/docview.h>
+	<wx/caret.h>
+	"gridview.h"
+	"../engine/tracks.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/gridview.h
+	"mainview.h"
+	"../engine/tracks.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/mainview.h
+	"wx/wxprec.h"
+	"wx/wx.h"
+	<wx/docview.h>
+	<wx/log.h>
+	"../engine/tracks.h"
+	"rulerview.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/floopyapp.cpp
+	"wx/wxprec.h"
+	"wx/wx.h"
+	"floopyapp.h"
+	"floopyframe.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/floopyapp.h
+	<wx/wx.h>
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/floopyframe.h
+	<wx/dnd.h>
+	<wx/timer.h>
+	"views/tracksview.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/tracksview.h
+	<wx/splitter.h>
+	"labelsview.h"
+	"timelineview.h"
+	"rulerview.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/labelsview.h
+	"wx/wxprec.h"
+	"wx/wx.h"
+	<wx/log.h>
+	"mainview.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/floopycontrol.cpp
+	"floopycontrol.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/floopyframe.cpp
+	"wx/wxprec.h"
+	"wx/wx.h"
+	"floopyframe.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/util/aqua.cpp
+	<wx/dc.h>
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/util/format.cpp
+	"util.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/util/rect3d.cpp
+	<wx/settings.h>
+	"util.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/caretview.cpp
+	"caretview.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/gridview.cpp
+	"gridview.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/labelsview.cpp
+	"labelsview.h"
+	"../engine/track.h"
+	"../engine/label.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/mainview.cpp
+	"mainview.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/projectview.cpp
+	"projectview.h"
+	"../engine/track.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/projectview.h
+	"wx/wxprec.h"
+	"wx/wx.h"
+	<wx/log.h>
+	"rulerview.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/rulers/floopyhruler.cpp
+	"../../globals.h"
+	"floopyhruler.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/rulers/floopyhruler.h
+	"../rulerview.h"
+	"../../engine/tracks.h"
+	"../../util/util.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/rulers/sampleruler.cpp
+	"sampleruler.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/rulers/sampleruler.h
+	"floopyhruler.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/rulers/timeruler.cpp
+	"timeruler.h"
+
+1246306203 /home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/rulers/timeruler.h
+	"floopyhruler.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/rulerview.cpp
+	"rulerview.h"
+	<wx/dcclient.h>
+	<wx/settings.h>
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/timelineview.cpp
+	"timelineview.h"
+	"rulers/timeruler.h"
+	"rulers/sampleruler.h"
+	"../engine/track.h"
+	"../engine/region.h"
+	"wx/tooltip.h"
+
+1246306203 source:/home/sqba/sqba/projects/floopy/rev82/wxFloopy/views/tracksview.cpp
+	"tracksview.h"
+
+=======
+>>>>>>> .r158

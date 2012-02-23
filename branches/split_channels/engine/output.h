@@ -37,7 +37,7 @@ public:
 	//void Close();
 
 	int Write(BYTE *data, int size);
-	int GetPosition();
+	int Write2(BYTE **data, int channels, int samples);
 
 	const char *GetName();
 	const char *GetDescription();
@@ -59,6 +59,8 @@ public:
 	void SetDest(IFloopySoundOutput *dst);
 
 	const char *GetLastErrorDesc();
+
+	int GetPosition();
 
 private:
 	void copyErrorDesc();

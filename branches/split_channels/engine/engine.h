@@ -57,7 +57,7 @@ public:
 	IFloopySoundOutput *CreateOutput(const char *plugin, SOUNDFORMAT fmt);
 
 	const char *GetDisplayName();
-	void SetDisplayName(const char *name);
+	void SetDisplayName(const char *name, int len);
 
 	void RegisterUpdateCallback(UpdateCallback func);
 
