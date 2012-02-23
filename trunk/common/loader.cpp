@@ -118,7 +118,7 @@ void *CLoader::get_function(const char *name)
 		return 0;
 	}
 
-	void *func = PLUGIN_LOAD(m_hPlugin, name);
+	void *func = (int*)PLUGIN_LOAD(m_hPlugin, name);
 	assert( func );
 	if(func == 0)
 	{

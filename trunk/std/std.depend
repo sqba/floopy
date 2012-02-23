@@ -45,7 +45,7 @@
 	<limits.h>
 	<unistd.h>
 
-1263520502 e:\floopy\platform\win32.h
+1330031257 e:\floopy\platform\win32.h
 
 1263520026 e:\floopy\common\util.h
 
@@ -265,4 +265,8 @@
 1265483850 source:e:\floopy\std\xml\xml.cpp
 	"xml.h"
 	"../../common/util.h"
+
+1330030853 source:e:\floopy\std\tonegen\tonegen.cpp
+	<math.h>
+	"tonegen.h"
 
