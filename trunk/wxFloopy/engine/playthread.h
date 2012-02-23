@@ -2,13 +2,13 @@
 #define PlayThread_H
 
 
-#include "../../../ifloopy.h"
-#include "../FloopyControl.h"
+#include "../../ifloopy.h"
+#include "../floopycontrol.h"
 #include "floopyobj.h"
-#include "ObjTypes.h"
+#include "objtypes.h"
 
 
-class CPlayThread : public wxThread  
+class CPlayThread : public wxThread
 {
 public:
 	CPlayThread(CTracks *pTracks);

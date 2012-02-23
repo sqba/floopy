@@ -1,6 +1,8 @@
 
+#include <wx/dc.h>
+
 //#include "engine/tracks.h"
-#include "util.h"
+//#include "util.h"
 
 void DrawAquaRect(wxDC& dc, wxRect& rc, int radius)
 {
@@ -41,7 +43,7 @@ void DrawAquaRect(wxDC& dc, wxRect& rc, int radius)
 	rstep = 75.f / (((float)height / 3.f) * 2.f);
 	gstep = 51.f / (((float)height / 3.f) * 2.f);
 	r=111.f, g=161.f, b=225.f;
-	for(y=top+height/3; y<top+height-1; y++)
+	for(int y=top+height/3; y<top+height-1; y++)
 	{
 		r += rstep;
 		g += gstep;

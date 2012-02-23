@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
-#include "OutputCache.h"
+#include "outputcache.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -11,7 +11,7 @@
 
 COutputCache::COutputCache()
 {
-	m_pHead = NULL;
+	m_pHead = 0;
 }
 
 COutputCache::~COutputCache()
@@ -19,9 +19,9 @@ COutputCache::~COutputCache()
 
 }
 
-void COutputCache::Add(char *signature, int position, BYTE *buff, int size)
+void COutputCache::Add(const char *signature, int position, BYTE *buff, int size)
 {
-	if(m_pHead == NULL)
+	if(m_pHead == 0)
 	{
 		m_pTail = m_pHead = new CCachedBuffer(signature, position, buff, size);
 	}
@@ -31,9 +31,9 @@ void COutputCache::Add(char *signature, int position, BYTE *buff, int size)
 	}
 }
 
-int COutputCache::Get(char *signature, int position, BYTE *buff, int size)
+int COutputCache::Get(const char *signature, int position, BYTE *buff, int size)
 {
-	if(m_pHead == NULL)
+	if(m_pHead == 0)
 	{
 		return m_pHead->Get(signature, position, buff, size);
 	}
@@ -45,7 +45,7 @@ int COutputCache::Get(char *signature, int position, BYTE *buff, int size)
 
 
 // CCachedBuffer
-COutputCache::CCachedBuffer::CCachedBuffer(char *signature, int position, BYTE *buff, int size)
+COutputCache::CCachedBuffer::CCachedBuffer(const char *signature, int position, BYTE *buff, int size)
 {
 	m_buff = new BYTE(size);
 	memcpy(m_buff, buff, size);
@@ -61,17 +61,17 @@ void COutputCache::CCachedBuffer::GetBuffer(BYTE *buff, int size)
 	memcpy(buff, m_buff, size);
 }
 
-void COutputCache::CCachedBuffer::Add(char *signature, int position, BYTE *buff, int size)
+void COutputCache::CCachedBuffer::Add(const char *signature, int position, BYTE *buff, int size)
 {
-	int firstNum = atoi( (const char*)signature[0] );
+	int firstNum = atoi( signature );
 	m_Next[firstNum] = new CCachedBuffer(signature, position, buff, size);
 }
 
-int COutputCache::CCachedBuffer::Get(char *signature, int position, BYTE *buff, int size)
+int COutputCache::CCachedBuffer::Get(const char *signature, int position, BYTE *buff, int size)
 {
 	if(signature == NULL)
 		return 0;
-	int firstNum = atoi( (const char*)signature[0] );
+//	int firstNum = atoi( signature );
 	//m_Next[firstNum]->Get();
 	return 0;
 }

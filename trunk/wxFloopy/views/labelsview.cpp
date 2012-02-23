@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "LabelsView.h"
+#include "labelsview.h"
 #include "../engine/track.h"
 #include "../engine/label.h"
 
@@ -31,7 +31,7 @@ void CLabelsView::OnDraw(wxDC& dc)
 {
 	int xScrollUnits=0, yScrollUnits=0;
 	m_pTimelineView->GetScrollPixelsPerUnit( &xScrollUnits, &yScrollUnits );
-	
+
 	int y = m_pTimelineView->GetScrollPos(wxVERTICAL) * yScrollUnits;
 	dc.SetDeviceOrigin( 0, -y );
 

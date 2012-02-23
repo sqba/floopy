@@ -9,7 +9,7 @@
 #include "gridview.h"
 #include "../engine/tracks.h"
 
-class CCaretView : public CGridView  
+class CCaretView : public CGridView
 {
 public:
 	CCaretView(CRulerView* parent, CTracks *tracks);

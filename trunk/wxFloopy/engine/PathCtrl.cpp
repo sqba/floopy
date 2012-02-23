@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "PathCtrl.h"
+#include "pathctrl.h"
 #include "track.h"
 #include "label.h"
 
@@ -71,7 +71,7 @@ void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 		points[3] = wxPoint(x+w-GAP_LENGTH,					y+h);
 		points[4] = wxPoint(x,								y+h);
 		points[5] = wxPoint(x+CORNER_LENGTH,				y+h/2);
-		
+
 		n = m_bFirst ? 5 : 6;
 	}
 	else
@@ -82,7 +82,7 @@ void CPathItem::DrawBG(wxDC &dc, wxRect &rc)
 		points[2] = wxPoint(x+w,				y+h);
 		points[3] = wxPoint(x,					y+h);
 		points[4] = wxPoint(x+CORNER_LENGTH,	y+h/2);
-		
+
 		n = 5;
 	}
 
@@ -100,15 +100,13 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 {
 	dc.SetTextForeground(*wxBLACK);
 
-	wxString csName;
-	char *disp = "mixer";
+	wxString csName(_T("mixer"));
 	if(NULL != m_pInput)
 	{
-		char *nname = m_pInput->GetName();
-		char *dname = m_pInput->GetDisplayName();
-		disp = strlen(nname) > strlen(dname) ? dname : nname;
+		const char *nname = m_pInput->GetName();
+		const char *dname = m_pInput->GetDisplayName();
+		csName = (wxChar*)(strlen(nname) > strlen(dname) ? dname : nname);
 	}
-	csName = disp;
 
 	int width = rc.GetWidth();
 	if(!m_bFirst)
@@ -127,7 +125,7 @@ void CPathItem::DrawFore(wxDC &dc, wxRect &rc)
 	{
 		if(w>width)
 		{
-			csName.Printf("%c\0", disp[0]);
+			csName.Printf(_T("%c"),csName[0]);
 			dc.GetTextExtent(csName, &w, &h);
 		}
 		int x = rc.GetX() + width/2 - w/2 + (m_bFirst ? 0 : CORNER_LENGTH);
@@ -172,7 +170,7 @@ void CPathItem::Move(int dx, int WXUNUSED(dy))
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CPathCtrl::CPathCtrl(IFloopyObj parent, IFloopySoundInput *input)
+CPathCtrl::CPathCtrl(IFloopyObj *parent, IFloopySoundInput *input)
  : IFloopyObj(parent)
 {
 	SetPath(input);
@@ -191,7 +189,7 @@ void CPathCtrl::SetPath(IFloopySoundInput *input)
 	while(tmp)
 	{
 		IFloopySoundInput *tmp2 = tmp;
-		
+
 		int type = tmp->GetType();
 		if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
 			tmp = ((IFloopySoundFilter*)tmp)->GetSource();
@@ -199,8 +197,8 @@ void CPathCtrl::SetPath(IFloopySoundInput *input)
 			tmp = NULL;
 
 		CPathItem *item = new CPathItem(this, tmp2, tmp==NULL);
-		//m_PathList.Append(item);
-		m_PathList.Insert((int)0, item);
+		m_PathList.Append(item);
+		//m_PathList.Insert(0, item);
 	}
 	m_PathList.Append(new CPathItem(this, NULL, false));
 }

@@ -43,10 +43,10 @@ CParameter::~CParameter()
 
 bool CParameter::GetName(wxString &str)
 {
-	char *name = m_pInput->GetParamName(m_index);
+	const char *name = m_pInput->GetParamName(m_index);
 	if(NULL != name)
 	{
-		str.Printf("%s", name);
+		str.Printf(_T("%s"), name);
 		return true;
 	}
 	return false;
@@ -101,7 +101,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 			{
 				if(m_bAfterTrack && offset>=0)
 					x += start - offset;
-				
+
 				x /= m_iSamplesPerPixel;
 
 				if(x <= left)
@@ -112,7 +112,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 				{
 					dc.DrawLine(prevX, prevY, x, prevY);	// Horizontal line
 					dc.DrawLine(x, prevY, x, y);			// Vertical line
-					
+
 					if( bDrawCircle )
 					{
 						if(m_pSelectedPoint &&
@@ -124,7 +124,7 @@ void CParameter::DrawFore(wxDC& dc, wxRect& rc)
 						else
 							dc.DrawCircle(x, y, 3);				// Parameter
 					}
-					
+
 					prevX = x;
 				}
 
@@ -151,13 +151,13 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 	int offset = m_pRegion->GetStartOffset();
 	if(m_bAfterTrack && offset>=0)
 		x -= (start-offset)/m_iSamplesPerPixel;
-	
+
 	int pos = x * m_iSamplesPerPixel;
 	int prevOffset	= 0;
 	int nextOffset	= 0;
 	float value		= 0.f;
 	float valuePrev	= 0.f;
-	float valueNext = 0.f;
+//	float valueNext = 0.f;
 
 	int bottom	= m_pRegion->GetTop() + m_pRegion->GetHeight();
 
@@ -173,7 +173,7 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 				pos = nextOffset;
 			else if( m_pInput->GetParamAt(prevOffset, m_index, &value) )
 			{
-				if( (prevOffset==0 || pos>prevOffset) && 
+				if( (prevOffset==0 || pos>prevOffset) &&
 					(nextOffset==0 || pos<=nextOffset) )
 				{
 					int tmpY = (int)((float)bottom - (value * m_fScale));
@@ -198,7 +198,7 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 	if( m_pInput->GetParamAt(pos, m_index, &value) )
 	{
 		int tmpY = (int)((float)bottom - (value * m_fScale));
-		
+
 		if(tmpY >= y-1 && tmpY <= y+1)
 		{
 			m_pPoint->m_samplesPerPixel = m_iSamplesPerPixel;
@@ -215,7 +215,7 @@ IFloopyObj *CParameter::GetChildAt(int x, int y)
 			if( m_pInput->GetParamAt(prevOffset, m_index, &valuePrev) )
 			{
 				int prevY = (int)((float)bottom - (valuePrev * m_fScale));
-				
+
 				if(prevY > tmpY)
 				{
 					int tmp	= tmpY;
@@ -287,13 +287,13 @@ bool CParameter::OnKeyDown(wxKeyEvent& event)
 			m_pSelectedPoint->Move(0, 1);
 		return true;
 	case WXK_PRIOR:
-	case WXK_PAGEUP:
+//	case WXK_PAGEUP:
 	case WXK_NUMPAD_PAGEUP:
 		if(NULL != m_pSelectedPoint)
 			m_pSelectedPoint->Move(-1, 0);
 		return true;
 	case WXK_NEXT:
-	case WXK_PAGEDOWN:
+//	case WXK_PAGEDOWN:
 	case WXK_NUMPAD_PAGEDOWN:
 		if(NULL != m_pSelectedPoint)
 			m_pSelectedPoint->Move(1, 0);
@@ -309,7 +309,7 @@ bool CParameter::OnKeyDown(wxKeyEvent& event)
 	default:
 		break;
 	}
-		
+
 	return false;
 }
 

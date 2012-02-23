@@ -9,13 +9,12 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
+#include "../platform.h"
 #include "../ifloopy.h"
+#include "../common/loader.h"
+#include "../common/util.h"
 #include "timeline.h"
-#include "PluginLoader.h"
 #include "outputcache.h"
-
-
 
 /**
  * \class CInput
@@ -28,48 +27,48 @@
  * Memorizes all parameter changes and the offsets at which they occured.
  * These parameters are then set during execution.
  */
-class CInput : public IFloopySoundMixer, CPluginLoader
+class CInput : public IFloopySoundMixer, CLoader
 {
 public:
-	CInput(UpdateCallback func, COutputCache *outputCache);
+	CInput(LIB_HANDLE hModule, UpdateCallback func, COutputCache *outputCache);
 	virtual ~CInput();
 
-	bool Create(char *plugin);
+	bool Create(const char *plugin);
 	bool Create(IFloopySoundEngine *src);
 
-	char *GetName()									{ return m_plugin->GetName(); }
-	char *GetDescription()							{ return m_plugin->GetDescription(); }
-	char *GetVersion()								{ return m_plugin->GetVersion(); }
-	char *GetAuthor()								{ return m_plugin->GetAuthor(); }
+	const char *GetName()							{ return m_plugin->GetName(); }
+	const char *GetDescription()					{ return m_plugin->GetDescription(); }
+	const char *GetVersion()						{ return m_plugin->GetVersion(); }
+	const char *GetAuthor()							{ return m_plugin->GetAuthor(); }
 
 	int   GetParamCount()							{ return m_plugin->GetParamCount(); }
 	bool  GetParamVal(int index, float *value);
 	void  SetParamVal(int index, float value);
-	char *GetParamName(int index);
-	char *GetParamDesc(int index);
-	bool  GetParamIndex(char *name, int *index);
+	const char *GetParamName(int index);
+	const char *GetParamDesc(int index);
+	bool  GetParamIndex(const char *name, int *index);
 	float GetParamMax(int index)					{ return m_plugin->GetParamMax(index); }
 	float GetParamMin(int index)					{ return m_plugin->GetParamMin(index); }
-	char *GetParamUnit(int index)					{ return m_plugin->GetParamUnit(index); }
+	const char *GetParamUnit(int index)				{ return m_plugin->GetParamUnit(index); }
 	float GetParamStep(int index)					{ return m_plugin->GetParamStep(index); }
 
 	int   GetPropertyCount()						{ return m_plugin->GetPropertyCount(); }
 	bool  GetPropertyVal(int index, float *value)	{ return m_plugin->GetPropertyVal(index, value); }
 	void  SetPropertyVal(int index, float value)	{ m_plugin->SetPropertyVal(index, value); }
-	char *GetPropertyName(int index)				{ return m_plugin->GetPropertyName(index); }
-	char *GetPropertyDesc(int index)				{ return m_plugin->GetPropertyDesc(index); }
-	bool  GetPropertyIndex(char *name, int *index);//	{ return m_plugin->GetPropertyIndex(name, index); }
+	const char *GetPropertyName(int index)			{ return m_plugin->GetPropertyName(index); }
+	const char *GetPropertyDesc(int index)			{ return m_plugin->GetPropertyDesc(index); }
+	bool  GetPropertyIndex(const char *name, int *index);//	{ return m_plugin->GetPropertyIndex(name, index); }
 	float GetPropertyMax(int index)					{ return m_plugin->GetPropertyMax(index); }
 	float GetPropertyMin(int index)					{ return m_plugin->GetPropertyMin(index); }
-	char *GetPropertyUnit(int index)				{ return m_plugin->GetPropertyUnit(index); }
+	const char *GetPropertyUnit(int index)			{ return m_plugin->GetPropertyUnit(index); }
 	float GetPropertyStep(int index)				{ return m_plugin->GetPropertyStep(index); }
 
-	int GetType()									{ return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY); }
+	int GetType()									{ return (m_plugin ? m_plugin->GetType() : TYPE_FLOOPY_OBJECT); }
 
-	char *GetPath()									{ return isEngine() ? m_source->GetPath() : m_szObjPath; }
+	const char *GetPath()							{ return m_plugin->is_engine() ? m_source->GetPath() : m_szObjPath; }
 
-	char *GetDisplayName()							{ return m_szDisplayName; }
-	void SetDisplayName(char*, int);
+	const char *GetDisplayName()					{ return m_szDisplayName; }
+	void SetDisplayName(const char*, int);
 
 	int GetPosition()								{ return m_offset / m_nSamplesToBytes; }
 
@@ -83,7 +82,7 @@ public:
 	void Enable(bool bEnable);
 	bool IsEnabled();
 
-	bool Open(char*);
+	bool Open(const char*);
 	void Close();
 
 	void MoveTo(int samples);
@@ -111,8 +110,9 @@ public:
 
 
 	bool GetLastError(char*, int);
+	const char *GetLastErrorDesc() { return NULL; }
 
-	char *GetSignature();
+	const char *GetSignature();
 
 
 
@@ -130,14 +130,12 @@ public:
 	bool GetBypass();
 	void SetBypass(bool);
 
-	bool ReadSourceIfDisabled();
+	bool CanReadSourceIfDisabled();
 
 private:
 	inline IFloopySoundInput *getSource();
-	inline bool isEngine();
-	inline bool isFilter();
-	inline bool isEndOfTrack();
-	inline bool isMixer();
+
+	bool isEndOfTrack();
 
 	void	applyParamsAt(int);
 	int		applyPreviousParams(int);
@@ -147,9 +145,6 @@ private:
 	void	recalcVariables();
 	void	recalcSourceVariables();
 	int		skipChunk(int);
-
-	void	getLibraryName(char *fullname, char *name);
-	void	getPluginName(char *fullname, char *name);
 
 	void	loadDefaultParams();
 	int		readFromCache(BYTE *data, int size);

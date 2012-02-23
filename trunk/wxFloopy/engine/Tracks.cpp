@@ -11,12 +11,13 @@
 #include "label.h"
 #include "playthread.h"
 #include "../views/timelineview.h"
-#include "../../../IFloopy.h"
-#include "ActionHistory.h"
+#include "../../ifloopy.h"
+#include "actionhistory.h"
 
-typedef IFloopySoundEngine* (*CreateProc)(HMODULE);
+#include "../../platform.h"
+
+typedef IFloopySoundEngine* (*CreateProc)(LIB_HANDLE);
 #define PROC_NAME	"CreateSoundEngine"
-#define PLUG_EXT	".dll"
 
 //IMPLEMENT_DYNAMIC_CLASS(CTracks, IFloopyObj)
 
@@ -40,9 +41,11 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_bChanged			= false;
 	m_bViewUpdated		= false;
 	m_bScrollView		= false;
-	m_bDrawPreview		= false;	// Default
+	m_bDrawPreview		= true;	// Default
 
-	memset(m_filename, 0, sizeof(m_filename));
+	m_pEngine           = NULL;
+
+	m_filename          = _T("");
 
 	m_Timer.SetParent( this );
 
@@ -50,9 +53,9 @@ CTracks::CTracks() : IFloopyObj(NULL)
 	m_pPlayThread		= new CPlayThread(this);
 	m_pActionHistory	= new CActionHistory();
 
-	createEngine("engine");
+	createEngine( _T("engine") );
 
-	wxLog::AddTraceMask(_T("CTracks"));
+	wxLog::AddTraceMask( _T("CTracks") );
 }
 
 CTracks::~CTracks()
@@ -71,7 +74,7 @@ CTracks::~CTracks()
 	if(NULL != m_pEngine)
 	{
 		delete m_pEngine;
-		m_libEngine.Unload();
+//		m_libEngine.Unload();
 	}
 
 	delete m_pActionHistory;
@@ -335,11 +338,11 @@ bool CTracks::RemoveSelectedObjects()
 		{
 			if( RemoveTrack(track) )
 			{
-				GetStatusBar()->SetStatusText("Track removed", 0);
+				GetStatusBar()->SetStatusText(_T("Track removed"), 0);
 				bResult = true;
 			}
 			else
-				GetStatusBar()->SetStatusText("Failed to remove track", 0);
+				GetStatusBar()->SetStatusText(_T("Failed to remove track"), 0);
 		}
 	}
 	return bResult;
@@ -424,7 +427,7 @@ void CTracks::SetTimelineView(CRulerView *panel)
 
 int CTracks::GetWidth()
 {
-	return m_length * (float)m_iPixelsPerSecond;
+	return int(m_length * (float)m_iPixelsPerSecond);
 }
 
 void CTracks::SetWidth(int width)
@@ -445,28 +448,31 @@ void CTracks::changeHeight(int dy)
 	}
 	SetCaretPos( GetCaretPos() );
 }
-
-void CTracks::Dump(ostream& stream)
+/*
+void CTracks::Dump(ostringstream& stream)
 {
-	/*stream << _T("CTracks") << '\n';
+	stream << _T("CTracks") << '\n';
 
 	if( m_pBorder )
 		stream << m_pBorder << '\n';
 
-	stream << '\n';*/
+	stream << '\n';
 }
+*/
 
 
 
 
 
 
-
-bool CTracks::createEngine(char *plugin)
+bool CTracks::createEngine(const wxChar *plugin)
 {
-	char *filename = new char[strlen(plugin) + 5];
-	strcpy(filename, plugin);
-	strcat(filename, PLUG_EXT);
+    wxString str = plugin;
+    m_pEngine = new CEngineWrapper( str.mb_str() );
+    return(NULL != m_pEngine);
+/*
+	wxString filename;
+	filename.Printf(_T("%s%s%s"), _T(PLUG_PREFIX), plugin, _T(PLUG_EXT));
 
 	bool result = false;
 
@@ -492,12 +498,13 @@ bool CTracks::createEngine(char *plugin)
 		}
 	}
 
-	delete filename;
+//	delete filename;
 
 	return result;
+*/
 }
 
-bool CTracks::Open(char *filename)
+bool CTracks::Open(wxString &filename)
 {
 	bool result = false;
 
@@ -505,13 +512,19 @@ bool CTracks::Open(char *filename)
 
 	::wxSetCursor( *wxHOURGLASS_CURSOR );
 
+    char fn[MAX_PATH] = {0};
+    wxWC2MB(fn, filename.c_str(), MAX_PATH-1);
+
+    //const char *fn = filename.mb_str(wxConvLibc); // Doesn't work!
+    //const char *fn = filename.fn_str();
+    wxASSERT(strlen(fn) > 0);
+
 	if(m_pEngine)
 	{
-		if(m_pEngine->Open(filename))
+		if( m_pEngine->Open(fn) )
 		{
 			m_pMaster = NULL;
-			memset(m_filename, 0, sizeof(m_filename));
-			strcpy(m_filename, filename);
+			m_filename = filename;
 			Clear();
 			loadTracks(m_pEngine, 0);
 			SOUNDFORMAT *fmt = m_pEngine->GetFormat();
@@ -524,16 +537,16 @@ bool CTracks::Open(char *filename)
 		}
 		else
 		{
-			IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateTrack(filename);
+			IFloopySoundFilter *track = (IFloopySoundFilter*)m_pEngine->CreateTrack(fn);
 			if(track)
 			{
 				if(!m_pMaster)
 				{
-					m_pMaster = (IFloopySoundMixer*)m_pEngine->CreateInput("stdlib.mixer");
+					m_pMaster = (IFloopySoundMixer*)m_pEngine->CreateInput("std.mixer");
 					m_pMaster->Enable(true);
 					m_pEngine->SetSource( m_pMaster );
 				}
-				track->SetDisplayName(filename, strlen(filename));
+				track->SetDisplayName(fn, strlen(fn));
 				if( m_pMaster->AddSource(track) > -1 )
 				{
 					addTrack(track, 0);
@@ -543,7 +556,7 @@ bool CTracks::Open(char *filename)
 				else
 				{
 					wxString err;
-					err.Printf("Mixer supports maximum %d tracks!", m_tracks.GetCount());
+					err.Printf(_T("Mixer supports maximum %d tracks!"), m_tracks.GetCount());
 					(void)wxMessageBox(err, _T("Mixer error"), wxICON_EXCLAMATION);
 					result = true;
 				}
@@ -560,10 +573,10 @@ bool CTracks::Open(char *filename)
 	return result;
 }
 
-bool CTracks::Save(char *filename)
+bool CTracks::Save(const wxChar *filename)
 {
 	if(m_pEngine)
-		return m_pEngine->Save(filename);
+		return m_pEngine->Save((char*)filename);
 	return false;
 }
 
@@ -592,7 +605,7 @@ void CTracks::loadTracks(IFloopySoundInput *input, int level)
 		m_pMaster = (IFloopySoundMixer*)input;
 
 		int count = m_pMaster->GetInputCount();
-		
+
 		for(int i=0; i<count; i++)
 		{
 			IFloopySoundInput *track = m_pMaster->GetSource(i);
@@ -654,7 +667,7 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		Play();
 		return true;
 	case WXK_PRIOR:
-	case WXK_PAGEUP:
+//	case WXK_PAGEUP:
 	case WXK_NUMPAD_PAGEUP:
 		{
 			CTrack *track = GetSelectedTrack();
@@ -675,7 +688,7 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		}
 		return true;
 	case WXK_NEXT:
-	case WXK_PAGEDOWN:
+//	case WXK_PAGEDOWN:
 	case WXK_NUMPAD_PAGEDOWN:
 		{
 			CTrack *track = GetSelectedTrack();
@@ -713,7 +726,7 @@ bool CTracks::OnKeyDown(wxKeyEvent& event)
 		{
 			if( event.ShiftDown() )
 				m_pActionHistory->RedoLastAction();
-			else 
+			else
 				m_pActionHistory->UndoLastAction();
 		}
 		return true;
@@ -785,8 +798,8 @@ int CTracks::GetClosestGridPos(int pos)
 
 int CTracks::CalcStep(int mindist)
 {
-	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
-	int freq	= fmt->frequency;
+//	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
+//	int freq	= fmt->frequency;
 	int pps		= m_iPixelsPerSecond;
 	int res		= (pps / mindist);
 
@@ -815,7 +828,7 @@ void CTracks::OnExitThread()
 	// Postaviti nekako kursor na prvobitnu poziciju.
 	// A to ne moze iz drugog thread-a!
 
-	GetStatusBar()->SetStatusText("Finished playing", 0);
+	GetStatusBar()->SetStatusText(_T("Finished playing"), 0);
 	m_pPlayThread = new CPlayThread(this);
 }
 
@@ -834,7 +847,7 @@ void CTracks::Play()
 		{
 			m_iStartSample = GetCaretPos();
 			m_pPlayThread->Play( m_iStartSample );
-			GetStatusBar()->SetStatusText("Playing", 0);
+			GetStatusBar()->SetStatusText(_T("Playing"), 0);
 		}
 
 		m_Timer.Start();
@@ -846,9 +859,9 @@ void CTracks::Pause()
 	if(NULL != m_pPlayThread)
 	{
 		if(m_pPlayThread->IsPaused())
-			GetStatusBar()->SetStatusText("Playing", 0);
+			GetStatusBar()->SetStatusText(_T("Playing"), 0);
 		else
-			GetStatusBar()->SetStatusText("Paused", 1);
+			GetStatusBar()->SetStatusText(_T("Paused"), 1);
 		m_pPlayThread->Pause();
 	}
 }
@@ -864,7 +877,7 @@ void CTracks::Stop()
 		SetCaretPos( m_iStartSample );
 		SetCursorPosition( m_iStartSample );
 
-		GetStatusBar()->SetStatusText("Idle", 1);
+		GetStatusBar()->SetStatusText(_T("Idle"), 1);
 	}
 }
 
@@ -877,7 +890,8 @@ void CTracks::SetCaretPos(int samples)
 	if(samples < 0)
 		samples = 0;
 
-	int x = samples / GetSamplesPerPixel();
+    int spp = GetSamplesPerPixel();
+	int x = samples / spp ;
 	int y = 0;
 
 	int xc1, yc1;
@@ -941,6 +955,7 @@ int CTracks::GetCursorPosition()
 
 void CTracks::SetStatusText(int samples)
 {
+    return; // something breaks here
 	float seconds = 0.f;
 	SOUNDFORMAT *fmt = m_pEngine->GetFormat();
 	if(fmt && fmt->frequency>0)
@@ -950,10 +965,10 @@ void CTracks::SetStatusText(int samples)
 	float min = seconds>60.f ? seconds/60.f : 0.f;
 	float sec = min>1.f ? seconds-min*60.f : seconds;
 	float ms  = sec*1000.f - (int)sec*1000;
-	csTime.Printf("%2.2d:%2.2d:%3.3d", (int)min, (int)sec, (int)ms);
+	csTime.Printf(_T("%2.2f:%2.2f:%3.3f"), min, sec, ms);
 
 	wxString str;
-	str.Printf("%d samples / %s", samples, csTime);
+	str.Printf(_T("%d samples / %s"), samples, csTime.c_str());
 
 	GetStatusBar()->SetStatusText(str, 1);
 }
@@ -997,10 +1012,10 @@ char *CTracks::GetComponentName(IFloopySoundInput *src)
 {
 	if(NULL == src)
 		return NULL;
-	char *tmp = src->GetName();
+	const char *tmp = src->GetName();
 	char *name = strrchr(tmp, '.');
 	if(NULL == name)
-		name = tmp;
+		name = (char*)tmp;
 	else
 		name++;
 	return name;
@@ -1105,7 +1120,7 @@ void CTracks::SetPropertyVal(int index, float value)
 	}
 }
 
-char *CTracks::GetPropertyName(int index)
+const char *CTracks::GetPropertyName(int index)
 {
 	switch(index)
 	{
@@ -1119,7 +1134,7 @@ char *CTracks::GetPropertyName(int index)
 	return NULL;
 }
 
-char *CTracks::GetPropertyDesc(int index)
+const char *CTracks::GetPropertyDesc(int index)
 {
 	switch(index)
 	{
@@ -1161,7 +1176,7 @@ float CTracks::GetPropertyMax(int index)
 	return 0.f;
 }
 
-char *CTracks::GetPropertyUnit(int index)
+const char *CTracks::GetPropertyUnit(int index)
 {
 	switch(index)
 	{
@@ -1203,7 +1218,7 @@ void CTracks::CTimer::Notify()
 	int pos = m_pTracks->GetCursorPosition();
 	m_pTracks->SetCaretPos( pos );
 	m_pTracks->SetStatusText( pos );
-	
+
 	// Mozda je bolje skrolovati konstantnom brzinom
 	// i povremeno vrsiti korekcije
 	if( m_pTracks->ScrollWhilePlaying() )

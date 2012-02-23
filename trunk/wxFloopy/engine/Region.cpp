@@ -141,7 +141,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
 
 //	dc.DrawRoundedRectangle(rc.GetLeft(), rc.GetTop(), rc.GetWidth(), rc.GetHeight(), 3);
-	
+
 	int left = rc.GetLeft();
 	int right = left + rc.GetWidth();
 
@@ -157,7 +157,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 
 		if(i==0 && start!=0)
 			l = origLen-start;
-		
+
 		int x1 = prev;
 		int x2 = prev + l;
 
@@ -201,7 +201,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	int origLen = ceil((float)m_iLengthNotLooped / (float)nSamplesPerPixel);
 
 	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
-	
+
 	int left  = rc.GetLeft();
 	int right = left + rc.GetWidth();
 
@@ -222,7 +222,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	int width = rc.GetWidth();
 	int end = start+width;
 	//int pos = left-start;
-	
+
 	for(int x=left; x<=right; x++)
 	{
 		int l=3;
@@ -284,8 +284,8 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 
 /**
  * Draws region frame with loop end markers.
- * @param dc 
- * @param rc 
+ * @param dc
+ * @param rc
  * @return void
  */
 void CRegion::drawFrame(wxDC& dc, wxRect& rc)
@@ -304,7 +304,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	int origLen = ceil((float)m_iLengthNotLooped / (float)nSamplesPerPixel);
 
 	int loopCount = floor((float)rc.GetWidth() / (float)origLen);
-	
+
 	int left  = rc.GetLeft();
 	int right = left + rc.GetWidth();
 
@@ -330,7 +330,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 
 		if(l < 0)
 			l = 0;
-		
+
 		int x1 = prev;
 		int x2 = prev + l;
 
@@ -375,7 +375,7 @@ void CRegion::drawFrame(wxDC& dc, wxRect& rc)
 	points[n++] = wxPoint(right, y1);
 	points[n++] = wxPoint(right, y2);
 
-	for(i=b; i>0; i--)
+	for(int i=b; i>0; i--)
 		points[n++] = pointsBottom[i-1];
 
 	dc.DrawPolygon(n, points);
@@ -446,7 +446,10 @@ void CRegion::DrawBG(wxDC& dc, wxRect& rc)
 	//CWaveDisplay *disp = (CWaveDisplay*)getTrack()->GetDisplay();
 	CRegionDisplay *disp = m_pDisplay;
 	if(disp && IsDrawPreviewOn())
-		disp->DrawBG(dc, wxRect(left+border, top+border, width-border*2, height-border*2));
+	{
+	    wxRect rc(left+border, top+border, width-border*2, height-border*2);
+		disp->DrawBG(dc, rc);
+	}
 	dc.SetPen(oldpen);
 	///////////////////////////////////////////////////////
 }
@@ -463,7 +466,7 @@ void CRegion::DrawFore(wxDC& dc, wxRect& rc)
 	int left=0, right=0;
 	calcPos(&left, &right);
 	int width	= right - left;
-	int border	= (IsSelected() ? 2 : 1);
+//	int border	= (IsSelected() ? 2 : 1);
 	int top		= rc.GetTop() + 1;
 	int height	= rc.GetHeight() - 2;
 
@@ -648,9 +651,9 @@ IFloopyObj *CRegion::GetChildAt(int x, int y)
 
 	if( HitTest(x, y) )
 	{
-		if( m_bShowOffsetBar && 
-			this->GetHeight()>2*m_pOffsetBar->GetHeight() && 
-			y>=GetTop() && 
+		if( m_bShowOffsetBar &&
+			this->GetHeight()>2*m_pOffsetBar->GetHeight() &&
+			y>=GetTop() &&
 			y<GetTop() + m_pOffsetBar->GetHeight())
 			return m_pOffsetBar;
 		if(left == x)
@@ -873,9 +876,9 @@ bool CRegion::setEndPos(int prevPos, int newPos)
 
 void CRegion::Update()
 {
-	bool bRefresh = true;
+//	bool bRefresh = true;
 
-	IFloopySoundInput *track = getTrack()->GetTrack();
+//	IFloopySoundInput *track = getTrack()->GetTrack();
 
 	CActionHistory *actionHistory = getTracks()->GetActionHistory();
 
@@ -996,7 +999,7 @@ bool CRegion::OnKeyDown(wxKeyEvent& event)
 				return true;
 		}*/
 	}
-	
+
 	return false;
 }
 
@@ -1225,7 +1228,7 @@ void CRegion::SetReset(bool bReset)
 	else
 	{
 		IFloopySoundInput *track = getTrack()->GetTrack();
-	
+
 		CActionHistory *actionHistory = getTracks()->GetActionHistory();
 
 		float value = 0;
@@ -1314,7 +1317,7 @@ int CRegion::GetCaretPos()
 	{
 		return getTrack()->GetCaretPos();
 	}*/
-		
+
 	return pos;
 }
 
@@ -1417,7 +1420,7 @@ void CRegion::SetPropertyVal(int index, float value)
 	}
 }
 
-char *CRegion::GetPropertyName(int index)
+const char *CRegion::GetPropertyName(int index)
 {
 	switch(index)
 	{
@@ -1426,7 +1429,7 @@ char *CRegion::GetPropertyName(int index)
 	return NULL;
 }
 
-char *CRegion::GetPropertyDesc(int index)
+const char *CRegion::GetPropertyDesc(int index)
 {
 	switch(index)
 	{
@@ -1453,7 +1456,7 @@ float CRegion::GetPropertyMax(int index)
 	return 0.f;
 }
 
-char *CRegion::GetPropertyUnit(int index)
+const char *CRegion::GetPropertyUnit(int index)
 {
 	//switch(index)
 	//{
@@ -1548,7 +1551,7 @@ void CRegion::CBorder::Move(int dx, int WXUNUSED(dy))
 /**
  * Called by CActionHistory.
  * Moves or resizes region depending of the index parameter.
- * @param offset 
+ * @param offset
  * @param index 0:translation, 1:start position, 2:end position
  * @param value not used
  * @param newoffset New position
@@ -1607,17 +1610,17 @@ float CRegion::GetParamStep(int index)
 	return 0.f;
 }
 
-char *CRegion::GetParamName(int index)
+const char *CRegion::GetParamName(int index)
 {
 	return NULL;
 }
 
-char *CRegion::GetParamDesc(int index)
+const char *CRegion::GetParamDesc(int index)
 {
 	return NULL;
 }
 
-char *CRegion::GetParamUnit(int index)
+const char *CRegion::GetParamUnit(int index)
 {
 	return NULL;
 }

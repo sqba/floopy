@@ -44,7 +44,8 @@ void CLabel::DrawBG(wxDC& dc, wxRect& rc)
 		width  = rc.GetWidth()-left;
 		height = rc.GetHeight();
 		//dc.DrawRectangle(left, top, width, height);
-		DrawAquaRect(dc, wxRect(left+1, top+1, width-2, height-2), 4);
+		wxRect rc(left+1, top+1, width-2, height-2);
+		DrawAquaRect(dc, rc, 4);
 	}
 	else
 	{

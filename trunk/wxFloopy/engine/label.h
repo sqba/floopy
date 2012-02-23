@@ -2,11 +2,11 @@
 #define Label_H
 
 
-#include "../../../ifloopy.h"
-#include "../FloopyControl.h"
+#include "../../ifloopy.h"
+#include "../floopycontrol.h"
 #include "floopyobj.h"
-#include "ObjTypes.h"
-#include "PathCtrl.h"
+#include "objtypes.h"
+#include "pathctrl.h"
 
 
 class CTrack;

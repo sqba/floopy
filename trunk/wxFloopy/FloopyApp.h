@@ -12,4 +12,4 @@ public:
 
 DECLARE_APP(CFloopyApp)
 
-#endif _FLOOPYAPP_H
+#endif // _FLOOPYAPP_H

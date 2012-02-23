@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "TimeRuler.h"
+#include "timeruler.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -52,7 +52,7 @@ void CTimeRuler::OnDraw(wxDC &dc)
 	dc.SetFont( *wxSWISS_FONT );
 
 	int w=0, h=0;
-	wxString csLabel("00:00:000");
+	wxString csLabel(_T("00:00:000"));
 	dc.GetTextExtent(csLabel, &w, &h);
 	int iTextTop = iLineTop1 - (h - h/3);
 

@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "CaretView.h"
+#include "caretview.h"
 
 
 BEGIN_EVENT_TABLE(CCaretView, CGridView)
@@ -68,7 +68,7 @@ void CCaretView::OnMouseEvent(wxMouseEvent& event)
 	{
 		//wxLogTrace(_T("CCaretView"), _T("ButtonDown x=%d y=%d"), event.GetX(), event.GetY());
 		m_ptSelStart = event.GetPosition();
-			
+
 		//m_iSelStart = m_ptSelStart.x;
 		//m_iSelEnd = -1;
 

@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "ActionHistory.h"
+#include "actionhistory.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -27,7 +27,7 @@ CActionHistory::~CActionHistory()
 	}
 }
 
-bool CActionHistory::EnableAt(IFloopyObj *caller, IFloopy *obj, int offset, bool bEnable)
+bool CActionHistory::EnableAt(IFloopyObj *caller, IFloopyObject *obj, int offset, bool bEnable)
 {
 	if( obj->EnableAt(offset, bEnable) )
 	{
@@ -44,7 +44,7 @@ bool CActionHistory::EnableAt(IFloopyObj *caller, IFloopy *obj, int offset, bool
 	return false;
 }
 
-bool CActionHistory::SetParamAt(IFloopyObj *caller, IFloopy *obj, int offset, int index, float value)
+bool CActionHistory::SetParamAt(IFloopyObj *caller, IFloopyObject *obj, int offset, int index, float value)
 {
 	float prevValue = 0.f;
 	obj->GetParamAt(offset, index, &prevValue);
@@ -65,7 +65,7 @@ bool CActionHistory::SetParamAt(IFloopyObj *caller, IFloopy *obj, int offset, in
 	return false;
 }
 
-bool CActionHistory::ResetParamAt(IFloopyObj *caller, IFloopy *obj, int offset, int index, float value)
+bool CActionHistory::ResetParamAt(IFloopyObj *caller, IFloopyObject *obj, int offset, int index, float value)
 {
 	float prevValue = 0.f;
 	if( obj->GetParamAt(offset, index, &prevValue) )
@@ -88,7 +88,7 @@ bool CActionHistory::ResetParamAt(IFloopyObj *caller, IFloopy *obj, int offset, 
 	return false;
 }
 
-bool CActionHistory::MoveParam(IFloopyObj *caller, IFloopy *obj, int offset, int index, float value, int newoffset)
+bool CActionHistory::MoveParam(IFloopyObj *caller, IFloopyObject *obj, int offset, int index, float value, int newoffset)
 {
 	if( obj->MoveParam(offset, index, value, newoffset) )
 	{

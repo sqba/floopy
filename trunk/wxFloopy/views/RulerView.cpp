@@ -1,5 +1,5 @@
 
-#include "RulerView.h"
+#include "rulerview.h"
 #include <wx/dcclient.h>
 #include <wx/settings.h>
 
@@ -75,7 +75,7 @@ void CRulerView::OnSize( wxSizeEvent& event )
 
 	int viewTop = 0;
 	int viewBottom = ch;
-	
+
 	if ( m_pTopRuler && m_pTopRuler->IsShown() )
 	{
 		int height = m_pTopRuler->GetSize().GetHeight();

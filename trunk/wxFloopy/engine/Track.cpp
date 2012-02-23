@@ -54,10 +54,10 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
 	assert(NULL != m_pTrack);
 
 
-	char *name = input->GetDisplayName();
+	const char *name = input->GetDisplayName();
 	if(!name || strlen(name) == 0)
 		name = input->GetName();
-	
+
 	char *tmp = strrchr(name, '\\');
 	if(tmp)
 		name = tmp + 1;
@@ -71,10 +71,10 @@ CTrack::CTrack(CTracks *tracks, IFloopySoundInput *input, int level)
 			m_height = (int)val;
 	}*/
 
-	m_name    = name;
+	m_name    = (wxChar*)name;
 	m_top     = 0;
 	m_pBitmap = new wxBitmap();
-	m_pBitmap->LoadFile("res/help.bmp", wxBITMAP_TYPE_BMP);
+	m_pBitmap->LoadFile(_T("res/help.bmp"), wxBITMAP_TYPE_BMP);
 	m_pBorder = new CBorder(this);
 //	m_pDisplay = NULL;
 
@@ -444,7 +444,7 @@ void CTrack::SetHeight(int height)
 			m_pTrack->SetPropertyVal(index, (float)height);
 
 			Refresh();
-			
+
 			GetTracks()->RefreshTracks(this);
 
 			GetTracks()->SetCaretPos(GetTracks()->GetCaretPos());
@@ -489,10 +489,10 @@ bool CTrack::LoadDisplay(wxString strType)
 	}*/
 	return result;
 }
-
+/*
 void CTrack::Dump(ostream& stream)
 {
-	/*stream << _T("CTrack") << '\n';
+	stream << _T("CTrack") << '\n';
 
 	if( m_pBitmap )
 		stream << m_pBitmap << '\n';
@@ -501,9 +501,9 @@ void CTrack::Dump(ostream& stream)
 	if( m_pDisplay )
 		stream << m_pDisplay << '\n';
 
-	stream << '\n';*/
+	stream << '\n';
 }
-
+*/
 /*
 void CTrack::RefreshLabel(wxPanel *panel)
 {
@@ -524,8 +524,8 @@ void CTrack::Select(bool sel)
 void CTrack::loadRegions()
 {
 	int start=-1, end=-1;
-	SOUNDFORMAT *fmt = m_pTrack->GetFormat();
-	float freq = (float)fmt->frequency;
+//	SOUNDFORMAT *fmt = m_pTrack->GetFormat();
+//	float freq = (float)fmt->frequency;
 
 	m_pTrack->Reset();
 
@@ -633,7 +633,7 @@ bool CTrack::OnKeyDown(wxKeyEvent& event)
 				return true;
 		}*/
 	}
-		
+
 	return false;
 }
 
@@ -746,7 +746,7 @@ void CTrack::CheckIntersections(CRegion *pEvent1, int &left, int &right, bool bR
 
 		node = node->GetNext();
 	}
-	
+
 //	assert(left>0 && right>0);
 }
 
@@ -778,7 +778,7 @@ void CTrack::SetLooped(bool bLooped)
 				return; // No need
 
 			IFloopySoundEngine *engine = (IFloopySoundEngine*)GetTracks()->GetInput();
-			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateInput("stdlib.loop");
+			IFloopySoundFilter *loop = (IFloopySoundFilter*)engine->CreateInput("std.loop");
 			if(loop)
 			{
 				loop->EnableAt(0, true);
@@ -839,7 +839,7 @@ void CTrack::SetReverse(bool bReverse)
 			assert(engine != NULL);
 			if(NULL != engine)
 			{
-				IFloopySoundFilter *reverse = (IFloopySoundFilter*)engine->CreateInput("stdlib.reverse");
+				IFloopySoundFilter *reverse = (IFloopySoundFilter*)engine->CreateInput("std.reverse");
 				if(NULL != reverse)
 				{
 					reverse->EnableAt(0, true);
@@ -968,7 +968,7 @@ int CTrack::GetCaretPos()
 	int pos = GetTracks()->GetCaretPos();
 
 	float value = 0;
-	int offset = 0;
+//	int offset = 0;
 	if(m_pTrack->GetParamAt(pos, TIMELINE_PARAM_MOVETO, &value))
 		pos -= (int)value;
 	else
@@ -979,7 +979,7 @@ int CTrack::GetCaretPos()
 			pos -= prev + (int)value;
 		}
 	}
-		
+
 	return pos;
 }
 
@@ -1037,7 +1037,7 @@ void CTrack::SetPropertyVal(int index, float value)
 	}
 }
 
-char *CTrack::GetPropertyName(int index)
+const char *CTrack::GetPropertyName(int index)
 {
 	switch(index)
 	{
@@ -1046,7 +1046,7 @@ char *CTrack::GetPropertyName(int index)
 	return NULL;
 }
 
-char *CTrack::GetPropertyDesc(int index)
+const char *CTrack::GetPropertyDesc(int index)
 {
 	switch(index)
 	{
@@ -1073,7 +1073,7 @@ float CTrack::GetPropertyMax(int index)
 	return 0.f;
 }
 
-char *CTrack::GetPropertyUnit(int index)
+const char *CTrack::GetPropertyUnit(int index)
 {
 	//switch(index)
 	//{

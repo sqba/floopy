@@ -24,12 +24,22 @@
 //////////////////////////////////////////////////////////////////////
 // Defines from windows.h
 //////////////////////////////////////////////////////////////////////
+#include<bits/wordsize.h>
+#if __WORDSIZE == 64
+typedef int						INT;	/// 32-bit signed integer.
+typedef unsigned int			UINT;	/// Unsigned INT.
+//typedef int						BOOL;	/// Boolean variable (should be true or false).
+typedef unsigned short			WORD;	/// 16-bit unsigned integer.
+typedef unsigned char			BYTE;	/// Byte (8 bits).
+typedef unsigned int			DWORD;	/// 32-bit unsigned integer.
+#else
 typedef int						INT;	/// 32-bit signed integer.
 typedef unsigned int			UINT;	/// Unsigned INT.
 //typedef int						BOOL;	/// Boolean variable (should be true or false).
 typedef unsigned short			WORD;	/// 16-bit unsigned integer.
 typedef unsigned char			BYTE;	/// Byte (8 bits).
 typedef unsigned long			DWORD;	/// 32-bit unsigned integer.
+#endif
 
 #ifndef NULL
 #ifdef __cplusplus
@@ -61,7 +71,7 @@ typedef unsigned long			DWORD;	/// 32-bit unsigned integer.
 */
 
 
-class IFloopy;
+class IFloopyObject;
 
 
 /**
@@ -70,7 +80,7 @@ class IFloopy;
  * @param offset Sample position at which the change occurred.
  * @param param Parameter index.
  */
-typedef void (*UpdateCallback)(IFloopy *src, int offset, int param);
+typedef void (*UpdateCallback)(IFloopyObject *src, int offset, int param);
 
 
 /*********************************************************************
@@ -90,13 +100,15 @@ typedef struct SoundFormat
 } SOUNDFORMAT;
 
 
-#define TYPE_FLOOPY					0x00010000								/** IFloopy				*/
-#define TYPE_FLOOPY_SOUND_INPUT		(TYPE_FLOOPY|0x00000001L)				/** IFloopySoundInput	*/
-#define TYPE_FLOOPY_SOUND_FILTER	(TYPE_FLOOPY_SOUND_INPUT|0x00000002L)	/** IFloopySoundFilter	*/
-#define TYPE_FLOOPY_SOUND_MIXER		(TYPE_FLOOPY_SOUND_FILTER|0x00000004L)	/** IFloopySoundMixer	*/
-#define TYPE_FLOOPY_SOUND_ENGINE	(TYPE_FLOOPY_SOUND_FILTER|0x00000008L)	/** IFloopySoundEngine	*/
-#define TYPE_FLOOPY_SOUND_TRACK		(TYPE_FLOOPY_SOUND_FILTER|0x00000010L)	/** Just a track (for the GUI) */
-#define TYPE_FLOOPY_SOUND_OUTPUT	(TYPE_FLOOPY|0x00000020L)				/** IFloopySound		*/
+#define TYPE_FLOOPY_ENGINE_STORAGE	0x00100000								/** IFloopyEngineStorage		*/
+#define TYPE_FLOOPY_BASE			0x00010000								/** IFloopyBase					*/
+#define TYPE_FLOOPY_OBJECT			(TYPE_FLOOPY_BASE|0x00000001L)			/** IFloopyObject				*/
+#define TYPE_FLOOPY_SOUND_INPUT		(TYPE_FLOOPY_OBJECT|0x00000002L)		/** IFloopySoundInput			*/
+#define TYPE_FLOOPY_SOUND_OUTPUT	(TYPE_FLOOPY_OBJECT|0x00000004L)		/** IFloopySound				*/
+#define TYPE_FLOOPY_SOUND_FILTER	(TYPE_FLOOPY_SOUND_INPUT|0x00000008L)	/** IFloopySoundFilter			*/
+#define TYPE_FLOOPY_SOUND_MIXER		(TYPE_FLOOPY_SOUND_FILTER|0x00000016L)	/** IFloopySoundMixer			*/
+#define TYPE_FLOOPY_SOUND_ENGINE	(TYPE_FLOOPY_SOUND_FILTER|0x00000032L)	/** IFloopySoundEngine			*/
+#define TYPE_FLOOPY_SOUND_TRACK		(TYPE_FLOOPY_SOUND_FILTER|0x00000064L)	/** Just a track (for the GUI)	*/
 
 
 
@@ -119,8 +131,38 @@ public:
 	IFloopyCallback()	{ }
 	virtual ~IFloopyCallback()	{ }
 
-	void OnParameterUpdate(IFloopy *src, int offset, int param)
+	void OnParameterUpdate(IFloopyObject *src, int offset, int param)
 };*/
+
+
+/*********************************************************************
+ *! \class IFloopyBase
+ *  \brief
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 09. april 2009.
+ *
+ *  Not to be directly overriden in implementations.
+ *
+ *
+ *********************************************************************/
+class IFloopyBase
+{
+public:
+	/**
+	 * Returns class type identificator.
+	 * Used for runtime class identification.
+	 * Do not override in implementations!!!
+	 * @return class type identificator.
+	 */
+	virtual int GetType()					{ return TYPE_FLOOPY_BASE; }
+
+	// Component description
+	virtual const char *GetName()			{ return "IFloopyObject"; }
+	virtual const char *GetDescription()	{ return "IFloopyObject interface"; }
+	virtual const char *GetVersion()		{ return "0.1"; }
+	virtual const char *GetAuthor()			{ return "sqba"; }
+};
 
 
 /*********************************************************************
@@ -134,12 +176,14 @@ public:
  *
  *  Properties are not connected to the timeline.
  *********************************************************************/
-class IFloopyProperty
+class IFloopyProperty : public IFloopyBase
 {
 public:
+	virtual ~IFloopyProperty() {}
+
 	virtual int   GetPropertyCount()			{ return 0; }
 
-	virtual bool  GetPropertyIndex(char *name, int *index)	{ return false; }
+	virtual bool  GetPropertyIndex(const char *name, int *index)	{ return false; }
 
 	virtual bool  GetPropertyVal(int index, float *value)	{ return false; }
 	virtual void  SetPropertyVal(int index, float value)	{ }
@@ -149,9 +193,9 @@ public:
 	virtual float GetPropertyStep(int index)	{ return 0.f; }
 	//virtual bool GetPropertyInfo(int index, float *min, float *max, float *step)
 	//	{ return false; }
-	virtual char *GetPropertyName(int index)	{ return NULL; }
-	virtual char *GetPropertyDesc(int index)	{ return NULL; }
-	virtual char *GetPropertyUnit(int index)	{ return NULL; }
+	virtual const char *GetPropertyName(int index)	{ return NULL; }
+	virtual const char *GetPropertyDesc(int index)	{ return NULL; }
+	virtual const char *GetPropertyUnit(int index)	{ return NULL; }
 };
 
 
@@ -173,7 +217,7 @@ public:
 
 	virtual int   GetParamCount()					{ return 0; }
 
-	virtual bool  GetParamIndex(char *name, int *index)	{ return false; }
+	virtual bool  GetParamIndex(const char *name, int *index)	{ return false; }
 
 	virtual bool  GetParamVal(int index, float *value)	{ return false; }
 	virtual void  SetParamVal(int index, float value)	{ }
@@ -183,9 +227,9 @@ public:
 	virtual float GetParamStep(int index)	{ return 0.f; }
 	//virtual bool GetParamInfo(int index, float *min, float *max, float *step)
 	//	{ return false; }
-	virtual char *GetParamName(int index)	{ return NULL; }
-	virtual char *GetParamDesc(int index)	{ return NULL; }
-	virtual char *GetParamUnit(int index)	{ return NULL; }
+	virtual const char *GetParamName(int index)	{ return NULL; }
+	virtual const char *GetParamDesc(int index)	{ return NULL; }
+	virtual const char *GetParamUnit(int index)	{ return NULL; }
 
 	virtual void  Enable(bool bEnabled)		{ m_bEnabled = bEnabled; }
 	virtual bool  IsEnabled()				{ return m_bEnabled; }
@@ -290,10 +334,10 @@ class IFloopyDisplay : public IFloopyTimeline
 {
 public:
 	/** Do not override in implementations, handled by the engine */
-	virtual char *GetDisplayName()					{ return NULL; }
+	virtual const char *GetDisplayName()					{ return NULL; }
 
 	/** Do not override in implementations, handled by the engine */
-	virtual void  SetDisplayName(char *name, int len){ }
+	virtual void  SetDisplayName(const char *name, int len){ } // remove len!!!
 
 	/** Do not override in implementations, handled by the engine */
 	virtual bool GetColor(UINT *red, UINT *green, UINT *blue) { return false; }
@@ -304,7 +348,7 @@ public:
 
 
 /*********************************************************************
- *! \class IFloopy
+ *! \class IFloopyObject
  *  \brief Main object interface.
  *  \author Filip Pavlovic
  *  \version 0.0
@@ -312,37 +356,30 @@ public:
  *
  *  Not to be directly overriden in implementations.
  *********************************************************************/
-class IFloopy : public IFloopyDisplay
+class IFloopyObject : public IFloopyDisplay
 {
 public:
-	IFloopy()							{ m_nLastError = 0; m_pEngine = NULL; }
-	virtual ~IFloopy()					{ }
+	IFloopyObject()							{ m_nLastError = 0; m_pEngine = NULL; }
 
 //	bool Is(int type)
 //	{ int t=this->GetType(); return (t == (type | t)); }
 
-	/**
-	 * Returns class type identificator.
-	 * Used for runtime class identification.
-	 * Do not override in implementations!!!
-	 * @return class type identificator.
-	 */
-	virtual int GetType()				{ return TYPE_FLOOPY; }
+	virtual int GetType()				{ return TYPE_FLOOPY_OBJECT; }
 
 	// Component description
-	virtual char *GetName()				{ return "IFloopy"; }
-	virtual char *GetDescription()		{ return "IFloopy interface"; }
-	virtual char *GetVersion()			{ return "0.1"; }
-	virtual char *GetAuthor()			{ return "sqba"; }
+	virtual const char *GetName()				{ return "IFloopyObject"; }
+	virtual const char *GetDescription()		{ return "IFloopyObject interface"; }
+	virtual const char *GetVersion()			{ return "0.1"; }
+	virtual const char *GetAuthor()			{ return "sqba"; }
 
 			int   GetLastError()		{ return m_nLastError; }
-	virtual char *GetLastErrorDesc()	{ return NULL; }
-	//virtual bool  GetLastError(char *str, int len)	{ return false; }
+	virtual const char *GetLastErrorDesc() = 0;//	{ return NULL; }
+	//virtual bool  GetLastError(const char *str, int len)	{ return false; }
 
 	/** Do not override in implementations, handled by the engine */
-	virtual char *GetPath()				{ return NULL; }
+	virtual const char *GetPath()				{ return NULL; }
 
-	virtual bool Open(char *filename)	{ return false; }
+	virtual bool Open(const char *filename)	{ return false; }
 	virtual void Close()				{ }
 
 	/** Do not override in implementations, handled by the engine */
@@ -368,13 +405,13 @@ protected:
  *
  *  Interface implemented and used by all sound objects.
  *********************************************************************/
-class IFloopySound : public IFloopy
+class IFloopySound : public IFloopyObject
 {
 public:
-	IFloopySound() : IFloopy()
+	IFloopySound() : IFloopyObject()
 		{ memset(&m_format, 0, sizeof(SOUNDFORMAT)); }
 
-	IFloopySound(SOUNDFORMAT fmt) : IFloopy()
+	IFloopySound(SOUNDFORMAT fmt) : IFloopyObject()
 		{ memcpy(&m_format, &fmt, sizeof(SOUNDFORMAT)); }
 
 	virtual SOUNDFORMAT *GetFormat()	{ return &m_format; }
@@ -405,13 +442,13 @@ public:
 	int GetType()			{ return TYPE_FLOOPY_SOUND_INPUT; }
 
 	// Component description
-	char *GetName()			{ return "IFloopySoundInput"; }
-	char *GetDescription()	{ return "IFloopySoundInput interface"; }
+	const char *GetName()			{ return "IFloopySoundInput"; }
+	const char *GetDescription()	{ return "IFloopySoundInput interface"; }
 
 	/**
 	 * Open source file.
 	 */
-	bool Open(char *filename)				{ return false; }
+	bool Open(const char *filename)				{ return false; }
 
 	/**
 	 * Return total track size.
@@ -440,11 +477,11 @@ public:
 
 
 	/**
-	 * Specifies whether the source should be read and passed on 
+	 * Specifies whether the source should be read and passed on
 	 * if this component is disabled. If false then nothing
 	 * will be read.
 	 */
-	virtual bool ReadSourceIfDisabled()		{ return true; }
+	virtual bool CanReadSourceIfDisabled()	{ return true; }
 
 	virtual bool IsEOF()					{ return true; }
 
@@ -458,7 +495,25 @@ public:
 	/**
 	 * No need to override this one, it is used by the engine, for caching.
 	 */
-	virtual char *GetSignature()			{ return NULL; }
+	virtual const char *GetSignature()			{ return NULL; }
+
+	bool is_filter()
+	{
+		int type = GetType();
+		return(type == (TYPE_FLOOPY_SOUND_FILTER | type));
+	}
+
+	bool is_mixer()
+	{
+		int type = GetType();
+		return(type == (TYPE_FLOOPY_SOUND_MIXER | type));
+	}
+
+	bool is_engine()
+	{
+		int type = GetType();
+		return(type == (TYPE_FLOOPY_SOUND_ENGINE | type));
+	}
 
 protected:
 	//int m_pos;
@@ -504,7 +559,7 @@ public:
 	}
 
 
-	virtual bool Open(char *filename)
+	virtual bool Open(const char *filename)
 	{
 		return (NULL != m_source ? m_source->Open(filename) : false);
 	}
@@ -553,7 +608,7 @@ public:
 	/**
 	 * No need to override this one, it is used by the engine, for caching.
 	 */
-	virtual char *GetSignature()
+	virtual const char *GetSignature()
 	{
 		return m_source != NULL ? m_source->GetSignature() : NULL;
 	}
@@ -577,8 +632,8 @@ protected:
 class IFloopySoundMixer : public IFloopySoundFilter
 {
 public:
-	char *GetName()			{ return "IFloopySoundMixer"; }
-	char *GetDescription()	{ return "IFloopySoundMixer interface"; }
+	const char *GetName()			{ return "IFloopySoundMixer"; }
+	const char *GetDescription()	{ return "IFloopySoundMixer interface"; }
 
 	int GetType()			{ return TYPE_FLOOPY_SOUND_MIXER; }
 
@@ -626,13 +681,13 @@ public:
 
 	int GetType()			{ return TYPE_FLOOPY_SOUND_OUTPUT; }
 
-	char *GetName()			{ return "IFloopySoundOutput"; }
-	char *GetDescription()	{ return "IFloopySoundOutput interface"; }
+	const char *GetName()			{ return "IFloopySoundOutput"; }
+	const char *GetDescription()	{ return "IFloopySoundOutput interface"; }
 
 	/**
 	 * Opens destination (file).
 	 */
-	bool Open(char *filename)
+	bool Open(const char *filename)
 	{
 		return (NULL != m_dest ? m_dest->Open(filename) : false);
 	}
@@ -702,43 +757,43 @@ protected:
 class IFloopySoundEngine : public IFloopySoundFilter
 {
 public:
-	int GetType()			{ return TYPE_FLOOPY_SOUND_ENGINE; }
+	int GetType()					{ return TYPE_FLOOPY_SOUND_ENGINE; }
 
-	char *GetName()			{ return "IFloopySoundEngine"; }
-	char *GetDescription()	{ return "IFloopySoundEngine interface"; }
+	const char *GetName()			{ return "IFloopySoundEngine"; }
+	const char *GetDescription()	{ return "IFloopySoundEngine interface"; }
 
 	/**
 	 * Creates a sound source or filter.
 	 * @param name Component name (without extension).
 	 */
-	virtual IFloopySoundInput  *CreateInput(char *name)
-	{ return NULL; }
+	virtual IFloopySoundInput  *CreateInput(const char *name)
+									{ return NULL; }
 
 	/**
 	 * Creates a sound source or filter with apropriate convertors.
 	 * @param name Component name (without extension).
 	 */
-	virtual IFloopySoundInput  *CreateTrack(char *name)
-	{ return NULL; }
+	virtual IFloopySoundInput  *CreateTrack(const char *name)
+									{ return NULL; }
 
 	/**
 	 * Creates a sound output.
 	 * @param name Component name (without extension).
 	 */
-	virtual IFloopySoundOutput *CreateOutput(char *name, SOUNDFORMAT fmt)
-	{ return NULL; }
+	virtual IFloopySoundOutput *CreateOutput(const char *name, SOUNDFORMAT fmt)
+									{ return NULL; }
 
 	/**
 	 * Destroys the object created by CreateInput() or CreateOutput().
 	 * @param obj Pointer to the object being deleted.
 	 */
-	virtual void DeleteObject(IFloopy *obj) {}
+	virtual void DeleteObject(IFloopyObject *obj) {}
 
 	/**
 	 * Serializes current engine state into a file.
 	 * @param filename Project file name.
 	 */
-	virtual bool Save(char *filename) { return false; }
+	virtual bool Save(const char *filename) { return false; }
 
 	/**
 	 * Sets the callback function that is called on parameter changes.
@@ -755,13 +810,6 @@ public:
 	virtual int EmptyBuffer(BYTE *data, int size) { return 0; }
 
 /*
-	// Utility functions
-	bool IsFilter(IFloopySoundInput *input)
-	{
-		int type = input->GetType();
-		return (type == (TYPE_FLOOPY_SOUND_FILTER | type));
-	}
-
 	// Utility
 	int CalcNumberOfSamples(int bytes)
 	{
@@ -771,5 +819,33 @@ public:
 */
 };
 
+
+
+
+/*********************************************************************
+ *! \class IFloopyEngineStorage
+ *  \brief Floopy engine stoirage interface.
+ *  \author Filip Pavlovic
+ *  \version 0.0
+ *  \date 09. april 2009
+ *
+ *  Floopy engine storage interface.
+ *********************************************************************/
+class IFloopyEngineStorage : public IFloopyBase
+{
+public:
+	int GetType()					{ return TYPE_FLOOPY_ENGINE_STORAGE; }
+
+	const char *GetName()			{ return "IFloopyEngineStorage"; }
+	const char *GetDescription()	{ return "IFloopyEngineStorage interface"; }
+
+	/**
+	 * Creates a sound source or filter.
+	 * @param name Component name (without extension).
+	 */
+	virtual bool Load(IFloopySoundEngine *engine, const char *filename) = 0;
+	virtual bool Save(IFloopySoundEngine *engine, const char *filename) = 0;
+	virtual const char *GetExtension() = 0;
+};
 
 #endif //_IFLOOPY_H_

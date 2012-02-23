@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "TracksView.h"
+#include "tracksview.h"
 
 
 //BEGIN_EVENT_TABLE(CTracksView, wxSplitterWindow)

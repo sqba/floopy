@@ -30,7 +30,7 @@
 
 #include <wx/log.h>
 
-#include "MainView.h"
+#include "mainview.h"
 //#include "../engine/engine.h"
 
 class CLabelsView : public CMainView

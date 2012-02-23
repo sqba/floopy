@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "../../globals.h"
-#include "FloopyHRuler.h"
+#include "floopyhruler.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -29,7 +29,7 @@ void CFloopyHRuler::OnDrawBG(wxDC &dc)
 {
 	// Background and frame
 	wxSize size = this->GetClientSize();
-	int left=0, top=0;
+	int left=0;//, top=0;
 /*
 	int xScrollUnits=0, yScrollUnits=0;
 	m_owner->GetViewStart(&left, &top);
@@ -42,7 +42,13 @@ void CFloopyHRuler::OnDrawBG(wxDC &dc)
 	int height = size.GetHeight();
 
 	if(m_bDrawAquaBG)
-		DrawAquaRect(dc, wxRect(0, 0, width, height), 0);
+	{
+	    wxRect rc(0, 0, width, height);
+		DrawAquaRect(dc, rc , 0);
+	}
 	else
-		DrawRect3D(dc, wxRect(left, 0, width, height));
+	{
+	    wxRect rc(left, 0, width, height);
+		DrawRect3D(dc, rc);
+	}
 }

@@ -4,18 +4,19 @@
 
 #include <stdio.h>
 #include <time.h>
-#include "Output.h"
+#include "output.h"
 #include <assert.h>
+#include <string.h>
+#include <sstream>
+#include "../platform.h"
+#include "../common/util.h"
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef IFloopySoundOutput* (*CreateProc)(char*, SOUNDFORMAT);
-#define PROC_NAME "CreateOutput"
-#define PLUG_EXT ".dll"
-
-COutput::COutput()
+COutput::COutput(LIB_HANDLE hModule) : CLoader(hModule)
 {
 	m_plugin			= NULL;
 	m_offset			= 0;
@@ -29,70 +30,51 @@ COutput::~COutput()
 }
 
 
-bool COutput::Create(char *plugin, SOUNDFORMAT fmt)
+bool COutput::Create(const char *name, SOUNDFORMAT fmt)
 {
-	if(NULL == plugin)
+	if(NULL == name)
 	{
-		sprintf(m_szLastError, "plugin is NULL.\n\0");
+		sprintf(m_szLastError, "plugin is NULL.\n");
 		return false;
 	}
 
 	if(fmt.bitsPerSample == 0)
 	{
-		sprintf(m_szLastError, "fmt.bitsPerSample == 0.\n\0");
+		sprintf(m_szLastError, "fmt.bitsPerSample == 0.\n");
 		return false;
 	}
 
 	if(fmt.channels == 0)
 	{
-		sprintf(m_szLastError, "fmt.channels == 0.\n\0");
+		sprintf(m_szLastError, "fmt.channels == 0.");
 		return false;
 	}
 
 	if(fmt.format == 0)
 	{
-		sprintf(m_szLastError, "fmt.format == 0.\n\0");
+		sprintf(m_szLastError, "fmt.format == 0.\n");
 		return false;
 	}
 
 	if(fmt.frequency == 0)
 	{
-		sprintf(m_szLastError, "fmt.frequency == 0.\n\0");
+		sprintf(m_szLastError, "fmt.frequency == 0.\n");
 		return false;
 	}
 
-	char *library = plugin;
+	char plugin[MAX_PATH]	= {0};
+	char library[MAX_FNAME]	= {0};
 
-	char *sep = strrchr(plugin, '.');
-	if(sep)
-	{
-		char tmp[MAX_PATH] = {0};
-		strcpy(tmp, plugin);
-		char *sep = strrchr(tmp, '.');
-		plugin = sep+1;
-		*sep = 0;
-		library = tmp;
-	}
-	char *filename = new char[strlen(library) + 5];
-	strcpy(filename, library);
-	strcat(filename, PLUG_EXT);
-	
-	if( !LoadPlugin(filename) )
-	{
-		sprintf(m_szLastError, "File not found: %s.\n\0", filename);
-		delete filename;
-		return false;
-	}
-	delete filename;
+	get_library_name(name, library);
+	get_plugin_name(name, plugin);
 
-	CreateProc func = (CreateProc)GetFunction(PROC_NAME);
-	if(func == NULL)
+	if( !LoadPlugin(library) )
 	{
-		sprintf(m_szLastError, "Function %s() not found in file: %s.\n\0", PROC_NAME, filename);
+//		sprintf(m_szLastError, "File not found: %s.\n", tmp);
 		return false;
 	}
 
-	m_plugin = func( plugin, fmt );
+	m_plugin = CreateOutput( plugin, fmt );
 	IFloopySoundOutput::SetDest( m_plugin );
 	m_samplesToBytes = (fmt.bitsPerSample / 8) * fmt.channels;
 	return true;
@@ -117,12 +99,12 @@ void COutput::Reset()
 	m_plugin->Reset();
 }
 
-bool COutput::Open(char *filename)
+bool COutput::Open(const char *filename)
 {
 	bool bResult = false;
 
 	if(NULL == m_plugin)
-		sprintf(m_szLastError, "NULL == m_plugin.\n\0");
+		sprintf(m_szLastError, "NULL == m_plugin.\n");
 	else
 	{
 		bResult = m_plugin->Open( filename );
@@ -135,21 +117,21 @@ bool COutput::Open(char *filename)
 
 void COutput::copyErrorDesc()
 {
-	strnset(m_szLastError, 0, 100);
+	memset(m_szLastError, 0, sizeof(m_szLastError[0]*sizeof(m_szLastError)));
 
 	if(NULL == m_plugin)
-		sprintf(m_szLastError, "Plugin not created.\n\0");
+		sprintf(m_szLastError, "Plugin not created.\n");
 	else
 	{
-		char *err = m_plugin->GetLastErrorDesc();
+		const char *err = m_plugin->GetLastErrorDesc();
 		if(NULL != err)
 			strncpy(m_szLastError, err, 99);
 	}
 }
 
-char *COutput::GetName()
+const char *COutput::GetName()
 {
-	char *result = "Plugin not created.\n\0";
+	const char *result = "Plugin not created.\n";
 	if(NULL != m_plugin)
 		result = m_plugin->GetName();
 	else
@@ -157,9 +139,9 @@ char *COutput::GetName()
 	return result;
 }
 
-char *COutput::GetDescription()
+const char *COutput::GetDescription()
 {
-	char *result = "Plugin not created.\n\0";
+	const char *result = "Plugin not created.\n\0";
 	if(NULL != m_plugin)
 		result = m_plugin->GetDescription();
 	else
@@ -167,9 +149,9 @@ char *COutput::GetDescription()
 	return result;
 }
 
-char *COutput::GetVersion()
+const char *COutput::GetVersion()
 {
-	char *result = "Plugin not created.\n\0";
+	const char *result = "Plugin not created.\n\0";
 	if(NULL != m_plugin)
 		result = m_plugin->GetVersion();
 	else
@@ -177,9 +159,9 @@ char *COutput::GetVersion()
 	return result;
 }
 
-char *COutput::GetAuthor()
+const char *COutput::GetAuthor()
 {
-	char *result = "Plugin not created.\n\0";
+	const char *result = "Plugin not created.\n\0";
 	if(NULL != m_plugin)
 		result = m_plugin->GetAuthor();
 	else
@@ -203,12 +185,12 @@ void COutput::SetParamVal(int index, float value)
 		m_plugin->SetParamVal(index, value);
 }
 
-char *COutput::GetParamName(int index)
+const char *COutput::GetParamName(int index)
 {
 	return NULL!=m_plugin ? m_plugin->GetParamName(index) : NULL;
 }
 
-char *COutput::GetParamDesc(int index)
+const char *COutput::GetParamDesc(int index)
 {
 	return NULL!=m_plugin ? m_plugin->GetParamDesc(index) : NULL;
 }
@@ -229,12 +211,12 @@ void COutput::SetPropertyVal(int index, float value)
 		m_plugin->SetPropertyVal(index, value);
 }
 
-char *COutput::GetPropertyName(int index)
+const char *COutput::GetPropertyName(int index)
 {
 	return NULL!=m_plugin ? m_plugin->GetPropertyName(index) : NULL;
 }
 
-char *COutput::GetPropertyDesc(int index)
+const char *COutput::GetPropertyDesc(int index)
 {
 	return NULL!=m_plugin ? m_plugin->GetPropertyDesc(index) : NULL;
 }
@@ -245,7 +227,7 @@ void COutput::SetDest(IFloopySoundOutput *dst)
 		m_plugin->SetDest(dst);
 }
 
-char *COutput::GetLastErrorDesc()
+const char *COutput::GetLastErrorDesc()
 {
 	return m_szLastError;
 }

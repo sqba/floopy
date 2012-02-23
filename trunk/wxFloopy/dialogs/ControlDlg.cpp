@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "ControlDlg.h"
+#include "controldlg.h"
 #include "../engine/region.h"
 
 
@@ -20,7 +20,7 @@ END_EVENT_TABLE()
 
 
 CControlDlg::CControlDlg(CTracks *pTracks)
- : wxDialog(NULL, -1, "Mixer", wxDefaultPosition, wxSize(200, 250),
+ : wxDialog(NULL, -1, _T("Mixer"), wxDefaultPosition, wxSize(200, 250),
 	wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxSTAY_ON_TOP)
 {
 	m_count		= 0;
@@ -78,7 +78,7 @@ void CControlDlg::init(IFloopyObj *obj, bool property)
 {
 	//wxDialog::SetTitle(wxString(obj->GetDisplayName()));
 	//wxDialog::SetTitle(wxString(obj->GetDescription()));
-	wxDialog::SetTitle(property ? "Properties" : "Parameters");
+	wxDialog::SetTitle(property ? _T("Properties") : _T("Parameters"));
 
 #ifdef __WXMSW__
 	wxDialog::SetIcon(wxICON(Floopy));
@@ -93,7 +93,7 @@ void CControlDlg::init(IFloopyObj *obj, bool property)
 	m_pObject	= obj;
 	m_bProperty	= property;
 
-	IFloopy *input = obj->GetInput();
+	IFloopyObject *input = obj->GetInput();
 	if(NULL == input)
 		return;
 
@@ -103,16 +103,16 @@ void CControlDlg::init(IFloopyObj *obj, bool property)
 	load2( obj );
 }
 
-void CControlDlg::load(IFloopy *obj)
+void CControlDlg::load(IFloopyObject *obj)
 {
 	int count = m_bProperty ? obj->GetPropertyCount() : obj->GetParamCount();
 
 	for(int index=0; index<count; index++)
 	{
-		wxString txt(m_bProperty ? obj->GetPropertyName(index) : obj->GetParamName(index));
+		wxString txt = (wxChar*)(m_bProperty ? obj->GetPropertyName(index) : obj->GetParamName(index));
 
 		wxStaticText	*name	= new wxStaticText(this, -1, txt);
-		wxStaticText	*value	= new wxStaticText(this, -1, "value");
+		wxStaticText	*value	= new wxStaticText(this, -1, _T("value"));
 		wxSlider		*slider	= new CSliderCtrl(this, obj, index, m_bProperty, value);
 
 		m_pSizer->Add( name,	0, wxALIGN_RIGHT );
@@ -128,7 +128,7 @@ void CControlDlg::load(IFloopy *obj)
 	int type = obj->GetType();
 	if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
 	{
-		IFloopy *src = ((IFloopySoundFilter*)obj)->GetSource();
+		IFloopyObject *src = ((IFloopySoundFilter*)obj)->GetSource();
 		if(NULL != src)
 			load(src);
 	}
@@ -143,10 +143,10 @@ void CControlDlg::load2(IFloopyObj *obj)
 
 	for(int index=0; index<count; index++)
 	{
-		wxString txt(m_bProperty ? obj->GetPropertyName(index) : obj->GetParamName(index));
+		wxString txt = (wxChar*)(m_bProperty ? obj->GetPropertyName(index) : obj->GetParamName(index));
 
 		wxStaticText	*name	= new wxStaticText(this, -1, txt);
-		wxStaticText	*value	= new wxStaticText(this, -1, "value");
+		wxStaticText	*value	= new wxStaticText(this, -1, _T("value"));
 		wxSlider		*slider	= new CSliderCtrl(this, obj, index, m_bProperty, value);
 
 		m_pSizer->Add( name,	0, wxALIGN_RIGHT );
@@ -162,7 +162,7 @@ void CControlDlg::load2(IFloopyObj *obj)
 	int type = obj->GetType();
 	if(type == (TYPE_FLOOPY_SOUND_FILTER | type))
 	{
-		IFloopy *src = ((IFloopySoundFilter*)obj)->GetSource();
+		IFloopyObject *src = ((IFloopySoundFilter*)obj)->GetSource();
 		if(NULL != src)
 			load(src);
 	}
@@ -221,7 +221,7 @@ void CControlDlg::Update()
 
 
 CControlDlg::CSliderCtrl::CSliderCtrl(CControlDlg* parent,
-									  IFloopy *input,
+									  IFloopyObject *input,
 									  int index,
 									  bool property,
 									  wxStaticText* label)
@@ -233,7 +233,7 @@ CControlDlg::CSliderCtrl::CSliderCtrl(CControlDlg* parent,
 	m_bProperty	= property;
 	m_coeff		= 1;
 
-	m_Unit = property ? input->GetPropertyUnit(index) : input->GetParamUnit(index);
+	m_Unit = (wxChar*)(property ? input->GetPropertyUnit(index) : input->GetParamUnit(index));
 
 	init();
 }
@@ -268,7 +268,7 @@ void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 			CRegion *region = (CRegion*)obj;
 			float val = 0.f;
 			int end = region->GetEndPos();
-			//IFloopy *input = region->GetInput();
+			//IFloopyObject *input = region->GetInput();
 			m_pInput->GetParamAt(end, m_index, &val);
 			m_pInput->SetParamAt(sample, m_index, value);
 			m_pInput->SetParamAt(end, m_index, val);
@@ -278,7 +278,7 @@ void CControlDlg::CSliderCtrl::OnScroll(wxScrollEvent &evt)
 	}
 
 	wxString txt;
-	txt.Printf("%.4f %s", value, m_Unit);
+	txt.Printf(_T("%.4f %s"), value, m_Unit.c_str());
 	m_pLabel->SetLabel( txt );
 
 	obj->Invalidate();
@@ -319,7 +319,7 @@ void CControlDlg::CSliderCtrl::init()
 		m_coeff = 1;
 
 	wxString txt;
-	txt.Printf("%.4f %s", val, m_Unit);
+	txt.Printf(_T("%.4f %s"), val, m_Unit.c_str());
 	m_pLabel->SetLabel( txt );
 
 	min *= m_coeff;

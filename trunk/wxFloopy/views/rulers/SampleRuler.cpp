@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "SampleRuler.h"
+#include "sampleruler.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -45,7 +45,7 @@ void CSampleRuler::OnDraw(wxDC &dc)
 	dc.SetFont( *wxSWISS_FONT );
 
 	int w=0, h=0;
-	wxString csLabel("000000");
+	wxString csLabel(_T("000000"));
 	dc.GetTextExtent(csLabel, &w, &h);
 	int iTextTop = iLineBottom - h/3;
 
@@ -60,7 +60,7 @@ void CSampleRuler::OnDraw(wxDC &dc)
 			if(x+4+w < right)
 			{
 				int sample = x * spp;
-				csLabel.Printf("%d", sample);
+				csLabel.Printf(_T("%d"), sample);
 				dc.DrawText(csLabel, x+4, iTextTop);
 			}
 		}
