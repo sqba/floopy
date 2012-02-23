@@ -1,136 +1,136 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="../ifloopy.h" open="0" top="0" tabpos="0">
+	<File name="..\ifloopy.h" open="0" top="0" tabpos="0">
 		<Cursor position="17297" topLine="584" />
 	</File>
-	<File name="8to16bit/convert8to16bit.cpp" open="0" top="0" tabpos="0">
+	<File name="8to16bit\convert8to16bit.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="1120" topLine="30" />
 	</File>
-	<File name="8to16bit/convert8to16bit.h" open="0" top="0" tabpos="1">
+	<File name="8to16bit\convert8to16bit.h" open="0" top="0" tabpos="1">
 		<Cursor position="802" topLine="4" />
 	</File>
-	<File name="cache/cache.cpp" open="0" top="0" tabpos="2">
+	<File name="cache\cache.cpp" open="0" top="0" tabpos="2">
 		<Cursor position="3951" topLine="193" />
 	</File>
-	<File name="cache/cache.h" open="0" top="0" tabpos="3">
+	<File name="cache\cache.h" open="0" top="0" tabpos="3">
 		<Cursor position="952" topLine="24" />
 	</File>
-	<File name="converttofloat/converttofloat.cpp" open="0" top="0" tabpos="4">
+	<File name="converttofloat\converttofloat.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="1741" topLine="77" />
 	</File>
-	<File name="converttofloat/converttofloat.h" open="0" top="0" tabpos="5">
+	<File name="converttofloat\converttofloat.h" open="0" top="0" tabpos="5">
 		<Cursor position="853" topLine="10" />
 	</File>
-	<File name="dump/dump.cpp" open="0" top="0" tabpos="3">
+	<File name="dump\dump.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="1815" topLine="0" />
 	</File>
-	<File name="dump/dump.h" open="0" top="0" tabpos="5">
+	<File name="dump\dump.h" open="0" top="0" tabpos="5">
 		<Cursor position="347" topLine="0" />
 	</File>
-	<File name="echo/echo.cpp" open="0" top="0" tabpos="6">
+	<File name="echo\echo.cpp" open="0" top="0" tabpos="6">
 		<Cursor position="1954" topLine="71" />
 	</File>
-	<File name="echo/echo.h" open="0" top="0" tabpos="7">
+	<File name="echo\echo.h" open="0" top="0" tabpos="7">
 		<Cursor position="681" topLine="1" />
 	</File>
-	<File name="float2int/float2Int.cpp" open="0" top="0" tabpos="8">
+	<File name="float2int\float2Int.cpp" open="0" top="0" tabpos="8">
 		<Cursor position="1669" topLine="68" />
 	</File>
-	<File name="float2int/float2int.h" open="0" top="0" tabpos="9">
+	<File name="float2int\float2int.h" open="0" top="0" tabpos="9">
 		<Cursor position="866" topLine="11" />
 	</File>
-	<File name="invert/invert.cpp" open="0" top="0" tabpos="10">
+	<File name="invert\invert.cpp" open="0" top="0" tabpos="10">
 		<Cursor position="841" topLine="8" />
 	</File>
-	<File name="invert/invert.h" open="0" top="0" tabpos="11">
+	<File name="invert\invert.h" open="0" top="0" tabpos="11">
 		<Cursor position="692" topLine="0" />
 	</File>
 	<File name="libstd.cpp" open="0" top="0" tabpos="5">
 		<Cursor position="1363" topLine="36" />
 	</File>
-	<File name="loop/loop.cpp" open="0" top="0" tabpos="12">
+	<File name="loop\loop.cpp" open="0" top="0" tabpos="12">
 		<Cursor position="317" topLine="15" />
 	</File>
-	<File name="loop/loop.h" open="0" top="0" tabpos="13">
+	<File name="loop\loop.h" open="0" top="0" tabpos="13">
 		<Cursor position="475" topLine="0" />
 	</File>
-	<File name="mixer/mixer.cpp" open="0" top="0" tabpos="14">
+	<File name="mixer\mixer.cpp" open="0" top="0" tabpos="14">
 		<Cursor position="4334" topLine="217" />
 	</File>
-	<File name="mixer/mixer.h" open="0" top="0" tabpos="15">
+	<File name="mixer\mixer.h" open="0" top="0" tabpos="15">
 		<Cursor position="925" topLine="22" />
 	</File>
-	<File name="mono2stereo/mono2stereo.cpp" open="0" top="0" tabpos="16">
+	<File name="mono2stereo\mono2stereo.cpp" open="0" top="0" tabpos="16">
 		<Cursor position="1307" topLine="32" />
 	</File>
-	<File name="mono2stereo/mono2stereo.h" open="0" top="0" tabpos="17">
+	<File name="mono2stereo\mono2stereo.h" open="0" top="0" tabpos="17">
 		<Cursor position="750" topLine="1" />
 	</File>
-	<File name="oss/oss.cpp" open="0" top="0" tabpos="18">
+	<File name="oss\oss.cpp" open="0" top="0" tabpos="18">
 		<Cursor position="754" topLine="19" />
 	</File>
-	<File name="oss/oss.h" open="0" top="0" tabpos="19">
+	<File name="oss\oss.h" open="0" top="0" tabpos="19">
 		<Cursor position="347" topLine="1" />
 	</File>
-	<File name="performance/performance.cpp" open="0" top="0" tabpos="20">
+	<File name="performance\performance.cpp" open="0" top="0" tabpos="20">
 		<Cursor position="984" topLine="28" />
 	</File>
-	<File name="performance/performance.h" open="0" top="0" tabpos="21">
+	<File name="performance\performance.h" open="0" top="0" tabpos="21">
 		<Cursor position="853" topLine="9" />
 	</File>
-	<File name="playrgn/playregion.cpp" open="0" top="0" tabpos="22">
+	<File name="playrgn\playregion.cpp" open="0" top="0" tabpos="22">
 		<Cursor position="1999" topLine="64" />
 	</File>
-	<File name="playrgn/playregion.h" open="0" top="0" tabpos="23">
+	<File name="playrgn\playregion.h" open="0" top="0" tabpos="23">
 		<Cursor position="1026" topLine="13" />
 	</File>
-	<File name="reverse/reverse.cpp" open="0" top="0" tabpos="24">
+	<File name="reverse\reverse.cpp" open="0" top="0" tabpos="24">
 		<Cursor position="1703" topLine="75" />
 	</File>
-	<File name="reverse/reverse.h" open="0" top="0" tabpos="25">
+	<File name="reverse\reverse.h" open="0" top="0" tabpos="25">
 		<Cursor position="497" topLine="0" />
 	</File>
-	<File name="tonegen/tonegen.cpp" open="0" top="0" tabpos="26">
-		<Cursor position="1051" topLine="31" />
+	<File name="tonegen\tonegen.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="864" topLine="31" />
 	</File>
-	<File name="tonegen/tonegen.h" open="0" top="0" tabpos="27">
+	<File name="tonegen\tonegen.h" open="0" top="0" tabpos="27">
 		<Cursor position="489" topLine="7" />
 	</File>
-	<File name="track/track.cpp" open="0" top="0" tabpos="0">
+	<File name="track\track.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="0" topLine="139" />
 	</File>
-	<File name="track/track.h" open="0" top="0" tabpos="15">
+	<File name="track\track.h" open="0" top="0" tabpos="15">
 		<Cursor position="393" topLine="3" />
 	</File>
-	<File name="volume/volume.cpp" open="0" top="0" tabpos="28">
+	<File name="volume\volume.cpp" open="0" top="0" tabpos="28">
 		<Cursor position="2272" topLine="74" />
 	</File>
-	<File name="volume/volume.h" open="0" top="0" tabpos="29">
+	<File name="volume\volume.h" open="0" top="0" tabpos="29">
 		<Cursor position="511" topLine="4" />
 	</File>
-	<File name="waveout/waveout.cpp" open="0" top="0" tabpos="30">
-		<Cursor position="3267" topLine="94" />
+	<File name="waveout\waveout.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="1422" topLine="28" />
 	</File>
-	<File name="waveout/waveout.h" open="0" top="0" tabpos="31">
-		<Cursor position="1019" topLine="30" />
+	<File name="waveout\waveout.h" open="1" top="0" tabpos="2">
+		<Cursor position="769" topLine="13" />
 	</File>
-	<File name="wavfile/wavfilein.cpp" open="0" top="0" tabpos="32">
+	<File name="wavfile\wavfilein.cpp" open="0" top="0" tabpos="32">
 		<Cursor position="3868" topLine="147" />
 	</File>
-	<File name="wavfile/wavfilein.h" open="0" top="0" tabpos="1">
+	<File name="wavfile\wavfilein.h" open="0" top="0" tabpos="1">
 		<Cursor position="643" topLine="4" />
 	</File>
-	<File name="wavfile/wavfileout.cpp" open="0" top="0" tabpos="33">
+	<File name="wavfile\wavfileout.cpp" open="0" top="0" tabpos="33">
 		<Cursor position="2029" topLine="45" />
 	</File>
-	<File name="wavfile/wavfileout.h" open="0" top="0" tabpos="34">
-		<Cursor position="846" topLine="14" />
+	<File name="wavfile\wavfileout.h" open="1" top="0" tabpos="4">
+		<Cursor position="474" topLine="3" />
 	</File>
-	<File name="xml/xml.cpp" open="0" top="0" tabpos="6">
+	<File name="xml\xml.cpp" open="0" top="0" tabpos="6">
 		<Cursor position="3960" topLine="164" />
 	</File>
-	<File name="xml/xml.h" open="0" top="0" tabpos="7">
+	<File name="xml\xml.h" open="0" top="0" tabpos="7">
 		<Cursor position="966" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>

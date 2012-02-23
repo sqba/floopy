@@ -1902,35 +1902,3 @@
 1250405339 source:/media/sqba/sqba/projects/floopy/trunk/wxFloopy/views/tracksview.cpp
 	"tracksview.h"
 
-1263520021 source:e:\floopy\common\engine_wrapper.cpp
-	"engine_wrapper.h"
-	<stdio.h>
-	<sstream>
-	"../platform.h"
-
-1263520032 e:\floopy\common\engine_wrapper.h
-	"../ifloopy.h"
-	"../platform.h"
-	"../common/loader.h"
-	<windows.h>
-
-1330028189 e:\floopy\ifloopy.h
-	<memory.h>
-	<stdint.h>
-
-1265448326 e:\floopy\platform.h
-	"platform/linux.h"
-	"platform/win32.h"
-
-1263520496 e:\floopy\platform\linux.h
-	<dlfcn.h>
-	<limits.h>
-	<unistd.h>
-
-1263520502 e:\floopy\platform\win32.h
-
-1263520041 e:\floopy\common\loader.h
-	<windows.h>
-	"../ifloopy.h"
-	"../platform.h"
-
