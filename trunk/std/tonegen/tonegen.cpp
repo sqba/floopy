@@ -37,7 +37,7 @@ int CToneGen::Read(BYTE *data, int size)
 	{
 		int i;
 		double d = sin(m_angle) * m_max;
-#ifdef WIN32
+#ifdef VC
 		__asm {
 			fld d
 			fistp i
