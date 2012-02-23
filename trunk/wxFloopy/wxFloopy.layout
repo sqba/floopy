@@ -13,8 +13,8 @@
 	<File name="dialogs\controldlg.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="4502" topLine="191" />
 	</File>
-	<File name="dialogs\controldlg.h" open="1" top="1" tabpos="2">
-		<Cursor position="348" topLine="2" />
+	<File name="dialogs\controldlg.h" open="1" top="0" tabpos="2">
+		<Cursor position="348" topLine="0" />
 	</File>
 	<File name="engine\actionhistory.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="2180" topLine="53" />
