@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "loader.h"
 #include "util.h"
 #include "../platform.h"
@@ -38,12 +39,12 @@ CLoader::~CLoader()
 
 bool CLoader::LoadPlugin(const char *fileName)
 {
-	char path[MAX_PATH] = {0};
+	char path[_MAX_PATH] = {0};
 	char sep[2] = {PATH_SEP, 0};
 
 	get_library_path(m_hModule, path, MAX_PATH);
 
-	char library[MAX_FNAME]	= {0};
+	char library[_MAX_FNAME]	= {0};
 	get_library_name(fileName, library);
 
 //	char plugin[MAX_PATH]	= {0};
