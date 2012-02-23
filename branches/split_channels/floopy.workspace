@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="engine/engine.cbp" />
+		<Project filename="std/std.cbp" />
+		<Project filename="floopy/floopy.cbp" />
+		<Project filename="svg/svg.cbp" />
+		<Project filename="wxFloopy/wxFloopy.cbp" active="1" />
+	</Workspace>
+</CodeBlocks_workspace_file>
