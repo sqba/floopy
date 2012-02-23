@@ -30,9 +30,9 @@
 
 #include <wx/log.h>
 
-#include "RulerView.h"
+#include "rulerview.h"
 
-class CProjectView : public CView  
+class CProjectView : public CView
 {
 public:
 	CProjectView(CRulerView* parent);

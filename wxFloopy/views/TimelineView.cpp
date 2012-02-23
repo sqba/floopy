@@ -34,7 +34,7 @@ CTimelineView::CTimelineView(CRulerView* parent, wxScrolledWindow *labels, CTrac
 	m_pSelectedObj	= NULL;
 	m_ptPrev.x = m_ptPrev.y = 0;
 //	m_pTracks->SetTimelineView(this);
-	
+
 	SetCursor( wxCURSOR_PENCIL );
 
 	m_pParamsDialog = new CControlDlg( tracks );
@@ -251,7 +251,7 @@ void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 			case FLOOPY_REGION_BORDER:
 				{
 					CRegion *region = (CRegion*)m_pSelectedObj->GetParent();
-					
+
 					if(region->GetWidth() <= 2)
 					{
 						CTrack *track = (CTrack*)region->GetParent();
@@ -299,7 +299,7 @@ void CTimelineView::OnMouseEvent(wxMouseEvent& event)
 void CTimelineView::OnMouseWheel(wxMouseEvent& event)
 {
 	// EVT_MOUSE_EVENTS( CTimelineView::OnMouseEvent )
-	
+
 	// Zameniti OnMouseEvent pojedinacnim eventima
 
 	// EVT_LEFT_DOWN( CTimelineView::OnLeftDown )
@@ -343,10 +343,10 @@ void CTimelineView::Init()
 	m_bDrag			= false;
 	m_pSelectedObj	= NULL;
 	m_ptPrev.x = m_ptPrev.y = 0;
-	
+
 	SetCursor( wxCURSOR_PENCIL );
 
-	wxToolTip *tip = new wxToolTip("object");
+	wxToolTip *tip = new wxToolTip(_T("object"));
 	wxToolTip::Enable(true);
 	wxToolTip::SetDelay(500);
 	gToolTip = tip;

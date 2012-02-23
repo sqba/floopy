@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "GridView.h"
+#include "gridview.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -29,14 +29,14 @@ void CGridView::OnDraw(wxDC &dc)
 		int iStep  = m_pTracks->CalcStep(MIN_DISTANCE);
 
 		wxPen oldpen = dc.GetPen();
-		
+
 		for(int n=0; n<length; n+=iStep)
 		{
 			bool full = ((n/iStep)%4 == 0);
 			dc.SetPen(full ? *wxMEDIUM_GREY_PEN : *wxLIGHT_GREY_PEN);
 			dc.DrawLine(n, 0, n, height);
 		}
-		
+
 		dc.SetPen(oldpen);
 	}
 }

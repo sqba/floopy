@@ -2,50 +2,52 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "Storage.h"
+#include <assert.h>
+#include "storage.h"
+#include "../common/util.h"
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-typedef bool (*StorageProc)(IFloopySoundEngine*, char*);
-#define PROC_NAME_LOAD "Load"
-#define PROC_NAME_SAVE "Save"
-#define PLUG_EXT ".dll"
-
-CStorage::CStorage(IFloopySoundEngine *engine, char *plugin)
+CStorage::CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *name) : CLoader(hModule)
 {
 	m_engine = engine;
 
-	char *filename = new char[strlen(plugin) + 5];
-	strcpy(filename, plugin);
-	strcat(filename, PLUG_EXT);
+	m_plugin = NULL;
 
-	LoadPlugin(filename);
+	char plugin[MAX_PATH]	= {0};
+	char library[MAX_FNAME]	= {0};
 
-	delete[] filename;
+	get_library_name(name, library);
+	get_plugin_name(name, plugin);
+
+	if( !LoadPlugin(library) )
+	{
+//		sprintf(m_szLastError, "File not found: %s.\n", tmp);
+		return;
+	}
+
+	m_plugin = CreateStorage( plugin );
 }
 
 CStorage::~CStorage()
 {
 }
 
-bool CStorage::Load(char *filename)
+bool CStorage::Load(const char *filename)
 {
-	StorageProc func = (StorageProc)GetFunction(PROC_NAME_LOAD);
+	assert( filename );
+	assert( m_plugin );
 
-	if(NULL == func)
-		return false;
-
-	return func(m_engine, filename);
+	return m_plugin->Load(m_engine, filename);
 }
 
-bool CStorage::Save(char *filename)
+bool CStorage::Save(const char *filename)
 {
-	StorageProc func = (StorageProc)GetFunction(PROC_NAME_SAVE);
+	assert( filename );
+	assert( m_plugin );
 
-	if(NULL == func)
-		return false;
-
-	return func(m_engine, filename);
+	return m_plugin->Save(m_engine, filename);
 }

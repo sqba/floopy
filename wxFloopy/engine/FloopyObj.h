@@ -4,7 +4,7 @@
 #include <wx/menu.h>
 #include <wx/list.h>
 
-#include "../../../ifloopy.h"
+#include "../../ifloopy.h"
 
 
 class IFloopyObj;
@@ -28,7 +28,7 @@ public:
 
 WX_DECLARE_LIST(CMenuItem, MenuItems);
 
-class CMenu : public wxMenu  
+class CMenu : public wxMenu
 {
 public:
 	CMenu(IFloopyObj *parent);
@@ -52,7 +52,7 @@ private:
  *  \author Filip Pavlovic
  *  \version 0.0
  *********************************************************************/
-class IFloopyObj : public IFloopy
+class IFloopyObj : public IFloopyObject
 {
 public:
 	IFloopyObj(IFloopyObj *parent = NULL)
@@ -135,6 +135,8 @@ public:
 		else
 			return m_bDrawPreview;
 	}
+
+	const char* GetLastErrorDesc()                  { return NULL; }
 
 protected:
 	IFloopyObj	*m_pParent;

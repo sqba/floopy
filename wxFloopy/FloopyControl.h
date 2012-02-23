@@ -11,9 +11,9 @@
 
 #include <wx/wx.h>
 
-#include "engine/FloopyObj.h"
+#include "engine/floopyobj.h"
 
-class CFloopyControl : public IFloopyObj  
+class CFloopyControl : public IFloopyObj
 {
 public:
 	CFloopyControl(IFloopyObj *parent);

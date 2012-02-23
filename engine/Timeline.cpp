@@ -2,7 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "Timeline.h"
+#include "timeline.h"
+
+#include "../ifloopy.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -10,7 +12,7 @@
 
 CTimeline::CTimeline()
 {
-	m_pFirst = m_pLast = m_pTemp = NULL;
+	m_pFirst = m_pLast = m_pTemp = 0;
 }
 
 CTimeline::~CTimeline()
@@ -92,7 +94,7 @@ bool CTimeline::RemoveParam(int offset, int index, float value)
 	{
 		tmp = removeParam( tmp );
 		if(m_pTemp == tmp)
-			m_pTemp = NULL;
+			m_pTemp = 0;
 		if(tmp)
 		{
 			delete tmp;
@@ -240,20 +242,20 @@ CTimeline::tParam *CTimeline::removeParam(CTimeline::tParam *param)
 {
 	tParam *prev = param->prev;
 	tParam *next = param->next;
-	
+
 	if(prev)
 		prev->next = next;
 	if(next)
 		next->prev = prev;
-	
+
 	if(m_pFirst == param)
 		m_pFirst = next;
 	if(m_pLast == param)
 		m_pLast = prev;
-	
+
 	param->prev = NULL;
 	param->next = NULL;
-	
+
 	return param;
 }
 
@@ -334,7 +336,7 @@ CTimeline::tParam *CTimeline::getPrevParam(int offset)
 {
 	int max = 0;
 	tParam *prev = m_pFirst;
-	
+
 	tParam *tmp = m_pFirst;
 	while(tmp)
 	{
@@ -389,7 +391,6 @@ bool CTimeline::moveParam(CTimeline::tParam *param, int newoffset)
 
 CTimeline::tParam *CTimeline::getFirstParamAt(int offset)
 {
-	int o = 0;
 	CTimeline::tParam *tmp = m_pFirst;
 
 	while(tmp && tmp->offset<offset)
@@ -400,7 +401,6 @@ CTimeline::tParam *CTimeline::getFirstParamAt(int offset)
 
 CTimeline::tParam *CTimeline::getLastParamAt(int offset)
 {
-	int o = 0;
 	CTimeline::tParam *tmp = m_pLast;
 
 	while(tmp && tmp->offset>offset)

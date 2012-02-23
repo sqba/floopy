@@ -6,7 +6,7 @@
 #define STORAGE_H
 
 #include "../ifloopy.h"
-#include "PluginLoader.h"
+#include "../common/loader.h"
 
 /*********************************************************************
  *! \class CStorage
@@ -14,17 +14,18 @@
  *  \author Filip Pavlovic
  *  \version 0.0
  *********************************************************************/
-class CStorage : CPluginLoader
+class CStorage : CLoader
 {
 public:
-	CStorage(IFloopySoundEngine *engine, char *plugin);
+	CStorage(LIB_HANDLE hModule, IFloopySoundEngine *engine, const char *name);
 	virtual ~CStorage();
 
-	bool Load(char *filename);
-	bool Save(char *filename);
+	bool Load(const char *filename);
+	bool Save(const char *filename);
 
 private:
 	IFloopySoundEngine *m_engine;
+	IFloopyEngineStorage *m_plugin;
 };
 
 #endif // !defined(STORAGE_H)

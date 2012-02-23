@@ -3,7 +3,7 @@
 
 
 #include "floopyobj.h"
-#include "ObjTypes.h"
+#include "objtypes.h"
 
 
 #define SIZE_VALUE	0
@@ -29,7 +29,7 @@ public:
 		CPoint(CParameter *parameter);
 		CPoint(CPoint *pt);
 		virtual ~CPoint() {}
-	
+
 		int GetType()	{ return FLOOPY_PARAMETER; }
 		bool GetName(wxString &str);
 
@@ -50,6 +50,8 @@ public:
 		float	m_value;
 		int		m_sizing;
 		CActionHistory *m_pActionHistory;
+
+		const char *GetLastErrorDesc() { return NULL; }
 	};
 
 public:

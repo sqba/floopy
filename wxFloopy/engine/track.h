@@ -2,13 +2,13 @@
 #define Track_H
 
 
-#include "../../../ifloopy.h"
+#include "../../ifloopy.h"
 #include "floopyobj.h"
-#include "ObjTypes.h"
+#include "objtypes.h"
 
 
 #include <wx/string.h>
-#include <strstrea.h>
+//#include <strstrea.h>
 
 
 class CTracks;
@@ -19,17 +19,17 @@ class CLabel;
 WX_DECLARE_LIST(CRegion, RegionList);
 
 
-class CTrack : public IFloopyObj  
+class CTrack : public IFloopyObj
 {
 //	DECLARE_DYNAMIC_CLASS(CTrack)
 
 	/*! \class CBorder
-	 *  \brief 
+	 *  \brief
 	 *  \author sqba
 	 *  \version 0.0
 	 *  \date 2005
 	 *
-	 *  
+	 *
 	 */
 	class CBorder : public IFloopyObj
 	{
@@ -90,7 +90,7 @@ public:
 	bool RemoveSelectedObjects();
 	void UpdateSelectedRegions();
 
-	void Dump(ostream& stream);
+//	void Dump(ostream& stream);
 
 	IFloopySoundInput *GetTrack()	{ return m_pTrack; }
 	IFloopySoundInput *GetInput()	{ return m_pInput; }
@@ -136,11 +136,11 @@ public:
 	int   GetPropertyCount();
 	bool  GetPropertyVal(int, float*);
 	void  SetPropertyVal(int, float);
-	char *GetPropertyName(int);
-	char *GetPropertyDesc(int);
+	const char *GetPropertyName(int);
+	const char *GetPropertyDesc(int);
 	float GetPropertyMax(int);
 	float GetPropertyMin(int);
-	char *GetPropertyUnit(int);
+	const char *GetPropertyUnit(int);
 	float GetPropertyStep(int);
 
 	void ShowObjectParameters(IFloopySoundInput *obj, bool show=true);

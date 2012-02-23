@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
+#include "../platform.h"
 
 /**
  * Vraca numericku vrednost parametra komandne linije.
@@ -9,7 +10,7 @@
  * \param def [in] default
  * \return vrednost parametra ili def, ako parametar nije nadjen
  */
-int GetArg(int argc, char* argv[], char *arg, int def)
+int GetArg(int argc, char* argv[], const char *arg, int def)
 {
 	int i, result=def;
 	for(i=1; i<argc; i++) {
@@ -41,7 +42,7 @@ int GetArg(int argc, char* argv[], char *arg, int def)
  * \param def [in] default
  * \return vrednost parametra ili def, ako parametar nije nadjen
  */
-float GetArg(int argc, char* argv[], char *arg, float def)
+float GetArg(int argc, char* argv[], const char *arg, float def)
 {
 	int i;
 	float result=def;
@@ -74,10 +75,10 @@ float GetArg(int argc, char* argv[], char *arg, float def)
  * \param def [in] default
  * \return vrednost parametra ili def, ako parametar nije nadjen
  */
-char *GetArg(int argc, char* argv[], char *arg, char *def)
+const char *GetArg(int argc, char* argv[], const char *arg, const char *def)
 {
 	int i;
-	char *result = def;
+	const char *result = def;
 	for(i=1; i<argc; i++) {
 		if(argv[i][0] == '-') {
 			char *c = argv[i]+1;

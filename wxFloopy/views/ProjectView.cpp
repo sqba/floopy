@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "ProjectView.h"
+#include "projectview.h"
 
 #include "../engine/track.h"
 

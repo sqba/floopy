@@ -13,7 +13,7 @@
 #include <wx/region.h>
 #include <wx/list.h>
 
-#include "FloopyObj.h"
+#include "floopyobj.h"
 
 class CPathCtrl;
 
@@ -48,7 +48,7 @@ WX_DECLARE_LIST(CPathItem, ItemList);
 class CPathCtrl : public IFloopyObj
 {
 public:
-	CPathCtrl(IFloopyObj parent, IFloopySoundInput *input);
+	CPathCtrl(IFloopyObj *parent, IFloopySoundInput *input);
 	virtual ~CPathCtrl();
 
 	void SetPath(IFloopySoundInput *input);
@@ -62,6 +62,8 @@ public:
 	IFloopyObj *GetChild(int index);
 	void Move(int dx, int dy);
 	IFloopyObj *GetSelectedObj();
+
+	const char *GetLastErrorDesc() { return NULL; }
 
 private:
 	ItemList m_PathList;

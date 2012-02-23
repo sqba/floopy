@@ -12,14 +12,15 @@
 #include <stdio.h>
 #include <time.h>
 #include "../ifloopy.h"
+#include "../platform.h"
 #include "timeline.h"
 #include "timeline.h"
 #include "outputcache.h"
 
+#ifdef WIN32
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #include <windows.h>
-
-#define NAME_LEN	50
+#endif
 
 enum enumObjType { TYPE_INPUT, TYPE_OUTPUT, TYPE_ENGINE };
 
@@ -29,73 +30,62 @@ enum enumObjType { TYPE_INPUT, TYPE_OUTPUT, TYPE_ENGINE };
  */
 struct tComponent
 {
-	IFloopy		*obj;	/** Pointer to the object itself	*/
-	tComponent	*prev;	/** Pointer to the next object		*/
-	tComponent	*next;	/** Pointer to the previous object	*/
-	enumObjType	type;	/** Object type						*/
+	IFloopyObject	*obj;	/** Pointer to the object itself	*/
+	tComponent		*prev;	/** Pointer to the next object		*/
+	tComponent		*next;	/** Pointer to the previous object	*/
+	enumObjType		type;	/** Object type						*/
 };
 
 class CEngine : public IFloopySoundEngine
 {
 public:
-	CEngine(HMODULE hModule);
-	CEngine(HMODULE hModule, COutputCache *pOutputCache);
+	CEngine(LIB_HANDLE hModule);
+	CEngine(LIB_HANDLE hModule, COutputCache *pOutputCache);
 	virtual ~CEngine();
 
-	char *GetName()			{ return "engine"; }
-	char *GetDescription()	{ return "Floopy Engine"; }
-	char *GetVersion()		{ return "0.1"; }
-	char *GetAuthor()		{ return "sqba"; }
+	const char *GetName()			{ return "engine"; }
+	const char *GetDescription()	{ return "Floopy Engine"; }
+	const char *GetVersion()		{ return "0.1"; }
+	const char *GetAuthor()			{ return "sqba"; }
 
-	bool Open(char *filename);
-	bool Save(char *filename);
+	bool Open(const char *filename);
+	bool Save(const char *filename);
 	void Close();
 
-	IFloopySoundInput  *CreateInput(char *plugin);
-	IFloopySoundInput  *CreateTrack(char *plugin);
-	IFloopySoundOutput *CreateOutput(char *plugin, SOUNDFORMAT fmt);
+	IFloopySoundInput  *CreateInput(const char *plugin);
+	IFloopySoundInput  *CreateTrack(const char *plugin);
+	IFloopySoundOutput *CreateOutput(const char *plugin, SOUNDFORMAT fmt);
 
-//	bool SetParamAt(IFloopy *obj, int offset, int index, float value);
-//	bool ResetParamAt(IFloopy *obj, int offset, int index);
-//	bool EnableAt(IFloopy *obj, int offset, bool bEnable);
-
-	char *GetDisplayName();
-	void SetDisplayName(char *name, int len);
+	const char *GetDisplayName();
+	void SetDisplayName(const char *name, int len);
 
 	void RegisterUpdateCallback(UpdateCallback func);
 
-	char *GetLastErrorDesc();
-	//int GetLastError();
-	//bool GetLastError(char *str, int len);
+	const char *GetLastErrorDesc();
 
-	bool ReadSourceIfDisabled()	{ return false; }
+	bool CanReadSourceIfDisabled()	{ return false; }
 
-	char *GetPath() { return m_szFileName; }
+	const char *GetPath() { return m_szFileName; }
 
 	int EmptyBuffer(BYTE *data, int size);
-
-//	int GetSize();
 
 	bool GetColor(UINT *r, UINT *g, UINT *b);
 	void SetColor(UINT r, UINT g, UINT b);
 
 private:
-//	int samplesToBytes();
-	char *getPluginName(char *filename);
-//	enumObjType createObject(char *filename);
-	tComponent *add(IFloopy *comp, enumObjType type);
+	void init(LIB_HANDLE hModule, COutputCache *pOutputCache);
+	const char *get_plugin_name(const char *filename);
+	tComponent *add(IFloopyObject *comp, enumObjType type);
 	void saveChildEngines();
-	//void setLastError(char *err, char *str);
 
 private:
-	HMODULE m_hModule;				/** Handle to the module that created the engine */
-	char m_szDisplayname[NAME_LEN];	/** Engine name, user defined string */
-	char m_szLastError[100];		/** Last error description */
-	char m_szPath[MAX_PATH];		/** Physical location of the engine */
-	char m_szFileName[MAX_PATH];	/** File name, set after succesfull call to Open() */
-	CTimeline m_timeline;			/** Parameter changes */
-	UpdateCallback m_callback;		/** Callback function called on parameter changes while playing */
-	tComponent *m_pFirst, *m_pLast;	/** Linked list of all objects created by the engine */
+	LIB_HANDLE m_hModule;				/** Handle to the module that created the engine */
+	char m_szDisplayname[MAX_FNAME];	/** Engine name, user defined string */
+	char m_szLastError[100];			/** Last error description */
+	char m_szFileName[MAX_PATH];		/** File name, set after succesfull call to Open() */
+	CTimeline m_timeline;				/** Parameter changes */
+	UpdateCallback m_callback;			/** Callback function called on parameter changes while playing */
+	tComponent *m_pFirst, *m_pLast;		/** Linked list of all objects created by the engine */
 	UINT m_red, m_green, m_blue;
 	COutputCache *m_pOutputCache;
 };

@@ -1,7 +1,7 @@
 #ifndef GridView_H
 #define GridView_H
 
-#include "MainView.h"
+#include "mainview.h"
 #include "../engine/tracks.h"
 
 class CGridView : public CMainView

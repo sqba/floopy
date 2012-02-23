@@ -115,7 +115,7 @@ bool CPlayThread::Play(int sample)
 	SOUNDFORMAT *fmt = m_pInput->GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
 	m_iSamplesToBytes = (fmt->bitsPerSample/8) * fmt->channels;
-	m_pOutput = m_pEngine->CreateOutput("stdlib.waveout", *fmt);
+	m_pOutput = m_pEngine->CreateOutput("std.waveout", *fmt);
 
 
 	if( wxThread::IsPaused() )

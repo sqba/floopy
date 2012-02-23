@@ -36,7 +36,8 @@ private:
 		{
 			for(int i=0; i<(int)filenames.Count(); i++)
 			{
-				m_pFrame->Open( (char*)filenames.Item(i).GetData() );
+			    wxString str( filenames.Item(i).GetData() );
+				m_pFrame->Open( str );
 			}
 			return true;
 		}
@@ -49,7 +50,7 @@ public:
 	CFloopyFrame();
 	~CFloopyFrame();
 
-	bool Open(char *filename);
+	bool Open(wxString &filename);
 	bool Save();
 	bool SaveAs();
 	bool Close();
@@ -83,4 +84,4 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-#endif _FLOOPYFRAME_H
+#endif // _FLOOPYFRAME_H

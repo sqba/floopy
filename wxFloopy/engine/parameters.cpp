@@ -116,7 +116,7 @@ void CParameters::DeselectAll()
 
 bool CParameters::isAfterTrack(IFloopySoundInput *obj)
 {
-	bool bAfterTrack = false; // Is obj source of track?
+//	bool bAfterTrack = false; // Is obj source of track?
 	CRegion *region = (CRegion*)GetParent();
 	CTrack *track = (CTrack*)region->GetParent();
 	IFloopySoundInput *input = track->GetTrack();

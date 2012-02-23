@@ -5,8 +5,8 @@
 	#include "wx/wx.h"
 #endif
 
-#include "FloopyApp.h"
-#include "FloopyFrame.h"
+#include "floopyapp.h"
+#include "floopyframe.h"
 
 
 IMPLEMENT_APP(CFloopyApp)
@@ -17,12 +17,15 @@ bool CFloopyApp::OnInit()
 	CFloopyFrame *frame = new CFloopyFrame();
 
 	frame->CreateStatusBar(4);//, wxST_SIZEGRIP);  // XP?
-	frame->SetStatusText("Floopy");
+//	frame->SetStatusText("Floopy");
 
 	if(argc > 1)
 	{
 		for(int i=1; i<argc; i++)
-			frame->Open(argv[i]);
+		{
+		    wxString str( argv[i] );
+			frame->Open( str );
+		}
 	}
 
 	frame->Show(true);

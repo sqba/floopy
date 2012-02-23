@@ -2,26 +2,29 @@
 #define Tracks_H
 
 
-#include <strstrea.h>
+//#include <sstream>
 #include <wx/log.h>
 #include <wx/wxprec.h>
 #include <wx/list.h>
 #include <wx/listimpl.cpp>
 #include <wx/docview.h>
-#include <wx/dynlib.h>
+//#include <wx/dynlib.h>
 #include <wx/thread.h>
 #include <wx/timer.h>
 
 #include <wx/dcmemory.h>
 #include <wx/bitmap.h>
 
-#include "../../../ifloopy.h"
-#include "../FloopyControl.h"
+#include "../../ifloopy.h"
+#include "../floopycontrol.h"
 #include "floopyobj.h"
 #include "../views/rulerview.h"
 
 #include "objtypes.h"
 
+#include "../../platform.h"
+
+#include "../../common/engine_wrapper.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -111,12 +114,12 @@ class CTracks : public IFloopyObj
 	};
 
 	/*! \class CSelectedEvents
-	 *  \brief 
+	 *  \brief
 	 *  \author sqba
 	 *  \version 0.0
 	 *  \date 2005
 	 *
-	 *  
+	 *
 	 */
 	/*class CSelectedEvents : public IFloopyObj
 	{
@@ -148,11 +151,11 @@ public:
 	int   GetPropertyCount();
 	bool  GetPropertyVal(int, float*);
 	void  SetPropertyVal(int, float);
-	char *GetPropertyName(int);
-	char *GetPropertyDesc(int);
+	const char *GetPropertyName(int);
+	const char *GetPropertyDesc(int);
 	float GetPropertyMax(int);
 	float GetPropertyMin(int);
-	char *GetPropertyUnit(int);
+	const char *GetPropertyUnit(int);
 	float GetPropertyStep(int);
 
 	int  GetWidth();
@@ -168,7 +171,7 @@ public:
 
 	void SetTimelineView(CRulerView *panel);
 	void SetLabelsView(CRulerView *panel)		{ m_pLabelsView = panel; }
-	
+
 	CRulerView *GetTimelineView()				{ return m_pTimelineView; };
 	CRulerView *GetLabelsView()					{ return m_pLabelsView; };
 
@@ -179,7 +182,7 @@ public:
 	IFloopySoundInput *GetInput()				{ return m_pEngine; }
 	wxStatusBar *GetStatusBar()					{ return m_pFrame->GetStatusBar(); }
 	void SetFrame(wxFrame *pFrame)				{ m_pFrame = pFrame; }
-	char *GetFilename()							{ return m_filename; }
+	const wxChar *GetFilename()					{ return m_filename; }
 	int GetPixelsPerSecond()					{ return m_iPixelsPerSecond; }
 	CActionHistory *GetActionHistory()			{ return m_pActionHistory; }
 	bool ScrollWhilePlaying()					{ return m_bScrollView; }
@@ -207,10 +210,10 @@ public:
 	void Refresh();
 	void Invalidate();
 
-	void Dump(ostream& stream);
+//	void Dump(ostringstream& stream);
 
-	bool Open(char *filename);
-	bool Save(char *filename);
+	bool Open(wxString &filename);
+	bool Save(const wxChar *filename);
 	void Clear();
 
 	bool OnKeyDown(wxKeyEvent& event);
@@ -245,27 +248,30 @@ public:
 	static char *GetComponentName(IFloopySoundInput*);
 	static bool IsFilter(IFloopySoundInput*);
 
+	const char* GetLastErrorDesc()         { return NULL; }
+
 private:
 	CTrack *addTrack(IFloopySoundInput*, int);
-	bool createEngine(char *plugin);
+	bool createEngine(const wxChar *plugin);
 	void loadTracks(IFloopySoundInput*, int);
 	void changeHeight(int dy);
 	void init();
 
 private:
 	TracksList			m_tracks;
-	IFloopySoundEngine	*m_pEngine;
+//	IFloopySoundEngine	*m_pEngine;
 	IFloopySoundMixer	*m_pMaster;
 	CRulerView			*m_pTimelineView, *m_pLabelsView;
 	CBorder				*m_pBorder;
-	wxDynamicLibrary	m_libEngine;
+//	wxDynamicLibrary	m_libEngine;
+	CEngineWrapper      *m_pEngine;
 	CPlayThread			*m_pPlayThread;
 	int					m_iCursorPosition;
 	wxStatusBar			*m_pStatusBar;
 	wxFrame				*m_pFrame;
 	CTimer				m_Timer;
 	int					m_iStartSample;
-	char				m_filename[MAX_PATH];
+	wxString			m_filename;
 	bool				m_bViewUpdated;
 	CActionHistory		*m_pActionHistory;
 

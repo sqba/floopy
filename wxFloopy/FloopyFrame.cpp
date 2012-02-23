@@ -4,7 +4,7 @@
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif
-#include "FloopyFrame.h"
+#include "floopyframe.h"
 
 
 
@@ -93,13 +93,13 @@ void CFloopyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void CFloopyFrame::OnFileOpen(wxCommandEvent& WXUNUSED(event))
 {
-	wxFileDialog *dlg = new wxFileDialog(this, "Open", "", "",
-		"XML Files(*.xml)|*.xml|Wav files(*.wav)|*.wav|All files(*.*)|*.*",
+	wxFileDialog *dlg = new wxFileDialog(this, _T("Open"), _T(""), _T(""),
+		_T("XML Files(*.xml)|*.xml|Wav files(*.wav)|*.wav|All files(*.*)|*.*"),
 		wxOPEN, wxDefaultPosition);
 	if ( dlg->ShowModal() == wxID_OK )
 	{
 		SetStatusText(dlg->GetFilename(), 0);
-		char *filename = (char*)dlg->GetPath().c_str();
+		wxString filename = dlg->GetPath();
 		Open(filename);
 	}
 	dlg->Destroy();
@@ -202,10 +202,10 @@ void CFloopyFrame::initToolbar()
 
 	//wxBitmap aboutImage("res/help.bmp", wxBITMAP_TYPE_BMP);
 
-	wxBitmap aboutImage("CSQUERY",	wxBITMAP_TYPE_RESOURCE);
-	wxBitmap playImage( "PLAY",		wxBITMAP_TYPE_RESOURCE);
-	wxBitmap pauseImage("PAUSE",	wxBITMAP_TYPE_RESOURCE);
-	wxBitmap stopImage( "STOP",		wxBITMAP_TYPE_RESOURCE);
+	wxBitmap aboutImage(_T("CSQUERY"),	wxBITMAP_TYPE_RESOURCE);
+	wxBitmap playImage( _T("PLAY"),		wxBITMAP_TYPE_RESOURCE);
+	wxBitmap pauseImage(_T("PAUSE"),	wxBITMAP_TYPE_RESOURCE);
+	wxBitmap stopImage( _T("STOP"),		wxBITMAP_TYPE_RESOURCE);
 
 	toolbar->AddTool(ID_ABOUT,	_("About"),	aboutImage,	_("About Floopy"));
 	toolbar->AddTool(ID_PLAY,	_("Play"),	playImage,	_("Play"));
@@ -215,20 +215,24 @@ void CFloopyFrame::initToolbar()
 	toolbar->Realize();
 }
 
-bool CFloopyFrame::Open(char *filename)
+bool CFloopyFrame::Open(wxString &filename)
 {
 	if( m_pTracks->Open(filename) )
 	{
-		wxString str;
-		str.Printf("Floopy! - %s", filename);
-		SetTitle( str );
+//		wxString str;
+//		str.Printf(_T("Floopy! - %s"), filename);
+//		SetTitle( str );
+
 		//m_pTimelineView->RefreshRulers();
 //		m_pTimelineView->SetFocus();
 
 		UINT r=0, g=0, b=0;
 		IFloopySoundEngine *engine = (IFloopySoundEngine*)m_pTracks->GetInput();
 		if( engine->GetColor(&r, &g, &b) )
-			m_pView->SetBackgroundColour( wxColor(r, g, b) );
+		{
+		    wxColour clr(r, g, b);
+			m_pView->SetBackgroundColour( clr );
+		}
 		return true;
 	}
 	return false;
@@ -236,8 +240,8 @@ bool CFloopyFrame::Open(char *filename)
 
 bool CFloopyFrame::Save()
 {
-	char *filename = m_pTracks->GetFilename();
-	if(strlen(filename) > 0)
+	const wxChar *filename = m_pTracks->GetFilename();
+	if(wxStrlen_(filename) > 0)
 		return m_pTracks->Save(filename);
 	return false;
 }
@@ -245,13 +249,13 @@ bool CFloopyFrame::Save()
 bool CFloopyFrame::SaveAs()
 {
 	bool bResult = false;
-	wxFileDialog *dlg = new wxFileDialog(this, "Save", "", "",
-		"XML Files(*.xml)|*.xml|Wav files(*.wav)|*.wav|All files(*.*)|*.*",
+	wxFileDialog *dlg = new wxFileDialog(this, _T("Save"), _T(""), _T(""),
+		_T("XML Files(*.xml)|*.xml|Wav files(*.wav)|*.wav|All files(*.*)|*.*"),
 		wxSAVE, wxDefaultPosition);
 	if ( dlg->ShowModal() == wxID_OK )
 	{
 		SetStatusText(dlg->GetFilename(), 0);
-		char *filename = (char*)dlg->GetPath().c_str();
+		const wxChar *filename = dlg->GetPath().c_str();
 		m_pTracks->Save(filename);
 		bResult = true;
 	}
@@ -288,17 +292,19 @@ bool CFloopyFrame::Close()
 
 void CFloopyFrame::ShowFreeMemory()
 {
+    return; // something's wrong here
 	wxString str;
-	wxMemorySize mem = ::wxGetFreeMemory();
-	wxString ext[] = {"B", "KB", "MB", "GB", "TB"};
+	wxMemorySize wxmem = ::wxGetFreeMemory();
+	long mem = wxmem.ToLong();
+	wxString ext[] = {_T("B"), _T("KB"), _T("MB"), _T("GB"), _T("TB")};
 	int i=0;
 	int cnt = sizeof(ext) / sizeof(wxString);
-	while(mem > 1024 && i < cnt)
+	while((mem > 1024) && (i < cnt))
 	{
 		mem /= 1024;
 		i++;
 	}
-	str.Printf("%d %s free memory", mem, ext[i]);
+	str.Printf(_T("%d %s free memory"), mem, ext[i].c_str());
 	GetStatusBar()->SetStatusText(str, 3);
 }
 

@@ -1,9 +1,9 @@
 #ifndef TimeRuler_H
 #define TimeRuler_H
 
-#include "FloopyHRuler.h"
+#include "floopyhruler.h"
 
-class CTimeRuler : public CFloopyHRuler  
+class CTimeRuler : public CFloopyHRuler
 {
 public:
 	CTimeRuler(CRulerView *parent, CTracks *tracks);

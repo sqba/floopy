@@ -1,9 +1,9 @@
 #ifndef SAMPLE_RULER_H
 #define SAMPLE_RULER_H
 
-#include "FloopyHRuler.h"
+#include "floopyhruler.h"
 
-class CSampleRuler : public CFloopyHRuler  
+class CSampleRuler : public CFloopyHRuler
 {
 public:
 	CSampleRuler(CRulerView *parent, CTracks *tracks);
