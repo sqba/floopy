@@ -1008,14 +1008,14 @@ void CTracks::SetViewUpdatedWhilePlaying(bool bUpdate)
 }
 
 
-char *CTracks::GetComponentName(IFloopySoundInput *src)
+const char *CTracks::GetComponentName(IFloopySoundInput *src)
 {
 	if(NULL == src)
 		return NULL;
 	const char *tmp = src->GetName();
-	char *name = strrchr(tmp, '.');
+	const char *name = strrchr(tmp, '.');
 	if(NULL == name)
-		name = (char*)tmp;
+		name = (const char*)tmp;
 	else
 		name++;
 	return name;
@@ -1025,7 +1025,7 @@ IFloopySoundInput *CTracks::FindComponentByName(IFloopySoundInput *src, char *na
 {
 	while(src)
 	{
-		char *tmp = GetComponentName(src);
+		const char *tmp = GetComponentName(src);
 		if(0==strcmpi(tmp, name))
 			return src;
 
