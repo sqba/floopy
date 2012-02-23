@@ -299,7 +299,7 @@ bool CEngine::Open(const char *filename)
 		}
 		else
 		{
-			char *sep = strrchr(plugin, '.');
+			const char *sep = strrchr(plugin, '.');
 			if(sep)
 			{
 				m_source = CreateInput( filename );
@@ -363,7 +363,7 @@ void CEngine::saveChildEngines()
 
 const char *CEngine::get_plugin_name(const char *filename)
 {
-	char *ext = strrchr(filename, '.');
+	const char *ext = strrchr(filename, '.');
 	if(ext)
 	{
 		ext++;

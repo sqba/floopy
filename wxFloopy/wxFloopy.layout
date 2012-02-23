@@ -7,8 +7,8 @@
 	<File name="dialogs/controldlg.cpp" open="0" top="0" tabpos="1">
 		<Cursor position="4502" topLine="191" />
 	</File>
-	<File name="dialogs/controldlg.h" open="0" top="0" tabpos="2">
-		<Cursor position="1436" topLine="33" />
+	<File name="dialogs/controldlg.h" open="1" top="0" tabpos="1">
+		<Cursor position="348" topLine="0" />
 	</File>
 	<File name="engine/actionhistory.cpp" open="0" top="0" tabpos="3">
 		<Cursor position="2180" topLine="53" />
@@ -56,22 +56,22 @@
 		<Cursor position="3686" topLine="133" />
 	</File>
 	<File name="engine/regiondisplay.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="3840" topLine="150" />
+		<Cursor position="4762" topLine="183" />
 	</File>
 	<File name="engine/regiondisplay.h" open="0" top="0" tabpos="6">
 		<Cursor position="820" topLine="22" />
 	</File>
-	<File name="engine/track.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="934" topLine="17" />
+	<File name="engine/track.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="979" topLine="8" />
 	</File>
 	<File name="engine/track.h" open="0" top="0" tabpos="8">
 		<Cursor position="3318" topLine="121" />
 	</File>
-	<File name="engine/tracks.cpp" open="0" top="0" tabpos="2">
-		<Cursor position="12292" topLine="533" />
+	<File name="engine/tracks.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="21801" topLine="995" />
 	</File>
-	<File name="engine/tracks.h" open="0" top="0" tabpos="1">
-		<Cursor position="450" topLine="5" />
+	<File name="engine/tracks.h" open="1" top="1" tabpos="4">
+		<Cursor position="5619" topLine="215" />
 	</File>
 	<File name="floopyapp.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="291" topLine="14" />

@@ -45,7 +45,7 @@ void get_plugin_name(const char *fullname, char *name)
 	else
 		path = fullname;
 
-	char *sep = strrchr(path, '.');
+	const char *sep = strrchr(path, '.');
 	const char *tmp = sep ? sep+1 : path;
 
 	if( strlen(tmp) <= MAX_FNAME )

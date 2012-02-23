@@ -11,8 +11,6 @@
 				<Option object_output="../obj/Debug/engine" />
 				<Option type="3" />
 				<Option compiler="gcc" />
-				<Option parameters="-i ../bin/Debug/samples/BLOWIT01.WAV -o ../bin/Debug/acid.svg" />
-				<Option host_application="floopy" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
@@ -41,7 +39,7 @@
 			<Add option="-fPIC" />
 		</Compiler>
 		<Linker>
-			<Add option="-ldl" />
+			<Add option="-ldl -fPIC" />
 		</Linker>
 		<Unit filename="../common/loader.cpp" />
 		<Unit filename="../common/loader.h" />
