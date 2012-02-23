@@ -131,7 +131,7 @@ bool CInput::Open(const char *filename)
 {
 	if(NULL!=m_plugin && m_plugin->Open(filename))
 	{
-		const char *tmp = strrchr(filename, '\\');
+		char *tmp = strrchr(filename, '\\');
 		filename = tmp ? tmp+1 : filename;
 		SetDisplayName( filename );
 		recalcVariables();
