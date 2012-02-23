@@ -299,7 +299,7 @@ bool CEngine::Open(const char *filename)
 		}
 		else
 		{
-			char *sep = strrchr(plugin, '.');
+			const char *sep = strrchr(plugin, '.');
 			if(sep)
 			{
 				m_source = CreateInput( filename );
@@ -363,7 +363,7 @@ void CEngine::saveChildEngines()
 
 const char *CEngine::get_plugin_name(const char *filename)
 {
-	char *ext = strrchr(filename, '.');
+	const char *ext = strrchr(filename, '.');
 	if(ext)
 	{
 		ext++;
@@ -413,10 +413,9 @@ const char *CEngine::GetDisplayName()
 	return m_szDisplayname;
 }
 
-void CEngine::SetDisplayName(const char *name, int len)
+void CEngine::SetDisplayName(const char *name)
 {
-	memset(m_szDisplayname, 0, MAX_FNAME);
-	memcpy(m_szDisplayname, name, (len < MAX_FNAME ? len : MAX_FNAME));
+	strcpy(m_szDisplayname, name);
 }
 
 void CEngine::RegisterUpdateCallback(UpdateCallback func)

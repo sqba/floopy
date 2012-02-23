@@ -116,11 +116,6 @@ int CWaveOut::Write(BYTE *data, int size)
 	return size;
 }
 
-int CWaveOut::Write2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}
-
 
 
 

@@ -68,9 +68,7 @@ public:
 	const char *GetPath()							{ return m_plugin->is_engine() ? m_source->GetPath() : m_szObjPath; }
 
 	const char *GetDisplayName()					{ return m_szDisplayName; }
-	void SetDisplayName(const char*, int);
-
-	int GetPosition()								{ return m_offset / m_nSamplesToBytes; }
+	void SetDisplayName(const char*);
 
 	void SetEngine(IFloopySoundEngine *pEngine)		{ m_plugin->SetEngine(pEngine); }
 
@@ -87,10 +85,9 @@ public:
 
 	void MoveTo(int samples);
 	void Reset();
-	int  Read(BYTE *data, int size);
-	int  Read2(BYTE **data, int channels, int samples);
-
 	int GetSize();
+	int GetPosition()								{ return m_offset / m_nSamplesToBytes; }
+	int  Read(BYTE *data, int size);
 	int GetSourceSize();
 
 	bool SetSource(IFloopySoundInput *src);

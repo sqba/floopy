@@ -14,7 +14,6 @@ public:
 
 	bool Open(const char *filename);
 	int Write(BYTE *data, int size);
-	int Write2(BYTE **data, int channels, int samples);
 	void Close();
 
 	const char *GetName()			{ return "svg.svgout"; }

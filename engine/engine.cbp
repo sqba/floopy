@@ -39,7 +39,7 @@
 			<Add option="-fPIC" />
 		</Compiler>
 		<Linker>
-			<Add option="-ldl" />
+			<Add option="-ldl -fPIC" />
 		</Linker>
 		<Unit filename="../common/loader.cpp" />
 		<Unit filename="../common/loader.h" />

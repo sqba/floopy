@@ -43,8 +43,3 @@ int CInvert::Read(BYTE *data, int size)
 	}
 	return len;
 }
-
-int CInvert::Read2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}

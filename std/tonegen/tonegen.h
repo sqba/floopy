@@ -23,9 +23,8 @@ public:
 	CToneGen();
 	virtual ~CToneGen();
 
-	int  GetSize()					{ return -1; }
 	int  Read(BYTE *data, int size);
-	int  Read2(BYTE **data, int channels, int samples);
+	int  GetSize()					{ return -1; }
 	void MoveTo(int samples)		{ if(samples==0) m_angle = 0.0; }
 	void Reset()					{ m_angle = 0.0; }
 

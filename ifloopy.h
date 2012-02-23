@@ -1,7 +1,6 @@
 #ifndef _IFLOOPY_H_
 #define _IFLOOPY_H_
 
-
 #include <memory.h>	// for memset()
 
 
@@ -104,7 +103,7 @@ typedef struct SoundFormat
 #define TYPE_FLOOPY_BASE			0x00010000								/** IFloopyBase					*/
 #define TYPE_FLOOPY_OBJECT			(TYPE_FLOOPY_BASE|0x00000001L)			/** IFloopyObject				*/
 #define TYPE_FLOOPY_SOUND_INPUT		(TYPE_FLOOPY_OBJECT|0x00000002L)		/** IFloopySoundInput			*/
-#define TYPE_FLOOPY_SOUND_OUTPUT	(TYPE_FLOOPY_OBJECT|0x00000004L)		/** IFloopySound				*/
+#define TYPE_FLOOPY_SOUND_OUTPUT	(TYPE_FLOOPY_OBJECT|0x00000004L)		/** IFloopySoundStream			*/
 #define TYPE_FLOOPY_SOUND_FILTER	(TYPE_FLOOPY_SOUND_INPUT|0x00000008L)	/** IFloopySoundFilter			*/
 #define TYPE_FLOOPY_SOUND_MIXER		(TYPE_FLOOPY_SOUND_FILTER|0x00000016L)	/** IFloopySoundMixer			*/
 #define TYPE_FLOOPY_SOUND_ENGINE	(TYPE_FLOOPY_SOUND_FILTER|0x00000032L)	/** IFloopySoundEngine			*/
@@ -156,6 +155,9 @@ public:
 	 * @return class type identificator.
 	 */
 	virtual int GetType()					{ return TYPE_FLOOPY_BASE; }
+
+//	bool Is(int type)
+//	{ int t=this->GetType(); return (t == (type | t)); }
 
 	// Component description
 	virtual const char *GetName()			{ return "IFloopyObject"; }
@@ -334,16 +336,16 @@ class IFloopyDisplay : public IFloopyTimeline
 {
 public:
 	/** Do not override in implementations, handled by the engine */
-	virtual const char *GetDisplayName()					{ return NULL; }
+	virtual const char *GetDisplayName()				{ return NULL; }
 
 	/** Do not override in implementations, handled by the engine */
-	virtual void  SetDisplayName(const char *name, int len){ } // remove len!!!
+	virtual void  SetDisplayName(const char *name)		{ }
 
 	/** Do not override in implementations, handled by the engine */
-	virtual bool GetColor(UINT *red, UINT *green, UINT *blue) { return false; }
+	virtual bool GetColor(UINT *r, UINT *g, UINT *b)	{ return false; }
 
 	/** Do not override in implementations, handled by the engine */
-	virtual void  SetColor(UINT red, UINT green, UINT blue){ }
+	virtual void  SetColor(UINT r, UINT g, UINT b)		{ }
 };
 
 
@@ -360,9 +362,6 @@ class IFloopyObject : public IFloopyDisplay
 {
 public:
 	IFloopyObject()							{ m_nLastError = 0; m_pEngine = NULL; }
-
-//	bool Is(int type)
-//	{ int t=this->GetType(); return (t == (type | t)); }
 
 	virtual int GetType()				{ return TYPE_FLOOPY_OBJECT; }
 
@@ -397,7 +396,7 @@ protected:
 
 
 /*********************************************************************
- *! \class IFloopySound
+ *! \class IFloopySoundStream
  *  \brief Main sound interface.
  *  \author Filip Pavlovic
  *  \version 0.0
@@ -405,13 +404,13 @@ protected:
  *
  *  Interface implemented and used by all sound objects.
  *********************************************************************/
-class IFloopySound : public IFloopyObject
+class IFloopySoundStream : public IFloopyObject
 {
 public:
-	IFloopySound() : IFloopyObject()
+	IFloopySoundStream() : IFloopyObject()
 		{ memset(&m_format, 0, sizeof(SOUNDFORMAT)); }
 
-	IFloopySound(SOUNDFORMAT fmt) : IFloopyObject()
+	IFloopySoundStream(SOUNDFORMAT fmt) : IFloopyObject()
 		{ memcpy(&m_format, &fmt, sizeof(SOUNDFORMAT)); }
 
 	virtual SOUNDFORMAT *GetFormat()	{ return &m_format; }
@@ -433,10 +432,10 @@ protected:
  *  Interface implemented and used by all sound
  *  input and filter (effect) objects.
  *********************************************************************/
-class IFloopySoundInput : public IFloopySound
+class IFloopySoundInput : public IFloopySoundStream
 {
 public:
-	IFloopySoundInput() : IFloopySound() {}
+	IFloopySoundInput() : IFloopySoundStream() {}
 	virtual ~IFloopySoundInput() {}
 
 	int GetType()			{ return TYPE_FLOOPY_SOUND_INPUT; }
@@ -463,7 +462,6 @@ public:
 	 * @return number of bytes read.
 	 */
 	virtual int Read(BYTE *data, int size)=0;//	{ return 0; }
-	virtual int Read2(BYTE **data, int channels, int samples)=0;//	{ return 0; }
 
 	/**
 	 * Moves the starting position.
@@ -539,15 +537,6 @@ public:
 	int GetType()	{ return TYPE_FLOOPY_SOUND_FILTER; }
 
 
-	/**
-	 * Return source size.
-	 * @return number of samples.
-	 */
-	virtual int GetSourceSize()
-	{
-		return GetSize();
-	}
-
 	virtual bool SetSource(IFloopySoundInput *src)
 	{
 		m_source = src;
@@ -565,9 +554,13 @@ public:
 		return (NULL != m_source ? m_source->Open(filename) : false);
 	}
 
-	virtual int GetSize()
+	/**
+	 * Return source size.
+	 * @return number of samples.
+	 */
+	virtual int GetSourceSize()
 	{
-		return (NULL != m_source ? m_source->GetSize() : 0);
+		return GetSize();
 	}
 
 	virtual int Read(BYTE *data, int size)
@@ -575,9 +568,9 @@ public:
 		return (NULL != m_source ? m_source->Read(data, size) : 0);
 	}
 
-	virtual int Read2(BYTE **data, int channels, int samples)
+	virtual int GetSize()
 	{
-		return (NULL != m_source ? m_source->Read2(data, channels, samples) : 0);
+		return (NULL != m_source ? m_source->GetSize() : 0);
 	}
 
 	virtual void MoveTo(int samples)
@@ -645,13 +638,10 @@ public:
 
 	virtual int AddSource(IFloopySoundInput *src)
 	{
-		if(NULL != m_source)
-		{
-			m_source = src;
-			return 0;
-		}
-		else
+		if(NULL == m_source)
 			return -1;
+		m_source = src;
+		return 0;
 	}
 
 	virtual IFloopySoundInput *GetSource(int index)
@@ -678,11 +668,11 @@ public:
  *  Interface implemented and used by all sound output objects
  *  such as file writers and encoders.
  *********************************************************************/
-class IFloopySoundOutput : public IFloopySound
+class IFloopySoundOutput : public IFloopySoundStream
 {
 public:
-	IFloopySoundOutput() : IFloopySound()				{ m_dest = NULL; }
-	IFloopySoundOutput(SOUNDFORMAT fmt) : IFloopySound(fmt) { m_dest = NULL; }
+	IFloopySoundOutput() : IFloopySoundStream()				{ m_dest = NULL; }
+	IFloopySoundOutput(SOUNDFORMAT fmt) : IFloopySoundStream(fmt) { m_dest = NULL; }
 	virtual ~IFloopySoundOutput() {}
 
 	int GetType()			{ return TYPE_FLOOPY_SOUND_OUTPUT; }
@@ -718,18 +708,13 @@ public:
 		return (NULL != m_dest ? m_dest->Write(data, size) : 0);
 	}
 
-	virtual int Write2(BYTE **data, int channels, int samples)
-	{
-		return (NULL != m_dest ? m_dest->Write2(data, channels, samples) : 0);
-	}
-
-	virtual void SetDest(IFloopySoundOutput *dst)	{ m_dest = dst; }
-	virtual IFloopySoundOutput *GetDest()			{ return m_dest; }
-
 	virtual int GetPosition()
 	{
 		return (NULL != m_dest ? m_dest->GetPosition() : 0);
 	}
+
+	virtual void SetDest(IFloopySoundOutput *dst)	{ m_dest = dst; }
+	virtual IFloopySoundOutput *GetDest()			{ return m_dest; }
 
 	virtual void Reset()
 	{

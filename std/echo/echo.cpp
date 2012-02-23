@@ -56,18 +56,6 @@ int CEcho::Read(BYTE *data, int size)
 	}
 }
 
-int CEcho::Read2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}
-
-void CEcho::Reset()
-{
-	memset(echo_buf, 0, sizeof(echo_buf));
-	memset(echo_buf2, 0, sizeof(echo_buf));
-	IFloopySoundFilter::Reset();
-}
-
 int CEcho::read(BYTE *data, int size)
 {
 	int len = IFloopySoundFilter::Read(data, size);
@@ -101,6 +89,14 @@ int CEcho::read(BYTE *data, int size)
 
 	return len;
 }
+
+void CEcho::Reset()
+{
+	memset(echo_buf, 0, sizeof(echo_buf));
+	memset(echo_buf2, 0, sizeof(echo_buf));
+	IFloopySoundFilter::Reset();
+}
+
 /*
 void CEcho::Enable(bool bEnabled)
 {

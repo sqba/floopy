@@ -84,11 +84,6 @@ int CFloat2Int::Read(BYTE *data, int size)
 	return size;
 }
 
-int CFloat2Int::Read2(BYTE **data, int channels, int samples)
-{
-	return 0;
-}
-
 void CFloat2Int::MoveTo(int samples)
 {
 	IFloopySoundFilter::MoveTo(samples);

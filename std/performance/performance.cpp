@@ -35,23 +35,14 @@ int CPerformance::Read(BYTE *data, int size)
 	return len;
 }
 
-int CPerformance::Read2(BYTE **data, int channels, int samples)
-{
-}
-
-void CPerformance::Close()
-{
-	IFloopySoundFilter::Close();
-}
-
 void CPerformance::MoveTo(int samples)
 {
 	IFloopySoundFilter::MoveTo( samples );
 }
 
-void CPerformance::Reset()
+int CPerformance::GetSize()
 {
-	IFloopySoundFilter::Reset();
+	return IFloopySoundFilter::GetSize();
 }
 
 int CPerformance::GetSourceSize()
@@ -59,14 +50,19 @@ int CPerformance::GetSourceSize()
 	return IFloopySoundFilter::GetSourceSize();
 }
 
+void CPerformance::Close()
+{
+	IFloopySoundFilter::Close();
+}
+
+void CPerformance::Reset()
+{
+	IFloopySoundFilter::Reset();
+}
+
 bool CPerformance::Open(char *filename)
 {
 	return IFloopySoundFilter::Open( filename );
-}
-
-int CPerformance::GetSize()
-{
-	return IFloopySoundFilter::GetSize();
 }
 
 

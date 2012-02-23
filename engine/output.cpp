@@ -93,9 +93,9 @@ int COutput::Write(BYTE *data, int size)
 	return 0;
 }
 
-int COutput::Write2(BYTE **data, int channels, int samples)
+int COutput::GetPosition()
 {
-	return 0;
+	return NULL!=m_plugin ? m_plugin->GetPosition() : 0;
 }
 
 void COutput::Reset()
@@ -235,9 +235,4 @@ void COutput::SetDest(IFloopySoundOutput *dst)
 const char *COutput::GetLastErrorDesc()
 {
 	return m_szLastError;
-}
-
-int COutput::GetPosition()
-{
-	return NULL!=m_plugin ? m_plugin->GetPosition() : 0;
 }

@@ -32,13 +32,12 @@ public:
 	const char *GetVersion()		{ return "0.1"; }
 	const char *GetAuthor()			{ return "sqba"; }
 
-	void MoveTo(int samples);
 	void Reset();
 	void Close();
-	int GetSize();
 
 	int Read(BYTE *data, int size);
-	int Read2(BYTE **data, int channels, int samples);
+	int GetSize();
+	void MoveTo(int samples);
 
 	bool SetSource(IFloopySoundInput *src) { return (AddSource(src) != -1); }
 	int AddSource(IFloopySoundInput *src);
