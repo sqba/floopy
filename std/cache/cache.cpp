@@ -40,6 +40,11 @@ int CCache::Read(BYTE *data, int size)
 	return size;
 }
 
+int CCache::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 bool CCache::SetSource(IFloopySoundInput *src)
 {
 	if(	createBuffer() )

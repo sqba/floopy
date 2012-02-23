@@ -163,6 +163,11 @@ int CWavFileIn::Read(BYTE *data, int size)
 	return fread( data, 1, size, m_pFile );
 }
 
+int CWavFileIn::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 int CWavFileIn::GetPosition()
 {
 	if( !m_pFile )

@@ -32,6 +32,11 @@ int CLoop::Read(BYTE *data, int size)
 	return result;
 }
 
+int CLoop::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 void CLoop::MoveTo(int samples)
 {
 	int size = IFloopySoundFilter::GetSize();

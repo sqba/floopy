@@ -159,14 +159,19 @@ int CMixer::Read(BYTE *data, int size)
 			result = m_nLengths[i];
 	}
 
-	return result; 
+	return result;
+}
+
+int CMixer::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
 }
 
 void CMixer::mixBuffers(BYTE *pBuffers, int buffCount, BYTE *output, int size)
 {
 	SOUNDFORMAT *fmt = GetFormat();
 	assert((fmt->bitsPerSample > 0) && (fmt->channels > 0));
-	
+
 	int step = fmt->bitsPerSample / 8;
 	int numsamples = size/step;
 
@@ -183,7 +188,7 @@ void CMixer::mixBuffers(BYTE *pBuffers, int buffCount, BYTE *output, int size)
 		for(int n=0; n<buffCount*numsamples; n+=numsamples)
 		{
 			SAMPLE sample = *(in+n+i);
-			
+
 			if(sample != 0)
 			{
 				int tmp = (int)*out + (int)sample;
@@ -240,7 +245,7 @@ void CMixer::Reset()
 int CMixer::GetSize()
 {
 	int size = 0;
-	
+
 	inputChannel *channel = m_pFirst;
 	while(channel)
 	{

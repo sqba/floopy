@@ -18,6 +18,7 @@ public:
 	virtual ~COSS();
 
 	int Write(BYTE *data, int size);
+	int Write2(BYTE **data, int channels, int samples);
 
 	const char *GetName()			{ return "std.oss"; }
 	const char *GetDescription()	{ return "OSS Out"; }

@@ -88,6 +88,7 @@ public:
 	void MoveTo(int samples);
 	void Reset();
 	int  Read(BYTE *data, int size);
+	int  Read2(BYTE **data, int channels, int samples);
 
 	int GetSize();
 	int GetSourceSize();

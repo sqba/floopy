@@ -66,6 +66,11 @@ int CReverse::Read(BYTE *data, int size)
 	return len;
 }
 
+int CReverse::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 void CReverse::reverse(BYTE *data, int size)
 {
 	SOUNDFORMAT *fmt = GetFormat();

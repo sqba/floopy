@@ -17,6 +17,7 @@ public:
 	bool CanReadSourceIfDisabled()	{ return false; }
 
 	int Read(BYTE*, int);
+	int Read2(BYTE**, int, int);
 	void MoveTo(int);
 	void Reset();
 	bool SetSource(IFloopySoundInput *src);

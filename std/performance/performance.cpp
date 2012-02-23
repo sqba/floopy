@@ -35,6 +35,10 @@ int CPerformance::Read(BYTE *data, int size)
 	return len;
 }
 
+int CPerformance::Read2(BYTE **data, int channels, int samples)
+{
+}
+
 void CPerformance::Close()
 {
 	IFloopySoundFilter::Close();

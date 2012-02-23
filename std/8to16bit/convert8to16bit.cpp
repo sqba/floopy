@@ -56,6 +56,11 @@ int CConvert8to16bit::Read(BYTE *data, int size)
 	return len*2;
 }
 
+int CConvert8to16bit::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 SOUNDFORMAT *CConvert8to16bit::GetFormat()
 {
 	memcpy(&m_format, IFloopySoundFilter::GetFormat(), sizeof(SOUNDFORMAT));

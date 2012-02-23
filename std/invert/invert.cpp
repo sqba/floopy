@@ -36,10 +36,15 @@ int CInvert::Read(BYTE *data, int size)
 		short int *sample = (short int*)data;
 
 		int pos = numsamples;
-		
+
 		while(pos--) {
 			*(sample++) *= -1;
 		};
 	}
 	return len;
+}
+
+int CInvert::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
 }

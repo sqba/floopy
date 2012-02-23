@@ -43,13 +43,18 @@ int CToneGen::Read(BYTE *data, int size)
 			fistp i
 		}
 #else
-		__asm__ __volatile__ ("fld %1; fistp %0;" : "=m" (i) : "m" (d)); 
+		__asm__ __volatile__ ("fld %1; fistp %0;" : "=m" (i) : "m" (d));
 #endif
 		*(s++) = i;
 		m_angle += m_step;
 	}
 
 	return size;
+}
+
+int CToneGen::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
 }
 
 bool CToneGen::GetParamVal(int index, float *value)

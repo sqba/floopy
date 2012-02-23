@@ -251,6 +251,11 @@ int CInput::Read(BYTE *data, int size)
 	return result;
 }
 
+int CInput::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 /**
  * Moves to the given position.
  * @param samples number of samples.
