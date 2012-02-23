@@ -1,1 +1,30 @@
 # depslib dependency file v1.0
+1263519990 source:e:\floopy\svg\svg.cpp
+	<math.h>
+	<string>
+	"svg.h"
+
+1263520007 e:\floopy\svg\svg.h
+	<stdio.h>
+	"../ifloopy.h"
+
+1330030861 e:\floopy\ifloopy.h
+	<memory.h>
+	<stdint.h>
+
+1263519974 source:e:\floopy\svg\main.cpp
+	"../ifloopy.h"
+	"../platform.h"
+	"svg.h"
+
+1265448326 e:\floopy\platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1263520496 e:\floopy\platform\linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1263520502 e:\floopy\platform\win32.h
+
