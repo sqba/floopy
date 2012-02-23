@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="std" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\bin\Debug\libstd" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\obj\Debug\std" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option parameters="-i ../bin/Debug/samples/acid/acid.xml -v dump" />
+				<Option host_application="floopy" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-fPIC" />
+				</Compiler>
+				<Linker>
+					<Add library="Winmm.lib" />
+					<Add directory="C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\Lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="..\bin\Release\libstd" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\obj\Release\std" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-fPIC" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="..\ifloopy.h" />
+		<Unit filename="..\platform.h" />
+		<Unit filename="8to16bit\convert8to16bit.cpp" />
+		<Unit filename="8to16bit\convert8to16bit.h" />
+		<Unit filename="cache\cache.cpp" />
+		<Unit filename="cache\cache.h" />
+		<Unit filename="converttofloat\converttofloat.cpp" />
+		<Unit filename="converttofloat\converttofloat.h" />
+		<Unit filename="dump\dump.cpp" />
+		<Unit filename="dump\dump.h" />
+		<Unit filename="echo\echo.cpp" />
+		<Unit filename="echo\echo.h" />
+		<Unit filename="float2int\float2Int.cpp" />
+		<Unit filename="float2int\float2int.h" />
+		<Unit filename="invert\invert.cpp" />
+		<Unit filename="invert\invert.h" />
+		<Unit filename="libstd.cpp" />
+		<Unit filename="loop\loop.cpp" />
+		<Unit filename="loop\loop.h" />
+		<Unit filename="mixer\mixer.cpp" />
+		<Unit filename="mixer\mixer.h" />
+		<Unit filename="mono2stereo\mono2stereo.cpp" />
+		<Unit filename="mono2stereo\mono2stereo.h" />
+		<Unit filename="oss\oss.cpp" />
+		<Unit filename="oss\oss.h" />
+		<Unit filename="performance\performance.cpp" />
+		<Unit filename="performance\performance.h" />
+		<Unit filename="playrgn\playregion.cpp" />
+		<Unit filename="playrgn\playregion.h" />
+		<Unit filename="reverse\reverse.cpp" />
+		<Unit filename="reverse\reverse.h" />
+		<Unit filename="tonegen\tonegen.cpp" />
+		<Unit filename="tonegen\tonegen.h" />
+		<Unit filename="track\track.cpp" />
+		<Unit filename="track\track.h" />
+		<Unit filename="volume\volume.cpp" />
+		<Unit filename="volume\volume.h" />
+		<Unit filename="waveout\waveout.cpp" />
+		<Unit filename="waveout\waveout.h" />
+		<Unit filename="wavfile\headers.h" />
+		<Unit filename="wavfile\wavfilein.cpp" />
+		<Unit filename="wavfile\wavfilein.h" />
+		<Unit filename="wavfile\wavfileout.cpp" />
+		<Unit filename="wavfile\wavfileout.h" />
+		<Unit filename="xml\tinyxml\Makefile" />
+		<Unit filename="xml\tinyxml\changes.txt" />
+		<Unit filename="xml\tinyxml\docs\annotated.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlAttribute-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlAttribute.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlAttribute.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlBase-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlBase.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlBase.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlComment-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlComment.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlComment.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlDeclaration-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlDeclaration.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlDeclaration.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlDocument-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlDocument.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlDocument.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlElement-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlElement.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlElement.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlHandle-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlHandle.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlNode-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlNode.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlNode.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlPrinter-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlPrinter.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlPrinter.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlText-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlText.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlText.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlUnknown-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlUnknown.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlUnknown.png" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlVisitor-members.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlVisitor.html" />
+		<Unit filename="xml\tinyxml\docs\classTiXmlVisitor.png" />
+		<Unit filename="xml\tinyxml\docs\deprecated.html" />
+		<Unit filename="xml\tinyxml\docs\doxygen.css" />
+		<Unit filename="xml\tinyxml\docs\doxygen.png" />
+		<Unit filename="xml\tinyxml\docs\files.html" />
+		<Unit filename="xml\tinyxml\docs\functions.html" />
+		<Unit filename="xml\tinyxml\docs\functions_enum.html" />
+		<Unit filename="xml\tinyxml\docs\functions_func.html" />
+		<Unit filename="xml\tinyxml\docs\functions_rela.html" />
+		<Unit filename="xml\tinyxml\docs\functions_vars.html" />
+		<Unit filename="xml\tinyxml\docs\hierarchy.html" />
+		<Unit filename="xml\tinyxml\docs\index.html" />
+		<Unit filename="xml\tinyxml\docs\pages.html" />
+		<Unit filename="xml\tinyxml\docs\tab_b.gif" />
+		<Unit filename="xml\tinyxml\docs\tab_l.gif" />
+		<Unit filename="xml\tinyxml\docs\tab_r.gif" />
+		<Unit filename="xml\tinyxml\docs\tabs.css" />
+		<Unit filename="xml\tinyxml\docs\tinystr_8h-source.html" />
+		<Unit filename="xml\tinyxml\docs\tinyxml_8h-source.html" />
+		<Unit filename="xml\tinyxml\docs\tutorial0.html" />
+		<Unit filename="xml\tinyxml\echo.dsp" />
+		<Unit filename="xml\tinyxml\readme.txt" />
+		<Unit filename="xml\tinyxml\tinyXmlTest.dsp" />
+		<Unit filename="xml\tinyxml\tinyXmlTest.vcproj" />
+		<Unit filename="xml\tinyxml\tinyXmlTestSTL.dsp" />
+		<Unit filename="xml\tinyxml\tinyXmlTestSTL.vcproj" />
+		<Unit filename="xml\tinyxml\tinystr.cpp" />
+		<Unit filename="xml\tinyxml\tinystr.h" />
+		<Unit filename="xml\tinyxml\tinyxml.cpp" />
+		<Unit filename="xml\tinyxml\tinyxml.dsw" />
+		<Unit filename="xml\tinyxml\tinyxml.h" />
+		<Unit filename="xml\tinyxml\tinyxml.sln" />
+		<Unit filename="xml\tinyxml\tinyxmlSTL.dsp" />
+		<Unit filename="xml\tinyxml\tinyxmlSTL.vcproj" />
+		<Unit filename="xml\tinyxml\tinyxml_lib.dsp" />
+		<Unit filename="xml\tinyxml\tinyxml_lib.vcproj" />
+		<Unit filename="xml\tinyxml\tinyxmlerror.cpp" />
+		<Unit filename="xml\tinyxml\tinyxmlparser.cpp" />
+		<Unit filename="xml\tinyxml\utf8test.gif" />
+		<Unit filename="xml\tinyxml\utf8test.xml" />
+		<Unit filename="xml\tinyxml\utf8testverify.xml" />
+		<Unit filename="xml\tinyxml\xmltest.cpp" />
+		<Unit filename="xml\xml.cpp" />
+		<Unit filename="xml\xml.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

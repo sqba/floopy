@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="engine/engine.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="151" topLine="0" />
+	</File>
+	<File name="engine/engine.h" open="0" top="0" tabpos="0">
+		<Cursor position="212" topLine="0" />
+	</File>
+	<File name="engine/object.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="1390" topLine="41" />
+	</File>
+	<File name="engine/object.h" open="0" top="0" tabpos="4">
+		<Cursor position="603" topLine="3" />
+	</File>
+	<File name="engine/region.cpp" open="1" top="0" tabpos="8">
+		<Cursor position="305" topLine="0" />
+	</File>
+	<File name="engine/region.h" open="0" top="0" tabpos="0">
+		<Cursor position="128" topLine="0" />
+	</File>
+	<File name="engine/track.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="566" topLine="0" />
+	</File>
+	<File name="engine/track.h" open="0" top="0" tabpos="0">
+		<Cursor position="195" topLine="0" />
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="11379" topLine="428" />
+	</File>
+</CodeBlocks_layout_file>

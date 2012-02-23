@@ -1,0 +1,272 @@
+# depslib dependency file v1.0
+1265483887 source:e:\floopy\std\8to16bit\convert8to16bit.cpp
+	<stdio.h>
+	"convert8to16bit.h"
+
+1265483883 e:\floopy\std\8to16bit\convert8to16bit.h
+	<assert.h>
+	"../../ifloopy.h"
+
+1330028661 e:\floopy\ifloopy.h
+	<memory.h>
+	<stdint.h>
+
+1265483900 source:e:\floopy\std\cache\cache.cpp
+	"cache.h"
+	<math.h>
+	<stdio.h>
+	<assert.h>
+
+1265483903 e:\floopy\std\cache\cache.h
+	"../../ifloopy.h"
+
+1265483843 source:e:\floopy\std\converttofloat\converttofloat.cpp
+	<assert.h>
+	"converttofloat.h"
+
+1265483845 e:\floopy\std\converttofloat\converttofloat.h
+	"../../ifloopy.h"
+
+1265483949 source:e:\floopy\std\dump\dump.cpp
+	"dump.h"
+	"../../common/util.h"
+
+1265483951 e:\floopy\std\dump\dump.h
+	<stdio.h>
+	"../../ifloopy.h"
+	"../../platform.h"
+
+1265448326 e:\floopy\platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1263520496 e:\floopy\platform\linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1263520502 e:\floopy\platform\win32.h
+
+1263520026 e:\floopy\common\util.h
+
+1265483872 source:e:\floopy\std\echo\echo.cpp
+	"echo.h"
+	<math.h>
+	<assert.h>
+	<stdio.h>
+
+1265483875 e:\floopy\std\echo\echo.h
+	"../../ifloopy.h"
+
+1265483933 source:e:\floopy\std\float2int\float2int.cpp
+	"float2int.h"
+
+1265483931 e:\floopy\std\float2int\float2int.h
+	"../../ifloopy.h"
+
+1265483897 source:e:\floopy\std\invert\invert.cpp
+	<math.h>
+	<stdio.h>
+	"invert.h"
+
+1265483895 e:\floopy\std\invert\invert.h
+	"../../ifloopy.h"
+
+1263520205 source:e:\floopy\std\libstd.cpp
+	<string.h>
+	"../ifloopy.h"
+	"../platform.h"
+	"dump/dump.h"
+	"xml/xml.h"
+	"cache/cache.h"
+	"echo/echo.h"
+	"loop/loop.h"
+	"mixer/mixer.h"
+	"mono2stereo/mono2stereo.h"
+	"playrgn/playregion.h"
+	"tonegen/tonegen.h"
+	"volume/volume.h"
+	"wavfile/wavfilein.h"
+	"track/track.h"
+	"reverse/reverse.h"
+	"invert/invert.h"
+	"performance/performance.h"
+	"converttofloat/converttofloat.h"
+	"float2int/float2int.h"
+	"wavfile/wavfileout.h"
+	"8to16bit/convert8to16bit.h"
+	"waveout/waveout.h"
+	"oss/oss.h"
+
+1265483847 e:\floopy\std\xml\xml.h
+	<string>
+	<vector>
+	"../../ifloopy.h"
+	"../../platform.h"
+	"tinyxml/tinyxml.h"
+
+1264211696 e:\floopy\std\xml\tinyxml\tinyxml.h
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<string>
+	<iostream>
+	<sstream>
+	"tinystr.h"
+
+1264211630 e:\floopy\std\xml\tinyxml\tinystr.h
+	<assert.h>
+	<string.h>
+
+1265483866 e:\floopy\std\loop\loop.h
+	"../../ifloopy.h"
+
+1265483908 e:\floopy\std\mixer\mixer.h
+	<time.h>
+	<stdio.h>
+	<assert.h>
+	"../../ifloopy.h"
+
+1265483889 e:\floopy\std\mono2stereo\mono2stereo.h
+	"../../ifloopy.h"
+
+1265483852 e:\floopy\std\playrgn\playregion.h
+	<assert.h>
+	"../../ifloopy.h"
+
+1265483954 e:\floopy\std\tonegen\tonegen.h
+	"../../ifloopy.h"
+
+1265483857 e:\floopy\std\volume\volume.h
+	"../../ifloopy.h"
+
+1265483938 e:\floopy\std\wavfile\wavfilein.h
+	<stdio.h>
+	<stdlib.h>
+	"../../ifloopy.h"
+	"../../platform.h"
+
+1265483923 e:\floopy\std\track\track.h
+	"../../ifloopy.h"
+
+1265483868 e:\floopy\std\reverse\reverse.h
+	"../../ifloopy.h"
+
+1265483910 e:\floopy\std\performance\performance.h
+	<time.h>
+	<stdio.h>
+	"../../ifloopy.h"
+
+1330028782 e:\floopy\std\wavfile\wavfileout.h
+	<stdio.h>
+	<stdlib.h>
+	<fcntl.h>
+	<io.h>
+	<tchar.h>
+	"../../ifloopy.h"
+	"../../platform.h"
+	"headers.h"
+
+1265483944 e:\floopy\std\wavfile\headers.h
+
+1330028691 e:\floopy\std\waveout\waveout.h
+	<windows.h>
+	<mmsystem.h>
+	<stdio.h>
+	<fcntl.h>
+	<io.h>
+	"../../ifloopy.h"
+
+1265483838 e:\floopy\std\oss\oss.h
+	"../../ifloopy.h"
+	<sys/ioctl.h>
+	<stdio.h>
+	<unistd.h>
+	<stdlib.h>
+	<fcntl.h>
+	<sys/soundcard.h>
+
+1265483863 source:e:\floopy\std\loop\loop.cpp
+	"loop.h"
+
+1265483905 source:e:\floopy\std\mixer\mixer.cpp
+	"mixer.h"
+	<math.h>
+	<assert.h>
+
+1265483892 source:e:\floopy\std\mono2stereo\mono2stereo.cpp
+	"mono2stereo.h"
+	<stdio.h>
+	<assert.h>
+
+1265483840 source:e:\floopy\std\oss\oss.cpp
+	"oss.h"
+
+1265483913 source:e:\floopy\std\performance\performance.cpp
+	<assert.h>
+	"performance.h"
+
+1265483855 source:e:\floopy\std\playrgn\playregion.cpp
+	"playregion.h"
+	<string.h>
+	<stdio.h>
+	<assert.h>
+
+1265483870 source:e:\floopy\std\reverse\reverse.cpp
+	<assert.h>
+	"reverse.h"
+
+1330028750 source:e:\floopy\std\tonegen\tonegen.cpp
+	<math.h>
+	"tonegen.h"
+
+1265483920 source:e:\floopy\std\track\track.cpp
+	"track.h"
+
+1265483860 source:e:\floopy\std\volume\volume.cpp
+	"volume.h"
+	<stdio.h>
+	<math.h>
+
+1265483915 source:e:\floopy\std\waveout\waveout.cpp
+	"waveout.h"
+
+1265483936 source:e:\floopy\std\wavfile\wavfilein.cpp
+	<string.h>
+	<assert.h>
+	"wavfilein.h"
+
+1265483941 source:e:\floopy\std\wavfile\wavfileout.cpp
+	"wavfileout.h"
+
+1264211615 source:e:\floopy\std\xml\tinyxml\tinystr.cpp
+	"tinystr.h"
+
+1264211657 source:e:\floopy\std\xml\tinyxml\tinyxml.cpp
+	<ctype.h>
+	<sstream>
+	<iostream>
+	"tinyxml.h"
+
+1264211625 source:e:\floopy\std\xml\tinyxml\tinyxmlerror.cpp
+	"tinyxml.h"
+
+1264211635 source:e:\floopy\std\xml\tinyxml\tinyxmlparser.cpp
+	<ctype.h>
+	<stddef.h>
+	"tinyxml.h"
+	<windows.h>
+
+1264211620 source:e:\floopy\std\xml\tinyxml\xmltest.cpp
+	<iostream>
+	<sstream>
+	<stdio.h>
+	<crtdbg.h>
+	"tinyxml.h"
+
+1265483850 source:e:\floopy\std\xml\xml.cpp
+	"xml.h"
+	"../../common/util.h"
+

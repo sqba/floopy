@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="engine" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\bin\Debug\libengine" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\obj\Debug\engine" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-fPIC" />
+					<Add option="-DWIN32" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="..\bin\Release\libengine" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\obj\Release\engine" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-fPIC" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fPIC" />
+		</Compiler>
+		<Linker>
+			<Add option="-ldl -fPIC" />
+		</Linker>
+		<Unit filename="..\common\loader.cpp" />
+		<Unit filename="..\common\loader.h" />
+		<Unit filename="..\common\util.cpp" />
+		<Unit filename="..\common\util.h" />
+		<Unit filename="engine.cpp" />
+		<Unit filename="engine.h" />
+		<Unit filename="globals.h" />
+		<Unit filename="input.cpp" />
+		<Unit filename="input.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="output.cpp" />
+		<Unit filename="output.h" />
+		<Unit filename="outputcache.cpp" />
+		<Unit filename="outputcache.h" />
+		<Unit filename="storage.cpp" />
+		<Unit filename="storage.h" />
+		<Unit filename="timeline.cpp" />
+		<Unit filename="timeline.h" />
+		<Unit filename="..\ifloopy.h" />
+		<Unit filename="..\platform.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
