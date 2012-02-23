@@ -37,6 +37,7 @@ public:
 	//void Close();
 
 	int Write(BYTE *data, int size);
+	int Write2(BYTE **data, int channels, int samples);
 
 	const char *GetName();
 	const char *GetDescription();

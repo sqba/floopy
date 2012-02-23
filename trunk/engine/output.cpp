@@ -93,6 +93,11 @@ int COutput::Write(BYTE *data, int size)
 	return 0;
 }
 
+int COutput::Write2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 void COutput::Reset()
 {
 	m_offset = 0;

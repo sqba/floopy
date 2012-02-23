@@ -68,6 +68,7 @@ public:
 	const char *GetPath() { return m_szFileName; }
 
 	int EmptyBuffer(BYTE *data, int size);
+	int EmptyBuffer2(BYTE **data, int size);
 
 	bool GetColor(UINT *r, UINT *g, UINT *b);
 	void SetColor(UINT r, UINT g, UINT b);

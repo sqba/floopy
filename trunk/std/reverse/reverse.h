@@ -17,6 +17,7 @@ public:
 	bool CanReadSourceIfDisabled()	{ return true; }
 
 	int Read(BYTE*, int);
+	int Read2(BYTE**, int, int);
 	void MoveTo(int);
 	void Reset();
 	int GetPosition();

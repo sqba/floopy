@@ -444,6 +444,11 @@ int CEngine::EmptyBuffer(BYTE *data, int size)
 	return 0;
 }
 
+int CEngine::EmptyBuffer2(BYTE **data, int size)
+{
+	return 0;
+}
+
 bool CEngine::GetColor(UINT *r, UINT *g, UINT *b)
 {
 	if(m_red<256 && m_green<256 && m_blue<256)

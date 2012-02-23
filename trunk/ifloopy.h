@@ -463,6 +463,7 @@ public:
 	 * @return number of bytes read.
 	 */
 	virtual int Read(BYTE *data, int size)=0;//	{ return 0; }
+	virtual int Read2(BYTE **data, int channels, int samples)=0;//	{ return 0; }
 
 	/**
 	 * Moves the starting position.
@@ -572,6 +573,11 @@ public:
 	virtual int Read(BYTE *data, int size)
 	{
 		return (NULL != m_source ? m_source->Read(data, size) : 0);
+	}
+
+	virtual int Read2(BYTE **data, int channels, int samples)
+	{
+		return (NULL != m_source ? m_source->Read2(data, channels, samples) : 0);
 	}
 
 	virtual void MoveTo(int samples)
@@ -712,6 +718,11 @@ public:
 		return (NULL != m_dest ? m_dest->Write(data, size) : 0);
 	}
 
+	virtual int Write2(BYTE **data, int channels, int samples)
+	{
+		return (NULL != m_dest ? m_dest->Write2(data, channels, samples) : 0);
+	}
+
 	virtual void SetDest(IFloopySoundOutput *dst)	{ m_dest = dst; }
 	virtual IFloopySoundOutput *GetDest()			{ return m_dest; }
 
@@ -808,6 +819,7 @@ public:
 	 * @return number of bytes written.
 	 */
 	virtual int EmptyBuffer(BYTE *data, int size) { return 0; }
+	virtual int EmptyBuffer2(BYTE **data, int size) { return 0; }
 
 /*
 	// Utility

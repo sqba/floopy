@@ -34,7 +34,7 @@ int CVolume::Read(BYTE *data, int size)
 	if(len <= 0)
 		return len;
 
-	if( m_master[LEFT]==100 && m_master[RIGHT]==100 && 
+	if( m_master[LEFT]==100 && m_master[RIGHT]==100 &&
 		m_volume[LEFT]==100 && m_volume[RIGHT]==100 )
 		return len;
 
@@ -75,15 +75,15 @@ int CVolume::Read(BYTE *data, int size)
 					int tmp = (int)((float)*sample * percent);
 					//int tmp = (int)floor((float)*sample * percent);
 					//int tmp = (int)ceil((float)*sample * percent);
-					
+
 					if(tmp > maxSample || tmp < -maxSample)
 						tmp = (short int)(*sample > 0 ? +1 : -1) * maxSample;
-					
+
 					/*if(tmp > maxSample)
 						tmp = maxSample;
 					else if(tmp < -maxSample)
 						tmp = -maxSample;*/
-					
+
 					*sample = (short int)tmp;
 				}
 				sample++;
@@ -93,6 +93,11 @@ int CVolume::Read(BYTE *data, int size)
 	}
 	else
 		return 0;
+}
+
+int CVolume::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
 }
 
 void CVolume::Reset()

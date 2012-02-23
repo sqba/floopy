@@ -23,6 +23,7 @@ public:
 	void MoveTo(int);
 	void Reset();
 	int  Read(BYTE*, int);
+	int  Read2(BYTE**, int, int);
 	void Close();
 	int  GetPosition();
 

@@ -56,6 +56,11 @@ int CEcho::Read(BYTE *data, int size)
 	}
 }
 
+int CEcho::Read2(BYTE **data, int channels, int samples)
+{
+	return 0;
+}
+
 void CEcho::Reset()
 {
 	memset(echo_buf, 0, sizeof(echo_buf));
@@ -80,13 +85,13 @@ int CEcho::read(BYTE *data, int size)
 		int max = (int)pow(2, fmt->bitsPerSample) / 2; // 32768
 		int x,s;
 		s = numsamples * fmt->channels;
-		
+
 		memcpy(echo_buf2,       echo_buf,       s*2);
 		memcpy(echo_buf,        echo_buf+s,     s*2);
 		memcpy(echo_buf+s,      echo_buf+s*2,	s*2);
 		memcpy(echo_buf+s*2,	echo_buf+s*3,	s*2);
 		memcpy(echo_buf+s*3,	samples,		s*2);
-		
+
 		for(x=0; x<s; x++)
 		{
 			int s = samples[x]/2 + echo_buf2[x]/2;

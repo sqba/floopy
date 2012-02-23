@@ -38,6 +38,7 @@ public:
 	int GetSize();
 
 	int Read(BYTE *data, int size);
+	int Read2(BYTE **data, int channels, int samples);
 
 	bool SetSource(IFloopySoundInput *src) { return (AddSource(src) != -1); }
 	int AddSource(IFloopySoundInput *src);
