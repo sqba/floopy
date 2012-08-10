@@ -3,13 +3,19 @@
 	<stdio.h>
 	"convert8to16bit.h"
 
+1265483887 o16bit.h"
+
 1265483883 e:\floopy\std\8to16bit\convert8to16bit.h
 	<assert.h>
 	"../../ifloopy.h"
 
+1330030846 oopy.h"
+
 1330030861 e:\floopy\ifloopy.h
 	<memory.h>
 	<stdint.h>
+
+1265483855 
 
 1265483900 source:e:\floopy\std\cache\cache.cpp
 	"cache.h"
@@ -24,6 +30,8 @@
 	<assert.h>
 	"converttofloat.h"
 
+1265483843 float.h"
+
 1265483845 e:\floopy\std\converttofloat\converttofloat.h
 	"../../ifloopy.h"
 
@@ -31,14 +39,20 @@
 	"dump.h"
 	"../../common/util.h"
 
+1265483850 mon/util.h"
+
 1265483951 e:\floopy\std\dump\dump.h
 	<stdio.h>
 	"../../ifloopy.h"
 	"../../platform.h"
 
+1265483938 tform.h"
+
 1265448326 e:\floopy\platform.h
 	"platform/linux.h"
 	"platform/win32.h"
+
+1265448326 win32.h"
 
 1263520496 e:\floopy\platform\linux.h
 	<dlfcn.h>
@@ -55,11 +69,15 @@
 	<assert.h>
 	<stdio.h>
 
+1265483860 
+
 1265483875 e:\floopy\std\echo\echo.h
 	"../../ifloopy.h"
 
 1265483933 source:e:\floopy\std\float2int\float2int.cpp
 	"float2int.h"
+
+1265483936 .h"
 
 1265483931 e:\floopy\std\float2int\float2int.h
 	"../../ifloopy.h"
@@ -98,12 +116,16 @@
 	"waveout/waveout.h"
 	"oss/oss.h"
 
+1330030853 "
+
 1265483847 e:\floopy\std\xml\xml.h
 	<string>
 	<vector>
 	"../../ifloopy.h"
 	"../../platform.h"
 	"tinyxml/tinyxml.h"
+
+1265483847 inyxml.h"
 
 1264211696 e:\floopy\std\xml\tinyxml\tinyxml.h
 	<ctype.h>
@@ -188,6 +210,8 @@
 	<fcntl.h>
 	<sys/soundcard.h>
 
+1265483838 card.h>
+
 1265483863 source:e:\floopy\std\loop\loop.cpp
 	"loop.h"
 
@@ -207,6 +231,8 @@
 1265483913 source:e:\floopy\std\performance\performance.cpp
 	<assert.h>
 	"performance.h"
+
+1265483913 ce.h"
 
 1265483855 source:e:\floopy\std\playrgn\playregion.cpp
 	"playregion.h"
@@ -237,6 +263,8 @@
 1265483941 source:e:\floopy\std\wavfile\wavfileout.cpp
 	"wavfileout.h"
 
+1265483941 t.h"
+
 1264211615 source:e:\floopy\std\xml\tinyxml\tinystr.cpp
 	"tinystr.h"
 
@@ -255,6 +283,8 @@
 	"tinyxml.h"
 	<windows.h>
 
+1264211635 >
+
 1264211620 source:e:\floopy\std\xml\tinyxml\xmltest.cpp
 	<iostream>
 	<sstream>
@@ -269,4 +299,77 @@
 1330030853 source:e:\floopy\std\tonegen\tonegen.cpp
 	<math.h>
 	"tonegen.h"
+
+1330111400 source:/home/sqba/Projects/floopy/std/8to16bit/convert8to16bit.cpp
+	<stdio.h>
+	"convert8to16bit.h"
+
+1330111400 /home/sqba/Projects/floopy/std/8to16bit/convert8to16bit.h
+	<assert.h>
+	"../../ifloopy.h"
+
+1330111401 /home/sqba/Projects/floopy/ifloopy.h
+	<memory.h>
+	<stdint.h>
+
+1330111401 source:/home/sqba/Projects/floopy/std/cache/cache.cpp
+	"cache.h"
+	<math.h>
+	<stdio.h>
+	<assert.h>
+
+1330111401 /home/sqba/Projects/floopy/std/cache/cache.h
+	"../../ifloopy.h"
+
+1330111401 source:/home/sqba/Projects/floopy/std/converttofloat/converttofloat.cpp
+	<assert.h>
+	"converttofloat.h"
+
+1330111401 /home/sqba/Projects/floopy/std/converttofloat/converttofloat.h
+	"../../ifloopy.h"
+
+1330111401 source:/home/sqba/Projects/floopy/std/dump/dump.cpp
+	"dump.h"
+	"../../common/util.h"
+
+1330111401 /home/sqba/Projects/floopy/std/dump/dump.h
+	<stdio.h>
+	"../../ifloopy.h"
+	"../../platform.h"
+
+1330111401 /home/sqba/Projects/floopy/platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1330111399 /home/sqba/Projects/floopy/platform/linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1330111399 /home/sqba/Projects/floopy/platform/win32.h
+
+1330111400 /home/sqba/Projects/floopy/common/util.h
+
+1330111401 source:/home/sqba/Projects/floopy/std/echo/echo.cpp
+	"echo.h"
+	<math.h>
+	<assert.h>
+	<stdio.h>
+
+1330111401 /home/sqba/Projects/floopy/std/echo/echo.h
+	"../../ifloopy.h"
+
+1330111401 source:/home/sqba/Projects/floopy/std/float2int/float2Int.cpp
+	"float2int.h"
+
+1330111401 /home/sqba/Projects/floopy/std/float2int/float2int.h
+	"../../ifloopy.h"
+
+1330111401 source:/home/sqba/Projects/floopy/std/invert/invert.cpp
+	<math.h>
+	<stdio.h>
+	"invert.h"
+
+1330111401 /home/sqba/Projects/floopy/std/invert/invert.h
+	"../../ifloopy.h"
 

@@ -4,22 +4,32 @@
 	<string>
 	"svg.h"
 
+1263519990 
+
 1263520007 e:\floopy\svg\svg.h
 	<stdio.h>
 	"../ifloopy.h"
 
+1263520007 y.h"
+
 1330030861 e:\floopy\ifloopy.h
 	<memory.h>
 	<stdint.h>
+
+1263520496 
 
 1263519974 source:e:\floopy\svg\main.cpp
 	"../ifloopy.h"
 	"../platform.h"
 	"svg.h"
 
+1263519974 rm.h"
+
 1265448326 e:\floopy\platform.h
 	"platform/linux.h"
 	"platform/win32.h"
+
+1265448326 win32.h"
 
 1263520496 e:\floopy\platform\linux.h
 	<dlfcn.h>
@@ -27,4 +37,33 @@
 	<unistd.h>
 
 1330031257 e:\floopy\platform\win32.h
+
+1330111399 source:/home/sqba/Projects/floopy/svg/main.cpp
+	"../ifloopy.h"
+	"../platform.h"
+	"svg.h"
+
+1330111401 /home/sqba/Projects/floopy/ifloopy.h
+	<memory.h>
+	<stdint.h>
+
+1330111401 /home/sqba/Projects/floopy/platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1330111399 /home/sqba/Projects/floopy/platform/linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1330111399 /home/sqba/Projects/floopy/platform/win32.h
+
+1330111399 /home/sqba/Projects/floopy/svg/svg.h
+	<stdio.h>
+	"../ifloopy.h"
+
+1330111399 source:/home/sqba/Projects/floopy/svg/svg.cpp
+	<math.h>
+	<string>
+	"svg.h"
 
