@@ -47,7 +47,7 @@ private:
 	RIFF m_riff;
 	FMT  m_fmt;
 	DATA m_data;
-	char m_filename[_MAX_PATH];
+	char m_filename[MAX_PATH];
 };
 
 #endif // !defined(AFX_WAVFILEOUT_H__73B41633_D564_4F1B_8602_A1A0CF7941FC__INCLUDED_)

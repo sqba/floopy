@@ -8,6 +8,8 @@
 	"util.h"
 	"../platform.h"
 
+1263520021 rm.h"
+
 1263520041 e:\floopy\common\loader.h
 	<windows.h>
 	"../ifloopy.h"
@@ -17,9 +19,13 @@
 	<memory.h>
 	<stdint.h>
 
+1263520169 
+
 1265448326 e:\floopy\platform.h
 	"platform/linux.h"
 	"platform/win32.h"
+
+1265448326 win32.h"
 
 1263520496 e:\floopy\platform\linux.h
 	<dlfcn.h>
@@ -48,6 +54,8 @@
 	"../common/loader.h"
 	<windows.h>
 
+1263520032 >
+
 1263520163 e:\floopy\floopy\args.h
 	<math.h>
 	<stdlib.h>
@@ -57,5 +65,65 @@
 	"engine_wrapper.h"
 	<stdio.h>
 	<sstream>
+	"../platform.h"
+
+1330111400 source:/home/sqba/Projects/floopy/common/engine_wrapper.cpp
+	"engine_wrapper.h"
+	<stdio.h>
+	<sstream>
+	"../platform.h"
+
+1330111400 /home/sqba/Projects/floopy/common/engine_wrapper.h
+	"../ifloopy.h"
+	"../platform.h"
+	"../common/loader.h"
+	<windows.h>
+
+1330111401 /home/sqba/Projects/floopy/ifloopy.h
+	<memory.h>
+	<stdint.h>
+
+1330111401 /home/sqba/Projects/floopy/platform.h
+	"platform/linux.h"
+	"platform/win32.h"
+
+1330111399 /home/sqba/Projects/floopy/platform/linux.h
+	<dlfcn.h>
+	<limits.h>
+	<unistd.h>
+
+1330111399 /home/sqba/Projects/floopy/platform/win32.h
+
+1330111400 /home/sqba/Projects/floopy/common/loader.h
+	<windows.h>
+	"../ifloopy.h"
+	"../platform.h"
+
+1344602163 source:/home/sqba/Projects/floopy/common/loader.cpp
+	<assert.h>
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	"loader.h"
+	"util.h"
+	"../platform.h"
+
+1330111400 /home/sqba/Projects/floopy/common/util.h
+
+1344602177 source:/home/sqba/Projects/floopy/common/util.cpp
+	<string.h>
+	<stdlib.h>
+	"../platform.h"
+
+1330111400 source:/home/sqba/Projects/floopy/floopy/floopy.cpp
+	<stdio.h>
+	<time.h>
+	<assert.h>
+	"../common/engine_wrapper.h"
+	"args.h"
+
+1330111400 /home/sqba/Projects/floopy/floopy/args.h
+	<math.h>
+	<stdlib.h>
 	"../platform.h"
 
