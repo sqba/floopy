@@ -8,6 +8,8 @@
 #define EXPORTED					__declspec( dllexport )
 
 // File system
+//#define MAX_PATH	                _MAX_PATH
+#define MAX_FNAME	                _MAX_FNAME
 #define PATH_SEP	'\\'
 
 // Default PCM output
